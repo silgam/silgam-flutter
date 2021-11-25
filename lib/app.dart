@@ -13,6 +13,7 @@ class SilgamApp extends StatelessWidget {
       routes: {
         '/clock': (context) => const ClockPage(),
       },
+      theme: ThemeData(fontFamily: 'NotoSansKR'),
     );
   }
 }
