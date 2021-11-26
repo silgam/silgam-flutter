@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'clock_page.dart';
+import 'home_page.dart';
 
 class SilgamApp extends StatelessWidget {
   const SilgamApp({Key? key}) : super(key: key);
@@ -9,8 +10,9 @@ class SilgamApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '실감',
-      initialRoute: '/clock',
+      initialRoute: '/',
       routes: {
+        '/': (context) => const HomePage(),
         '/clock': (context) => const ClockPage(),
       },
       theme: ThemeData(
