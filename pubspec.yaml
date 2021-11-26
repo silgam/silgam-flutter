@@ -39,3 +39,6 @@ flutter:
           weight: 700
         - asset: fonts/NotoSansKR-Black.otf
           weight: 900
+    - family: NanumMyeongjo
+      fonts:
+        - asset: fonts/NanumMyeongjo-ExtraBold.ttf
