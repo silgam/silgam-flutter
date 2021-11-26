@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'record_view.dart';
+import 'settings_view.dart';
+import 'take_exam_view.dart';
+
 final _backgroundColor = Colors.grey[50];
 const _tabItemNames = ['시험보기', '기록', '설정'];
 
@@ -22,7 +26,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody() {
-    return Container();
+    switch (_selectedIndex) {
+      case 0:
+        return const TakeExamView();
+      case 1:
+        return const RecordView();
+      case 2:
+        return const SettingsView();
+      default:
+        return Container();
+    }
   }
 
   @override
