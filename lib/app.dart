@@ -14,6 +14,7 @@ class SilgamApp extends StatelessWidget {
         '/clock': (context) => const ClockPage(),
       },
       theme: ThemeData(fontFamily: 'NotoSansKR'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
