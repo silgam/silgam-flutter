@@ -95,8 +95,8 @@ class AnalogClockPainter extends CustomPainter {
     if (showTicks) _paintTicks(canvas, tickRadius, tickWidth, bigTickWidth);
 
     // setup numbers
-    final double numberRadius = tickRadius - bigTickWidth * 3;
-    double hourTextHeight = (radius - borderWidth) / 40 * 8 * hourNumberScale;
+    final double numberRadius = tickRadius - bigTickWidth * 3.5;
+    double hourTextHeight = (radius - borderWidth) / 4.5 * hourNumberScale;
 
     if (showNumber) {
       hourTextHeight = _paintHourText(canvas, numberRadius, hourTextHeight);
@@ -163,7 +163,7 @@ class AnalogClockPainter extends CustomPainter {
       String hourText = hourNumbers[intHour - 1];
       _hourTextPainter.text = TextSpan(
         text: hourText,
-        style: TextStyle(fontSize: fontSize, color: numberColor),
+        style: TextStyle(fontSize: fontSize, color: numberColor, fontWeight: FontWeight.w900),
       );
       _hourTextPainter.layout();
       if (_hourTextPainter.height > maxTextHeight) maxTextHeight = _hourTextPainter.height;
@@ -187,7 +187,7 @@ class AnalogClockPainter extends CustomPainter {
 
   /// draw minute hand
   void _paintMinuteHand(Canvas canvas, double radius, double strokeWidth) {
-    double angle = _datetime.minute - 15.0;
+    double angle = _datetime.minute + _datetime.second / 60 - 15.0;
     Offset handOffset =
         Offset(cos(getRadians(angle * 6.0)) * radius, sin(getRadians(angle * 6.0)) * radius);
     final hourHandPaint = Paint()
