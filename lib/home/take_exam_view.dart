@@ -11,13 +11,13 @@ class TakeExamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: ListView.builder(
-        itemCount: defaultExams.length,
-        itemBuilder: (context, i) => _buildExamItem(context, i, defaultExams),
-        physics: const BouncingScrollPhysics(),
-        clipBehavior: Clip.none,
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: 20),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => _buildExamItem(context, i, defaultExams),
+          childCount: defaultExams.length,
+        ),
       ),
     );
   }
