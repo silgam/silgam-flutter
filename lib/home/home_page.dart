@@ -42,24 +42,32 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          _tabItemNames[_selectedIndex],
-          style: const TextStyle(
-            fontFamily: 'NanumMyeongjo',
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: 90,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+              centerTitle: false,
+              title: Text(
+                _tabItemNames[_selectedIndex],
+                style: const TextStyle(
+                    fontFamily: 'NanumMyeongjo', fontWeight: FontWeight.w800, color: Colors.black),
+              ),
+            ),
+            elevation: 1,
+            foregroundColor: Colors.black,
+            backgroundColor: _backgroundColor,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.dark,
+              statusBarColor: Colors.transparent,
+            ),
           ),
-        ),
-        titleSpacing: 24,
-        toolbarHeight: 90,
-        foregroundColor: Colors.black,
-        backgroundColor: _backgroundColor,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: _backgroundColor, statusBarIconBrightness: Brightness.dark),
+          _buildBody()
+        ],
       ),
-      body: _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 4,
         backgroundColor: Colors.white,
