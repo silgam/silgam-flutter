@@ -46,18 +46,20 @@ class _HomePageState extends State<HomePage> {
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            pinned: true,
-            expandedHeight: 90,
+            toolbarHeight: 80,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+              titlePadding: const EdgeInsets.only(bottom: 16, left: 20),
               centerTitle: false,
               title: Text(
                 _tabItemNames[_selectedIndex],
                 style: const TextStyle(
-                    fontFamily: 'NanumMyeongjo', fontWeight: FontWeight.w800, color: Colors.black),
+                  fontFamily: 'NanumMyeongjo',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 28,
+                  color: Colors.black,
+                ),
               ),
             ),
-            elevation: 1,
             foregroundColor: Colors.black,
             backgroundColor: _backgroundColor,
             systemOverlayStyle: const SystemUiOverlayStyle(
