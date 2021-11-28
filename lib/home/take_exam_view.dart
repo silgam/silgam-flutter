@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import '../model/exam.dart';
 
 class TakeExamView extends StatelessWidget {
-  final int gradientStartColor = 0xFF3548D8;
-  final int gradientEndColor = 0xFF7D3DD5;
-
   const TakeExamView({Key? key}) : super(key: key);
 
   @override
@@ -15,20 +12,42 @@ class TakeExamView extends StatelessWidget {
       padding: const EdgeInsets.only(top: 20),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, i) => _buildExamItem(context, i, defaultExams),
+          (context, i) => _buildExamItem(i, defaultExams.length, defaultExams[i]),
           childCount: defaultExams.length,
         ),
       ),
     );
   }
 
-  Widget _buildExamItem(BuildContext context, int i, List<Exam> items) {
-    final thisExam = items[i];
+  Widget _buildExamItem(int index, int numberOfItems, Exam thisExam) {
     return Card(
       color: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       margin: const EdgeInsets.only(left: 28, right: 28, bottom: 20),
       elevation: 0,
+      child: _ExamCardContainer(index, numberOfItems, thisExam),
+    );
+  }
+}
+
+class _ExamCardContainer extends StatefulWidget {
+  final int index;
+  final int numberOfItems;
+  final Exam thisExam;
+
+  const _ExamCardContainer(this.index, this.numberOfItems, this.thisExam, {Key? key})
+      : super(key: key);
+
+  @override
+  _ExamCardContainerState createState() => _ExamCardContainerState();
+}
+
+class _ExamCardContainerState extends State<_ExamCardContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       child: Container(
         padding: const EdgeInsets.only(top: 12, bottom: 20, left: 20, right: 20),
         decoration: BoxDecoration(
@@ -37,22 +56,22 @@ class TakeExamView extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              _getGradientColor(i / (items.length - 1)),
-              _getGradientColor((i + 1) / (items.length - 1)),
+              _getGradientColor(widget.index / (widget.numberOfItems - 1)),
+              _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: _getGradientColor((i + 1) / (items.length - 1)).withAlpha(120),
+              color:
+                  _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)).withAlpha(120),
               blurRadius: 6,
             ),
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              thisExam.subjectName,
+              widget.thisExam.subjectName,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -62,12 +81,12 @@ class TakeExamView extends StatelessWidget {
             const SizedBox(height: 10),
             _TextWithIcon(
               icon: Icons.schedule,
-              text: thisExam.buildExamTimeString(),
+              text: widget.thisExam.buildExamTimeString(),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 4),
             _TextWithIcon(
                 icon: Icons.text_snippet,
-                text: '${thisExam.numberOfQuestions}문제 / ${thisExam.perfectScore}점'),
+                text: '${widget.thisExam.numberOfQuestions}문제 / ${widget.thisExam.perfectScore}점'),
           ],
         ),
       ),
@@ -75,8 +94,8 @@ class TakeExamView extends StatelessWidget {
   }
 
   Color _getGradientColor(double t) {
-    final startColor = HSVColor.fromColor(Color(gradientStartColor));
-    final endColor = HSVColor.fromColor(Color(gradientEndColor));
+    final startColor = HSVColor.fromColor(const Color(0xFFC67EF2));
+    final endColor = HSVColor.fromColor(const Color(0xFF5CA2E8));
     final color = HSVColor.lerp(startColor, endColor, t) ?? HSVColor.fromColor(Colors.white);
     return color.toColor();
   }
