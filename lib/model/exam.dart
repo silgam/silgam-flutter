@@ -1,7 +1,7 @@
 class Exam {
   final String subjectName;
   final DateTime examStartTime;
-  final DateTime examEndTimea;
+  final DateTime examEndTime;
   final int examDuration;
   final int numberOfQuestions;
   final int perfectScore;
@@ -12,7 +12,7 @@ class Exam {
     required this.examDuration,
     required this.numberOfQuestions,
     required this.perfectScore,
-  }) : examEndTimea = examStartTime.add(Duration(minutes: examDuration));
+  }) : examEndTime = examStartTime.add(Duration(minutes: examDuration));
 
   String buildExamTimeString() {
     final examEndTime = examStartTime.add(Duration(minutes: examDuration));
