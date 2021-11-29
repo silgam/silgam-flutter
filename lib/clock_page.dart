@@ -3,11 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'analog_clock/analog_clock.dart';
+import 'model/exam.dart';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
+  final Exam exam;
 
-  const ClockPage({Key? key}) : super(key: key);
+  const ClockPage({
+    Key? key,
+    required this.exam,
+  }) : super(key: key);
 
   @override
   State<ClockPage> createState() => _ClockPageState();
@@ -71,7 +76,9 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _onCloseButtonPressed() {}
+  void _onCloseButtonPressed() {
+    Navigator.pop(context);
+  }
 
   void _onSkipButtonPressed() {}
 
@@ -107,4 +114,10 @@ class WristWatch extends StatelessWidget {
       ),
     );
   }
+}
+
+class ClockPageArguments {
+  final Exam exam;
+
+  ClockPageArguments(this.exam);
 }

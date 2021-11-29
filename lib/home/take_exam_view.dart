@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../clock_page.dart';
 import '../model/exam.dart';
 import '../repository/exam_repository.dart';
 
@@ -51,6 +51,7 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: _onCardTapped,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: Container(
@@ -68,7 +69,7 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
           boxShadow: [
             BoxShadow(
               color:
-                  _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)).withAlpha(120),
+              _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)).withAlpha(120),
               blurRadius: 6,
             ),
           ],
@@ -95,6 +96,14 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
           ],
         ),
       ),
+    );
+  }
+
+  void _onCardTapped() {
+    Navigator.pushNamed(
+      context,
+      ClockPage.routeName,
+      arguments: ClockPageArguments(widget.thisExam),
     );
   }
 
