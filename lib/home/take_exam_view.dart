@@ -3,22 +3,28 @@ import 'package:flutter/material.dart';
 import '../clock_page.dart';
 import '../model/exam.dart';
 import '../repository/exam_repository.dart';
+import '../util/scaffold_body.dart';
 
 class TakeExamView extends StatelessWidget {
+  static const title = '시험보기';
+
   const TakeExamView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(top: 20),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) => _buildExamItem(
-            index,
-            ExamRepository.defaultExams.length,
-            ExamRepository.defaultExams[index],
+    return ScaffoldBody(
+      title: title,
+      child: SliverPadding(
+        padding: const EdgeInsets.only(top: 20),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => _buildExamItem(
+              index,
+              ExamRepository.defaultExams.length,
+              ExamRepository.defaultExams[index],
+            ),
+            childCount: ExamRepository.defaultExams.length,
           ),
-          childCount: ExamRepository.defaultExams.length,
         ),
       ),
     );
@@ -68,8 +74,9 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
           ),
           boxShadow: [
             BoxShadow(
-              color:
-              _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)).withAlpha(120),
+              color: _getGradientColor(
+                (widget.index + 1) / (widget.numberOfItems - 1),
+              ).withAlpha(120),
               blurRadius: 6,
             ),
           ],

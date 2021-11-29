@@ -1,16 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'record_view.dart';
 import 'settings_view.dart';
 import 'take_exam_view.dart';
 
-final _backgroundColor = Colors.grey[50];
-const _tabItemNames = ['시험보기', '기록', '설정'];
-
 class HomePage extends StatefulWidget {
   static const routeName = '/';
+  static final backgroundColor = Colors.grey[50];
 
   const HomePage({Key? key}) : super(key: key);
 
@@ -43,35 +39,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _backgroundColor,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            toolbarHeight: 80,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(bottom: 16, left: 20),
-              centerTitle: false,
-              title: Text(
-                _tabItemNames[_selectedIndex],
-                style: const TextStyle(
-                  fontFamily: 'NanumMyeongjo',
-                  fontWeight: FontWeight.w800,
-                  fontSize: 28,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            foregroundColor: Colors.black,
-            backgroundColor: _backgroundColor,
-            systemOverlayStyle: const SystemUiOverlayStyle(
-              statusBarIconBrightness: Brightness.dark,
-              statusBarColor: Colors.transparent,
-            ),
-          ),
-          _buildBody()
-        ],
-      ),
+      backgroundColor: HomePage.backgroundColor,
+      body: _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 4,
         backgroundColor: Colors.white,
@@ -79,18 +48,18 @@ class _HomePageState extends State<HomePage> {
         showSelectedLabels: false,
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
-        items: [
+        items: const [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.create),
-            label: _tabItemNames[0],
+            icon: Icon(Icons.create),
+            label: TakeExamView.title,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.format_list_bulleted),
-            label: _tabItemNames[1],
+            icon: Icon(Icons.format_list_bulleted),
+            label: RecordView.title,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
-            label: _tabItemNames[2],
+            icon: Icon(Icons.settings),
+            label: SettingsView.title,
           ),
         ],
       ),
