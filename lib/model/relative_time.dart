@@ -2,15 +2,15 @@ class RelativeTime {
   final RelativeTimeType type;
   final int minutes;
 
-  RelativeTime.beforeStart({
+  const RelativeTime.beforeStart({
     required this.minutes,
   }) : type = RelativeTimeType.beforeStart;
 
-  RelativeTime.afterStart({
+  const RelativeTime.afterStart({
     required this.minutes,
   }) : type = RelativeTimeType.afterStart;
 
-  RelativeTime.afterFinish({
+  const RelativeTime.afterFinish({
     required this.minutes,
   }) : type = RelativeTimeType.afterFinish;
 }
