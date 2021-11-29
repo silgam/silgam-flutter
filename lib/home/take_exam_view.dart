@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../model/exam.dart';
+import '../repository/exam_repository.dart';
 
 class TakeExamView extends StatelessWidget {
   const TakeExamView({Key? key}) : super(key: key);
@@ -12,8 +13,12 @@ class TakeExamView extends StatelessWidget {
       padding: const EdgeInsets.only(top: 20),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, i) => _buildExamItem(i, defaultExams.length, defaultExams[i]),
-          childCount: defaultExams.length,
+          (context, index) => _buildExamItem(
+            index,
+            ExamRepository.defaultExams.length,
+            ExamRepository.defaultExams[index],
+          ),
+          childCount: ExamRepository.defaultExams.length,
         ),
       ),
     );
