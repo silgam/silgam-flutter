@@ -10,10 +10,10 @@ class SilgamApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '실감',
-      initialRoute: '/',
+      initialRoute: HomePage.routeName,
       routes: {
-        '/': (context) => const HomePage(),
-        '/clock': (context) => const ClockPage(),
+        HomePage.routeName: (context) => const HomePage(),
+        ClockPage.routeName: (context) => const ClockPage(),
       },
       theme: ThemeData(
         primarySwatch: indigoSwatch,

@@ -80,7 +80,7 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w400,
               ),
             ),
             const SizedBox(height: 10),

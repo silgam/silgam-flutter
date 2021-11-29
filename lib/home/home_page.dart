@@ -10,6 +10,8 @@ final _backgroundColor = Colors.grey[50];
 const _tabItemNames = ['시험보기', '기록', '설정'];
 
 class HomePage extends StatefulWidget {
+  static const routeName = '/';
+
   const HomePage({Key? key}) : super(key: key);
 
   @override
