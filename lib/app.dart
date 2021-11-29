@@ -13,7 +13,14 @@ class SilgamApp extends StatelessWidget {
       initialRoute: HomePage.routeName,
       routes: {
         HomePage.routeName: (context) => const HomePage(),
-        ClockPage.routeName: (context) => const ClockPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == ClockPage.routeName) {
+          final args = settings.arguments as ClockPageArguments;
+          return MaterialPageRoute(
+            builder: (context) => ClockPage(exam: args.exam),
+          );
+        }
       },
       theme: ThemeData(
         primarySwatch: indigoSwatch,
