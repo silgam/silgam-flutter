@@ -18,10 +18,10 @@ class TakeExamView extends StatelessWidget {
         padding: const EdgeInsets.only(top: 20),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, index) => _buildExamItem(
-              index,
-              ExamRepository.defaultExams.length,
-              ExamRepository.defaultExams[index],
+            (context, index) => _ExamCard(
+              index: index,
+              numberOfItems: ExamRepository.defaultExams.length,
+              thisExam: ExamRepository.defaultExams[index],
             ),
             childCount: ExamRepository.defaultExams.length,
           ),
@@ -29,31 +29,25 @@ class TakeExamView extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildExamItem(int index, int numberOfItems, Exam thisExam) {
-    return Card(
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      margin: const EdgeInsets.only(left: 28, right: 28, bottom: 20),
-      elevation: 0,
-      child: _ExamCardContainer(index, numberOfItems, thisExam),
-    );
-  }
 }
 
-class _ExamCardContainer extends StatefulWidget {
+class _ExamCard extends StatefulWidget {
   final int index;
   final int numberOfItems;
   final Exam thisExam;
 
-  const _ExamCardContainer(this.index, this.numberOfItems, this.thisExam, {Key? key})
-      : super(key: key);
+  const _ExamCard({
+    required this.index,
+    required this.numberOfItems,
+    required this.thisExam,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _ExamCardContainerState createState() => _ExamCardContainerState();
+  _ExamCardState createState() => _ExamCardState();
 }
 
-class _ExamCardContainerState extends State<_ExamCardContainer> {
+class _ExamCardState extends State<_ExamCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -61,26 +55,9 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: Container(
+        margin: const EdgeInsets.only(left: 28, right: 28, bottom: 20),
         padding: const EdgeInsets.only(top: 12, bottom: 20, left: 20, right: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              _getGradientColor(widget.index / (widget.numberOfItems - 1)),
-              _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: _getGradientColor(
-                (widget.index + 1) / (widget.numberOfItems - 1),
-              ).withAlpha(120),
-              blurRadius: 6,
-            ),
-          ],
-        ),
+        decoration: _buildGradientBoxDecoration(),
         child: Column(
           children: [
             Text(
@@ -98,8 +75,9 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
             ),
             const SizedBox(height: 4),
             _TextWithIcon(
-                icon: Icons.text_snippet,
-                text: '${widget.thisExam.numberOfQuestions}문제 / ${widget.thisExam.perfectScore}점'),
+              icon: Icons.text_snippet,
+              text: '${widget.thisExam.numberOfQuestions}문제 / ${widget.thisExam.perfectScore}점',
+            ),
           ],
         ),
       ),
@@ -111,6 +89,28 @@ class _ExamCardContainerState extends State<_ExamCardContainer> {
       context,
       ClockPage.routeName,
       arguments: ClockPageArguments(widget.thisExam),
+    );
+  }
+
+  BoxDecoration _buildGradientBoxDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(6),
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          _getGradientColor(widget.index / (widget.numberOfItems - 1)),
+          _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)),
+        ],
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: _getGradientColor(
+            (widget.index + 1) / (widget.numberOfItems - 1),
+          ).withAlpha(120),
+          blurRadius: 6,
+        ),
+      ],
     );
   }
 
