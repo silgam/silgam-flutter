@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'analog_clock/analog_clock.dart';
 
 class ClockPage extends StatefulWidget {
+  static const routeName = '/clock';
+
   const ClockPage({Key? key}) : super(key: key);
 
   @override
