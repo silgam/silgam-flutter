@@ -1,6 +1,7 @@
 import '../model/announcement.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
+import '../util/date_time_extension.dart';
 
 class ExamRepository {
   static final List<Exam> defaultExams = [

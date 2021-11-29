@@ -1,3 +1,4 @@
+import '../util/date_time_extension.dart';
 import 'announcement.dart';
 
 class Exam {
@@ -37,19 +38,5 @@ class Exam {
     }
 
     return '$startHour$startMinute~ $endHour$endMinute(${examDuration}m)';
-  }
-}
-
-extension DateTimeBuilder on DateTime {
-  static DateTime fromHourMinute(int hour, int minute) => DateTime(0, 1, 1, hour, minute);
-}
-
-extension on DateTime {
-  int get hour12 {
-    if (hour > 12) {
-      return hour - 12;
-    } else {
-      return hour;
-    }
   }
 }
