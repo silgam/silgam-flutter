@@ -12,19 +12,19 @@ class ExamRepository {
       numberOfQuestions: 45,
       perfectScore: 100,
       announcementTimeline: [
-        Announcement(
+        const Announcement(
           title: '1교시 예비령',
           time: RelativeTime.beforeStart(minutes: 15),
         ),
-        Announcement(
+        const Announcement(
           title: '1교시 준비령',
           time: RelativeTime.beforeStart(minutes: 5),
         ),
-        Announcement(
+        const Announcement(
           title: '1교시 본령',
           time: RelativeTime.beforeStart(minutes: 0),
         ),
-        Announcement(
+        const Announcement(
           title: '1교시 종료령',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
@@ -37,19 +37,19 @@ class ExamRepository {
       numberOfQuestions: 30,
       perfectScore: 100,
       announcementTimeline: [
-        Announcement(
+        const Announcement(
           title: '2교시 예비령',
           time: RelativeTime.beforeStart(minutes: 10),
         ),
-        Announcement(
+        const Announcement(
           title: '2교시 준비령',
           time: RelativeTime.beforeStart(minutes: 5),
         ),
-        Announcement(
+        const Announcement(
           title: '2교시 본령',
           time: RelativeTime.beforeStart(minutes: 0),
         ),
-        Announcement(
+        const Announcement(
           title: '2교시 종료령',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
@@ -62,19 +62,19 @@ class ExamRepository {
       numberOfQuestions: 45,
       perfectScore: 100,
       announcementTimeline: [
-        Announcement(
+        const Announcement(
           title: '3교시 예비령',
           time: RelativeTime.beforeStart(minutes: 10),
         ),
-        Announcement(
+        const Announcement(
           title: '3교시 준비령',
           time: RelativeTime.beforeStart(minutes: 5),
         ),
-        Announcement(
+        const Announcement(
           title: '3교시 본령',
           time: RelativeTime.beforeStart(minutes: 0),
         ),
-        Announcement(
+        const Announcement(
           title: '3교시 종료령',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
@@ -87,19 +87,19 @@ class ExamRepository {
       numberOfQuestions: 20,
       perfectScore: 50,
       announcementTimeline: [
-        Announcement(
+        const Announcement(
           title: '4교시 예비령',
           time: RelativeTime.beforeStart(minutes: 10),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 준비령',
           time: RelativeTime.beforeStart(minutes: 5),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 본령',
           time: RelativeTime.beforeStart(minutes: 0),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 종료령',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
@@ -112,27 +112,27 @@ class ExamRepository {
       numberOfQuestions: 20,
       perfectScore: 50,
       announcementTimeline: [
-        Announcement(
+        const Announcement(
           title: '4교시 예비령 (탐구1)',
           time: RelativeTime.beforeStart(minutes: 10),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 준비령 (탐구1)',
           time: RelativeTime.beforeStart(minutes: 5),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 본령 (탐구1)',
           time: RelativeTime.beforeStart(minutes: 0),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 종료령 (탐구1)',
           time: RelativeTime.afterStart(minutes: 30),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 본령 (탐구2)',
           time: RelativeTime.afterStart(minutes: 32),
         ),
-        Announcement(
+        const Announcement(
           title: '4교시 종료령 (탐구2)',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
@@ -145,19 +145,19 @@ class ExamRepository {
       numberOfQuestions: 30,
       perfectScore: 50,
       announcementTimeline: [
-        Announcement(
+        const Announcement(
           title: '5교시 예비령',
           time: RelativeTime.beforeStart(minutes: 10),
         ),
-        Announcement(
+        const Announcement(
           title: '5교시 준비령',
           time: RelativeTime.beforeStart(minutes: 5),
         ),
-        Announcement(
+        const Announcement(
           title: '5교시 본령',
           time: RelativeTime.beforeStart(minutes: 0),
         ),
-        Announcement(
+        const Announcement(
           title: '5교시 종료령',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
