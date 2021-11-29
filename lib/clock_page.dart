@@ -31,46 +31,44 @@ class _ClockPageState extends State<ClockPage> {
       backgroundColor: Colors.black,
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              alignment: Alignment.topCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    child: IconButton(
-                      splashRadius: 20,
-                      icon: const Icon(Icons.close),
-                      onPressed: _onCloseButtonPressed,
-                      color: Colors.white,
+          Flexible(
+            fit: FlexFit.tight,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  child: IconButton(
+                    splashRadius: 20,
+                    icon: const Icon(Icons.close),
+                    onPressed: _onCloseButtonPressed,
+                    color: Colors.white,
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(right: 24),
+                  child: OutlinedButton(
+                    child: const Text(
+                      '건너뛰기',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                    onPressed: _onSkipButtonPressed,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.white),
+                      primary: Colors.white,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(right: 24),
-                    child: OutlinedButton(
-                      child: const Text(
-                        '건너뛰기',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                      onPressed: _onSkipButtonPressed,
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white),
-                        primary: Colors.white,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        minimumSize: Size.zero,
-                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const WristWatch(),
-          Expanded(
-            child: Container(),
-          )
+          Flexible(child: Container()),
         ],
       ),
     );
