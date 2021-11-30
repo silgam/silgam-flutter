@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../model/exam.dart';
+import '../util/date_time_extension.dart';
 import 'breakpoint.dart';
 import 'wrist_watch.dart';
 
@@ -77,7 +78,16 @@ class _ClockPageState extends State<ClockPage> {
             clockTime: _currentTime,
             onEverySecond: _onEverySecond,
           ),
-          Flexible(child: Container()),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: _buildTimelineTiles(),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -105,10 +115,65 @@ class _ClockPageState extends State<ClockPage> {
     });
   }
 
+  List<Widget> _buildTimelineTiles() {
+    final tiles = <Widget>[];
+    _breakpoints.asMap().forEach((index, breakpoint) {
+      final time = '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
+      tiles.add(_TimelineTile(time, breakpoint.title));
+      if (index == _breakpoints.length - 1) return;
+      final nextBreakpoint = _breakpoints[index + 1];
+      final int duration = nextBreakpoint.time.difference(breakpoint.time).inMinutes;
+      tiles.add(_TimelineConnector(duration));
+    });
+    return tiles;
+  }
+
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
+  }
+}
+
+class _TimelineTile extends StatelessWidget {
+  final String time;
+  final String title;
+
+  const _TimelineTile(this.time, this.title, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          time,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 12),
+        ),
+        Text(
+          title,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 16),
+        ),
+      ],
+    );
+  }
+}
+
+class _TimelineConnector extends StatelessWidget {
+  final int duration;
+
+  const _TimelineConnector(this.duration, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        height: 1,
+        width: duration * 3.0,
+        color: Colors.white,
+      ),
+    );
   }
 }
 
