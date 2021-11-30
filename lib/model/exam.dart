@@ -8,7 +8,7 @@ class Exam {
   final int examDuration;
   final int numberOfQuestions;
   final int perfectScore;
-  final List<Announcement> announcementTimeline;
+  final List<Announcement> announcements;
 
   Exam({
     required this.subjectName,
@@ -16,7 +16,7 @@ class Exam {
     required this.examDuration,
     required this.numberOfQuestions,
     required this.perfectScore,
-    required this.announcementTimeline,
+    required this.announcements,
   }) : examEndTime = examStartTime.add(Duration(minutes: examDuration));
 
   String buildExamTimeString() {
