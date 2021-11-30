@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'clock_page.dart';
+import 'clock_page/clock_page.dart';
 import 'home/home_page.dart';
 
 class SilgamApp extends StatelessWidget {
