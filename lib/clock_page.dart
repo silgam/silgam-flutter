@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'analog_clock/analog_clock.dart';
+import 'model/announcement.dart';
 import 'model/exam.dart';
+import 'model/relative_time.dart';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
@@ -19,10 +21,16 @@ class ClockPage extends StatefulWidget {
 }
 
 class _ClockPageState extends State<ClockPage> {
+  late final List<_Breakpoint> _breakpoints;
+  late int _currentBreakpointIndex = 0;
+  DateTime _currentTime = DateTime.now();
+
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    _breakpoints = _Breakpoint.createBreakpointsFromExam(widget.exam);
+    _currentTime = _breakpoints[_currentBreakpointIndex].time;
   }
 
   @override
@@ -67,18 +75,37 @@ class _ClockPageState extends State<ClockPage> {
               ],
             ),
           ),
-          const WristWatch(),
+          WristWatch(
+            clockTime: _currentTime,
+            onEverySecond: _onEverySecond,
+          ),
           Flexible(child: Container()),
         ],
       ),
     );
   }
 
+  void _onEverySecond(DateTime newTime) {
+    _currentTime = newTime;
+    if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
+    final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
+    if (newTime.compareTo(nextBreakpoint.time) >= 0) {
+      _currentBreakpointIndex++;
+    }
+  }
+
   void _onCloseButtonPressed() {
     Navigator.pop(context);
   }
 
-  void _onSkipButtonPressed() {}
+  void _onSkipButtonPressed() {
+    setState(() {
+      if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
+      _currentBreakpointIndex++;
+      final nextBreakpoint = _breakpoints[_currentBreakpointIndex];
+      _currentTime = nextBreakpoint.time;
+    });
+  }
 
   @override
   void dispose() {
@@ -88,7 +115,14 @@ class _ClockPageState extends State<ClockPage> {
 }
 
 class WristWatch extends StatelessWidget {
-  const WristWatch({Key? key}) : super(key: key);
+  final DateTime clockTime;
+  final Function(DateTime)? onEverySecond;
+
+  const WristWatch({
+    Key? key,
+    required this.clockTime,
+    this.onEverySecond,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -103,14 +137,57 @@ class WristWatch extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.center,
-            child: const FractionallySizedBox(
+            child: FractionallySizedBox(
               widthFactor: 0.77,
-              child: AnalogClock(borderWidth: 0),
+              child: AnalogClock(
+                borderWidth: 0,
+                dateTime: clockTime,
+                onEverySecond: onEverySecond,
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+class _Breakpoint {
+  final String title;
+  final DateTime time;
+  final Announcement? announcement;
+
+  _Breakpoint({
+    required this.title,
+    required this.time,
+    this.announcement,
+  });
+
+  static List<_Breakpoint> createBreakpointsFromExam(Exam exam) {
+    final breakpoints = <_Breakpoint>[];
+
+    for (var announcement in exam.announcements) {
+      final int minutes = announcement.time.minutes;
+      final DateTime breakpointTime;
+      switch (announcement.time.type) {
+        case RelativeTimeType.beforeStart:
+          breakpointTime = exam.examStartTime.subtract(Duration(minutes: minutes));
+          break;
+        case RelativeTimeType.afterStart:
+          breakpointTime = exam.examStartTime.add(Duration(minutes: minutes));
+          break;
+        case RelativeTimeType.afterFinish:
+          breakpointTime = exam.examEndTime.add(Duration(minutes: minutes));
+          break;
+      }
+      breakpoints.add(_Breakpoint(
+        title: announcement.title,
+        time: breakpointTime,
+      ));
+    }
+
+    breakpoints.sort((a, b) => a.time.compareTo(b.time));
+    return breakpoints;
   }
 }
 
