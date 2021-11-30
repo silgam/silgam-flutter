@@ -79,12 +79,15 @@ class _ClockPageState extends State<ClockPage> {
             onEverySecond: _onEverySecond,
           ),
           Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: _buildTimelineTiles(),
+            child: Container(
+              alignment: Alignment.center,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _buildTimelineTiles(),
+                ),
               ),
             ),
           ),
@@ -150,12 +153,35 @@ class _TimelineTile extends StatelessWidget {
           time,
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 12),
         ),
-        Text(
-          title,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 16),
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(
+              fontFamily: 'NotoSansKR',
+              color: Colors.white,
+              fontWeight: FontWeight.w300,
+              fontSize: 16,
+            ),
+            children: _buildTitleTextSpans(),
+          ),
         ),
       ],
     );
+  }
+
+  List<TextSpan> _buildTitleTextSpans() {
+    final textSpans = <TextSpan>[];
+    final regex = RegExp(r"\(([^)]+)\)");
+    final allMatches = regex.allMatches(title);
+    final splits = title.split(regex);
+    splits.asMap().forEach((index, string) {
+      textSpans.add(TextSpan(text: string));
+      if (index == splits.length - 1) return;
+      textSpans.add(TextSpan(
+        text: allMatches.elementAt(index).group(0),
+        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w100),
+      ));
+    });
+    return textSpans;
   }
 }
 
