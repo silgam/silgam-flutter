@@ -29,6 +29,7 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
+      subjectNumber: 1,
     ),
     Exam(
       subjectName: '수학',
@@ -54,6 +55,7 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
+      subjectNumber: 2,
     ),
     Exam(
       subjectName: '영어',
@@ -79,6 +81,7 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
+      subjectNumber: 3,
     ),
     Exam(
       subjectName: '한국사',
@@ -104,6 +107,7 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
+      subjectNumber: 4,
     ),
     Exam(
       subjectName: '탐구',
@@ -137,6 +141,7 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
+      subjectNumber: 4,
     ),
     Exam(
       subjectName: '제2외국어/한문',
@@ -162,6 +167,7 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
+      subjectNumber: 5,
     ),
   ];
 }
