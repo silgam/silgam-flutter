@@ -6,10 +6,12 @@ import 'analog_clock.dart';
 class WristWatch extends StatelessWidget {
   final DateTime clockTime;
   final Function(DateTime)? onEverySecond;
+  final bool isLive;
 
   const WristWatch({
     Key? key,
     required this.clockTime,
+    required this.isLive,
     this.onEverySecond,
   }) : super(key: key);
 
@@ -29,8 +31,9 @@ class WristWatch extends StatelessWidget {
             child: FractionallySizedBox(
               widthFactor: 0.77,
               child: AnalogClock(
-                borderWidth: 0,
                 dateTime: clockTime,
+                isLive: isLive,
+                borderWidth: 0,
                 onEverySecond: onEverySecond,
               ),
             ),

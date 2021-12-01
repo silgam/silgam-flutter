@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -30,6 +31,10 @@ class _ClockPageState extends State<ClockPage> {
   late final List<GlobalKey> _timelineTileKeys;
   late final List<GlobalKey> _timelineConnectorKeys;
 
+  static const int defaultScreenOverlayAlpha = 220;
+  int _screenOverlayAlpha = defaultScreenOverlayAlpha;
+  bool _isStarted = false;
+
   @override
   void initState() {
     super.initState();
@@ -44,65 +49,71 @@ class _ClockPageState extends State<ClockPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Column(
+      body: Stack(
         children: [
-          Flexible(
-            fit: FlexFit.tight,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  child: IconButton(
-                    splashRadius: 20,
-                    icon: const Icon(Icons.close),
-                    onPressed: _onCloseButtonPressed,
-                    color: Colors.white,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(right: 24),
-                  child: OutlinedButton(
-                    child: const Text(
-                      '건너뛰기',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+          Column(
+            children: [
+              Flexible(
+                fit: FlexFit.tight,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      child: IconButton(
+                        splashRadius: 20,
+                        icon: const Icon(Icons.close),
+                        onPressed: _onCloseButtonPressed,
+                        color: Colors.white,
+                      ),
                     ),
-                    onPressed: _onSkipButtonPressed,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white),
-                      primary: Colors.white,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      minimumSize: Size.zero,
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    Container(
+                      margin: const EdgeInsets.only(right: 24),
+                      child: OutlinedButton(
+                        child: const Text(
+                          '건너뛰기',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                        onPressed: _onSkipButtonPressed,
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.white),
+                          primary: Colors.white,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          minimumSize: Size.zero,
+                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          WristWatch(
-            clockTime: _currentTime,
-            onEverySecond: _onEverySecond,
-          ),
-          Flexible(
-            child: Container(
-              alignment: Alignment.center,
-              child: ScrollConfiguration(
-                behavior: EmptyScrollBehavior(),
-                child: SingleChildScrollView(
-                  controller: _timelineController,
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: _buildTimelineTiles(),
+              ),
+              WristWatch(
+                clockTime: _currentTime,
+                onEverySecond: _onEverySecond,
+                isLive: _isStarted,
+              ),
+              Flexible(
+                child: Container(
+                  alignment: Alignment.center,
+                  child: ScrollConfiguration(
+                    behavior: EmptyScrollBehavior(),
+                    child: SingleChildScrollView(
+                      controller: _timelineController,
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: _buildTimelineTiles(),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
+          _buildScreenOverlayIfNotStarted(),
         ],
       ),
     );
@@ -112,7 +123,7 @@ class _ClockPageState extends State<ClockPage> {
     _currentTime = newTime;
     if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
     final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-    if (newTime.compareTo(nextBreakpoint.time) >= 0) moveToNextBreakpoint();
+    if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
     setState(() {});
   }
 
@@ -123,12 +134,12 @@ class _ClockPageState extends State<ClockPage> {
   void _onSkipButtonPressed() {
     setState(() {
       if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
-      moveToNextBreakpoint();
+      _moveToNextBreakpoint();
       _currentTime = _breakpoints[_currentBreakpointIndex].time;
     });
   }
 
-  void moveToNextBreakpoint() {
+  void _moveToNextBreakpoint() {
     _currentBreakpointIndex++;
     double progressedWidth = 0;
     for (int i = 0; i < _currentBreakpointIndex; i++) {
@@ -137,9 +148,48 @@ class _ClockPageState extends State<ClockPage> {
     }
     _timelineController.animateTo(
       progressedWidth,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 100),
       curve: Curves.decelerate,
     );
+  }
+
+  Widget _buildScreenOverlayIfNotStarted() {
+    if (_isStarted == true) return const SizedBox.shrink();
+    return GestureDetector(
+      onTapDown: _onScreenTapDown,
+      onTapUp: _onScreenTapUp,
+      onTapCancel: _onScreenTapCancel,
+      child: AnimatedContainer(
+        width: double.infinity,
+        height: double.infinity,
+        alignment: Alignment.center,
+        color: Colors.black.withAlpha(_screenOverlayAlpha),
+        duration: const Duration(milliseconds: 100),
+        child: const Text(
+          '화면을 터치하면 시작됩니다',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onScreenTapDown(TapDownDetails tapDownDetails) {
+    _screenOverlayAlpha = 160;
+    setState(() {});
+  }
+
+  void _onScreenTapUp(TapUpDetails tapUpDetails) {
+    _screenOverlayAlpha = 0;
+    _isStarted = true;
+    setState(() {});
+  }
+
+  void _onScreenTapCancel() {
+    _screenOverlayAlpha = defaultScreenOverlayAlpha;
+    setState(() {});
   }
 
   List<Widget> _buildTimelineTiles() {
