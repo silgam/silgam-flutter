@@ -53,39 +53,11 @@ class _ClockPageState extends State<ClockPage> {
         children: [
           Column(
             children: [
-              Flexible(
-                fit: FlexFit.tight,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  textBaseline: TextBaseline.alphabetic,
+              Expanded(
+                child: Column(
                   children: [
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      child: IconButton(
-                        splashRadius: 20,
-                        icon: const Icon(Icons.close),
-                        onPressed: _onCloseButtonPressed,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(right: 24),
-                      child: OutlinedButton(
-                        child: const Text(
-                          '건너뛰기',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
-                        onPressed: _onSkipButtonPressed,
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.white),
-                          primary: Colors.white,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: Size.zero,
-                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                        ),
-                      ),
-                    ),
+                    _buildTopMenu(),
+                    Expanded(child: _buildExamTitle()),
                   ],
                 ),
               ),
@@ -94,7 +66,7 @@ class _ClockPageState extends State<ClockPage> {
                 onEverySecond: _onEverySecond,
                 isLive: _isStarted,
               ),
-              Flexible(
+              Expanded(
                 child: Container(
                   alignment: Alignment.center,
                   child: ScrollConfiguration(
@@ -150,6 +122,81 @@ class _ClockPageState extends State<ClockPage> {
       progressedWidth,
       duration: const Duration(milliseconds: 100),
       curve: Curves.decelerate,
+    );
+  }
+
+  Widget _buildTopMenu() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          margin: const EdgeInsets.all(8),
+          child: IconButton(
+            splashRadius: 20,
+            icon: const Icon(Icons.close),
+            onPressed: _onCloseButtonPressed,
+            color: Colors.white,
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(right: 24),
+          child: OutlinedButton(
+            child: const Text(
+              '건너뛰기',
+              style: TextStyle(color: Colors.white, fontSize: 12),
+            ),
+            onPressed: _onSkipButtonPressed,
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.white),
+              primary: Colors.white,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: Size.zero,
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExamTitle() {
+    final children = <Widget>[];
+
+    if (widget.exam.subjectNumber != null) {
+      children.add(Container(
+        margin: const EdgeInsets.only(bottom: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(1000)),
+          border: Border.all(color: Colors.white),
+        ),
+        child: Text(
+          '${widget.exam.subjectNumber}교시',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            height: 1.2,
+          ),
+        ),
+      ));
+    }
+
+    children.add(Text(
+      widget.exam.subjectName,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 28,
+        fontWeight: FontWeight.w500,
+      ),
+    ));
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: children,
+      ),
     );
   }
 

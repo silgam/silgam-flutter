@@ -3,6 +3,7 @@ import 'announcement.dart';
 
 class Exam {
   final String subjectName;
+  final int? subjectNumber;
   final DateTime examStartTime;
   final DateTime examEndTime;
   final int examDuration;
@@ -12,6 +13,7 @@ class Exam {
 
   Exam({
     required this.subjectName,
+    this.subjectNumber,
     required this.examStartTime,
     required this.examDuration,
     required this.numberOfQuestions,
