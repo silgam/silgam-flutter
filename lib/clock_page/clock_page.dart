@@ -153,35 +153,33 @@ class _TimelineTile extends StatelessWidget {
           time,
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 12),
         ),
-        RichText(
-          text: TextSpan(
-            style: const TextStyle(
-              fontFamily: 'NotoSansKR',
-              color: Colors.white,
-              fontWeight: FontWeight.w300,
-              fontSize: 16,
-            ),
-            children: _buildTitleTextSpans(),
-          ),
-        ),
+        Column(children: _buildTitleTexts()),
       ],
     );
   }
 
-  List<TextSpan> _buildTitleTextSpans() {
-    final textSpans = <TextSpan>[];
+  List<Text> _buildTitleTexts() {
+    final texts = <Text>[];
     final regex = RegExp(r"\(([^)]+)\)");
     final allMatches = regex.allMatches(title);
-    final splits = title.split(regex);
-    splits.asMap().forEach((index, string) {
-      textSpans.add(TextSpan(text: string));
-      if (index == splits.length - 1) return;
-      textSpans.add(TextSpan(
-        text: allMatches.elementAt(index).group(0),
-        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w100),
-      ));
-    });
-    return textSpans;
+    const defaultTextStyle = TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w300,
+      fontSize: 16,
+    );
+    const smallTextStyle = TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w100,
+      fontSize: 10,
+    );
+    if (allMatches.isEmpty) {
+      texts.add(Text(title, style: defaultTextStyle));
+    } else {
+      final splitIndex = allMatches.last.start;
+      texts.add(Text(title.substring(0, splitIndex).trim(), style: defaultTextStyle));
+      texts.add(Text(title.substring(splitIndex).trim(), style: smallTextStyle));
+    }
+    return texts;
   }
 }
 
