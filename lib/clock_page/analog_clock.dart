@@ -9,6 +9,7 @@ import 'analog_clock_painter.dart';
 /// A analog clock.
 class AnalogClock extends StatefulWidget {
   final DateTime dateTime;
+  final bool isLive;
   final Color dialPlateColor;
   final Color hourHandColor;
   final Color minuteHandColor;
@@ -25,7 +26,6 @@ class AnalogClock extends StatefulWidget {
   final double? borderWidth;
   final double hourNumberScale;
   final List<String> hourNumbers;
-  final bool isLive;
   final double width;
   final double height;
   final BoxDecoration decoration;
@@ -34,6 +34,7 @@ class AnalogClock extends StatefulWidget {
 
   const AnalogClock({
     required this.dateTime,
+    required this.isLive,
     this.dialPlateColor = Colors.white,
     this.hourHandColor = Colors.black,
     this.minuteHandColor = Colors.black,
@@ -50,7 +51,6 @@ class AnalogClock extends StatefulWidget {
     this.borderWidth,
     this.hourNumberScale = 1.0,
     this.hourNumbers = AnalogClockPainter.defaultHourNumbers,
-    this.isLive = true,
     this.width = double.infinity,
     this.height = double.infinity,
     this.decoration = const BoxDecoration(),
@@ -72,18 +72,21 @@ class _AnalogClockState extends State<AnalogClock> {
   void initState() {
     super.initState();
     _updateInitialDateTimeIfChanged();
-    _timer = widget.isLive
-        ? Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-            _dateTime = _dateTime.add(const Duration(seconds: 1));
-            if (mounted) setState(() {});
-            widget.onEverySecond?.call(_dateTime);
-          })
-        : null;
   }
 
   @override
   Widget build(BuildContext context) {
     _updateInitialDateTimeIfChanged();
+
+    _timer?.cancel();
+    if (widget.isLive) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+        _dateTime = _dateTime.add(const Duration(seconds: 1));
+        if (mounted) setState(() {});
+        widget.onEverySecond?.call(_dateTime);
+      });
+    }
+
     return Container(
       width: widget.width,
       height: widget.height,
