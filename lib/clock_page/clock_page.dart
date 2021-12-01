@@ -82,7 +82,7 @@ class _ClockPageState extends State<ClockPage> {
             child: Container(
               alignment: Alignment.center,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 40),
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -100,9 +100,8 @@ class _ClockPageState extends State<ClockPage> {
     _currentTime = newTime;
     if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
     final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-    if (newTime.compareTo(nextBreakpoint.time) >= 0) {
-      _currentBreakpointIndex++;
-    }
+    if (newTime.compareTo(nextBreakpoint.time) >= 0) _currentBreakpointIndex++;
+    setState(() {});
   }
 
   void _onCloseButtonPressed() {
@@ -121,12 +120,26 @@ class _ClockPageState extends State<ClockPage> {
   List<Widget> _buildTimelineTiles() {
     final tiles = <Widget>[];
     _breakpoints.asMap().forEach((index, breakpoint) {
+      bool disabled = false;
+      if (index > _currentBreakpointIndex) disabled = true;
+
+      // Tile
       final time = '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
-      tiles.add(_TimelineTile(time, breakpoint.title));
+      tiles.add(_TimelineTile(time, breakpoint.title, disabled));
+
+      // Connector
       if (index == _breakpoints.length - 1) return;
       final nextBreakpoint = _breakpoints[index + 1];
-      final int duration = nextBreakpoint.time.difference(breakpoint.time).inMinutes;
-      tiles.add(_TimelineConnector(duration));
+      final Duration duration = nextBreakpoint.time.difference(breakpoint.time);
+
+      double progress = 1;
+      if (disabled) {
+        progress = 0;
+      } else if (index == _currentBreakpointIndex) {
+        progress = _currentTime.difference(breakpoint.time).inSeconds / duration.inSeconds;
+      }
+
+      tiles.add(_TimelineConnector(duration.inMinutes, progress));
     });
     return tiles;
   }
@@ -141,8 +154,9 @@ class _ClockPageState extends State<ClockPage> {
 class _TimelineTile extends StatelessWidget {
   final String time;
   final String title;
+  final bool disabled;
 
-  const _TimelineTile(this.time, this.title, {Key? key}) : super(key: key);
+  const _TimelineTile(this.time, this.title, this.disabled, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +165,11 @@ class _TimelineTile extends StatelessWidget {
       children: [
         Text(
           time,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 12),
+          style: TextStyle(
+            color: _getTimelineColor(disabled),
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+          ),
         ),
         Column(children: _buildTitleTexts()),
       ],
@@ -162,13 +180,13 @@ class _TimelineTile extends StatelessWidget {
     final texts = <Text>[];
     final regex = RegExp(r"\(([^)]+)\)");
     final allMatches = regex.allMatches(title);
-    const defaultTextStyle = TextStyle(
-      color: Colors.white,
+    final defaultTextStyle = TextStyle(
+      color: _getTimelineColor(disabled),
       fontWeight: FontWeight.w300,
       fontSize: 16,
     );
-    const smallTextStyle = TextStyle(
-      color: Colors.white,
+    final smallTextStyle = TextStyle(
+      color: _getTimelineColor(disabled),
       fontWeight: FontWeight.w100,
       fontSize: 10,
     );
@@ -185,8 +203,9 @@ class _TimelineTile extends StatelessWidget {
 
 class _TimelineConnector extends StatelessWidget {
   final int duration;
+  final double progress;
 
-  const _TimelineConnector(this.duration, {Key? key}) : super(key: key);
+  const _TimelineConnector(this.duration, this.progress, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +214,12 @@ class _TimelineConnector extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 10),
         height: 1,
         width: duration * 3.0,
-        color: Colors.white,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [_getTimelineColor(false), _getTimelineColor(true)],
+            stops: [progress, progress],
+          ),
+        ),
       ),
     );
   }
@@ -205,4 +229,9 @@ class ClockPageArguments {
   final Exam exam;
 
   ClockPageArguments(this.exam);
+}
+
+Color _getTimelineColor(bool disabled) {
+  if (disabled) return Colors.grey[700]!;
+  return Colors.white;
 }
