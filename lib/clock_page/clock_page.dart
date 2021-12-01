@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../model/exam.dart';
 import '../util/date_time_extension.dart';
+import '../util/empty_scroll_behavior.dart';
 import 'breakpoint.dart';
 import 'wrist_watch.dart';
 
@@ -81,12 +82,15 @@ class _ClockPageState extends State<ClockPage> {
           Flexible(
             child: Container(
               alignment: Alignment.center,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _buildTimelineTiles(),
+              child: ScrollConfiguration(
+                behavior: EmptyScrollBehavior(),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: _buildTimelineTiles(),
+                  ),
                 ),
               ),
             ),
