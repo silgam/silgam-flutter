@@ -25,12 +25,18 @@ class _ClockPageState extends State<ClockPage> {
   late int _currentBreakpointIndex = 0;
   DateTime _currentTime = DateTime.now();
 
+  final ScrollController _timelineController = ScrollController();
+  late final List<GlobalKey> _timelineTileKeys;
+  late final List<GlobalKey> _timelineConnectorKeys;
+
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
     _currentTime = _breakpoints[_currentBreakpointIndex].time;
+    _timelineTileKeys = List.generate(_breakpoints.length, (index) => GlobalKey());
+    _timelineConnectorKeys = List.generate(_breakpoints.length - 1, (index) => GlobalKey());
   }
 
   @override
@@ -85,6 +91,7 @@ class _ClockPageState extends State<ClockPage> {
               child: ScrollConfiguration(
                 behavior: EmptyScrollBehavior(),
                 child: SingleChildScrollView(
+                  controller: _timelineController,
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -104,7 +111,7 @@ class _ClockPageState extends State<ClockPage> {
     _currentTime = newTime;
     if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
     final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-    if (newTime.compareTo(nextBreakpoint.time) >= 0) _currentBreakpointIndex++;
+    if (newTime.compareTo(nextBreakpoint.time) >= 0) moveToNextBreakpoint();
     setState(() {});
   }
 
@@ -115,10 +122,23 @@ class _ClockPageState extends State<ClockPage> {
   void _onSkipButtonPressed() {
     setState(() {
       if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
-      _currentBreakpointIndex++;
-      final nextBreakpoint = _breakpoints[_currentBreakpointIndex];
-      _currentTime = nextBreakpoint.time;
+      moveToNextBreakpoint();
+      _currentTime = _breakpoints[_currentBreakpointIndex].time;
     });
+  }
+
+  void moveToNextBreakpoint() {
+    _currentBreakpointIndex++;
+    double progressedWidth = 0;
+    for (int i = 0; i < _currentBreakpointIndex; i++) {
+      progressedWidth += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
+      progressedWidth += _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
+    }
+    _timelineController.animateTo(
+      progressedWidth,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.decelerate,
+    );
   }
 
   List<Widget> _buildTimelineTiles() {
@@ -129,7 +149,12 @@ class _ClockPageState extends State<ClockPage> {
 
       // Tile
       final time = '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
-      tiles.add(_TimelineTile(time, breakpoint.title, disabled));
+      tiles.add(_TimelineTile(
+        time,
+        breakpoint.title,
+        disabled,
+        key: _timelineTileKeys[index],
+      ));
 
       // Connector
       if (index == _breakpoints.length - 1) return;
@@ -143,7 +168,11 @@ class _ClockPageState extends State<ClockPage> {
         progress = _currentTime.difference(breakpoint.time).inSeconds / duration.inSeconds;
       }
 
-      tiles.add(_TimelineConnector(duration.inMinutes, progress));
+      tiles.add(_TimelineConnector(
+        duration.inMinutes,
+        progress,
+        key: _timelineConnectorKeys[index],
+      ));
     });
     return tiles;
   }
