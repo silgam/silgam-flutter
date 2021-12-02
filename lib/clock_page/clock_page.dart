@@ -274,11 +274,12 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _onEverySecond(DateTime newTime) {
-    _currentTime = newTime;
-    if (_isFinished) return;
-    final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-    if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
-    setState(() {});
+    setState(() {
+      _currentTime = newTime;
+      if (_isFinished) return;
+      final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
+      if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
+    });
   }
 
   void _onCloseButtonPressed() async {
@@ -359,24 +360,28 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _onScreenTap() {
-    _isUiVisible = !_isUiVisible;
-    setState(() {});
+    setState(() {
+      _isUiVisible = !_isUiVisible;
+    });
   }
 
   void _onOverlayTapDown(TapDownDetails tapDownDetails) {
-    _screenOverlayAlpha = 160;
-    setState(() {});
+    setState(() {
+      _screenOverlayAlpha = 160;
+    });
   }
 
   void _onOverlayTapUp(TapUpDetails tapUpDetails) {
-    _screenOverlayAlpha = 0;
-    _startExam();
-    setState(() {});
+    setState(() {
+      _screenOverlayAlpha = 0;
+      _startExam();
+    });
   }
 
   void _onOverlayTapCancel() {
-    _screenOverlayAlpha = defaultScreenOverlayAlpha;
-    setState(() {});
+    setState(() {
+      _screenOverlayAlpha = defaultScreenOverlayAlpha;
+    });
   }
 
   @override
