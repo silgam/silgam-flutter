@@ -57,48 +57,60 @@ class _ClockPageState extends State<ClockPage> {
         behavior: HitTestBehavior.opaque,
         child: Stack(
           children: [
-            Column(
-              children: [
-                Expanded(
-                  child: UiVisibility(
-                    uiVisible: _isUiVisible,
-                    child: Column(
-                      children: [
-                        _buildTopMenu(),
-                        Expanded(child: _buildExamTitle()),
-                      ],
-                    ),
-                  ),
-                ),
-                WristWatch(
-                  clockTime: _currentTime,
-                  onEverySecond: _onEverySecond,
-                  isLive: _isStarted,
-                ),
-                Expanded(
-                  child: UiVisibility(
-                    uiVisible: _isUiVisible,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: ScrollConfiguration(
-                        behavior: EmptyScrollBehavior(),
-                        child: SingleChildScrollView(
-                          controller: _timelineController,
-                          padding: const EdgeInsets.symmetric(horizontal: 40),
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: _buildTimelineTiles(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            _buildMainBody(),
             _buildScreenOverlayIfNotStarted(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainBody() {
+    return Column(
+      children: [
+        Expanded(
+          child: UiVisibility(
+            uiVisible: _isUiVisible,
+            child: _buildTopUi(),
+          ),
+        ),
+        WristWatch(
+          clockTime: _currentTime,
+          onEverySecond: _onEverySecond,
+          isLive: _isStarted,
+        ),
+        Expanded(
+          child: UiVisibility(
+            uiVisible: _isUiVisible,
+            child: _buildBottomUi(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopUi() {
+    return Column(
+      children: [
+        _buildTopMenu(),
+        Expanded(child: _buildExamTitle()),
+      ],
+    );
+  }
+
+  Widget _buildBottomUi() {
+    return Container(
+      alignment: Alignment.center,
+      child: ScrollConfiguration(
+        behavior: EmptyScrollBehavior(),
+        child: SingleChildScrollView(
+          controller: _timelineController,
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: _buildTimelineTiles(),
+          ),
         ),
       ),
     );
