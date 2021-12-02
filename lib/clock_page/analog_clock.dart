@@ -81,8 +81,9 @@ class _AnalogClockState extends State<AnalogClock> {
     _timer?.cancel();
     if (widget.isLive) {
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-        _dateTime = _dateTime.add(const Duration(seconds: 1));
-        if (mounted) setState(() {});
+        setState(() {
+          _dateTime = _dateTime.add(const Duration(seconds: 1));
+        });
         widget.onEverySecond?.call(_dateTime);
       });
     }
