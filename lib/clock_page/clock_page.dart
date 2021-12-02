@@ -7,6 +7,7 @@ import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
 import 'breakpoint.dart';
 import 'timeline.dart';
+import 'ui_visibility.dart';
 import 'wrist_watch.dart';
 
 class ClockPage extends StatefulWidget {
@@ -35,6 +36,8 @@ class _ClockPageState extends State<ClockPage> {
   int _screenOverlayAlpha = defaultScreenOverlayAlpha;
   bool _isStarted = false;
 
+  bool _isUiVisible = true;
+
   @override
   void initState() {
     super.initState();
@@ -49,44 +52,54 @@ class _ClockPageState extends State<ClockPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildTopMenu(),
-                    Expanded(child: _buildExamTitle()),
-                  ],
+      body: GestureDetector(
+        onTap: _onScreenTap,
+        behavior: HitTestBehavior.opaque,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: UiVisibility(
+                    uiVisible: _isUiVisible,
+                    child: Column(
+                      children: [
+                        _buildTopMenu(),
+                        Expanded(child: _buildExamTitle()),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              WristWatch(
-                clockTime: _currentTime,
-                onEverySecond: _onEverySecond,
-                isLive: _isStarted,
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  child: ScrollConfiguration(
-                    behavior: EmptyScrollBehavior(),
-                    child: SingleChildScrollView(
-                      controller: _timelineController,
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: _buildTimelineTiles(),
+                WristWatch(
+                  clockTime: _currentTime,
+                  onEverySecond: _onEverySecond,
+                  isLive: _isStarted,
+                ),
+                Expanded(
+                  child: UiVisibility(
+                    uiVisible: _isUiVisible,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: ScrollConfiguration(
+                        behavior: EmptyScrollBehavior(),
+                        child: SingleChildScrollView(
+                          controller: _timelineController,
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: _buildTimelineTiles(),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          _buildScreenOverlayIfNotStarted(),
-        ],
+              ],
+            ),
+            _buildScreenOverlayIfNotStarted(),
+          ],
+        ),
       ),
     );
   }
@@ -203,9 +216,9 @@ class _ClockPageState extends State<ClockPage> {
   Widget _buildScreenOverlayIfNotStarted() {
     if (_isStarted == true) return const SizedBox.shrink();
     return GestureDetector(
-      onTapDown: _onScreenTapDown,
-      onTapUp: _onScreenTapUp,
-      onTapCancel: _onScreenTapCancel,
+      onTapDown: _onOverlayTapDown,
+      onTapUp: _onOverlayTapUp,
+      onTapCancel: _onOverlayTapCancel,
       child: AnimatedContainer(
         width: double.infinity,
         height: double.infinity,
@@ -223,18 +236,23 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _onScreenTapDown(TapDownDetails tapDownDetails) {
+  void _onScreenTap() {
+    _isUiVisible = !_isUiVisible;
+    setState(() {});
+  }
+
+  void _onOverlayTapDown(TapDownDetails tapDownDetails) {
     _screenOverlayAlpha = 160;
     setState(() {});
   }
 
-  void _onScreenTapUp(TapUpDetails tapUpDetails) {
+  void _onOverlayTapUp(TapUpDetails tapUpDetails) {
     _screenOverlayAlpha = 0;
     _isStarted = true;
     setState(() {});
   }
 
-  void _onScreenTapCancel() {
+  void _onOverlayTapCancel() {
     _screenOverlayAlpha = defaultScreenOverlayAlpha;
     setState(() {});
   }
