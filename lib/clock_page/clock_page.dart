@@ -245,12 +245,25 @@ class _ClockPageState extends State<ClockPage> {
         alignment: Alignment.center,
         color: Colors.black.withAlpha(_screenOverlayAlpha),
         duration: const Duration(milliseconds: 100),
-        child: const Text(
-          '화면을 터치하면 시작됩니다',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              '화면을 터치하면 시작됩니다',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              '소리를 켜면 안내방송을 들을 수 있어요!',
+              style: TextStyle(
+                color: Colors.white.withAlpha(200),
+                fontSize: 12,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ],
         ),
       ),
     );
