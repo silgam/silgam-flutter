@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../home/home_page.dart';
+import '../home_page/home_page.dart';
 
 class ScaffoldBody extends StatelessWidget {
   final String title;
