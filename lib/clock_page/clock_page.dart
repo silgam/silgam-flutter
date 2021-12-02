@@ -104,69 +104,6 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildBottomUi() {
-    return Container(
-      alignment: Alignment.center,
-      child: ScrollConfiguration(
-        behavior: EmptyScrollBehavior(),
-        child: SingleChildScrollView(
-          controller: _timelineController,
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: _buildTimelineTiles(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _onEverySecond(DateTime newTime) {
-    _currentTime = newTime;
-    if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
-    final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-    if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
-    setState(() {});
-  }
-
-  void _onCloseButtonPressed() {
-    Navigator.pop(context);
-  }
-
-  void _onSkipButtonPressed() {
-    setState(() {
-      player.pause();
-      if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
-      _moveToNextBreakpoint();
-      _currentTime = _breakpoints[_currentBreakpointIndex].time;
-    });
-  }
-
-  void _moveToNextBreakpoint() {
-    _currentBreakpointIndex++;
-    double progressedWidth = 0;
-    for (int i = 0; i < _currentBreakpointIndex; i++) {
-      progressedWidth += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
-      progressedWidth += _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
-    }
-    _timelineController.animateTo(
-      progressedWidth,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.decelerate,
-    );
-
-    _playAnnouncement();
-  }
-
-  Future<void> _playAnnouncement() async {
-    await player.pause();
-    final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement?.fileName;
-    if (currentFileName == null) return;
-    await player.setAsset('$_announcementsAssetPath/$currentFileName');
-    await player.play();
-  }
-
   Widget _buildTopMenu() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,53 +179,22 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildScreenOverlayIfNotStarted() {
-    if (_isStarted == true) return const SizedBox.shrink();
-    return GestureDetector(
-      onTapDown: _onOverlayTapDown,
-      onTapUp: _onOverlayTapUp,
-      onTapCancel: _onOverlayTapCancel,
-      child: AnimatedContainer(
-        width: double.infinity,
-        height: double.infinity,
-        alignment: Alignment.center,
-        color: Colors.black.withAlpha(_screenOverlayAlpha),
-        duration: const Duration(milliseconds: 100),
-        child: const Text(
-          '화면을 터치하면 시작됩니다',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
+  Widget _buildBottomUi() {
+    return Container(
+      alignment: Alignment.center,
+      child: ScrollConfiguration(
+        behavior: EmptyScrollBehavior(),
+        child: SingleChildScrollView(
+          controller: _timelineController,
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: _buildTimelineTiles(),
           ),
         ),
       ),
     );
-  }
-
-  void _onScreenTap() {
-    _isUiVisible = !_isUiVisible;
-    setState(() {});
-  }
-
-  void _onOverlayTapDown(TapDownDetails tapDownDetails) {
-    _screenOverlayAlpha = 160;
-    setState(() {});
-  }
-
-  void _onOverlayTapUp(TapUpDetails tapUpDetails) {
-    _screenOverlayAlpha = 0;
-    _startExam();
-    setState(() {});
-  }
-
-  void _onOverlayTapCancel() {
-    _screenOverlayAlpha = defaultScreenOverlayAlpha;
-    setState(() {});
-  }
-
-  void _startExam() {
-    _isStarted = true;
-    _playAnnouncement();
   }
 
   List<Widget> _buildTimelineTiles() {
@@ -325,6 +231,100 @@ class _ClockPageState extends State<ClockPage> {
       ));
     });
     return tiles;
+  }
+
+  Widget _buildScreenOverlayIfNotStarted() {
+    if (_isStarted == true) return const SizedBox.shrink();
+    return GestureDetector(
+      onTapDown: _onOverlayTapDown,
+      onTapUp: _onOverlayTapUp,
+      onTapCancel: _onOverlayTapCancel,
+      child: AnimatedContainer(
+        width: double.infinity,
+        height: double.infinity,
+        alignment: Alignment.center,
+        color: Colors.black.withAlpha(_screenOverlayAlpha),
+        duration: const Duration(milliseconds: 100),
+        child: const Text(
+          '화면을 터치하면 시작됩니다',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onEverySecond(DateTime newTime) {
+    _currentTime = newTime;
+    if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
+    final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
+    if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
+    setState(() {});
+  }
+
+  void _onCloseButtonPressed() {
+    Navigator.pop(context);
+  }
+
+  void _onSkipButtonPressed() {
+    setState(() {
+      player.pause();
+      if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
+      _moveToNextBreakpoint();
+      _currentTime = _breakpoints[_currentBreakpointIndex].time;
+    });
+  }
+
+  void _moveToNextBreakpoint() {
+    _currentBreakpointIndex++;
+    double progressedWidth = 0;
+    for (int i = 0; i < _currentBreakpointIndex; i++) {
+      progressedWidth += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
+      progressedWidth += _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
+    }
+    _timelineController.animateTo(
+      progressedWidth,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.decelerate,
+    );
+
+    _playAnnouncement();
+  }
+
+  Future<void> _playAnnouncement() async {
+    await player.pause();
+    final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement?.fileName;
+    if (currentFileName == null) return;
+    await player.setAsset('$_announcementsAssetPath/$currentFileName');
+    await player.play();
+  }
+
+  void _startExam() {
+    _isStarted = true;
+    _playAnnouncement();
+  }
+
+  void _onScreenTap() {
+    _isUiVisible = !_isUiVisible;
+    setState(() {});
+  }
+
+  void _onOverlayTapDown(TapDownDetails tapDownDetails) {
+    _screenOverlayAlpha = 160;
+    setState(() {});
+  }
+
+  void _onOverlayTapUp(TapUpDetails tapUpDetails) {
+    _screenOverlayAlpha = 0;
+    _startExam();
+    setState(() {});
+  }
+
+  void _onOverlayTapCancel() {
+    _screenOverlayAlpha = defaultScreenOverlayAlpha;
+    setState(() {});
   }
 
   @override
