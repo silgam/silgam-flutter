@@ -10,9 +10,13 @@ class RelativeTime {
     required this.minutes,
   }) : type = RelativeTimeType.afterStart;
 
+  const RelativeTime.beforeFinish({
+    required this.minutes,
+  }) : type = RelativeTimeType.beforeFinish;
+
   const RelativeTime.afterFinish({
     required this.minutes,
   }) : type = RelativeTimeType.afterFinish;
 }
 
-enum RelativeTimeType { beforeStart, afterStart, afterFinish }
+enum RelativeTimeType { beforeStart, afterStart, beforeFinish, afterFinish }

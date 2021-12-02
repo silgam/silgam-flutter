@@ -25,6 +25,10 @@ class ExamRepository {
           time: RelativeTime.beforeStart(minutes: 0),
         ),
         const Announcement(
+          title: '10분전',
+          time: RelativeTime.beforeFinish(minutes: 10),
+        ),
+        const Announcement(
           title: '종료령',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
@@ -49,6 +53,10 @@ class ExamRepository {
         const Announcement(
           title: '본령',
           time: RelativeTime.beforeStart(minutes: 0),
+        ),
+        const Announcement(
+          title: '10분전',
+          time: RelativeTime.beforeFinish(minutes: 10),
         ),
         const Announcement(
           title: '종료령',
@@ -77,6 +85,10 @@ class ExamRepository {
           time: RelativeTime.beforeStart(minutes: 0),
         ),
         const Announcement(
+          title: '10분전',
+          time: RelativeTime.beforeFinish(minutes: 10),
+        ),
+        const Announcement(
           title: '종료령',
           time: RelativeTime.afterFinish(minutes: 0),
         ),
@@ -101,6 +113,10 @@ class ExamRepository {
         const Announcement(
           title: '본령',
           time: RelativeTime.beforeStart(minutes: 0),
+        ),
+        const Announcement(
+          title: '5분전',
+          time: RelativeTime.beforeFinish(minutes: 5),
         ),
         const Announcement(
           title: '종료령',
@@ -129,12 +145,20 @@ class ExamRepository {
           time: RelativeTime.beforeStart(minutes: 0),
         ),
         const Announcement(
+          title: '5분전 (탐구1)',
+          time: RelativeTime.afterStart(minutes: 25),
+        ),
+        const Announcement(
           title: '종료령 (탐구1)',
           time: RelativeTime.afterStart(minutes: 30),
         ),
         const Announcement(
           title: '본령 (탐구2)',
           time: RelativeTime.afterStart(minutes: 32),
+        ),
+        const Announcement(
+          title: '5분전 (탐구2)',
+          time: RelativeTime.beforeFinish(minutes: 5),
         ),
         const Announcement(
           title: '종료령 (탐구2)',
@@ -161,6 +185,10 @@ class ExamRepository {
         const Announcement(
           title: '본령',
           time: RelativeTime.beforeStart(minutes: 0),
+        ),
+        const Announcement(
+          title: '10분전',
+          time: RelativeTime.beforeFinish(minutes: 10),
         ),
         const Announcement(
           title: '종료령',
