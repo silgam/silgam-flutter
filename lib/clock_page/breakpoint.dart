@@ -36,6 +36,7 @@ class Breakpoint {
       breakpoints.add(Breakpoint(
         title: announcement.title,
         time: breakpointTime,
+        announcement: announcement,
       ));
     }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../model/exam.dart';
 import '../model/subject.dart';
@@ -10,6 +11,8 @@ import 'breakpoint.dart';
 import 'timeline.dart';
 import 'ui_visibility.dart';
 import 'wrist_watch.dart';
+
+const _announcementsAssetPath = 'assets/announcements';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
@@ -28,6 +31,8 @@ class _ClockPageState extends State<ClockPage> {
   late final List<Breakpoint> _breakpoints;
   late int _currentBreakpointIndex = 0;
   DateTime _currentTime = DateTime.now();
+
+  final AudioPlayer player = AudioPlayer();
 
   final ScrollController _timelineController = ScrollController();
   late final List<GlobalKey> _timelineTileKeys;
@@ -131,6 +136,7 @@ class _ClockPageState extends State<ClockPage> {
 
   void _onSkipButtonPressed() {
     setState(() {
+      player.pause();
       if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
       _moveToNextBreakpoint();
       _currentTime = _breakpoints[_currentBreakpointIndex].time;
@@ -149,6 +155,16 @@ class _ClockPageState extends State<ClockPage> {
       duration: const Duration(milliseconds: 100),
       curve: Curves.decelerate,
     );
+
+    _playAnnouncement();
+  }
+
+  Future<void> _playAnnouncement() async {
+    await player.pause();
+    final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement?.fileName;
+    if (currentFileName == null) return;
+    await player.setAsset('$_announcementsAssetPath/$currentFileName');
+    await player.play();
   }
 
   Widget _buildTopMenu() {
@@ -261,13 +277,18 @@ class _ClockPageState extends State<ClockPage> {
 
   void _onOverlayTapUp(TapUpDetails tapUpDetails) {
     _screenOverlayAlpha = 0;
-    _isStarted = true;
+    _startExam();
     setState(() {});
   }
 
   void _onOverlayTapCancel() {
     _screenOverlayAlpha = defaultScreenOverlayAlpha;
     setState(() {});
+  }
+
+  void _startExam() {
+    _isStarted = true;
+    _playAnnouncement();
   }
 
   List<Widget> _buildTimelineTiles() {
@@ -309,6 +330,7 @@ class _ClockPageState extends State<ClockPage> {
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    player.dispose();
     super.dispose();
   }
 }
