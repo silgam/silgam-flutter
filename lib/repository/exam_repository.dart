@@ -1,12 +1,13 @@
 import '../model/announcement.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
+import '../model/subject.dart';
 import '../util/date_time_extension.dart';
 
 class ExamRepository {
   static final List<Exam> defaultExams = [
     Exam(
-      subjectName: '국어',
+      subject: Subject.language,
       examStartTime: DateTimeBuilder.fromHourMinute(8, 40),
       examDuration: 80,
       numberOfQuestions: 45,
@@ -33,10 +34,9 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
-      subjectNumber: 1,
     ),
     Exam(
-      subjectName: '수학',
+      subject: Subject.math,
       examStartTime: DateTimeBuilder.fromHourMinute(10, 30),
       examDuration: 100,
       numberOfQuestions: 30,
@@ -63,10 +63,9 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
-      subjectNumber: 2,
     ),
     Exam(
-      subjectName: '영어',
+      subject: Subject.english,
       examStartTime: DateTimeBuilder.fromHourMinute(13, 10),
       examDuration: 70,
       numberOfQuestions: 45,
@@ -81,7 +80,7 @@ class ExamRepository {
           time: RelativeTime.beforeStart(minutes: 5),
         ),
         const Announcement(
-          title: '본령',
+          title: '본령 (타종X)',
           time: RelativeTime.beforeStart(minutes: 0),
         ),
         const Announcement(
@@ -93,10 +92,9 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
-      subjectNumber: 3,
     ),
     Exam(
-      subjectName: '한국사',
+      subject: Subject.history,
       examStartTime: DateTimeBuilder.fromHourMinute(14, 50),
       examDuration: 30,
       numberOfQuestions: 20,
@@ -123,10 +121,9 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
-      subjectNumber: 4,
     ),
     Exam(
-      subjectName: '탐구',
+      subject: Subject.investigation,
       examStartTime: DateTimeBuilder.fromHourMinute(15, 35),
       examDuration: 62,
       numberOfQuestions: 20,
@@ -165,10 +162,9 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
-      subjectNumber: 4,
     ),
     Exam(
-      subjectName: '제2외국어/한문',
+      subject: Subject.secondLanguage,
       examStartTime: DateTimeBuilder.fromHourMinute(17, 5),
       examDuration: 40,
       numberOfQuestions: 30,
@@ -195,7 +191,6 @@ class ExamRepository {
           time: RelativeTime.afterFinish(minutes: 0),
         ),
       ],
-      subjectNumber: 5,
     ),
   ];
 }
