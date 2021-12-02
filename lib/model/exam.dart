@@ -1,9 +1,9 @@
 import '../util/date_time_extension.dart';
 import 'announcement.dart';
+import 'subject.dart';
 
 class Exam {
-  final String subjectName;
-  final int? subjectNumber;
+  final Subject subject;
   final DateTime examStartTime;
   final DateTime examEndTime;
   final int examDuration;
@@ -12,8 +12,7 @@ class Exam {
   final List<Announcement> announcements;
 
   Exam({
-    required this.subjectName,
-    this.subjectNumber,
+    required this.subject,
     required this.examStartTime,
     required this.examDuration,
     required this.numberOfQuestions,

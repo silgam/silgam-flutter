@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../model/exam.dart';
+import '../model/subject.dart';
 import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
 import 'breakpoint.dart';
@@ -187,7 +188,7 @@ class _ClockPageState extends State<ClockPage> {
   Widget _buildExamTitle() {
     final children = <Widget>[];
 
-    if (widget.exam.subjectNumber != null) {
+    if (widget.exam.subject.number != null) {
       children.add(Container(
         margin: const EdgeInsets.only(bottom: 4),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -196,7 +197,7 @@ class _ClockPageState extends State<ClockPage> {
           border: Border.all(color: Colors.white),
         ),
         child: Text(
-          '${widget.exam.subjectNumber}교시',
+          '${widget.exam.subject.number}교시',
           style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -208,7 +209,7 @@ class _ClockPageState extends State<ClockPage> {
     }
 
     children.add(Text(
-      widget.exam.subjectName,
+      widget.exam.subject.name,
       style: const TextStyle(
         color: Colors.white,
         fontSize: 28,

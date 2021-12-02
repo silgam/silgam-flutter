@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../clock_page/clock_page.dart';
 import '../model/exam.dart';
+import '../model/subject.dart';
 import '../repository/exam_repository.dart';
 import '../util/scaffold_body.dart';
 
@@ -61,7 +62,7 @@ class _ExamCardState extends State<_ExamCard> {
         child: Column(
           children: [
             Text(
-              widget.thisExam.subjectName,
+              widget.thisExam.subject.name,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
