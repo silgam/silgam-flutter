@@ -41,8 +41,9 @@ class _ClockPageState extends State<ClockPage> {
   static const int defaultScreenOverlayAlpha = 220;
   int _screenOverlayAlpha = defaultScreenOverlayAlpha;
   bool _isStarted = false;
-
   bool _isUiVisible = true;
+
+  bool get _isFinished => _currentBreakpointIndex >= _breakpoints.length - 1;
 
   @override
   void initState() {
@@ -56,16 +57,19 @@ class _ClockPageState extends State<ClockPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTap: _onScreenTap,
-        behavior: HitTestBehavior.opaque,
-        child: Stack(
-          children: [
-            _buildMainBody(),
-            _buildScreenOverlayIfNotStarted(),
-          ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          onTap: _onScreenTap,
+          behavior: HitTestBehavior.opaque,
+          child: Stack(
+            children: [
+              _buildMainBody(),
+              _buildScreenOverlayIfNotStarted(),
+            ],
+          ),
         ),
       ),
     );
@@ -120,9 +124,9 @@ class _ClockPageState extends State<ClockPage> {
         Container(
           margin: const EdgeInsets.only(right: 24),
           child: OutlinedButton(
-            child: const Text(
-              '건너뛰기',
-              style: TextStyle(color: Colors.white, fontSize: 12),
+            child: Text(
+              _isFinished ? '시험 종료' : '건너뛰기',
+              style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
             onPressed: _onSkipButtonPressed,
             style: OutlinedButton.styleFrom(
@@ -271,20 +275,50 @@ class _ClockPageState extends State<ClockPage> {
 
   void _onEverySecond(DateTime newTime) {
     _currentTime = newTime;
-    if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
+    if (_isFinished) return;
     final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
     if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
     setState(() {});
   }
 
-  void _onCloseButtonPressed() {
-    Navigator.pop(context);
+  void _onCloseButtonPressed() async {
+    if (_isFinished) {
+      Navigator.pop(context);
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('아직 시험이 끝나지 않았어요!'),
+          content: const Text('시험을 종료하실 건가요?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text('시험 종료'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _onSkipButtonPressed() {
+    if (_isFinished) {
+      _onCloseButtonPressed();
+      return;
+    }
+    player.pause();
     setState(() {
-      player.pause();
-      if (_currentBreakpointIndex + 1 >= _breakpoints.length) return;
       _moveToNextBreakpoint();
       _currentTime = _breakpoints[_currentBreakpointIndex].time;
     });
@@ -317,6 +351,11 @@ class _ClockPageState extends State<ClockPage> {
   void _startExam() {
     _isStarted = true;
     _playAnnouncement();
+  }
+
+  Future<bool> _onBackPressed() {
+    _onCloseButtonPressed();
+    return Future.value(false);
   }
 
   void _onScreenTap() {
