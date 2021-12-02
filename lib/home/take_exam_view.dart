@@ -15,7 +15,7 @@ class TakeExamView extends StatelessWidget {
     return ScaffoldBody(
       title: title,
       child: SliverPadding(
-        padding: const EdgeInsets.only(top: 20),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) => _ExamCard(
@@ -55,7 +55,7 @@ class _ExamCardState extends State<_ExamCard> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: Container(
-        margin: const EdgeInsets.only(left: 28, right: 28, bottom: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
         padding: const EdgeInsets.only(top: 12, bottom: 20, left: 20, right: 20),
         decoration: _buildGradientBoxDecoration(),
         child: Column(
