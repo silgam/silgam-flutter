@@ -66,7 +66,22 @@ class _ClockPageState extends State<ClockPage> {
           behavior: HitTestBehavior.opaque,
           child: Stack(
             children: [
-              _buildMainBody(),
+              UiVisibility(
+                uiVisible: _isUiVisible,
+                child: _buildAppBarMenu(),
+              ),
+              UiVisibility(
+                uiVisible: _isUiVisible,
+                child: _buildBackgroundUi(),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: WristWatch(
+                  clockTime: _currentTime,
+                  onEverySecond: _onEverySecond,
+                  isLive: _isStarted,
+                ),
+              ),
               _buildScreenOverlayIfNotStarted(),
             ],
           ),
@@ -75,42 +90,13 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildMainBody() {
-    return Column(
-      children: [
-        Expanded(
-          child: UiVisibility(
-            uiVisible: _isUiVisible,
-            child: _buildTopUi(),
-          ),
-        ),
-        WristWatch(
-          clockTime: _currentTime,
-          onEverySecond: _onEverySecond,
-          isLive: _isStarted,
-        ),
-        Expanded(
-          child: UiVisibility(
-            uiVisible: _isUiVisible,
-            child: _buildBottomUi(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTopUi() {
-    return Column(
-      children: [
-        _buildTopMenu(),
-        Expanded(child: _buildExamTitle()),
-      ],
-    );
-  }
-
-  Widget _buildTopMenu() {
-    return Row(
+  Widget _buildAppBarMenu() {
+    Axis direction = Axis.horizontal;
+    if (_isSmallHeightScreen()) direction = Axis.vertical;
+    return Flex(
+      direction: direction,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           margin: const EdgeInsets.all(8),
@@ -122,7 +108,7 @@ class _ClockPageState extends State<ClockPage> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(right: 24),
+          margin: const EdgeInsets.all(24),
           child: OutlinedButton(
             child: Text(
               _isFinished ? '시험 종료' : '건너뛰기',
@@ -138,6 +124,19 @@ class _ClockPageState extends State<ClockPage> {
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildBackgroundUi() {
+    Axis direction = Axis.vertical;
+    if (_isSmallHeightScreen()) direction = Axis.horizontal;
+    return Flex(
+      direction: direction,
+      children: [
+        Expanded(child: _buildExamTitle()),
+        const WristWatchContainer(),
+        Expanded(child: _buildTimeline()),
       ],
     );
   }
@@ -174,34 +173,38 @@ class _ClockPageState extends State<ClockPage> {
       ),
     ));
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: children,
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: children,
     );
   }
 
-  Widget _buildBottomUi() {
+  Widget _buildTimeline() {
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 40);
+    Axis direction = Axis.horizontal;
+    if (_isSmallHeightScreen()) {
+      padding = const EdgeInsets.symmetric(vertical: 40);
+      direction = Axis.vertical;
+    }
     return Container(
       alignment: Alignment.center,
       child: ScrollConfiguration(
         behavior: EmptyScrollBehavior(),
         child: SingleChildScrollView(
           controller: _timelineController,
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          scrollDirection: Axis.horizontal,
-          child: Row(
+          padding: padding,
+          scrollDirection: direction,
+          child: Flex(
             mainAxisSize: MainAxisSize.min,
-            children: _buildTimelineTiles(),
+            direction: direction,
+            children: _buildTimelineTiles(direction),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildTimelineTiles() {
+  List<Widget> _buildTimelineTiles(Axis orientation) {
     final tiles = <Widget>[];
     _breakpoints.asMap().forEach((index, breakpoint) {
       bool disabled = false;
@@ -231,6 +234,7 @@ class _ClockPageState extends State<ClockPage> {
       tiles.add(TimelineConnector(
         duration.inMinutes,
         progress,
+        direction: orientation,
         key: _timelineConnectorKeys[index],
       ));
     });
@@ -327,13 +331,22 @@ class _ClockPageState extends State<ClockPage> {
 
   void _moveToNextBreakpoint() {
     _currentBreakpointIndex++;
-    double progressedWidth = 0;
-    for (int i = 0; i < _currentBreakpointIndex; i++) {
-      progressedWidth += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
-      progressedWidth += _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
+    double progressedSize = 0;
+
+    if (_isSmallHeightScreen()) {
+      for (int i = 0; i < _currentBreakpointIndex; i++) {
+        progressedSize += _timelineTileKeys[i].currentContext?.size?.height ?? 0;
+        progressedSize += _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
+      }
+    } else {
+      for (int i = 0; i < _currentBreakpointIndex; i++) {
+        progressedSize += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
+        progressedSize += _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
+      }
     }
+
     _timelineController.animateTo(
-      progressedWidth,
+      progressedSize,
       duration: const Duration(milliseconds: 100),
       curve: Curves.decelerate,
     );
@@ -389,6 +402,10 @@ class _ClockPageState extends State<ClockPage> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     player.dispose();
     super.dispose();
+  }
+
+  bool _isSmallHeightScreen() {
+    return MediaQuery.of(context).size.height < 600;
   }
 }
 

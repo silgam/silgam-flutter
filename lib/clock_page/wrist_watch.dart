@@ -3,6 +3,29 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'analog_clock.dart';
 
+class WristWatchContainer extends StatelessWidget {
+  final Widget? child;
+
+  const WristWatchContainer({
+    Key? key,
+    this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 410),
+      child: FractionallySizedBox(
+        heightFactor: 0.8,
+        child: AspectRatio(
+          aspectRatio: 200 / 330,
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
 class WristWatch extends StatelessWidget {
   final DateTime clockTime;
   final Function(DateTime)? onEverySecond;
@@ -17,9 +40,7 @@ class WristWatch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200,
-      height: 330,
+    return WristWatchContainer(
       child: Stack(
         children: [
           SvgPicture.asset(
