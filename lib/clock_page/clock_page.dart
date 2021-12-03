@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../model/exam.dart';
@@ -68,7 +69,15 @@ class _ClockPageState extends State<ClockPage> {
             children: [
               UiVisibility(
                 uiVisible: _isUiVisible,
-                child: _buildAppBarMenu(),
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  child: IconButton(
+                    splashRadius: 20,
+                    icon: const Icon(Icons.close),
+                    onPressed: _onCloseButtonPressed,
+                    color: Colors.white,
+                  ),
+                ),
               ),
               UiVisibility(
                 uiVisible: _isUiVisible,
@@ -90,44 +99,6 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildAppBarMenu() {
-    Axis direction = Axis.horizontal;
-    if (_isSmallHeightScreen()) direction = Axis.vertical;
-    return Flex(
-      direction: direction,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.all(8),
-          child: IconButton(
-            splashRadius: 20,
-            icon: const Icon(Icons.close),
-            onPressed: _onCloseButtonPressed,
-            color: Colors.white,
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.all(24),
-          child: OutlinedButton(
-            child: Text(
-              _isFinished ? '시험 종료' : '건너뛰기',
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            ),
-            onPressed: _onSkipButtonPressed,
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.white),
-              primary: Colors.white,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              minimumSize: Size.zero,
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildBackgroundUi() {
     Axis direction = Axis.vertical;
     if (_isSmallHeightScreen()) direction = Axis.horizontal;
@@ -136,7 +107,16 @@ class _ClockPageState extends State<ClockPage> {
       children: [
         Expanded(child: _buildExamTitle()),
         const WristWatchContainer(),
-        Expanded(child: _buildTimeline()),
+        Expanded(
+          child: Flex(
+            direction: direction,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildTimeline(),
+              _buildNavigator(),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -181,13 +161,16 @@ class _ClockPageState extends State<ClockPage> {
 
   Widget _buildTimeline() {
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 40);
+    EdgeInsets margin = const EdgeInsets.only(bottom: 12);
     Axis direction = Axis.horizontal;
     if (_isSmallHeightScreen()) {
       padding = const EdgeInsets.symmetric(vertical: 40);
+      margin = const EdgeInsets.only(right: 12);
       direction = Axis.vertical;
     }
     return Container(
       alignment: Alignment.center,
+      margin: margin,
       child: ScrollConfiguration(
         behavior: EmptyScrollBehavior(),
         child: SingleChildScrollView(
@@ -239,6 +222,50 @@ class _ClockPageState extends State<ClockPage> {
       ));
     });
     return tiles;
+  }
+
+  Widget _buildNavigator() {
+    Axis direction = Axis.horizontal;
+    int rotate = 0;
+    if (_isSmallHeightScreen()) {
+      direction = Axis.vertical;
+      rotate = 1;
+    }
+
+    return Flex(
+      direction: direction,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        UiVisibility(
+          uiVisible: _currentBreakpointIndex > 0,
+          child: RotatedBox(
+            quarterTurns: rotate + 2,
+            child: IconButton(
+              onPressed: _moveToBeforeBreakpoint,
+              icon: SvgPicture.asset(
+                'assets/chevron.svg',
+                color: Colors.grey[700],
+              ),
+              splashRadius: 20,
+            ),
+          ),
+        ),
+        UiVisibility(
+          uiVisible: !_isFinished,
+          child: RotatedBox(
+            quarterTurns: rotate,
+            child: IconButton(
+              onPressed: _moveToNextBreakpoint,
+              icon: SvgPicture.asset(
+                'assets/chevron.svg',
+                color: Colors.grey[700],
+              ),
+              splashRadius: 20,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildScreenOverlayIfNotStarted() {
@@ -317,22 +344,29 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _onSkipButtonPressed() {
-    if (_isFinished) {
-      _onCloseButtonPressed();
-      return;
-    }
-    player.pause();
-    setState(() {
-      _moveToNextBreakpoint();
-      _currentTime = _breakpoints[_currentBreakpointIndex].time;
-    });
+  void _moveToBeforeBreakpoint() {
+    if (_currentBreakpointIndex <= 0) return;
+    _currentBreakpointIndex--;
+    _moveBreakpoint();
   }
 
   void _moveToNextBreakpoint() {
+    if (_isFinished) return;
     _currentBreakpointIndex++;
-    double progressedSize = 0;
+    _moveBreakpoint();
+  }
 
+  void _moveBreakpoint() {
+    player.pause();
+    setState(() {
+      _currentTime = _breakpoints[_currentBreakpointIndex].time;
+    });
+    _animateTimeline();
+    _playAnnouncement();
+  }
+
+  void _animateTimeline() {
+    double progressedSize = 0;
     if (_isSmallHeightScreen()) {
       for (int i = 0; i < _currentBreakpointIndex; i++) {
         progressedSize += _timelineTileKeys[i].currentContext?.size?.height ?? 0;
@@ -350,8 +384,6 @@ class _ClockPageState extends State<ClockPage> {
       duration: const Duration(milliseconds: 100),
       curve: Curves.decelerate,
     );
-
-    _playAnnouncement();
   }
 
   Future<void> _playAnnouncement() async {
