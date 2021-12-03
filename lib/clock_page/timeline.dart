@@ -53,16 +53,28 @@ class TimelineTile extends StatelessWidget {
 class TimelineConnector extends StatelessWidget {
   final int duration;
   final double progress;
+  final Axis direction;
 
-  const TimelineConnector(this.duration, this.progress, {Key? key}) : super(key: key);
+  const TimelineConnector(
+    this.duration,
+    this.progress, {
+    this.direction = Axis.horizontal,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double width = duration * 3.0;
+    double height = 1;
+    if (direction == Axis.vertical) {
+      height = width;
+      width = 1;
+    }
     return Flexible(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        height: 1,
-        width: duration * 3.0,
+        margin: const EdgeInsets.all(10),
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [_getTimelineColor(false), _getTimelineColor(true)],
