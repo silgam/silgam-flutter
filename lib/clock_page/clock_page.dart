@@ -50,6 +50,7 @@ class _ClockPageState extends State<ClockPage> {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
     _currentTime = _breakpoints[_currentBreakpointIndex].time;
     _timelineTileKeys = List.generate(_breakpoints.length, (index) => GlobalKey());
@@ -432,6 +433,10 @@ class _ClockPageState extends State<ClockPage> {
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     player.dispose();
     super.dispose();
   }

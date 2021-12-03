@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'clock_page/clock_page.dart';
 import 'home_page/home_page.dart';
@@ -8,6 +9,10 @@ class SilgamApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: '실감',
       initialRoute: HomePage.routeName,
