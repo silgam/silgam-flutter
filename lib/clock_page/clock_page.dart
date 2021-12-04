@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '../model/exam.dart';
 import '../model/subject.dart';
@@ -49,6 +50,7 @@ class _ClockPageState extends State<ClockPage> {
   @override
   void initState() {
     super.initState();
+    Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
@@ -432,6 +434,7 @@ class _ClockPageState extends State<ClockPage> {
 
   @override
   void dispose() {
+    Wakelock.disable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
