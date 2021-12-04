@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "55232180944",
+    "project_id": "silgam-app",
+    "storage_bucket": "silgam-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55232180944:android:bed57925bd8793fe1664d5",
+        "android_client_info": {
+          "package_name": "com.seunghyun.silgam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "55232180944-afhh1d14bkkj1kb1js4n50asg81517d1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4AUUqJQEuXMXn5Kv6kb8FqWryd3Ur0y0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "55232180944-afhh1d14bkkj1kb1js4n50asg81517d1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "55232180944-jm8sqs01dn3uu7ntj2hj8r84cl8or3us.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.seunghyun.silgam"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
