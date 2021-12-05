@@ -183,6 +183,7 @@ class _ClockPageState extends State<ClockPage> {
           controller: _timelineController,
           padding: padding,
           scrollDirection: direction,
+          physics: const ClampingScrollPhysics(),
           child: Flex(
             mainAxisSize: MainAxisSize.min,
             direction: direction,
