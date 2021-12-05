@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,6 +10,7 @@ class SilgamApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    requestPermissions();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -33,6 +35,10 @@ class SilgamApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
     );
+  }
+
+  void requestPermissions() async {
+    FirebaseMessaging.instance.requestPermission();
   }
 }
 
