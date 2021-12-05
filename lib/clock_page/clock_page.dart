@@ -7,6 +7,7 @@ import 'package:wakelock/wakelock.dart';
 
 import '../model/exam.dart';
 import '../model/subject.dart';
+import '../util/android_audio_manager.dart';
 import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
 import 'breakpoint.dart';
@@ -53,6 +54,8 @@ class _ClockPageState extends State<ClockPage> {
     Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    AndroidAudioManager.controlMediaVolume();
+
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
     _currentTime = _breakpoints[_currentBreakpointIndex].time;
     _timelineTileKeys = List.generate(_breakpoints.length, (index) => GlobalKey());
@@ -440,6 +443,8 @@ class _ClockPageState extends State<ClockPage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    AndroidAudioManager.controlDefaultVolume();
+
     player.dispose();
     super.dispose();
   }
