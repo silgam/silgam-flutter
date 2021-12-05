@@ -10,11 +10,7 @@ class SilgamApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    requestPermissions();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    initialize();
     return MaterialApp(
       title: '실감',
       initialRoute: HomePage.routeName,
@@ -37,8 +33,15 @@ class SilgamApp extends StatelessWidget {
     );
   }
 
-  void requestPermissions() async {
+  void initialize() {
     FirebaseMessaging.instance.requestPermission();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
+    );
   }
 }
 
