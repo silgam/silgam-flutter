@@ -12,6 +12,7 @@ class SettingsView extends StatelessWidget {
     return ScaffoldBody(
       title: title,
       child: SliverFillRemaining(
+        hasScrollBody: false,
         child: Container(
           alignment: Alignment.center,
           margin: const EdgeInsets.all(20),
