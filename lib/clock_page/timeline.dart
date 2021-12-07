@@ -66,9 +66,13 @@ class TimelineConnector extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = duration * 3.0;
     double height = 1;
+    Alignment begin = Alignment.centerLeft;
+    Alignment end = Alignment.centerRight;
     if (direction == Axis.vertical) {
       height = width;
       width = 1;
+      begin = Alignment.topCenter;
+      end = Alignment.bottomCenter;
     }
     return Flexible(
       child: Container(
@@ -77,6 +81,8 @@ class TimelineConnector extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
+            begin: begin,
+            end: end,
             colors: [_getTimelineColor(false), _getTimelineColor(true)],
             stops: [progress, progress],
           ),
