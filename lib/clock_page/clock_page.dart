@@ -53,7 +53,6 @@ class _ClockPageState extends State<ClockPage> {
     super.initState();
     Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     AndroidAudioManager.controlMediaVolume();
 
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
@@ -440,10 +439,6 @@ class _ClockPageState extends State<ClockPage> {
   void dispose() {
     Wakelock.disable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     AndroidAudioManager.controlDefaultVolume();
 
     player.dispose();
