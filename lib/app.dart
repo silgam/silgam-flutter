@@ -35,10 +35,6 @@ class SilgamApp extends StatelessWidget {
 
   void initialize() {
     FirebaseMessaging.instance.requestPermission();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
     );
