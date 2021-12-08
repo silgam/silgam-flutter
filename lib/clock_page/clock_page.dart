@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wakelock/wakelock.dart';
 
+import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
 import '../model/subject.dart';
 import '../util/android_audio_manager.dart';
@@ -340,7 +341,7 @@ class _ClockPageState extends State<ClockPage> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.pop(context);
+                _finishExam();
               },
               child: const Text('시험 종료'),
             ),
@@ -403,6 +404,12 @@ class _ClockPageState extends State<ClockPage> {
   void _startExam() {
     _isStarted = true;
     _playAnnouncement();
+  }
+
+  void _finishExam() {
+    Navigator.pop(context);
+    final arguments = EditRecordPageArguments();
+    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
   }
 
   Future<bool> _onBackPressed() {
