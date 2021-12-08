@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'clock_page/clock_page.dart';
+import 'edit_record_page/edit_record_page.dart';
 import 'home_page/home_page.dart';
 
 class SilgamApp extends StatelessWidget {
@@ -18,11 +19,17 @@ class SilgamApp extends StatelessWidget {
         HomePage.routeName: (context) => const HomePage(),
       },
       onGenerateRoute: (settings) {
-        if (settings.name == ClockPage.routeName) {
-          final args = settings.arguments as ClockPageArguments;
-          return MaterialPageRoute(
-            builder: (context) => ClockPage(exam: args.exam),
-          );
+        switch (settings.name) {
+          case ClockPage.routeName:
+            final args = settings.arguments as ClockPageArguments;
+            return MaterialPageRoute(
+              builder: (context) => ClockPage(exam: args.exam),
+            );
+          case EditRecordPage.routeName:
+            final args = settings.arguments as EditRecordPageArguments;
+            return MaterialPageRoute(
+              builder: (context) => EditRecordPage(arguments: args),
+            );
         }
       },
       theme: ThemeData(
