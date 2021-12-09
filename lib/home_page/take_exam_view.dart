@@ -4,6 +4,7 @@ import '../clock_page/clock_page.dart';
 import '../model/exam.dart';
 import '../model/subject.dart';
 import '../repository/exam_repository.dart';
+import '../util/color_utils.dart';
 import '../util/scaffold_body.dart';
 
 class TakeExamView extends StatelessWidget {
@@ -100,26 +101,19 @@ class _ExamCardState extends State<_ExamCard> {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          _getGradientColor(widget.index / (widget.numberOfItems - 1)),
-          _getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)),
+          getGradientColor(widget.index / (widget.numberOfItems - 1)),
+          getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)),
         ],
       ),
       boxShadow: [
         BoxShadow(
-          color: _getGradientColor(
+          color: getGradientColor(
             (widget.index + 1) / (widget.numberOfItems - 1),
           ).withAlpha(120),
           blurRadius: 6,
         ),
       ],
     );
-  }
-
-  Color _getGradientColor(double t) {
-    final startColor = HSVColor.fromColor(const Color(0xFFC67EF2));
-    final endColor = HSVColor.fromColor(const Color(0xFF5CA2E8));
-    final color = HSVColor.lerp(startColor, endColor, t) ?? HSVColor.fromColor(Colors.white);
-    return color.toColor();
   }
 }
 
