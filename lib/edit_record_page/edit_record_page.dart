@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../model/problem.dart';
 import '../model/subject.dart';
+import '../util/date_time_extension.dart';
+import 'add_review_problem_dialog.dart';
+import 'outlined_text_field.dart';
 
 class EditRecordPage extends StatefulWidget {
   static const routeName = '/edit_record';
@@ -45,21 +47,25 @@ class _EditRecordPageState extends State<EditRecordPage> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                  child: _buildForm(),
-                ),
-              ),
-              const Divider(height: 1),
-              _buildBottomButtons(),
-            ],
-          ),
+          child: _buildBody(),
         ),
       ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            child: _buildForm(),
+          ),
+        ),
+        const Divider(height: 1),
+        _buildBottomButtons(),
+      ],
     );
   }
 
@@ -87,11 +93,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
         DropdownButtonHideUnderline(
           child: DropdownButton(
             value: _selectedSubject,
-            onChanged: (Subject? newSubject) {
-              setState(() {
-                _selectedSubject = newSubject ?? Subject.language;
-              });
-            },
+            onChanged: _onSelectedSubjectChanged,
             items: Subject.values.map((subject) {
               return DropdownMenuItem(
                 value: subject,
@@ -107,16 +109,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
         _buildSubTitle('시험 시작 시각'),
         const SizedBox(height: 2),
         GestureDetector(
-          onTap: () async {
-            final dateTime = await DatePicker.showDateTimePicker(
-              context,
-              locale: LocaleType.ko,
-              currentTime: _selectedDateTime,
-            );
-            if (dateTime == null) return;
-            _selectedDateTime = dateTime;
-            setState(() {});
-          },
+          onTap: _onExamStartTimeTextTapped,
           child: Text(
             _selectedDateTime.toStringTrimmed(),
             style: const TextStyle(
@@ -130,39 +123,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
         Wrap(
           spacing: 24,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSubTitle('시험 시간'),
-                const SizedBox(height: 6),
-                const SizedBox(
-                  width: 60,
-                  child: _OutlinedTextField(suffix: '분'),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSubTitle('점수'),
-                const SizedBox(height: 6),
-                const SizedBox(
-                  width: 60,
-                  child: _OutlinedTextField(suffix: '점'),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSubTitle('등급'),
-                const SizedBox(height: 6),
-                const SizedBox(
-                  width: 56,
-                  child: _OutlinedTextField(suffix: '등급'),
-                ),
-              ],
-            ),
+            _buildNumberInputWithTitle('시험 시간', '분', 60),
+            _buildNumberInputWithTitle('점수', '점', 60),
+            _buildNumberInputWithTitle('등급', '등급', 56),
           ],
         ),
         const SizedBox(height: 8),
@@ -180,7 +143,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 labelPadding: const EdgeInsets.only(left: 8, right: 2),
                 deleteIconColor: Colors.white54,
                 backgroundColor: Theme.of(context).primaryColor,
-                labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400, height: 1.21),
+                labelStyle: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                  height: 1.21,
+                ),
               ),
             SizedBox(
               width: 80,
@@ -234,6 +201,30 @@ class _EditRecordPageState extends State<EditRecordPage> {
             _buildReviewProblemAddCard(),
           ],
         )
+      ],
+    );
+  }
+
+  Widget _buildSubTitle(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.grey.shade600,
+        fontWeight: FontWeight.w300,
+      ),
+    );
+  }
+
+  Widget _buildNumberInputWithTitle(String title, String suffix, double width) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSubTitle(title),
+        const SizedBox(height: 6),
+        SizedBox(
+          width: width,
+          child: OutlinedTextField(suffix: suffix),
+        ),
       ],
     );
   }
@@ -326,16 +317,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildSubTitle(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Colors.grey.shade600,
-        fontWeight: FontWeight.w300,
-      ),
-    );
-  }
-
   Widget _buildBottomButtons() {
     return Row(
       children: [
@@ -366,16 +347,36 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
+  void _onSelectedSubjectChanged(Subject? newSubject) {
+    setState(() {
+      _selectedSubject = newSubject ?? Subject.language;
+    });
+  }
+
+  void _onExamStartTimeTextTapped() async {
+    final dateTime = await DatePicker.showDateTimePicker(
+      context,
+      locale: LocaleType.ko,
+      currentTime: _selectedDateTime,
+    );
+    if (dateTime == null) return;
+    setState(() {
+      _selectedDateTime = dateTime;
+    });
+  }
+
   void _onChipDeleted(WrongProblem problem) {
-    _wrongProblems.remove(problem);
-    setState(() {});
+    setState(() {
+      _wrongProblems.remove(problem);
+    });
   }
 
   void _onWrongProblemEditingKeyDetected(RawKeyEvent event) {
     if (event is! RawKeyDownEvent) return;
     if (event.logicalKey == LogicalKeyboardKey.backspace && _wrongProblemEditingController.text.isEmpty) {
-      _wrongProblems.removeLast();
-      setState(() {});
+      setState(() {
+        _wrongProblems.removeLast();
+      });
     }
   }
 
@@ -394,22 +395,25 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (_wrongProblems.where((problem) {
       return problem.problemNumber == problemNumber;
     }).isNotEmpty) return;
-    _wrongProblems.add(WrongProblem(problemNumber));
-    setState(() {});
+
+    setState(() {
+      _wrongProblems.add(WrongProblem(problemNumber));
+    });
   }
 
   void _onReviewProblemAddCardTapped() {
     showDialog(
       context: context,
       builder: (context) {
-        return _AddReviewProblemDialog(onReviewProblemAdded: _onReviewProblemAdded);
+        return AddReviewProblemDialog(onReviewProblemAdded: _onReviewProblemAdded);
       },
     );
   }
 
   void _onReviewProblemAdded(ReviewProblem problem) {
-    _reviewProblems.add(problem);
-    setState(() {});
+    setState(() {
+      _reviewProblems.add(problem);
+    });
   }
 
   @override
@@ -419,220 +423,4 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 }
 
-class _OutlinedTextField extends StatelessWidget {
-  final String suffix;
-
-  const _OutlinedTextField({
-    Key? key,
-    required this.suffix,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        isCollapsed: true,
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: Text(
-            suffix,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w300,
-              color: Colors.grey.shade600,
-            ),
-          ),
-        ),
-        suffixIconConstraints: const BoxConstraints(minHeight: 0),
-        contentPadding: const EdgeInsets.only(top: 4, bottom: 4, left: 8),
-      ),
-    );
-  }
-}
-
-class _AddReviewProblemDialog extends StatefulWidget {
-  final Function(ReviewProblem) onReviewProblemAdded;
-
-  const _AddReviewProblemDialog({
-    Key? key,
-    required this.onReviewProblemAdded,
-  }) : super(key: key);
-
-  @override
-  _AddReviewProblemDialogState createState() => _AddReviewProblemDialogState();
-}
-
-class _AddReviewProblemDialogState extends State<_AddReviewProblemDialog> {
-  final List<String> _tempImagePaths = [];
-  final _titleEditingController = TextEditingController();
-  final _memoEditingController = TextEditingController();
-  bool _isTitleEmpty = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _titleEditingController.addListener(() {
-      if (_isTitleEmpty) {
-        _isTitleEmpty = false;
-        setState(() {});
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: EdgeInsets.zero,
-      content: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(left: 24, right: 24, top: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '복습할 문제 추가',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _titleEditingController,
-              decoration: InputDecoration(
-                hintText: '제목',
-                errorText: _isTitleEmpty ? '제목을 입력해주세요' : null,
-                isCollapsed: true,
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.all(12),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _memoEditingController,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              minLines: 2,
-              decoration: const InputDecoration(
-                hintText: '메모',
-                isCollapsed: true,
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.all(12),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '사진',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (String imagePath in _tempImagePaths)
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300, width: 0.5),
-                      ),
-                      child: GestureDetector(
-                        onTap: () => _onImageTapped(imagePath),
-                        child: Image.file(File(imagePath), fit: BoxFit.cover),
-                      ),
-                    ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300, width: 0.5),
-                    ),
-                    child: IconButton(
-                      onPressed: _onImageAddButtonPressed,
-                      icon: SvgPicture.asset(
-                        'assets/add.svg',
-                        color: Colors.grey.shade600,
-                      ),
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: _onCancelButtonPressed,
-          child: const Text('취소'),
-        ),
-        TextButton(
-          onPressed: _onConfirmButtonPressed,
-          child: const Text('추가하기'),
-        ),
-      ],
-    );
-  }
-
-  void _onImageTapped(String imagePath) {
-    _tempImagePaths.remove(imagePath);
-    setState(() {});
-  }
-
-  void _onImageAddButtonPressed() async {
-    final picker = ImagePicker();
-    List<XFile>? files = await picker.pickMultiImage();
-    if (files == null) return;
-    _tempImagePaths.addAll(files.map((e) => e.path));
-    setState(() {});
-  }
-
-  void _onCancelButtonPressed() {
-    Navigator.pop(context);
-  }
-
-  void _onConfirmButtonPressed() {
-    if (_titleEditingController.text.isEmpty) {
-      _isTitleEmpty = true;
-      setState(() {});
-      return;
-    }
-
-    final problem = ReviewProblem(
-      title: _titleEditingController.text,
-      memo: _memoEditingController.text,
-      imagePaths: _tempImagePaths,
-    );
-    widget.onReviewProblemAdded(problem);
-    Navigator.pop(context);
-  }
-
-  @override
-  void dispose() {
-    _titleEditingController.dispose();
-    super.dispose();
-  }
-}
-
 class EditRecordPageArguments {}
-
-extension on DateTime {
-  String toStringTrimmed() {
-    final string = toString();
-    return string.substring(0, string.length - 7);
-  }
-
-  DateTime resetSeconds() {
-    return DateTime(year, month, day, hour, minute);
-  }
-}
