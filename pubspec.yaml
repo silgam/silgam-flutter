@@ -19,6 +19,8 @@ dependencies:
   firebase_crashlytics: ^2.4.0
   firebase_messaging: ^11.2.0
   wakelock: ^0.5.6
+  flutter_datetime_picker: ^1.5.1
+  image_picker: ^0.8.4+4
 
 dev_dependencies:
   flutter_test:
