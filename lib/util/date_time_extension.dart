@@ -10,4 +10,13 @@ extension DateTimeUtil on DateTime {
       return hour;
     }
   }
+
+  String toStringTrimmed() {
+    final string = toString();
+    return string.substring(0, string.length - 7);
+  }
+
+  DateTime resetSeconds() {
+    return DateTime(year, month, day, hour, minute);
+  }
 }
