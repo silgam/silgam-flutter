@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 class OutlinedTextField extends StatelessWidget {
+  final TextEditingController controller;
   final String suffix;
 
   const OutlinedTextField({
     Key? key,
+    required this.controller,
     required this.suffix,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       keyboardType: TextInputType.number,
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(

@@ -62,13 +62,13 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _titleEditingController,
+              onChanged: _onTitleChanged,
               decoration: const InputDecoration(
                 hintText: '제목',
                 isCollapsed: true,
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12),
               ),
-              onChanged: onTitleChanged,
             ),
             const SizedBox(height: 16),
             TextField(
@@ -178,7 +178,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     );
   }
 
-  void onTitleChanged(String title) {
+  void _onTitleChanged(String title) {
     if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
       setState(() {
         _isTitleEmpty = false;

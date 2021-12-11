@@ -5,6 +5,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
+import '../model/exam_record.dart';
 import '../model/problem.dart';
 import '../model/subject.dart';
 import 'continuous_number_field.dart';
@@ -25,10 +26,17 @@ class EditRecordPage extends StatefulWidget {
 }
 
 class _EditRecordPageState extends State<EditRecordPage> {
-  Subject _selectedSubject = Subject.language;
-  DateTime _selectedDateTime = DateTime.now();
+  final TextEditingController _titleEditingController = TextEditingController();
+  final TextEditingController _examDurationEditingController = TextEditingController();
+  final TextEditingController _scoreEditingController = TextEditingController();
+  final TextEditingController _gradeEditingController = TextEditingController();
+  final TextEditingController _feedbackEditingController = TextEditingController();
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
+  Subject _selectedSubject = Subject.language;
+  DateTime _examStartedTime = DateTime.now();
+
+  bool _isTitleEmpty = true;
 
   @override
   Widget build(BuildContext context) {
@@ -65,13 +73,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
       children: [
         const SizedBox(height: 28),
         _buildSubTitle('모의고사 기록하기'),
-        const TextField(
-          style: TextStyle(
+        TextField(
+          controller: _titleEditingController,
+          onChanged: _onTitleChanged,
+          style: const TextStyle(
             fontSize: 24,
             color: Colors.black,
             fontWeight: FontWeight.w700,
           ),
-          decoration: InputDecoration.collapsed(
+          decoration: const InputDecoration.collapsed(
             hintText: '모의고사 이름',
             border: InputBorder.none,
           ),
@@ -98,9 +108,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
         _buildSubTitle('시험 시작 시각'),
         const SizedBox(height: 2),
         GestureDetector(
-          onTap: _onExamStartTimeTextTapped,
+          onTap: _onExamStartedTimeTextTapped,
           child: Text(
-            DateFormat.yMEd('ko_KR').add_Hm().format(_selectedDateTime),
+            DateFormat.yMEd('ko_KR').add_Hm().format(_examStartedTime),
             style: const TextStyle(
               fontSize: 16,
             ),
@@ -112,9 +122,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
         Wrap(
           spacing: 24,
           children: [
-            _buildNumberInputWithTitle('시험 시간', '분', 60),
-            _buildNumberInputWithTitle('점수', '점', 60),
-            _buildNumberInputWithTitle('등급', '등급', 56),
+            _buildNumberInputWithTitle(_examDurationEditingController, '시험 시간', '분', 60),
+            _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60),
+            _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 56),
           ],
         ),
         const SizedBox(height: 8),
@@ -152,11 +162,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
         const SizedBox(height: 8),
         _buildSubTitle('피드백'),
         const SizedBox(height: 8),
-        const TextField(
+        TextField(
+          controller: _feedbackEditingController,
           keyboardType: TextInputType.multiline,
           maxLines: null,
           minLines: 2,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             isCollapsed: true,
             border: OutlineInputBorder(),
             contentPadding: EdgeInsets.all(12),
@@ -191,7 +202,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildNumberInputWithTitle(String title, String suffix, double width) {
+  Widget _buildNumberInputWithTitle(
+    TextEditingController controller,
+    String title,
+    String suffix,
+    double width,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -199,7 +215,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
         const SizedBox(height: 6),
         SizedBox(
           width: width,
-          child: OutlinedTextField(suffix: suffix),
+          child: OutlinedTextField(
+            controller: controller,
+            suffix: suffix,
+          ),
         ),
       ],
     );
@@ -301,29 +320,46 @@ class _EditRecordPageState extends State<EditRecordPage> {
       children: [
         Expanded(
           child: TextButton(
-            onPressed: () {},
+            onPressed: _onCancelPressed,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: const Text('취소'),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            onPressed: _isTitleEmpty ? null : _onSavePressed,
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              '취소',
-              style: TextStyle(color: Colors.grey.shade600),
+              '저장',
+              style: TextStyle(
+                color: _isTitleEmpty ? Colors.grey.shade600 : null,
+              ),
             ),
-          ),
-        ),
-        Expanded(
-          child: TextButton(
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: const Text('저장'),
           ),
         ),
       ],
     );
+  }
+
+  void _onTitleChanged(String title) {
+    if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
+      setState(() {
+        _isTitleEmpty = false;
+      });
+      return;
+    }
+    if (!_isTitleEmpty && _titleEditingController.text.isEmpty) {
+      setState(() {
+        _isTitleEmpty = true;
+      });
+      return;
+    }
   }
 
   void _onSelectedSubjectChanged(Subject? newSubject) {
@@ -332,15 +368,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
-  void _onExamStartTimeTextTapped() async {
+  void _onExamStartedTimeTextTapped() async {
     final dateTime = await DatePicker.showDateTimePicker(
       context,
       locale: LocaleType.ko,
-      currentTime: _selectedDateTime,
+      currentTime: _examStartedTime,
     );
     if (dateTime == null) return;
     setState(() {
-      _selectedDateTime = dateTime;
+      _examStartedTime = dateTime;
     });
   }
 
@@ -408,6 +444,28 @@ class _EditRecordPageState extends State<EditRecordPage> {
     setState(() {
       _reviewProblems.add(problem);
     });
+  }
+
+  void _onCancelPressed() {
+    Navigator.pop(context);
+  }
+
+  void _onSavePressed() {
+    if (_isTitleEmpty) return;
+
+    final ExamRecord record = ExamRecord(
+      title: _titleEditingController.text,
+      subject: _selectedSubject,
+      examStartedTime: _examStartedTime,
+      examDurationMinutes: int.tryParse(_examDurationEditingController.text),
+      score: int.tryParse(_scoreEditingController.text),
+      grade: int.tryParse(_gradeEditingController.text),
+      wrongProblems: _wrongProblems,
+      feedback: _feedbackEditingController.text,
+      reviewProblems: _reviewProblems,
+    );
+
+    Navigator.pop(context);
   }
 }
 
