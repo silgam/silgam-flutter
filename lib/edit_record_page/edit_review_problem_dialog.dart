@@ -141,9 +141,23 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             ),
             child: GestureDetector(
               onTap: () => _onImageTapped(imagePath),
-              child: Image.file(
-                File(imagePath),
-                fit: BoxFit.cover,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.file(
+                    File(imagePath),
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    padding: const EdgeInsets.all(2),
+                    child: Icon(
+                      Icons.clear,
+                      size: 16,
+                      color: Colors.black.withAlpha(180),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
