@@ -27,19 +27,11 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   final _memoEditingController = TextEditingController();
   final List<String> _tempImagePaths = [];
 
-  bool _isTitleEmpty = false;
+  bool _isTitleEmpty = true;
 
   @override
   void initState() {
     super.initState();
-
-    _titleEditingController.addListener(() {
-      if (_isTitleEmpty) {
-        setState(() {
-          _isTitleEmpty = false;
-        });
-      }
-    });
 
     final editModeParams = widget.reviewProblemEditModeParams;
     if (editModeParams != null) {
@@ -70,13 +62,13 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _titleEditingController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: '제목',
-                errorText: _isTitleEmpty ? '제목을 입력해주세요' : null,
                 isCollapsed: true,
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.all(12),
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.all(12),
               ),
+              onChanged: onTitleChanged,
             ),
             const SizedBox(height: 16),
             TextField(
@@ -120,8 +112,13 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           child: const Text('취소'),
         ),
         TextButton(
-          onPressed: _onConfirmButtonPressed,
-          child: Text(widget.reviewProblemAddModeParams == null ? '수정' : '추가'),
+          onPressed: _isTitleEmpty ? null : _onConfirmButtonPressed,
+          child: Text(
+            widget.reviewProblemAddModeParams == null ? '수정' : '추가',
+            style: TextStyle(
+              color: _isTitleEmpty ? Colors.grey.shade600 : null,
+            ),
+          ),
         ),
       ],
     );
@@ -181,6 +178,21 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     );
   }
 
+  void onTitleChanged(String title) {
+    if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
+      setState(() {
+        _isTitleEmpty = false;
+      });
+      return;
+    }
+    if (!_isTitleEmpty && _titleEditingController.text.isEmpty) {
+      setState(() {
+        _isTitleEmpty = true;
+      });
+      return;
+    }
+  }
+
   void _onImageTapped(String imagePath) {
     setState(() {
       _tempImagePaths.remove(imagePath);
@@ -208,12 +220,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onConfirmButtonPressed() {
-    if (_titleEditingController.text.isEmpty) {
-      setState(() {
-        _isTitleEmpty = true;
-      });
-      return;
-    }
+    if (_isTitleEmpty) return;
 
     final newProblem = ReviewProblem(
       title: _titleEditingController.text,
@@ -228,12 +235,6 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     reviewProblemEditModeParams?.onReviewProblemEdited(reviewProblemEditModeParams.initialData, newProblem);
 
     Navigator.pop(context);
-  }
-
-  @override
-  void dispose() {
-    _titleEditingController.dispose();
-    super.dispose();
   }
 }
 
