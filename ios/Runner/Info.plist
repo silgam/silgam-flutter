@@ -57,5 +57,7 @@
 	<false/>
 	<key>NSMicrophoneUsageDescription</key>
     <string>We don't need microphone access actually</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>We need photo library access to upload problem photos</string>
 </dict>
 </plist>
