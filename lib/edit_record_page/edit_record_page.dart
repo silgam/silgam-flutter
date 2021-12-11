@@ -86,7 +86,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             items: Subject.values.map((subject) {
               return DropdownMenuItem(
                 value: subject,
-                child: Text(subject.name),
+                child: Text(subject.subjectName),
               );
             }).toList(),
             isDense: true,
