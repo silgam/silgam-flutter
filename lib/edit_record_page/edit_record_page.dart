@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../model/problem.dart';
 import '../model/subject.dart';
 import '../util/date_time_extension.dart';
-import 'add_review_problem_dialog.dart';
+import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
 
 class EditRecordPage extends StatefulWidget {
@@ -230,55 +230,58 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   Widget _buildReviewProblemCard(ReviewProblem problem) {
-    return Card(
-      margin: const EdgeInsets.all(4),
-      elevation: 0,
-      clipBehavior: Clip.hardEdge,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(width: 0.5, color: Colors.grey.shade300),
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
-      ),
-      child: Stack(
-        children: [
-          if (problem.imagePaths.isNotEmpty)
-            SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: Image.file(
-                File(problem.imagePaths.first),
+    return GestureDetector(
+      onTap: () => _onReviewProblemCardTapped(problem),
+      child: Card(
+        margin: const EdgeInsets.all(4),
+        elevation: 0,
+        clipBehavior: Clip.hardEdge,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(width: 0.5, color: Colors.grey.shade300),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Stack(
+          children: [
+            if (problem.imagePaths.isNotEmpty)
+              SizedBox(
                 width: double.infinity,
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
+                height: double.infinity,
+                child: Image.file(
+                  File(problem.imagePaths.first),
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                ),
               ),
-            ),
-          if (problem.imagePaths.isEmpty)
+            if (problem.imagePaths.isEmpty)
+              Container(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'assets/app_icon/app_icon_transparent.png',
+                  width: 100,
+                  color: Colors.grey.shade100,
+                ),
+              ),
             Container(
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/app_icon/app_icon_transparent.png',
-                width: 100,
-                color: Colors.grey.shade100,
+              margin: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(100)),
+                color: Colors.white.withAlpha(200),
+              ),
+              child: Text(
+                problem.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  height: 1.2,
+                ),
               ),
             ),
-          Container(
-            margin: const EdgeInsets.all(8),
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(100)),
-              color: Colors.white.withAlpha(200),
-            ),
-            child: Text(
-              problem.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                height: 1.2,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -401,11 +404,40 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
+  void _onReviewProblemCardTapped(ReviewProblem problem) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return EditReviewProblemDialog.edit(ReviewProblemEditModeParams(
+          onReviewProblemEdited: _onReviewProblemEdited,
+          onReviewProblemDeleted: _onReviewProblemDeleted,
+          initialData: problem,
+        ));
+      },
+    );
+  }
+
+  void _onReviewProblemEdited(ReviewProblem oldProblem, ReviewProblem newProblem) {
+    final oldProblemIndex = _reviewProblems.indexOf(oldProblem);
+    if (oldProblemIndex == -1) return;
+    setState(() {
+      _reviewProblems[oldProblemIndex] = newProblem;
+    });
+  }
+
+  void _onReviewProblemDeleted(ReviewProblem deletedProblem) {
+    setState(() {
+      _reviewProblems.remove(deletedProblem);
+    });
+  }
+
   void _onReviewProblemAddCardTapped() {
     showDialog(
       context: context,
       builder: (context) {
-        return AddReviewProblemDialog(onReviewProblemAdded: _onReviewProblemAdded);
+        return EditReviewProblemDialog.add(ReviewProblemAddModeParams(
+          onReviewProblemAdded: _onReviewProblemAdded,
+        ));
       },
     );
   }

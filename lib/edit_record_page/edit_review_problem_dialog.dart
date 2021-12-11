@@ -6,27 +6,33 @@ import 'package:image_picker/image_picker.dart';
 
 import '../model/problem.dart';
 
-class AddReviewProblemDialog extends StatefulWidget {
-  final Function(ReviewProblem) onReviewProblemAdded;
+class EditReviewProblemDialog extends StatefulWidget {
+  final ReviewProblemAddModeParams? reviewProblemAddModeParams;
+  final ReviewProblemEditModeParams? reviewProblemEditModeParams;
 
-  const AddReviewProblemDialog({
-    Key? key,
-    required this.onReviewProblemAdded,
-  }) : super(key: key);
+  const EditReviewProblemDialog.add(this.reviewProblemAddModeParams, {Key? key})
+      : reviewProblemEditModeParams = null,
+        super(key: key);
+
+  const EditReviewProblemDialog.edit(this.reviewProblemEditModeParams, {Key? key})
+      : reviewProblemAddModeParams = null,
+        super(key: key);
 
   @override
-  AddReviewProblemDialogState createState() => AddReviewProblemDialogState();
+  EditReviewProblemDialogState createState() => EditReviewProblemDialogState();
 }
 
-class AddReviewProblemDialogState extends State<AddReviewProblemDialog> {
-  final List<String> _tempImagePaths = [];
+class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   final _titleEditingController = TextEditingController();
   final _memoEditingController = TextEditingController();
+  final List<String> _tempImagePaths = [];
+
   bool _isTitleEmpty = false;
 
   @override
   void initState() {
     super.initState();
+
     _titleEditingController.addListener(() {
       if (_isTitleEmpty) {
         setState(() {
@@ -34,6 +40,13 @@ class AddReviewProblemDialogState extends State<AddReviewProblemDialog> {
         });
       }
     });
+
+    final editModeParams = widget.reviewProblemEditModeParams;
+    if (editModeParams != null) {
+      _titleEditingController.text = editModeParams.initialData.title;
+      _memoEditingController.text = editModeParams.initialData.memo ?? '';
+      _tempImagePaths.addAll(editModeParams.initialData.imagePaths);
+    }
   }
 
   @override
@@ -94,13 +107,21 @@ class AddReviewProblemDialogState extends State<AddReviewProblemDialog> {
         ),
       ),
       actions: [
+        if (widget.reviewProblemEditModeParams != null)
+          TextButton(
+            onPressed: _onDeleteButtonPressed,
+            child: Text(
+              '삭제',
+              style: TextStyle(color: Colors.red.shade600),
+            ),
+          ),
         TextButton(
           onPressed: _onCancelButtonPressed,
           child: const Text('취소'),
         ),
         TextButton(
           onPressed: _onConfirmButtonPressed,
-          child: const Text('추가하기'),
+          child: Text(widget.reviewProblemAddModeParams == null ? '수정' : '추가'),
         ),
       ],
     );
@@ -161,6 +182,13 @@ class AddReviewProblemDialogState extends State<AddReviewProblemDialog> {
     });
   }
 
+  void _onDeleteButtonPressed() {
+    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
+    reviewProblemEditModeParams?.onReviewProblemDeleted(reviewProblemEditModeParams.initialData);
+
+    Navigator.pop(context);
+  }
+
   void _onCancelButtonPressed() {
     Navigator.pop(context);
   }
@@ -173,12 +201,18 @@ class AddReviewProblemDialogState extends State<AddReviewProblemDialog> {
       return;
     }
 
-    final problem = ReviewProblem(
+    final newProblem = ReviewProblem(
       title: _titleEditingController.text,
       memo: _memoEditingController.text,
       imagePaths: _tempImagePaths,
     );
-    widget.onReviewProblemAdded(problem);
+
+    final reviewProblemAddModeParams = widget.reviewProblemAddModeParams;
+    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
+
+    reviewProblemAddModeParams?.onReviewProblemAdded(newProblem);
+    reviewProblemEditModeParams?.onReviewProblemEdited(reviewProblemEditModeParams.initialData, newProblem);
+
     Navigator.pop(context);
   }
 
@@ -187,4 +221,24 @@ class AddReviewProblemDialogState extends State<AddReviewProblemDialog> {
     _titleEditingController.dispose();
     super.dispose();
   }
+}
+
+class ReviewProblemAddModeParams {
+  final Function(ReviewProblem) onReviewProblemAdded;
+
+  const ReviewProblemAddModeParams({
+    required this.onReviewProblemAdded,
+  });
+}
+
+class ReviewProblemEditModeParams {
+  final Function(ReviewProblem oldProblem, ReviewProblem newProblem) onReviewProblemEdited;
+  final Function(ReviewProblem) onReviewProblemDeleted;
+  final ReviewProblem initialData;
+
+  const ReviewProblemEditModeParams({
+    required this.onReviewProblemEdited,
+    required this.onReviewProblemDeleted,
+    required this.initialData,
+  });
 }
