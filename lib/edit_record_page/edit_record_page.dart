@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 import '../model/problem.dart';
 import '../model/subject.dart';
-import '../util/date_time_extension.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
@@ -26,7 +26,7 @@ class EditRecordPage extends StatefulWidget {
 
 class _EditRecordPageState extends State<EditRecordPage> {
   Subject _selectedSubject = Subject.language;
-  DateTime _selectedDateTime = DateTime.now().resetSeconds();
+  DateTime _selectedDateTime = DateTime.now();
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
 
@@ -100,7 +100,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
         GestureDetector(
           onTap: _onExamStartTimeTextTapped,
           child: Text(
-            _selectedDateTime.toStringTrimmed(),
+            DateFormat.yMEd('ko_KR').add_Hm().format(_selectedDateTime),
             style: const TextStyle(
               fontSize: 16,
             ),
