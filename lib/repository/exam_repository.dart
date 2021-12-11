@@ -14,6 +14,8 @@ class ExamRepository {
       examDuration: 80,
       numberOfQuestions: 45,
       perfectScore: 100,
+      gradientStartColor: 0xFF55B99E,
+      gradientEndColor: 0xFF68D69B,
       announcements: [
         const Announcement(
           title: '예비령',
@@ -50,6 +52,8 @@ class ExamRepository {
       examDuration: 100,
       numberOfQuestions: 30,
       perfectScore: 100,
+      gradientStartColor: 0xFFE05FA9,
+      gradientEndColor: 0xFFF574DD,
       announcements: [
         const Announcement(
           title: '예비령',
@@ -86,6 +90,8 @@ class ExamRepository {
       examDuration: 70,
       numberOfQuestions: 45,
       perfectScore: 100,
+      gradientStartColor: 0xFF0098C3,
+      gradientEndColor: 0xFF03BAEB,
       announcements: [
         const Announcement(
           title: '예비령',
@@ -121,6 +127,8 @@ class ExamRepository {
       examDuration: 30,
       numberOfQuestions: 20,
       perfectScore: 50,
+      gradientStartColor: 0xFF7B4DB9,
+      gradientEndColor: 0xFF8F6CE0,
       announcements: [
         const Announcement(
           title: '예비령',
@@ -157,6 +165,8 @@ class ExamRepository {
       examDuration: 62,
       numberOfQuestions: 20,
       perfectScore: 50,
+      gradientStartColor: 0xFF7B4DB9,
+      gradientEndColor: 0xFF8F6CE0,
       announcements: [
         const Announcement(
           title: '예비령 (탐구1)',
@@ -208,6 +218,8 @@ class ExamRepository {
       examDuration: 40,
       numberOfQuestions: 30,
       perfectScore: 50,
+      gradientStartColor: 0xFFF39328,
+      gradientEndColor: 0xFFF7B061,
       announcements: [
         const Announcement(
           title: '예비령',

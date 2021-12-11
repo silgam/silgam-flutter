@@ -11,6 +11,8 @@ class Exam {
   final int examDuration;
   final int numberOfQuestions;
   final int perfectScore;
+  final int gradientStartColor;
+  final int gradientEndColor;
   final List<Announcement> announcements;
 
   Exam({
@@ -21,6 +23,8 @@ class Exam {
     required this.examDuration,
     required this.numberOfQuestions,
     required this.perfectScore,
+    required this.gradientStartColor,
+    required this.gradientEndColor,
     required this.announcements,
   }) : examEndTime = examStartTime.add(Duration(minutes: examDuration));
 

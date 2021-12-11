@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../clock_page/clock_page.dart';
 import '../model/exam.dart';
 import '../repository/exam_repository.dart';
-import '../util/color_utils.dart';
 import '../util/scaffold_body.dart';
 
 class TakeExamView extends StatelessWidget {
@@ -94,21 +93,21 @@ class _ExamCardState extends State<_ExamCard> {
   }
 
   BoxDecoration _buildGradientBoxDecoration() {
+    final Color startColor = Color(widget.thisExam.gradientStartColor);
+    final Color endColor = Color(widget.thisExam.gradientEndColor);
     return BoxDecoration(
       borderRadius: BorderRadius.circular(6),
       gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
         colors: [
-          getGradientColor(widget.index / (widget.numberOfItems - 1)),
-          getGradientColor((widget.index + 1) / (widget.numberOfItems - 1)),
+          startColor,
+          endColor,
         ],
       ),
       boxShadow: [
         BoxShadow(
-          color: getGradientColor(
-            (widget.index + 1) / (widget.numberOfItems - 1),
-          ).withAlpha(120),
+          color: startColor.withAlpha(120),
           blurRadius: 6,
         ),
       ],
