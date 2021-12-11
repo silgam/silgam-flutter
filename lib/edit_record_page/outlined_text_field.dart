@@ -12,6 +12,7 @@ class OutlinedTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         isCollapsed: true,
