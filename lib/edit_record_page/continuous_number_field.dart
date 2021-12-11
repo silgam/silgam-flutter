@@ -35,6 +35,7 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
       child: TextField(
         controller: _editingController,
         keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.next,
         decoration: const InputDecoration(
           hintText: '번호 입력',
           border: InputBorder.none,
