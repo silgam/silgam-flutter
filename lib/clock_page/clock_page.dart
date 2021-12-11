@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +6,6 @@ import 'package:wakelock/wakelock.dart';
 
 import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
-import '../model/subject.dart';
 import '../util/android_audio_manager.dart';
 import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
@@ -130,7 +128,7 @@ class _ClockPageState extends State<ClockPage> {
   Widget _buildExamTitle() {
     final children = <Widget>[];
 
-    if (widget.exam.subject.number != null) {
+    if (widget.exam.examNumber != null) {
       children.add(Container(
         margin: const EdgeInsets.only(bottom: 4),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -139,7 +137,7 @@ class _ClockPageState extends State<ClockPage> {
           border: Border.all(color: Colors.white),
         ),
         child: Text(
-          '${widget.exam.subject.number}교시',
+          '${widget.exam.examNumber}교시',
           style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -151,7 +149,7 @@ class _ClockPageState extends State<ClockPage> {
     }
 
     children.add(Text(
-      widget.exam.subject.name,
+      widget.exam.examName,
       style: const TextStyle(
         color: Colors.white,
         fontSize: 28,

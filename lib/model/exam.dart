@@ -4,6 +4,8 @@ import 'subject.dart';
 
 class Exam {
   final Subject subject;
+  final String examName;
+  final int? examNumber;
   final DateTime examStartTime;
   final DateTime examEndTime;
   final int examDuration;
@@ -13,6 +15,8 @@ class Exam {
 
   Exam({
     required this.subject,
+    required this.examName,
+    this.examNumber,
     required this.examStartTime,
     required this.examDuration,
     required this.numberOfQuestions,

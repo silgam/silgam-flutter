@@ -8,6 +8,8 @@ class ExamRepository {
   static final List<Exam> defaultExams = [
     Exam(
       subject: Subject.language,
+      examName: Subject.language.subjectName,
+      examNumber: 1,
       examStartTime: DateTimeBuilder.fromHourMinute(8, 40),
       examDuration: 80,
       numberOfQuestions: 45,
@@ -42,6 +44,8 @@ class ExamRepository {
     ),
     Exam(
       subject: Subject.math,
+      examName: Subject.math.subjectName,
+      examNumber: 2,
       examStartTime: DateTimeBuilder.fromHourMinute(10, 30),
       examDuration: 100,
       numberOfQuestions: 30,
@@ -76,6 +80,8 @@ class ExamRepository {
     ),
     Exam(
       subject: Subject.english,
+      examName: Subject.english.subjectName,
+      examNumber: 3,
       examStartTime: DateTimeBuilder.fromHourMinute(13, 10),
       examDuration: 70,
       numberOfQuestions: 45,
@@ -109,6 +115,8 @@ class ExamRepository {
     ),
     Exam(
       subject: Subject.history,
+      examName: Subject.history.subjectName,
+      examNumber: 4,
       examStartTime: DateTimeBuilder.fromHourMinute(14, 50),
       examDuration: 30,
       numberOfQuestions: 20,
@@ -143,6 +151,8 @@ class ExamRepository {
     ),
     Exam(
       subject: Subject.investigation,
+      examName: Subject.investigation.subjectName,
+      examNumber: 4,
       examStartTime: DateTimeBuilder.fromHourMinute(15, 35),
       examDuration: 62,
       numberOfQuestions: 20,
@@ -192,6 +202,8 @@ class ExamRepository {
     ),
     Exam(
       subject: Subject.secondLanguage,
+      examName: Subject.secondLanguage.subjectName,
+      examNumber: 5,
       examStartTime: DateTimeBuilder.fromHourMinute(17, 5),
       examDuration: 40,
       numberOfQuestions: 30,
