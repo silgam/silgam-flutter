@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../model/problem.dart';
 import '../model/subject.dart';
 import '../util/date_time_extension.dart';
+import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
 
@@ -29,17 +29,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
   DateTime _selectedDateTime = DateTime.now().resetSeconds();
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
-
-  final FocusNode _wrongProblemFocusNode = FocusNode();
-  final TextEditingController _wrongProblemEditingController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _wrongProblemFocusNode.addListener(() {
-      _onWrongProblemSubmitted(_wrongProblemEditingController.text);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +128,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             for (final problem in _wrongProblems)
               Chip(
                 label: Text('${problem.problemNumber}번'),
-                onDeleted: () => _onChipDeleted(problem),
+                onDeleted: () => _onWrongProblemChipDeleted(problem),
                 labelPadding: const EdgeInsets.only(left: 8, right: 2),
                 deleteIconColor: Colors.white54,
                 backgroundColor: Theme.of(context).primaryColor,
@@ -151,22 +140,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
               ),
             SizedBox(
               width: 80,
-              child: RawKeyboardListener(
-                focusNode: _wrongProblemFocusNode,
-                onKey: _onWrongProblemEditingKeyDetected,
-                child: TextField(
-                  controller: _wrongProblemEditingController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: '번호 입력',
-                    border: InputBorder.none,
-                  ),
-                  onEditingComplete: () {
-                    // Required, prevent hiding keyboard
-                  },
-                  onChanged: _onWrongProblemEditingChanged,
-                  onSubmitted: _onWrongProblemSubmitted,
-                ),
+              child: ContinuousNumberField(
+                onSubmit: _onWrongProblemAdded,
+                onDelete: _onWrongProblemDeleted,
               ),
             )
           ],
@@ -368,39 +344,25 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
-  void _onChipDeleted(WrongProblem problem) {
+  void _onWrongProblemChipDeleted(WrongProblem problem) {
     setState(() {
       _wrongProblems.remove(problem);
     });
   }
 
-  void _onWrongProblemEditingKeyDetected(RawKeyEvent event) {
-    if (event is! RawKeyDownEvent) return;
-    if (event.logicalKey == LogicalKeyboardKey.backspace && _wrongProblemEditingController.text.isEmpty) {
-      setState(() {
-        _wrongProblems.removeLast();
-      });
-    }
-  }
-
-  void _onWrongProblemEditingChanged(String text) {
-    if (text.endsWith(' ')) {
-      _onWrongProblemSubmitted(_wrongProblemEditingController.text);
-      _wrongProblemEditingController.clear();
-    }
-  }
-
-  void _onWrongProblemSubmitted(String text) {
-    _wrongProblemEditingController.clear();
-
-    int problemNumber = int.tryParse(text) ?? -1;
-    if (problemNumber == -1) return;
+  void _onWrongProblemAdded(int problemNumber) {
     if (_wrongProblems.where((problem) {
       return problem.problemNumber == problemNumber;
     }).isNotEmpty) return;
 
     setState(() {
       _wrongProblems.add(WrongProblem(problemNumber));
+    });
+  }
+
+  void _onWrongProblemDeleted() {
+    setState(() {
+      _wrongProblems.removeLast();
     });
   }
 
@@ -446,12 +408,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     setState(() {
       _reviewProblems.add(problem);
     });
-  }
-
-  @override
-  void dispose() {
-    _wrongProblemFocusNode.dispose();
-    super.dispose();
   }
 }
 
