@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'record_view.dart';
 import 'settings_view.dart';
@@ -38,30 +39,38 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: HomePage.backgroundColor,
-      body: _buildBody(),
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 4,
-        backgroundColor: Colors.white,
-        showUnselectedLabels: false,
-        showSelectedLabels: false,
-        onTap: _onItemTapped,
-        currentIndex: _selectedIndex,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.create),
-            label: TakeExamView.title,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.format_list_bulleted),
-            label: RecordView.title,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: SettingsView.title,
-          ),
-        ],
+    return AnnotatedRegion(
+      value: const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        backgroundColor: HomePage.backgroundColor,
+        body: _buildBody(),
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 4,
+          backgroundColor: Colors.white,
+          showUnselectedLabels: false,
+          showSelectedLabels: false,
+          onTap: _onItemTapped,
+          currentIndex: _selectedIndex,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.create),
+              label: TakeExamView.title,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.format_list_bulleted),
+              label: RecordView.title,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: SettingsView.title,
+            ),
+          ],
+        ),
       ),
     );
   }
