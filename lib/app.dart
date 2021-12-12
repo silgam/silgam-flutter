@@ -6,6 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'clock_page/clock_page.dart';
 import 'edit_record_page/edit_record_page.dart';
 import 'home_page/home_page.dart';
+import 'login_page/login_page.dart';
 
 class SilgamApp extends StatelessWidget {
   const SilgamApp({Key? key}) : super(key: key);
@@ -18,6 +19,7 @@ class SilgamApp extends StatelessWidget {
       initialRoute: HomePage.routeName,
       routes: {
         HomePage.routeName: (context) => const HomePage(),
+        LoginPage.routeName: (context) => const LoginPage(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {

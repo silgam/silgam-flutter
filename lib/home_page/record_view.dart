@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../login_page/login_page.dart';
 import '../util/scaffold_body.dart';
 
 class RecordView extends StatelessWidget {
@@ -16,9 +17,11 @@ class RecordView extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           margin: const EdgeInsets.all(20),
-          child: const Text(
-            '모의고사를 피드백하고 기록할 수 있는 기능이 업데이트될 예정입니다.',
-            textAlign: TextAlign.center,
+          child: TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, LoginPage.routeName);
+            },
+            child: const Text('로그인'),
           ),
         ),
       ),
