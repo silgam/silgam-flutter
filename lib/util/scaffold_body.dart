@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,6 +17,11 @@ class ScaffoldBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const systemOverlayStyle = SystemUiOverlayStyle(
+      statusBarIconBrightness: Brightness.dark,
+      statusBarColor: Colors.transparent,
+    );
+
     return CustomScrollView(
       physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       slivers: [
@@ -35,10 +42,8 @@ class ScaffoldBody extends StatelessWidget {
           ),
           foregroundColor: Colors.black,
           backgroundColor: HomePage.backgroundColor,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.dark,
-            statusBarColor: Colors.transparent,
-          ),
+          // Because of this https://github.com/flutter/flutter/issues/24893
+          systemOverlayStyle: Platform.isIOS ? null : systemOverlayStyle,
         ),
         child,
       ],

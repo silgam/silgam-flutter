@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'clock_page/clock_page.dart';
@@ -45,9 +44,6 @@ class SilgamApp extends StatelessWidget {
 
   void initialize() {
     FirebaseMessaging.instance.requestPermission();
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
-    );
     initializeDateFormatting('ko_KR');
   }
 }
