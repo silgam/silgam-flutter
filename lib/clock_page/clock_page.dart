@@ -4,7 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wakelock/wakelock.dart';
 
+import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
+import '../model/relative_time.dart';
 import '../util/android_audio_manager.dart';
 import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
@@ -32,6 +34,7 @@ class _ClockPageState extends State<ClockPage> {
   late final List<Breakpoint> _breakpoints;
   late int _currentBreakpointIndex = 0;
   DateTime _currentTime = DateTime.now();
+  DateTime? _examStartedTime;
 
   final AudioPlayer player = AudioPlayer();
 
@@ -357,7 +360,15 @@ class _ClockPageState extends State<ClockPage> {
   void _moveToNextBreakpoint() {
     if (_isFinished) return;
     _currentBreakpointIndex++;
+    _saveExamStartedTime();
     _moveBreakpoint();
+  }
+
+  void _saveExamStartedTime() {
+    final currentAnnouncementTime = _breakpoints[_currentBreakpointIndex].announcement?.time;
+    if (currentAnnouncementTime == const RelativeTime.beforeStart(minutes: 0)) {
+      _examStartedTime ??= DateTime.now();
+    }
   }
 
   void _moveBreakpoint() {
@@ -405,8 +416,11 @@ class _ClockPageState extends State<ClockPage> {
 
   void _finishExam() {
     Navigator.pop(context);
-    // final arguments = EditRecordPageArguments();
-    // Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
+    final arguments = EditRecordPageArguments(
+      inputExam: widget.exam,
+      examStartedTime: _examStartedTime,
+    );
+    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
   }
 
   Future<bool> _onBackPressed() {

@@ -5,6 +5,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
+import '../model/exam.dart';
 import '../model/exam_record.dart';
 import '../model/problem.dart';
 import '../model/subject.dart';
@@ -37,6 +38,22 @@ class _EditRecordPageState extends State<EditRecordPage> {
   DateTime _examStartedTime = DateTime.now();
 
   bool _isTitleEmpty = true;
+
+  @override
+  void initState() {
+    final exam = widget.arguments.inputExam;
+    if (exam != null) {
+      _examDurationEditingController.text = exam.examDuration.toString();
+      _selectedSubject = exam.subject;
+    }
+
+    final examStartedTime = widget.arguments.examStartedTime;
+    if (examStartedTime != null) {
+      _examStartedTime = examStartedTime;
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -469,4 +486,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 }
 
-class EditRecordPageArguments {}
+class EditRecordPageArguments {
+  final Exam? inputExam;
+  final DateTime? examStartedTime;
+
+  EditRecordPageArguments({
+    this.inputExam,
+    this.examStartedTime,
+  });
+}
