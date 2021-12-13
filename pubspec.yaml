@@ -18,6 +18,9 @@ dependencies:
   firebase_analytics: ^9.0.0-dev.4
   firebase_crashlytics: ^2.4.0
   firebase_messaging: ^11.2.0
+  firebase_auth: ^3.3.3
+  google_sign_in: ^5.2.1
+  flutter_facebook_auth: ^3.5.7
   wakelock: ^0.5.6
   flutter_datetime_picker: ^1.5.1
   image_picker: ^0.8.4+4
