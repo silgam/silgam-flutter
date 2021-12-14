@@ -19,6 +19,7 @@ dependencies:
   firebase_crashlytics: ^2.4.0
   firebase_messaging: ^11.2.0
   firebase_auth: ^3.3.3
+  cloud_firestore: ^3.1.4
   google_sign_in: ^5.2.1
   flutter_facebook_auth: ^3.5.7
   wakelock: ^0.5.6
