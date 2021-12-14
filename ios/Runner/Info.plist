@@ -20,6 +20,17 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.55232180944-jm8sqs01dn3uu7ntj2hj8r84cl8or3us</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -29,6 +40,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We don't need microphone access actually</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need photo library access to upload problem photos</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -55,9 +70,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSMicrophoneUsageDescription</key>
-    <string>We don't need microphone access actually</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-    <string>We need photo library access to upload problem photos</string>
 </dict>
 </plist>
