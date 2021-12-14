@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
@@ -114,9 +116,27 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pop(context);
   }
 
-  void _onGoogleLoginTapped() {}
+  void _onGoogleLoginTapped() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return;
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+      accessToken: googleAuth.accessToken,
+    );
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    _loginFinished();
+  }
 
   void _onFaceLoginTapped() {}
+
+  void _loginFinished() {
+    final String? userName = FirebaseAuth.instance.currentUser?.displayName;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('$userName님 반갑습니다!'),
+    ));
+    Navigator.pop(context);
+  }
 }
 
 class LoginButton extends StatelessWidget {
