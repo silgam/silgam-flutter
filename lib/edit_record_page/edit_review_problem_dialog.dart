@@ -36,7 +36,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     final editModeParams = widget.reviewProblemEditModeParams;
     if (editModeParams != null) {
       _titleEditingController.text = editModeParams.initialData.title;
-      _memoEditingController.text = editModeParams.initialData.memo ?? '';
+      _memoEditingController.text = editModeParams.initialData.memo;
       _tempImagePaths.addAll(editModeParams.initialData.imagePaths);
       _isTitleEmpty = _titleEditingController.text.isEmpty;
     }
