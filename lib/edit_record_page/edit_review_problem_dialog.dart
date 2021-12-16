@@ -38,6 +38,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
       _titleEditingController.text = editModeParams.initialData.title;
       _memoEditingController.text = editModeParams.initialData.memo ?? '';
       _tempImagePaths.addAll(editModeParams.initialData.imagePaths);
+      _isTitleEmpty = _titleEditingController.text.isEmpty;
     }
   }
 
