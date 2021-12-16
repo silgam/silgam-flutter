@@ -9,6 +9,8 @@ import '../model/exam.dart';
 import '../model/exam_record.dart';
 import '../model/problem.dart';
 import '../model/subject.dart';
+import '../repository/exam_record_repository.dart';
+import '../repository/user_repository.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
@@ -36,8 +38,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final List<ReviewProblem> _reviewProblems = [];
   Subject _selectedSubject = Subject.language;
   DateTime _examStartedTime = DateTime.now();
-
   bool _isTitleEmpty = true;
+
+  final UserRepository userRepository = UserRepository();
+  final ExamRecordRepository recordRepository = ExamRecordRepository();
 
   @override
   void initState() {
@@ -467,10 +471,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
     Navigator.pop(context);
   }
 
-  void _onSavePressed() {
+  void _onSavePressed() async {
     if (_isTitleEmpty) return;
+    await saveRecord();
+    Navigator.pop(context);
+  }
 
+  Future<void> saveRecord() async {
     final ExamRecord record = ExamRecord(
+      userId: userRepository.getUser().uid,
       title: _titleEditingController.text,
       subject: _selectedSubject,
       examStartedTime: _examStartedTime,
@@ -481,8 +490,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
     );
-
-    Navigator.pop(context);
+    await recordRepository.addExamRecord(record);
   }
 }
 
