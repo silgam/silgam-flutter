@@ -19,6 +19,7 @@ dependencies:
   firebase_crashlytics: ^2.4.0
   firebase_messaging: ^11.2.0
   firebase_auth: ^3.3.3
+  firebase_storage: ^10.2.3
   cloud_firestore: ^3.1.4
   google_sign_in: ^5.2.1
   flutter_facebook_auth: ^3.5.7
@@ -27,6 +28,7 @@ dependencies:
   image_picker: ^0.8.4+4
   intl: ^0.17.0
   json_annotation: ^4.4.0
+  uuid: ^3.0.5
 
 dev_dependencies:
   flutter_test:
