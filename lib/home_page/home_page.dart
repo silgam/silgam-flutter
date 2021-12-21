@@ -24,19 +24,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Widget _buildBody() {
-    switch (_selectedIndex) {
-      case 0:
-        return const TakeExamView();
-      case 1:
-        return const RecordView();
-      case 2:
-        return const SettingsView();
-      default:
-        return Container();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(
@@ -48,7 +35,15 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Scaffold(
         backgroundColor: HomePage.backgroundColor,
-        body: _buildBody(),
+        body: IndexedStack(
+          index: _selectedIndex,
+          sizing: StackFit.expand,
+          children: const [
+            TakeExamView(),
+            RecordView(),
+            SettingsView(),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 4,
           backgroundColor: Colors.white,
@@ -71,6 +66,12 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        floatingActionButton: _selectedIndex == 1
+            ? FloatingActionButton(
+                onPressed: () {},
+                child: const Icon(Icons.add),
+              )
+            : null,
       ),
     );
   }
