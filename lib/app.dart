@@ -6,6 +6,7 @@ import 'clock_page/clock_page.dart';
 import 'edit_record_page/edit_record_page.dart';
 import 'home_page/home_page.dart';
 import 'login_page/login_page.dart';
+import 'record_detail_page/record_detail_page.dart';
 
 class SilgamApp extends StatelessWidget {
   const SilgamApp({Key? key}) : super(key: key);
@@ -31,6 +32,11 @@ class SilgamApp extends StatelessWidget {
             final args = settings.arguments as EditRecordPageArguments;
             return MaterialPageRoute(
               builder: (context) => EditRecordPage(arguments: args),
+            );
+          case RecordDetailPage.routeName:
+            final args = settings.arguments as RecordDetailPageArguments;
+            return MaterialPageRoute(
+              builder: (context) => RecordDetailPage(arguments: args),
             );
         }
       },
