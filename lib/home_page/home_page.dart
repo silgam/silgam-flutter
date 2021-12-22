@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../edit_record_page/edit_record_page.dart';
 import 'record_view.dart';
 import 'settings_view.dart';
 import 'take_exam_view.dart';
@@ -68,11 +69,16 @@ class _HomePageState extends State<HomePage> {
         ),
         floatingActionButton: _selectedIndex == 1
             ? FloatingActionButton(
-                onPressed: () {},
+                onPressed: _onAddExamRecordButtonPressed,
                 child: const Icon(Icons.add),
               )
             : null,
       ),
     );
+  }
+
+  void _onAddExamRecordButtonPressed() {
+    final args = EditRecordPageArguments();
+    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: args);
   }
 }
