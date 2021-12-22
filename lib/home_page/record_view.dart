@@ -90,86 +90,95 @@ class _RecordTile extends StatefulWidget {
 class _RecordTileState extends State<_RecordTile> {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: _onTileTap,
-      splashColor: Colors.transparent,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(blurRadius: 8, color: Colors.grey.shade100),
-          ],
-        ),
-        // color: Colors.white,
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    DateFormat.yMEd('ko_KR').format(widget.record.examStartedTime),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.record.title,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        widget.record.subject.subjectName,
-                        style: TextStyle(
-                          color: Color(widget.record.subject.firstColor),
-                          fontWeight: FontWeight.w300,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (widget.record.feedback.isNotEmpty) const SizedBox(height: 6),
-                  if (widget.record.feedback.isNotEmpty)
-                    Text(
-                      widget.record.feedback,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 11,
-                      ),
-                    )
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              _getScoreGradeText(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 16,
-                height: 1.2,
-              ),
-            ),
-            const SizedBox(width: 4),
-          ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(blurRadius: 8, color: Colors.grey.shade200),
+        ],
+      ),
+      // color: Colors.white,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _onTileTap,
+          splashColor: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: _buildContent(),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildContent() {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                DateFormat.yMEd('ko_KR').format(widget.record.examStartedTime),
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Flexible(
+                    child: Text(
+                      widget.record.title,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.record.subject.subjectName,
+                    style: TextStyle(
+                      color: Color(widget.record.subject.firstColor),
+                      fontWeight: FontWeight.w300,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              if (widget.record.feedback.isNotEmpty) const SizedBox(height: 6),
+              if (widget.record.feedback.isNotEmpty)
+                Text(
+                  widget.record.feedback,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 11,
+                  ),
+                )
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          _getScoreGradeText(),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 16,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(width: 4),
+      ],
     );
   }
 
