@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../clock_page/clock_page.dart';
 import '../model/exam.dart';
+import '../model/subject.dart';
 import '../repository/exam_repository.dart';
 import '../util/scaffold_body.dart';
 
@@ -93,8 +94,8 @@ class _ExamCardState extends State<_ExamCard> {
   }
 
   BoxDecoration _buildGradientBoxDecoration() {
-    final Color startColor = Color(widget.thisExam.gradientStartColor);
-    final Color endColor = Color(widget.thisExam.gradientEndColor);
+    final Color startColor = Color(widget.thisExam.subject.firstColor);
+    final Color endColor = Color(widget.thisExam.subject.secondColor);
     return BoxDecoration(
       borderRadius: BorderRadius.circular(6),
       gradient: LinearGradient(
