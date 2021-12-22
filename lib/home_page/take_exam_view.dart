@@ -51,35 +51,41 @@ class _ExamCard extends StatefulWidget {
 class _ExamCardState extends State<_ExamCard> {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: _onCardTapped,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
-        padding: const EdgeInsets.only(top: 12, bottom: 20, left: 20, right: 20),
-        decoration: _buildGradientBoxDecoration(),
-        child: Column(
-          children: [
-            Text(
-              widget.thisExam.examName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w400,
-              ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+      decoration: _buildGradientBoxDecoration(),
+      clipBehavior: Clip.hardEdge,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.white.withAlpha(30),
+          onTap: _onCardTapped,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 12, bottom: 20, left: 20, right: 20),
+            child: Column(
+              children: [
+                Text(
+                  widget.thisExam.examName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _TextWithIcon(
+                  icon: Icons.schedule,
+                  text: widget.thisExam.buildExamTimeString(),
+                ),
+                const SizedBox(height: 4),
+                _TextWithIcon(
+                  icon: Icons.text_snippet,
+                  text: '${widget.thisExam.numberOfQuestions}문제 / ${widget.thisExam.perfectScore}점',
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            _TextWithIcon(
-              icon: Icons.schedule,
-              text: widget.thisExam.buildExamTimeString(),
-            ),
-            const SizedBox(height: 4),
-            _TextWithIcon(
-              icon: Icons.text_snippet,
-              text: '${widget.thisExam.numberOfQuestions}문제 / ${widget.thisExam.perfectScore}점',
-            ),
-          ],
+          ),
         ),
       ),
     );
