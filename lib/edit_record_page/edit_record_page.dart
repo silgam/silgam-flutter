@@ -143,9 +143,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
         Wrap(
           spacing: 24,
           children: [
-            _buildNumberInputWithTitle(_examDurationEditingController, '시험 시간', '분', 60),
             _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60),
             _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 56),
+            _buildNumberInputWithTitle(_examDurationEditingController, '시험 시간', '분', 60),
           ],
         ),
         const SizedBox(height: 8),
