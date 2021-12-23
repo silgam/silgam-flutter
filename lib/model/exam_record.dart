@@ -41,4 +41,25 @@ class ExamRecord {
   String toString() {
     return 'ExamRecord{userId: $userId, title: $title, subject: $subject, examStartedTime: $examStartedTime, examDurationMinutes: $examDurationMinutes, score: $score, grade: $grade, wrongProblems: $wrongProblems, feedback: $feedback, reviewProblems: $reviewProblems}';
   }
+
+  int getGradeColor() {
+    switch (grade) {
+      case 1:
+        return 0xFF7201E2;
+      case 2:
+        return 0xFF1201E2;
+      case 3:
+        return 0xFF04A80B;
+      case 4:
+        return 0xFFFFA700;
+      case 5:
+      case 6:
+      case 7:
+      case 8:
+      case 9:
+        return 0xFFD60303;
+      default:
+        return 0xFF000000;
+    }
+  }
 }
