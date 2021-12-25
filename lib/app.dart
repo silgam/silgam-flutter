@@ -18,25 +18,27 @@ class SilgamApp extends StatelessWidget {
       title: '실감',
       initialRoute: HomePage.routeName,
       routes: {
-        HomePage.routeName: (context) => const HomePage(),
-        LoginPage.routeName: (context) => const LoginPage(),
+        HomePage.routeName: (_) => const HomePage(),
+        LoginPage.routeName: (_) => const LoginPage(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case ClockPage.routeName:
             final args = settings.arguments as ClockPageArguments;
             return MaterialPageRoute(
-              builder: (context) => ClockPage(exam: args.exam),
+              builder: (_) => ClockPage(exam: args.exam),
             );
           case EditRecordPage.routeName:
             final args = settings.arguments as EditRecordPageArguments;
             return MaterialPageRoute(
-              builder: (context) => EditRecordPage(arguments: args),
+              builder: (_) => EditRecordPage(arguments: args),
             );
           case RecordDetailPage.routeName:
             final args = settings.arguments as RecordDetailPageArguments;
-            return MaterialPageRoute(
-              builder: (context) => RecordDetailPage(arguments: args),
+            return PageRouteBuilder(
+              pageBuilder: (_, __, ___) => RecordDetailPage(arguments: args),
+              transitionsBuilder: (_, Animation<double> animation, __, Widget child) =>
+                  FadeTransition(opacity: animation, child: child),
             );
         }
       },
