@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,6 +9,7 @@ import '../model/problem.dart';
 import '../model/subject.dart';
 import '../repository/exam_record_repository.dart';
 import '../repository/user_repository.dart';
+import '../util/review_problem_card.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
@@ -205,7 +204,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            for (final problem in _reviewProblems) _buildReviewProblemCard(problem),
+            for (final problem in _reviewProblems)
+              ReviewProblemCard(
+                problem: problem,
+                onTap: () => _onReviewProblemCardTapped(problem),
+              ),
             _buildReviewProblemAddCard(),
           ],
         )
@@ -242,63 +245,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildReviewProblemCard(ReviewProblem problem) {
-    return GestureDetector(
-      onTap: () => _onReviewProblemCardTapped(problem),
-      child: Card(
-        margin: const EdgeInsets.all(4),
-        elevation: 0,
-        clipBehavior: Clip.hardEdge,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 0.5, color: Colors.grey.shade300),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Stack(
-          children: [
-            if (problem.imagePaths.isNotEmpty)
-              SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: Image.file(
-                  File(problem.imagePaths.first),
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                ),
-              ),
-            if (problem.imagePaths.isEmpty)
-              Container(
-                alignment: Alignment.center,
-                child: Image.asset(
-                  'assets/app_icon/app_icon_transparent.png',
-                  width: 100,
-                  color: Colors.grey.shade100,
-                ),
-              ),
-            Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(100)),
-                color: Colors.white.withAlpha(200),
-              ),
-              child: Text(
-                problem.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 1.2,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
