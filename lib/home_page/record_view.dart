@@ -5,6 +5,7 @@ import '../model/exam_record.dart';
 import '../model/subject.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../repository/exam_record_repository.dart';
+import '../util/material_hero.dart';
 import '../util/scaffold_body.dart';
 
 class RecordView extends StatefulWidget {
@@ -98,17 +99,29 @@ class _RecordTileState extends State<_RecordTile> {
           BoxShadow(blurRadius: 8, color: Colors.grey.shade200),
         ],
       ),
-      // color: Colors.white,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _onTileTap,
-          splashColor: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: _buildContent(),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              alignment: Alignment.centerRight,
+              child: Container(
+                width: 1.5,
+                color: Color(widget.record.getGradeColor()),
+              ),
+            ),
           ),
-        ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _onTileTap,
+              splashColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: _buildContent(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -120,12 +133,15 @@ class _RecordTileState extends State<_RecordTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                DateFormat.yMEd('ko_KR').format(widget.record.examStartedTime),
-                style: TextStyle(
-                  fontWeight: FontWeight.w300,
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
+              MaterialHero(
+                tag: 'time ${widget.record.hashCode}',
+                child: Text(
+                  DateFormat.yMEd('ko_KR').add_Hm().format(widget.record.examStartedTime),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
               ),
               const SizedBox(height: 2),
@@ -133,22 +149,28 @@ class _RecordTileState extends State<_RecordTile> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Flexible(
-                    child: Text(
-                      widget.record.title,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
+                    child: MaterialHero(
+                      tag: 'title ${widget.record.hashCode}',
+                      child: Text(
+                        widget.record.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    widget.record.subject.subjectName,
-                    style: TextStyle(
-                      color: Color(widget.record.subject.firstColor),
-                      fontWeight: FontWeight.w300,
-                      fontSize: 12,
+                  MaterialHero(
+                    tag: 'subject ${widget.record.hashCode}',
+                    child: Text(
+                      widget.record.subject.subjectName,
+                      style: TextStyle(
+                        color: Color(widget.record.subject.firstColor),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ],
@@ -168,15 +190,7 @@ class _RecordTileState extends State<_RecordTile> {
           ),
         ),
         const SizedBox(width: 12),
-        Text(
-          _getScoreGradeText(),
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 16,
-            height: 1.2,
-          ),
-        ),
+        _buildScoreGradeWidget(),
         const SizedBox(width: 4),
       ],
     );
@@ -187,12 +201,50 @@ class _RecordTileState extends State<_RecordTile> {
     Navigator.pushNamed(context, RecordDetailPage.routeName, arguments: args);
   }
 
-  String _getScoreGradeText() {
+  Widget _buildScoreGradeWidget() {
     int? score = widget.record.score;
     int? grade = widget.record.grade;
-    if (score != null && grade == null) return '$score점';
-    if (score == null && grade != null) return '$grade등급';
-    if (score != null && grade != null) return '$score점\n$grade등급';
-    return '';
+
+    final List<TextSpan> textSpans = [];
+    TextStyle smallTextStyle = TextStyle(
+      fontSize: 12,
+      color: Colors.grey.shade700,
+    );
+
+    if (score != null) {
+      textSpans.add(TextSpan(text: score.toString()));
+      textSpans.add(
+        TextSpan(
+          text: ' 점',
+          style: smallTextStyle,
+        ),
+      );
+    }
+    if (score != null && grade != null) {
+      textSpans.add(const TextSpan(text: '\n'));
+    }
+    if (grade != null) {
+      textSpans.add(TextSpan(text: grade.toString()));
+      textSpans.add(
+        TextSpan(
+          text: ' 등급',
+          style: smallTextStyle,
+        ),
+      );
+    }
+
+    return RichText(
+      textAlign: TextAlign.end,
+      text: TextSpan(
+        style: const TextStyle(
+          fontWeight: FontWeight.w300,
+          fontSize: 18,
+          height: 1.2,
+          color: Colors.black,
+          fontFamily: 'NotoSansKR',
+        ),
+        children: textSpans,
+      ),
+    );
   }
 }
