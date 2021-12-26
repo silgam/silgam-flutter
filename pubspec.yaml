@@ -29,6 +29,7 @@ dependencies:
   intl: ^0.17.0
   json_annotation: ^4.4.0
   uuid: ^3.0.5
+  photo_view: ^0.13.0
 
 dev_dependencies:
   flutter_test:
