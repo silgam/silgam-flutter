@@ -7,10 +7,12 @@ import '../model/problem.dart';
 class ReviewProblemCard extends StatelessWidget {
   final ReviewProblem problem;
   final GestureTapCallback? onTap;
-  final bool imageFromNetwork;
 
-  const ReviewProblemCard({Key? key, required this.problem, this.onTap, this.imageFromNetwork = false})
-      : super(key: key);
+  const ReviewProblemCard({
+    Key? key,
+    required this.problem,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +33,17 @@ class ReviewProblemCard extends StatelessWidget {
                 width: double.infinity,
                 height: double.infinity,
                 child: Builder(builder: (context) {
-                  if (imageFromNetwork) {
+                  String imagePath = problem.imagePaths.first;
+                  if (imagePath.startsWith('http')) {
                     return Image.network(
-                      problem.imagePaths.first,
+                      imagePath,
                       width: double.infinity,
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,
                     );
                   } else {
                     return Image.file(
-                      File(problem.imagePaths.first),
+                      File(imagePath),
                       width: double.infinity,
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,
