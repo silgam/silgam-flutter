@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../model/exam_record.dart';
+import '../model/problem.dart';
 import '../model/subject.dart';
+import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../util/material_hero.dart';
 import '../util/review_problem_card.dart';
 
@@ -190,7 +192,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                   for (final problem in _record.reviewProblems)
                     ReviewProblemCard(
                       problem: problem,
-                      onTap: () {},
+                      onTap: () => _onReviewProblemCardTap(problem),
                     ),
                 ],
               )
@@ -304,6 +306,11 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
         fontWeight: FontWeight.w300,
       ),
     );
+  }
+
+  void _onReviewProblemCardTap(ReviewProblem problem) {
+    final arguments = ReviewProblemDetailPageArguments(problem: problem);
+    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName, arguments: arguments);
   }
 }
 
