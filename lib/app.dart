@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '../review_problem_detail_page/review_problem_detail_page.dart';
@@ -78,3 +79,10 @@ const MaterialColor indigoSwatch = MaterialColor(
   },
 );
 const int _indigoPrimaryValue = 0xFF283593;
+
+const SystemUiOverlayStyle defaultSystemUiOverlayStyle = SystemUiOverlayStyle(
+  statusBarIconBrightness: Brightness.dark,
+  statusBarColor: Colors.transparent,
+  systemNavigationBarIconBrightness: Brightness.dark,
+  systemNavigationBarColor: Colors.transparent,
+);
