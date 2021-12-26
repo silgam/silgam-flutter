@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
+import '../app.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'record_view.dart';
 import 'settings_view.dart';
@@ -28,12 +28,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(
-      value: const SystemUiOverlayStyle(
-        statusBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-      ),
+      value: defaultSystemUiOverlayStyle,
       child: Scaffold(
         backgroundColor: HomePage.backgroundColor,
         body: IndexedStack(
