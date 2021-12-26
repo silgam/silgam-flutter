@@ -191,7 +191,6 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                     ReviewProblemCard(
                       problem: problem,
                       onTap: () {},
-                      imageFromNetwork: true,
                     ),
                 ],
               )
