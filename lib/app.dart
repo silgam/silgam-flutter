@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import '../review_problem_detail_page/review_problem_detail_page.dart';
 import 'clock_page/clock_page.dart';
 import 'edit_record_page/edit_record_page.dart';
 import 'home_page/home_page.dart';
@@ -39,6 +40,11 @@ class SilgamApp extends StatelessWidget {
               pageBuilder: (_, __, ___) => RecordDetailPage(arguments: args),
               transitionsBuilder: (_, Animation<double> animation, __, Widget child) =>
                   FadeTransition(opacity: animation, child: child),
+            );
+          case ReviewProblemDetailPage.routeName:
+            final args = settings.arguments as ReviewProblemDetailPageArguments;
+            return MaterialPageRoute(
+              builder: (_) => ReviewProblemDetailPage(reviewProblem: args.problem),
             );
         }
       },
