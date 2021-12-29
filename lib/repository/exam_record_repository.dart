@@ -38,7 +38,11 @@ class ExamRecordRepository {
   Future<List<ExamRecord>> getMyExamRecords() async {
     final querySnapshot =
         await _recordsRef.where('userId', isEqualTo: _user.uid).orderBy('examStartedTime', descending: true).get();
-    final examRecords = querySnapshot.docs.map((documentSnapshot) => documentSnapshot.data()).toList();
+    final examRecords = querySnapshot.docs.map((documentSnapshot) {
+      final examRecord = documentSnapshot.data();
+      examRecord.documentId = documentSnapshot.id;
+      return examRecord;
+    }).toList();
     return examRecords;
   }
 
