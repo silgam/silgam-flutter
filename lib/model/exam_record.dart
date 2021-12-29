@@ -7,6 +7,8 @@ part 'exam_record.g.dart';
 
 @JsonSerializable()
 class ExamRecord {
+  @JsonKey(ignore: true)
+  String documentId;
   final String userId;
   final String title;
   final Subject subject;
@@ -21,6 +23,7 @@ class ExamRecord {
   final List<ReviewProblem> reviewProblems;
 
   ExamRecord({
+    this.documentId = '',
     required this.userId,
     required this.title,
     required this.subject,
@@ -39,7 +42,7 @@ class ExamRecord {
 
   @override
   String toString() {
-    return 'ExamRecord{userId: $userId, title: $title, subject: $subject, examStartedTime: $examStartedTime, examDurationMinutes: $examDurationMinutes, score: $score, grade: $grade, wrongProblems: $wrongProblems, feedback: $feedback, reviewProblems: $reviewProblems}';
+    return 'ExamRecord{documentId: $documentId, userId: $userId, title: $title, subject: $subject, examStartedTime: $examStartedTime, examDurationMinutes: $examDurationMinutes, score: $score, grade: $grade, wrongProblems: $wrongProblems, feedback: $feedback, reviewProblems: $reviewProblems}';
   }
 
   int getGradeColor() {
