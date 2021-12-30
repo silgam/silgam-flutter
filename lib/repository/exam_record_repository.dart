@@ -26,12 +26,7 @@ class ExamRecordRepository {
   final Uuid _uuid = const Uuid();
 
   Future<DocumentReference<ExamRecord>> addExamRecord(ExamRecord record) async {
-    for (final reviewProblem in record.reviewProblems) {
-      for (int i = 0; i < reviewProblem.imagePaths.length; i++) {
-        final imageUrl = await _uploadImage(reviewProblem.imagePaths[i]);
-        reviewProblem.imagePaths[i] = imageUrl;
-      }
-    }
+    await _uploadProblemImages(record);
     return await _recordsRef.add(record);
   }
 
@@ -46,10 +41,36 @@ class ExamRecordRepository {
     return examRecords;
   }
 
+  Future<void> updateExamRecord(ExamRecord oldRecord, ExamRecord newRecord) async {
+    List<String> oldImages = oldRecord.reviewProblems.expand((element) => element.imagePaths).toList();
+    List<String> newImages = newRecord.reviewProblems.expand((element) => element.imagePaths).toList();
+    for (final oldImage in oldImages) {
+      final isImageRemoved = !newImages.contains(oldImage);
+      if (isImageRemoved) await _deleteImage(oldImage);
+    }
+    await _uploadProblemImages(newRecord);
+    return await _recordsRef.doc(newRecord.documentId).update(newRecord.toJson());
+  }
+
+  Future<void> _uploadProblemImages(ExamRecord record) async {
+    for (final reviewProblem in record.reviewProblems) {
+      for (int i = 0; i < reviewProblem.imagePaths.length; i++) {
+        if (reviewProblem.imagePaths[i].startsWith('http')) continue;
+        final imageUrl = await _uploadImage(reviewProblem.imagePaths[i]);
+        reviewProblem.imagePaths[i] = imageUrl;
+      }
+    }
+  }
+
   Future<String> _uploadImage(String imagePath) async {
     final reference = _problemImagesRef.child(_user.uid).child(_uuid.v1());
     final TaskSnapshot snapshot = await reference.putFile(File(imagePath));
     final String url = await snapshot.ref.getDownloadURL();
     return url;
+  }
+
+  Future<void> _deleteImage(String imagePath) async {
+    final reference = FirebaseStorage.instance.refFromURL(imagePath);
+    return await reference.delete();
   }
 }

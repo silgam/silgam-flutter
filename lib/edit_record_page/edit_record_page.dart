@@ -38,12 +38,26 @@ class _EditRecordPageState extends State<EditRecordPage> {
   Subject _selectedSubject = Subject.language;
   DateTime _examStartedTime = DateTime.now();
   bool _isTitleEmpty = true;
+  bool _isEditingMode = false;
 
-  final UserRepository userRepository = UserRepository();
-  final ExamRecordRepository recordRepository = ExamRecordRepository();
+  final UserRepository _userRepository = UserRepository();
+  final ExamRecordRepository _recordRepository = ExamRecordRepository();
 
   @override
   void initState() {
+    final recordToEdit = widget.arguments.recordToEdit;
+    if (recordToEdit == null) {
+      _isEditingMode = false;
+      _initializeCreateMode();
+    } else {
+      _isEditingMode = true;
+      _initializeEditMode(recordToEdit);
+    }
+    _isTitleEmpty = _titleEditingController.text.isEmpty;
+    super.initState();
+  }
+
+  void _initializeCreateMode() {
     final exam = widget.arguments.inputExam;
     if (exam != null) {
       _examDurationEditingController.text = exam.examDuration.toString();
@@ -54,8 +68,18 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (examStartedTime != null) {
       _examStartedTime = examStartedTime;
     }
+  }
 
-    super.initState();
+  void _initializeEditMode(ExamRecord recordToEdit) {
+    _titleEditingController.text = recordToEdit.title;
+    _selectedSubject = recordToEdit.subject;
+    _examStartedTime = recordToEdit.examStartedTime;
+    _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
+    _gradeEditingController.text = recordToEdit.grade?.toString() ?? '';
+    _examDurationEditingController.text = recordToEdit.examDurationMinutes?.toString() ?? '';
+    _wrongProblems.addAll(recordToEdit.wrongProblems);
+    _feedbackEditingController.text = recordToEdit.feedback;
+    _reviewProblems.addAll(recordToEdit.reviewProblems);
   }
 
   @override
@@ -303,7 +327,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              '저장',
+              _isEditingMode ? '수정' : '저장',
               style: TextStyle(
                 color: _isTitleEmpty ? Colors.grey.shade600 : null,
               ),
@@ -425,7 +449,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   Future<void> saveRecord() async {
     final ExamRecord record = ExamRecord(
-      userId: userRepository.getUser().uid,
+      userId: _userRepository.getUser().uid,
       title: _titleEditingController.text,
       subject: _selectedSubject,
       examStartedTime: _examStartedTime,
@@ -436,16 +460,24 @@ class _EditRecordPageState extends State<EditRecordPage> {
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
     );
-    await recordRepository.addExamRecord(record);
+    if (_isEditingMode) {
+      final oldRecord = widget.arguments.recordToEdit!;
+      record.documentId = oldRecord.documentId;
+      await _recordRepository.updateExamRecord(oldRecord, record);
+    } else {
+      await _recordRepository.addExamRecord(record);
+    }
   }
 }
 
 class EditRecordPageArguments {
   final Exam? inputExam;
   final DateTime? examStartedTime;
+  final ExamRecord? recordToEdit;
 
   EditRecordPageArguments({
     this.inputExam,
     this.examStartedTime,
+    this.recordToEdit,
   });
 }
