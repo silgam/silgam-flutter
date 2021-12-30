@@ -142,10 +142,19 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.file(
-                    File(imagePath),
-                    fit: BoxFit.cover,
-                  ),
+                  Builder(builder: (context) {
+                    if (imagePath.startsWith('http')) {
+                      return Image.network(
+                        imagePath,
+                        fit: BoxFit.cover,
+                      );
+                    } else {
+                      return Image.file(
+                        File(imagePath),
+                        fit: BoxFit.cover,
+                      );
+                    }
+                  }),
                   Container(
                     alignment: Alignment.topLeft,
                     padding: const EdgeInsets.all(2),

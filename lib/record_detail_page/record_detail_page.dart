@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../app.dart';
+import '../edit_record_page/edit_record_page.dart';
 import '../model/exam_record.dart';
 import '../model/problem.dart';
 import '../model/subject.dart';
@@ -92,7 +93,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           Material(
             type: MaterialType.transparency,
             child: IconButton(
-              onPressed: () {},
+              onPressed: _onEditButtonPressed,
               icon: const Icon(Icons.edit),
               splashRadius: 20,
               tooltip: '수정',
@@ -310,6 +311,11 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
         fontWeight: FontWeight.w300,
       ),
     );
+  }
+
+  void _onEditButtonPressed() {
+    final arguments = EditRecordPageArguments(recordToEdit: _record);
+    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {
