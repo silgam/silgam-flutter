@@ -53,6 +53,10 @@ class ExamRecordRepository {
     return await _recordsRef.doc(newRecord.documentId).update(newRecord.toJson());
   }
 
+  Future<void> deleteExamRecord(ExamRecord examRecord) async {
+    return await _recordsRef.doc(examRecord.documentId).delete();
+  }
+
   Future<void> _uploadProblemImages(ExamRecord record) async {
     for (final reviewProblem in record.reviewProblems) {
       for (int i = 0; i < reviewProblem.imagePaths.length; i++) {
