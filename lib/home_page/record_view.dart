@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -10,8 +12,12 @@ import '../util/scaffold_body.dart';
 
 class RecordView extends StatefulWidget {
   static const title = '기록';
+  final Stream<RecordViewEvent> eventStream;
 
-  const RecordView({Key? key}) : super(key: key);
+  const RecordView({
+    Key? key,
+    required this.eventStream,
+  }) : super(key: key);
 
   @override
   State<RecordView> createState() => _RecordViewState();
@@ -21,11 +27,19 @@ class _RecordViewState extends State<RecordView> {
   final ExamRecordRepository _recordRepository = ExamRecordRepository();
   List<ExamRecord> _records = [];
   bool _isFirstRefresh = true;
+  late final StreamSubscription _eventStreamSubscription;
 
   @override
   void initState() {
     super.initState();
     _onRefresh();
+    _eventStreamSubscription = widget.eventStream.listen((RecordViewEvent event) {
+      switch (event) {
+        case RecordViewEvent.refresh:
+          _onRefresh();
+          break;
+      }
+    });
   }
 
   @override
@@ -60,7 +74,7 @@ class _RecordViewState extends State<RecordView> {
     } else {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, index) {
+              (context, index) {
             return _RecordTile(record: _records[index]);
           },
           childCount: _records.length,
@@ -73,6 +87,12 @@ class _RecordViewState extends State<RecordView> {
     _records = await _recordRepository.getMyExamRecords();
     _isFirstRefresh = false;
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _eventStreamSubscription.cancel();
+    super.dispose();
   }
 }
 
@@ -248,3 +268,5 @@ class _RecordTileState extends State<_RecordTile> {
     );
   }
 }
+
+enum RecordViewEvent { refresh }

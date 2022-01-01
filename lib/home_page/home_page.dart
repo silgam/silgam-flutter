@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../app.dart';
@@ -18,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final StreamController<RecordViewEvent> _recordViewEventStreamController = StreamController.broadcast();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -34,10 +37,10 @@ class _HomePageState extends State<HomePage> {
         body: IndexedStack(
           index: _selectedIndex,
           sizing: StackFit.expand,
-          children: const [
-            TakeExamView(),
-            RecordView(),
-            SettingsView(),
+          children: [
+            const TakeExamView(),
+            RecordView(eventStream: _recordViewEventStreamController.stream),
+            const SettingsView(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -72,8 +75,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _onAddExamRecordButtonPressed() {
+  @override
+  void dispose() {
+    _recordViewEventStreamController.close();
+    super.dispose();
+  }
+
+  void _onAddExamRecordButtonPressed() async {
     final args = EditRecordPageArguments();
-    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: args);
+    await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: args);
+    _recordViewEventStreamController.add(RecordViewEvent.refresh);
   }
 }
