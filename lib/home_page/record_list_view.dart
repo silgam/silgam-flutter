@@ -10,20 +10,20 @@ import '../repository/exam_record_repository.dart';
 import '../util/material_hero.dart';
 import '../util/scaffold_body.dart';
 
-class RecordView extends StatefulWidget {
+class RecordListView extends StatefulWidget {
   static const title = '기록';
-  final Stream<RecordViewEvent> eventStream;
+  final Stream<RecordListViewEvent> eventStream;
 
-  const RecordView({
+  const RecordListView({
     Key? key,
     required this.eventStream,
   }) : super(key: key);
 
   @override
-  State<RecordView> createState() => _RecordViewState();
+  State<RecordListView> createState() => _RecordListViewState();
 }
 
-class _RecordViewState extends State<RecordView> {
+class _RecordListViewState extends State<RecordListView> {
   final ExamRecordRepository _recordRepository = ExamRecordRepository();
   List<ExamRecord> _records = [];
   bool _isFirstRefresh = true;
@@ -33,9 +33,9 @@ class _RecordViewState extends State<RecordView> {
   void initState() {
     super.initState();
     _onRefresh();
-    _eventStreamSubscription = widget.eventStream.listen((RecordViewEvent event) {
+    _eventStreamSubscription = widget.eventStream.listen((RecordListViewEvent event) {
       switch (event) {
-        case RecordViewEvent.refresh:
+        case RecordListViewEvent.refresh:
           _onRefresh();
           break;
       }
@@ -47,7 +47,7 @@ class _RecordViewState extends State<RecordView> {
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: ScaffoldBody(
-        title: RecordView.title,
+        title: RecordListView.title,
         child: SliverPadding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           sliver: _buildMainBody(),
@@ -269,4 +269,4 @@ class _RecordTileState extends State<_RecordTile> {
   }
 }
 
-enum RecordViewEvent { refresh }
+enum RecordListViewEvent { refresh }

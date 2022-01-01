@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../app.dart';
 import '../edit_record_page/edit_record_page.dart';
-import 'record_view.dart';
+import 'record_list_view.dart';
 import 'settings_view.dart';
 import 'take_exam_view.dart';
 
@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  final StreamController<RecordViewEvent> _recordViewEventStreamController = StreamController.broadcast();
+  final StreamController<RecordListViewEvent> _recordListViewEventStreamController = StreamController.broadcast();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
           sizing: StackFit.expand,
           children: [
             const TakeExamView(),
-            RecordView(eventStream: _recordViewEventStreamController.stream),
+            RecordListView(eventStream: _recordListViewEventStreamController.stream),
             const SettingsView(),
           ],
         ),
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.format_list_bulleted),
-              label: RecordView.title,
+              label: RecordListView.title,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
@@ -77,13 +77,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _recordViewEventStreamController.close();
+    _recordListViewEventStreamController.close();
     super.dispose();
   }
 
   void _onAddExamRecordButtonPressed() async {
     final args = EditRecordPageArguments();
     await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: args);
-    _recordViewEventStreamController.add(RecordViewEvent.refresh);
+    _recordListViewEventStreamController.add(RecordListViewEvent.refresh);
   }
 }
