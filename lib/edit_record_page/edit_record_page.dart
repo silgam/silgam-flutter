@@ -92,12 +92,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
           child: Stack(
             children: [
               _buildBody(),
-              if (_isSaving)
-                Positioned.fill(
+              Positioned.fill(
+                child: AnimatedOpacity(
+                  duration: const Duration(seconds: 2),
+                  opacity: _isSaving ? 1 : 0,
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     alignment: Alignment.center,
-                    color: Colors.white.withAlpha(100),
+                    color: _isSaving ? Colors.white.withAlpha(100) : null,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
@@ -111,6 +113,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                     ),
                   ),
                 ),
+              ),
             ],
           ),
         ),
