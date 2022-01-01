@@ -40,6 +40,12 @@ class ReviewProblemCard extends StatelessWidget {
                       width: double.infinity,
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,
+                      loadingBuilder: (_, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      },
                     );
                   } else {
                     return Image.file(
