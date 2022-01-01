@@ -3,16 +3,16 @@ import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
 import '../../model/subject.dart';
-import '../../record_detail_page/record_detail_page.dart';
-import '../../repository/exam_record_repository.dart';
 import '../../util/material_hero.dart';
 
 class RecordTile extends StatefulWidget {
   final ExamRecord record;
+  final GestureTapCallback onTileTap;
 
   const RecordTile({
     Key? key,
     required this.record,
+    required this.onTileTap,
   }) : super(key: key);
 
   @override
@@ -20,15 +20,6 @@ class RecordTile extends StatefulWidget {
 }
 
 class RecordTileState extends State<RecordTile> {
-  late ExamRecord _record;
-  final ExamRecordRepository _recordRepository = ExamRecordRepository();
-
-  @override
-  void initState() {
-    super.initState();
-    _record = widget.record;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,14 +37,14 @@ class RecordTileState extends State<RecordTile> {
               alignment: Alignment.centerRight,
               child: Container(
                 width: 1.5,
-                color: Color(_record.getGradeColor()),
+                color: Color(widget.record.getGradeColor()),
               ),
             ),
           ),
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: _onTileTap,
+              onTap: widget.onTileTap,
               splashColor: Colors.transparent,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -74,9 +65,9 @@ class RecordTileState extends State<RecordTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               MaterialHero(
-                tag: 'time ${_record.hashCode}',
+                tag: 'time ${widget.record.hashCode}',
                 child: Text(
-                  DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
+                  DateFormat.yMEd('ko_KR').add_Hm().format(widget.record.examStartedTime),
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 12,
@@ -90,9 +81,9 @@ class RecordTileState extends State<RecordTile> {
                 children: [
                   Flexible(
                     child: MaterialHero(
-                      tag: 'title ${_record.hashCode}',
+                      tag: 'title ${widget.record.hashCode}',
                       child: Text(
-                        _record.title,
+                        widget.record.title,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
@@ -103,11 +94,11 @@ class RecordTileState extends State<RecordTile> {
                   ),
                   const SizedBox(width: 4),
                   MaterialHero(
-                    tag: 'subject ${_record.hashCode}',
+                    tag: 'subject ${widget.record.hashCode}',
                     child: Text(
-                      _record.subject.subjectName,
+                      widget.record.subject.subjectName,
                       style: TextStyle(
-                        color: Color(_record.subject.firstColor),
+                        color: Color(widget.record.subject.firstColor),
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
                       ),
@@ -115,10 +106,10 @@ class RecordTileState extends State<RecordTile> {
                   ),
                 ],
               ),
-              if (_record.feedback.isNotEmpty) const SizedBox(height: 6),
-              if (_record.feedback.isNotEmpty)
+              if (widget.record.feedback.isNotEmpty) const SizedBox(height: 6),
+              if (widget.record.feedback.isNotEmpty)
                 Text(
-                  _record.feedback,
+                  widget.record.feedback,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -137,8 +128,8 @@ class RecordTileState extends State<RecordTile> {
   }
 
   Widget _buildScoreGradeWidget() {
-    int? score = _record.score;
-    int? grade = _record.grade;
+    int? score = widget.record.score;
+    int? grade = widget.record.grade;
 
     final List<TextSpan> textSpans = [];
     TextStyle smallTextStyle = TextStyle(
@@ -181,16 +172,5 @@ class RecordTileState extends State<RecordTile> {
         children: textSpans,
       ),
     );
-  }
-
-  void _onTileTap() async {
-    final args = RecordDetailPageArguments(record: _record);
-    await Navigator.pushNamed(context, RecordDetailPage.routeName, arguments: args);
-    _refresh();
-  }
-
-  void _refresh() async {
-    _record = await _recordRepository.getExamRecordById(_record.documentId);
-    setState(() {});
   }
 }
