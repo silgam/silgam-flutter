@@ -24,7 +24,7 @@ class RecordListView extends StatefulWidget {
 class _RecordListViewState extends State<RecordListView> {
   final ExamRecordRepository _recordRepository = ExamRecordRepository();
   List<ExamRecord> _records = [];
-  bool _isFirstRefresh = true;
+  bool _isRefreshing = false;
   late final StreamSubscription _eventStreamSubscription;
 
   @override
@@ -36,27 +36,19 @@ class _RecordListViewState extends State<RecordListView> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
+    return ScaffoldBody(
+      title: RecordListView.title,
+      isRefreshing: _isRefreshing,
       onRefresh: _onRefresh,
-      child: ScaffoldBody(
-        title: RecordListView.title,
-        child: SliverPadding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          sliver: _buildMainBody(),
-        ),
+      child: SliverPadding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        sliver: _buildMainBody(),
       ),
     );
   }
 
   Widget _buildMainBody() {
-    if (_records.isEmpty && _isFirstRefresh) {
-      return SliverFillRemaining(
-        child: Container(
-          alignment: Alignment.center,
-          child: const CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
-    } else if (_records.isEmpty) {
+    if (_records.isEmpty) {
       return SliverFillRemaining(
         child: Container(
           alignment: Alignment.center,
@@ -79,9 +71,13 @@ class _RecordListViewState extends State<RecordListView> {
   }
 
   Future<void> _onRefresh() async {
+    setState(() {
+      _isRefreshing = true;
+    });
     _records = await _recordRepository.getMyExamRecords();
-    _isFirstRefresh = false;
-    setState(() {});
+    setState(() {
+      _isRefreshing = false;
+    });
   }
 
   void _onEventReceived(RecordListViewEvent event) {
