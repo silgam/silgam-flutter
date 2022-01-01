@@ -9,6 +9,7 @@ import '../model/problem.dart';
 import '../model/subject.dart';
 import '../repository/exam_record_repository.dart';
 import '../repository/user_repository.dart';
+import '../util/progress_overlay.dart';
 import '../util/review_problem_card.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
@@ -89,32 +90,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         body: SafeArea(
-          child: Stack(
-            children: [
-              _buildBody(),
-              Positioned.fill(
-                child: AnimatedOpacity(
-                  duration: const Duration(seconds: 2),
-                  opacity: _isSaving ? 1 : 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    alignment: Alignment.center,
-                    color: _isSaving ? Colors.white.withAlpha(100) : null,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        CircularProgressIndicator(strokeWidth: 3),
-                        SizedBox(height: 20),
-                        Text(
-                          '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          child: ProgressOverlay(
+            child: _buildBody(),
+            isProgressing: _isSaving,
+            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
           ),
         ),
       ),
