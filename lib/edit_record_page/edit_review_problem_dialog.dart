@@ -147,6 +147,16 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                       return Image.network(
                         imagePath,
                         fit: BoxFit.cover,
+                        loadingBuilder: (_, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        },
                       );
                     } else {
                       return Image.file(
