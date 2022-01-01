@@ -8,11 +8,15 @@ import '../home_page/home_page.dart';
 class ScaffoldBody extends StatelessWidget {
   final String title;
   final Widget child;
+  final RefreshCallback? onRefresh;
+  final bool isRefreshing;
 
   const ScaffoldBody({
     Key? key,
     required this.title,
     required this.child,
+    this.onRefresh,
+    this.isRefreshing = false,
   }) : super(key: key);
 
   @override
@@ -40,6 +44,35 @@ class ScaffoldBody extends StatelessWidget {
               ),
             ),
           ),
+          actions: [
+            if (onRefresh != null)
+              Container(
+                margin: const EdgeInsets.only(right: 8, top: 12),
+                alignment: Alignment.center,
+                child: Builder(builder: (context) {
+                  if (isRefreshing) {
+                    return const IconButton(
+                      onPressed: null,
+                      icon: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return IconButton(
+                      onPressed: onRefresh,
+                      icon: const Icon(Icons.refresh),
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                    );
+                  }
+                }),
+              ),
+          ],
           foregroundColor: Colors.black,
           backgroundColor: HomePage.backgroundColor,
           // Because of this https://github.com/flutter/flutter/issues/24893
