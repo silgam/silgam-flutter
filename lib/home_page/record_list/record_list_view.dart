@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../model/exam_record.dart';
+import '../../record_detail_page/record_detail_page.dart';
 import '../../repository/exam_record_repository.dart';
 import '../../util/scaffold_body.dart';
 import 'record_tile.dart';
@@ -30,13 +31,7 @@ class _RecordListViewState extends State<RecordListView> {
   void initState() {
     super.initState();
     _onRefresh();
-    _eventStreamSubscription = widget.eventStream.listen((RecordListViewEvent event) {
-      switch (event) {
-        case RecordListViewEvent.refresh:
-          _onRefresh();
-          break;
-      }
-    });
+    _eventStreamSubscription = widget.eventStream.listen(_onEventReceived);
   }
 
   @override
@@ -72,7 +67,10 @@ class _RecordListViewState extends State<RecordListView> {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            return RecordTile(record: _records[index]);
+            return RecordTile(
+              record: _records[index],
+              onTileTap: () => _onTileTap(index),
+            );
           },
           childCount: _records.length,
         ),
@@ -84,6 +82,20 @@ class _RecordListViewState extends State<RecordListView> {
     _records = await _recordRepository.getMyExamRecords();
     _isFirstRefresh = false;
     setState(() {});
+  }
+
+  void _onEventReceived(RecordListViewEvent event) {
+    switch (event) {
+      case RecordListViewEvent.refresh:
+        _onRefresh();
+        break;
+    }
+  }
+
+  void _onTileTap(int index) async {
+    final args = RecordDetailPageArguments(record: _records[index]);
+    await Navigator.pushNamed(context, RecordDetailPage.routeName, arguments: args);
+    _onRefresh();
   }
 
   @override
