@@ -9,6 +9,7 @@ import '../model/subject.dart';
 import '../repository/exam_record_repository.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../util/material_hero.dart';
+import '../util/progress_overlay.dart';
 import '../util/review_problem_card.dart';
 
 class RecordDetailPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class RecordDetailPage extends StatefulWidget {
 class _RecordDetailPageState extends State<RecordDetailPage> {
   late ExamRecord _record;
   final ExamRecordRepository _recordRepository = ExamRecordRepository();
+  bool _isDeleting = false;
 
   @override
   void initState() {
@@ -41,38 +43,42 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       value: defaultSystemUiOverlayStyle,
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              _buildMenuBar(),
-              Expanded(
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: _buildContent(),
+        body: ProgressOverlay(
+          isProgressing: _isDeleting,
+          description: '삭제하는 중',
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                _buildMenuBar(),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: _buildContent(),
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.white, Colors.white.withAlpha(0)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                      Container(
+                        height: 8,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.white, Colors.white.withAlpha(0)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -105,7 +111,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           Material(
             type: MaterialType.transparency,
             child: IconButton(
-              onPressed: () {},
+              onPressed: _onDeleteButtonPressed,
               icon: const Icon(Icons.delete),
               splashRadius: 20,
               tooltip: '삭제',
@@ -325,6 +331,49 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     final arguments = EditRecordPageArguments(recordToEdit: _record);
     await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
     _refresh();
+  }
+
+  void _onDeleteButtonPressed() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('정말 이 기록을 삭제하실 건가요?'),
+          content: Text(_record.title),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                '취소',
+                style: TextStyle(color: Colors.grey),
+              ),
+              style: TextButton.styleFrom(primary: Colors.grey),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _deleteRecord();
+              },
+              child: const Text(
+                '삭제',
+                style: TextStyle(color: Colors.red),
+              ),
+              style: TextButton.styleFrom(primary: Colors.red),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteRecord() async {
+    setState(() {
+      _isDeleting = true;
+    });
+    _recordRepository.deleteExamRecord(_record);
+    Navigator.pop(context);
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {
