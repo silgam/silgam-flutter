@@ -74,7 +74,7 @@ class _RecordListViewState extends State<RecordListView> {
     } else {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
-              (context, index) {
+          (context, index) {
             return _RecordTile(record: _records[index]);
           },
           childCount: _records.length,
@@ -109,6 +109,15 @@ class _RecordTile extends StatefulWidget {
 }
 
 class _RecordTileState extends State<_RecordTile> {
+  late ExamRecord _record;
+  final ExamRecordRepository _recordRepository = ExamRecordRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    _record = widget.record;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -126,7 +135,7 @@ class _RecordTileState extends State<_RecordTile> {
               alignment: Alignment.centerRight,
               child: Container(
                 width: 1.5,
-                color: Color(widget.record.getGradeColor()),
+                color: Color(_record.getGradeColor()),
               ),
             ),
           ),
@@ -154,9 +163,9 @@ class _RecordTileState extends State<_RecordTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               MaterialHero(
-                tag: 'time ${widget.record.hashCode}',
+                tag: 'time ${_record.hashCode}',
                 child: Text(
-                  DateFormat.yMEd('ko_KR').add_Hm().format(widget.record.examStartedTime),
+                  DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 12,
@@ -170,9 +179,9 @@ class _RecordTileState extends State<_RecordTile> {
                 children: [
                   Flexible(
                     child: MaterialHero(
-                      tag: 'title ${widget.record.hashCode}',
+                      tag: 'title ${_record.hashCode}',
                       child: Text(
-                        widget.record.title,
+                        _record.title,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
@@ -183,11 +192,11 @@ class _RecordTileState extends State<_RecordTile> {
                   ),
                   const SizedBox(width: 4),
                   MaterialHero(
-                    tag: 'subject ${widget.record.hashCode}',
+                    tag: 'subject ${_record.hashCode}',
                     child: Text(
-                      widget.record.subject.subjectName,
+                      _record.subject.subjectName,
                       style: TextStyle(
-                        color: Color(widget.record.subject.firstColor),
+                        color: Color(_record.subject.firstColor),
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
                       ),
@@ -195,10 +204,10 @@ class _RecordTileState extends State<_RecordTile> {
                   ),
                 ],
               ),
-              if (widget.record.feedback.isNotEmpty) const SizedBox(height: 6),
-              if (widget.record.feedback.isNotEmpty)
+              if (_record.feedback.isNotEmpty) const SizedBox(height: 6),
+              if (_record.feedback.isNotEmpty)
                 Text(
-                  widget.record.feedback,
+                  _record.feedback,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -216,14 +225,9 @@ class _RecordTileState extends State<_RecordTile> {
     );
   }
 
-  void _onTileTap() {
-    final args = RecordDetailPageArguments(record: widget.record);
-    Navigator.pushNamed(context, RecordDetailPage.routeName, arguments: args);
-  }
-
   Widget _buildScoreGradeWidget() {
-    int? score = widget.record.score;
-    int? grade = widget.record.grade;
+    int? score = _record.score;
+    int? grade = _record.grade;
 
     final List<TextSpan> textSpans = [];
     TextStyle smallTextStyle = TextStyle(
@@ -266,6 +270,17 @@ class _RecordTileState extends State<_RecordTile> {
         children: textSpans,
       ),
     );
+  }
+
+  void _onTileTap() async {
+    final args = RecordDetailPageArguments(record: _record);
+    await Navigator.pushNamed(context, RecordDetailPage.routeName, arguments: args);
+    _refresh();
+  }
+
+  void _refresh() async {
+    _record = await _recordRepository.getExamRecordById(_record.documentId);
+    setState(() {});
   }
 }
 

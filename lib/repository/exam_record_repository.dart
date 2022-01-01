@@ -30,14 +30,15 @@ class ExamRecordRepository {
     return await _recordsRef.add(record);
   }
 
+  Future<ExamRecord> getExamRecordById(String documentId) async {
+    final snapshot = await _recordsRef.doc(documentId).get();
+    return snapshot.toExamRecord();
+  }
+
   Future<List<ExamRecord>> getMyExamRecords() async {
     final querySnapshot =
         await _recordsRef.where('userId', isEqualTo: _user.uid).orderBy('examStartedTime', descending: true).get();
-    final examRecords = querySnapshot.docs.map((documentSnapshot) {
-      final examRecord = documentSnapshot.data();
-      examRecord.documentId = documentSnapshot.id;
-      return examRecord;
-    }).toList();
+    final examRecords = querySnapshot.docs.map((snapshot) => snapshot.toExamRecord()).toList();
     return examRecords;
   }
 
@@ -72,5 +73,13 @@ class ExamRecordRepository {
   Future<void> _deleteImage(String imagePath) async {
     final reference = FirebaseStorage.instance.refFromURL(imagePath);
     return await reference.delete();
+  }
+}
+
+extension on DocumentSnapshot<ExamRecord> {
+  ExamRecord toExamRecord() {
+    ExamRecord record = data()!;
+    record.documentId = id;
+    return record;
   }
 }
