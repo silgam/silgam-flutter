@@ -6,6 +6,7 @@ import '../edit_record_page/edit_record_page.dart';
 import '../model/exam_record.dart';
 import '../model/problem.dart';
 import '../model/subject.dart';
+import '../repository/exam_record_repository.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../util/material_hero.dart';
 import '../util/review_problem_card.dart';
@@ -24,12 +25,14 @@ class RecordDetailPage extends StatefulWidget {
 }
 
 class _RecordDetailPageState extends State<RecordDetailPage> {
-  late final ExamRecord _record;
+  late ExamRecord _record;
+  final ExamRecordRepository _recordRepository = ExamRecordRepository();
 
   @override
   void initState() {
     super.initState();
     _record = widget.arguments.record;
+    _refresh();
   }
 
   @override
@@ -313,9 +316,15 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  void _onEditButtonPressed() {
+  void _refresh() async {
+    _record = await _recordRepository.getExamRecordById(_record.documentId);
+    setState(() {});
+  }
+
+  void _onEditButtonPressed() async {
     final arguments = EditRecordPageArguments(recordToEdit: _record);
-    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
+    await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
+    _refresh();
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {
