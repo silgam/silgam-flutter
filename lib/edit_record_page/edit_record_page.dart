@@ -39,6 +39,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   DateTime _examStartedTime = DateTime.now();
   bool _isTitleEmpty = true;
   bool _isEditingMode = false;
+  bool _isSaving = false;
 
   final UserRepository _userRepository = UserRepository();
   final ExamRecordRepository _recordRepository = ExamRecordRepository();
@@ -88,7 +89,30 @@ class _EditRecordPageState extends State<EditRecordPage> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         body: SafeArea(
-          child: _buildBody(),
+          child: Stack(
+            children: [
+              _buildBody(),
+              if (_isSaving)
+                Positioned.fill(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    color: Colors.white.withAlpha(100),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        CircularProgressIndicator(strokeWidth: 3),
+                        SizedBox(height: 20),
+                        Text(
+                          '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -448,6 +472,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   Future<void> saveRecord() async {
+    if (_isSaving) return;
+    setState(() {
+      _isSaving = true;
+    });
+
     final ExamRecord record = ExamRecord(
       userId: _userRepository.getUser().uid,
       title: _titleEditingController.text,
@@ -467,6 +496,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
     } else {
       await _recordRepository.addExamRecord(record);
     }
+
+    setState(() {
+      _isSaving = false;
+    });
   }
 }
 
