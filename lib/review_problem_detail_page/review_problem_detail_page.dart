@@ -20,6 +20,7 @@ class ReviewProblemDetailPage extends StatefulWidget {
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   bool _hideUi = false;
   bool _hideMemo = true;
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                 onTapUp: _onPhotoViewTapUp,
                 imageProvider: NetworkImage(problem.imagePaths[index]),
               ),
+              onPageChanged: _onPhotoChanged,
               loadingBuilder: (context, event) => const Center(
                 child: CircularProgressIndicator(
                   color: Colors.white,
@@ -55,6 +57,12 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
                 child: _hideUi ? const SizedBox.shrink() : _buildMenuBar(),
+              ),
+            ),
+            SafeArea(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 100),
+                child: _hideUi ? const SizedBox.shrink() : _buildPageIndicator(),
               ),
             ),
           ],
@@ -130,9 +138,36 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     );
   }
 
+  Widget _buildPageIndicator() {
+    return Container(
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.all(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: Colors.black38,
+        ),
+        child: Text(
+          '${currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
+          style: const TextStyle(
+            color: Colors.white,
+            height: 1.21,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _onPhotoViewTapUp(_, __, ___) {
     setState(() {
       _hideUi = !_hideUi;
+    });
+  }
+
+  void _onPhotoChanged(int index) {
+    setState(() {
+      currentIndex = index;
     });
   }
 
