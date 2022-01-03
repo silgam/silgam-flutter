@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../app.dart';
 import '../edit_record_page/edit_record_page.dart';
+import '../repository/user_repository.dart';
 import 'record_list/record_list_view.dart';
 import 'settings_view.dart';
 import 'take_exam_view.dart';
@@ -24,12 +25,15 @@ class _HomePageState extends State<HomePage> {
   final StreamController<RecordListViewEvent> _recordListViewEventStreamController = StreamController.broadcast();
   final StreamController<SettingsViewEvent> _settingsViewEventStreamController = StreamController.broadcast();
 
+  bool get _isNotSignedIn => UserRepository().isNotSignedIn();
+
   @override
   void initState() {
     super.initState();
     FirebaseAuth.instance.userChanges().listen((_) {
       _recordListViewEventStreamController.add(RecordListViewEvent.refreshUser);
       _settingsViewEventStreamController.add(SettingsViewEvent.refreshUser);
+      setState(() {});
     });
   }
 
@@ -76,7 +80,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        floatingActionButton: _selectedIndex == 1
+        floatingActionButton: _selectedIndex == 1 && !_isNotSignedIn
             ? FloatingActionButton(
                 onPressed: _onAddExamRecordButtonPressed,
                 child: const Icon(Icons.add),
