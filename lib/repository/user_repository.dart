@@ -10,4 +10,8 @@ class UserRepository {
   User getUser() {
     return FirebaseAuth.instance.currentUser!;
   }
+
+  User? getUserOrNull() {
+    return FirebaseAuth.instance.currentUser;
+  }
 }

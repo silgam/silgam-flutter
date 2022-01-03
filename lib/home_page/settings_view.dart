@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../login_page/login_page.dart';
 import '../repository/user_repository.dart';
 import '../util/scaffold_body.dart';
 
@@ -16,7 +17,13 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  final User _user = UserRepository().getUser();
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +31,14 @@ class _SettingsViewState extends State<SettingsView> {
       title: SettingsView.title,
       child: SliverList(
         delegate: SliverChildListDelegate([
-          _buildLoginInfo(),
+          _user == null ? _buildLoginButton() : _buildLoginInfo(),
           const _Divider(),
-          _SettingTile(
-            onTap: () {},
-            title: '로그아웃',
-          ),
-          const _Divider(),
+          if (_user != null)
+            _SettingTile(
+              onTap: _onLogoutTap,
+              title: '로그아웃',
+            ),
+          if (_user != null) const _Divider(),
           FutureBuilder(
             future: PackageInfo.fromPlatform(),
             builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
@@ -52,9 +60,62 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
+  Widget _buildLoginButton() {
+    return Container(
+      margin: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).primaryColor,
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: _onLoginTap,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.white10,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.login,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '로그인',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      '로그인하면 실감의 더 많은 기능들을 누릴 수 있어요!',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withAlpha(200),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildLoginInfo() {
+    final User? user = _user;
+    if (user == null) throw Exception('User is null.');
     String providerIconPath = '';
-    final String providerId = _user.providerData.first.providerId;
+    final String providerId = user.providerData.first.providerId;
     if (providerId.contains('google')) {
       providerIconPath = 'assets/google_icon.svg';
     } else if (providerId.contains('facebook')) {
@@ -72,7 +133,7 @@ class _SettingsViewState extends State<SettingsView> {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(_user.photoURL ?? ''),
+              backgroundImage: NetworkImage(user.photoURL ?? ''),
               backgroundColor: Colors.grey,
             ),
             const SizedBox(width: 16),
@@ -80,14 +141,14 @@ class _SettingsViewState extends State<SettingsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _user.displayName ?? '',
+                  user.displayName ?? '',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
-                  _user.email ?? '',
+                  user.email ?? '',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey.shade700,
@@ -106,6 +167,46 @@ class _SettingsViewState extends State<SettingsView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _refreshUser() {
+    setState(() {
+      _user = UserRepository().getUserOrNull();
+    });
+  }
+
+  void _onLoginTap() async {
+    await Navigator.pushNamed(context, LoginPage.routeName);
+    _refreshUser();
+  }
+
+  void _onLogoutTap() async {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('로그아웃하실 건가요?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(primary: Colors.grey),
+            child: const Text(
+              '취소',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              _refreshUser();
+              Navigator.pop(context);
+            },
+            child: const Text('로그아웃'),
+          )
+        ],
       ),
     );
   }
