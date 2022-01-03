@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -101,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(width: 28),
               _LoginButton(
-                onTap: _onFaceLoginTapped,
+                onTap: _onFacebookLoginTapped,
                 assetName: 'assets/facebook_icon.svg',
               ),
             ],
@@ -128,7 +129,14 @@ class _LoginPageState extends State<LoginPage> {
     _loginFinished();
   }
 
-  void _onFaceLoginTapped() {}
+  void _onFacebookLoginTapped() async {
+    final LoginResult loginResult = await FacebookAuth.instance.login();
+    final AccessToken? accessToken = loginResult.accessToken;
+    if (accessToken == null) return;
+    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(accessToken.token);
+    await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+    _loginFinished();
+  }
 
   void _loginFinished() {
     final String? userName = FirebaseAuth.instance.currentUser?.displayName;
