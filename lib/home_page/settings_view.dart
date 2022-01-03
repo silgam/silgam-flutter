@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../login_page/login_page.dart';
 import '../repository/user_repository.dart';
+import '../util/login_button.dart';
 import '../util/scaffold_body.dart';
 
 class SettingsView extends StatefulWidget {
@@ -31,7 +32,12 @@ class _SettingsViewState extends State<SettingsView> {
       title: SettingsView.title,
       child: SliverList(
         delegate: SliverChildListDelegate([
-          _user == null ? _buildLoginButton() : _buildLoginInfo(),
+          _user == null
+              ? Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: LoginButton(onTap: _onLoginTap),
+                )
+              : _buildLoginInfo(),
           const _Divider(),
           if (_user != null)
             _SettingTile(
@@ -56,57 +62,6 @@ class _SettingsViewState extends State<SettingsView> {
             },
           ),
         ]),
-      ),
-    );
-  }
-
-  Widget _buildLoginButton() {
-    return Container(
-      margin: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Theme.of(context).primaryColor,
-      ),
-      clipBehavior: Clip.hardEdge,
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          onTap: _onLoginTap,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.white10,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.login,
-                  color: Colors.white,
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '로그인',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      '로그인하면 실감의 더 많은 기능들을 누릴 수 있어요!',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withAlpha(200),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
