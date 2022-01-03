@@ -95,12 +95,12 @@ class _LoginPageState extends State<LoginPage> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              LoginButton(
+              _LoginButton(
                 onTap: _onGoogleLoginTapped,
                 assetName: 'assets/google_icon.svg',
               ),
               const SizedBox(width: 28),
-              LoginButton(
+              _LoginButton(
                 onTap: _onFaceLoginTapped,
                 assetName: 'assets/facebook_icon.svg',
               ),
@@ -139,11 +139,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-class LoginButton extends StatelessWidget {
+class _LoginButton extends StatelessWidget {
   final String assetName;
   final GestureTapCallback onTap;
 
-  const LoginButton({
+  const _LoginButton({
     Key? key,
     required this.onTap,
     required this.assetName,
