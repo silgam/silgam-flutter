@@ -30,7 +30,7 @@ class _RecordListViewState extends State<RecordListView> {
   bool _isRefreshing = false;
   late final StreamSubscription _eventStreamSubscription;
 
-  bool get isNotSignedIn => UserRepository().isNotSignedIn();
+  bool get _isNotSignedIn => UserRepository().isNotSignedIn();
 
   @override
   void initState() {
@@ -44,13 +44,13 @@ class _RecordListViewState extends State<RecordListView> {
     return ScaffoldBody(
       title: RecordListView.title,
       isRefreshing: _isRefreshing,
-      onRefresh: isNotSignedIn ? null : _onRefresh,
+      onRefresh: _isNotSignedIn ? null : _onRefresh,
       child: _buildMainBody(),
     );
   }
 
   Widget _buildMainBody() {
-    if (isNotSignedIn) {
+    if (_isNotSignedIn) {
       return SliverFillRemaining(
         hasScrollBody: false,
         child: Container(
@@ -90,7 +90,7 @@ class _RecordListViewState extends State<RecordListView> {
   }
 
   Future<void> _onRefresh() async {
-    if (isNotSignedIn) return;
+    if (_isNotSignedIn) return;
     setState(() {
       _isRefreshing = true;
     });
