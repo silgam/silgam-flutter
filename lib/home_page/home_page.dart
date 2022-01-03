@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../app.dart';
@@ -21,6 +22,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final StreamController<RecordListViewEvent> _recordListViewEventStreamController = StreamController.broadcast();
+  final StreamController<SettingsViewEvent> _settingsViewEventStreamController = StreamController.broadcast();
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.userChanges().listen((_) {
+      _recordListViewEventStreamController.add(RecordListViewEvent.refreshUser);
+      _settingsViewEventStreamController.add(SettingsViewEvent.refreshUser);
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -40,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             const TakeExamView(),
             RecordListView(eventStream: _recordListViewEventStreamController.stream),
-            const SettingsView(),
+            SettingsView(eventStream: _settingsViewEventStreamController.stream),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -78,6 +89,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _recordListViewEventStreamController.close();
+    _settingsViewEventStreamController.close();
     super.dispose();
   }
 
