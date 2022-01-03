@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">실감</string>
+    <string name="facebook_app_id">457631255986966</string>
+    <string name="fb_login_protocol_scheme">fb457631255986966</string>
+</resources>
