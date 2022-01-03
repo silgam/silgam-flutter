@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,8 +12,12 @@ import '../util/scaffold_body.dart';
 
 class SettingsView extends StatefulWidget {
   static const title = '설정';
+  final Stream<SettingsViewEvent> eventStream;
 
-  const SettingsView({Key? key}) : super(key: key);
+  const SettingsView({
+    Key? key,
+    required this.eventStream,
+  }) : super(key: key);
 
   @override
   State<SettingsView> createState() => _SettingsViewState();
@@ -19,11 +25,13 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   User? _user;
+  late final StreamSubscription _eventStreamSubscription;
 
   @override
   void initState() {
     super.initState();
     _refreshUser();
+    _eventStreamSubscription = widget.eventStream.listen(_onEventReceived);
   }
 
   @override
@@ -34,9 +42,9 @@ class _SettingsViewState extends State<SettingsView> {
         delegate: SliverChildListDelegate([
           _user == null
               ? Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: LoginButton(onTap: _onLoginTap),
-                )
+            padding: const EdgeInsets.all(12),
+            child: LoginButton(onTap: _onLoginTap),
+          )
               : _buildLoginInfo(),
           const _Divider(),
           if (_user != null)
@@ -132,6 +140,14 @@ class _SettingsViewState extends State<SettingsView> {
     });
   }
 
+  void _onEventReceived(SettingsViewEvent event) {
+    switch (event) {
+      case SettingsViewEvent.refreshUser:
+        _refreshUser();
+        break;
+    }
+  }
+
   void _onLoginTap() async {
     await Navigator.pushNamed(context, LoginPage.routeName);
     _refreshUser();
@@ -142,19 +158,19 @@ class _SettingsViewState extends State<SettingsView> {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('로그아웃하실 건가요?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: TextButton.styleFrom(primary: Colors.grey),
-            child: const Text(
-              '취소',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(primary: Colors.grey),
+                child: const Text(
+                  '취소',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
               await FirebaseAuth.instance.signOut();
               _refreshUser();
               Navigator.pop(context);
@@ -164,6 +180,12 @@ class _SettingsViewState extends State<SettingsView> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _eventStreamSubscription.cancel();
+    super.dispose();
   }
 }
 
@@ -197,4 +219,8 @@ class _Divider extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Divider(height: 0.3, thickness: 0.3);
   }
+}
+
+enum SettingsViewEvent {
+  refreshUser,
 }
