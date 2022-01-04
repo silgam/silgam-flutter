@@ -8,8 +8,12 @@ import '../util/scaffold_body.dart';
 
 class TakeExamView extends StatelessWidget {
   static const title = '시험보기';
+  final Function() navigateToRecordTab;
 
-  const TakeExamView({Key? key}) : super(key: key);
+  const TakeExamView({
+    Key? key,
+    required this.navigateToRecordTab,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +27,7 @@ class TakeExamView extends StatelessWidget {
               index: index,
               numberOfItems: ExamRepository.defaultExams.length,
               thisExam: ExamRepository.defaultExams[index],
+              navigateToRecordTab: navigateToRecordTab,
             ),
             childCount: ExamRepository.defaultExams.length,
           ),
@@ -36,11 +41,13 @@ class _ExamCard extends StatefulWidget {
   final int index;
   final int numberOfItems;
   final Exam thisExam;
+  final Function() navigateToRecordTab;
 
   const _ExamCard({
     required this.index,
     required this.numberOfItems,
     required this.thisExam,
+    required this.navigateToRecordTab,
     Key? key,
   }) : super(key: key);
 
@@ -91,12 +98,13 @@ class _ExamCardState extends State<_ExamCard> {
     );
   }
 
-  void _onCardTapped() {
-    Navigator.pushNamed(
+  void _onCardTapped() async {
+    await Navigator.pushNamed(
       context,
       ClockPage.routeName,
       arguments: ClockPageArguments(widget.thisExam),
     );
+    widget.navigateToRecordTab();
   }
 
   BoxDecoration _buildGradientBoxDecoration() {
