@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wakelock/wakelock.dart';
 
-import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
 import '../util/android_audio_manager.dart';
@@ -416,11 +415,6 @@ class _ClockPageState extends State<ClockPage> {
 
   void _finishExam() {
     Navigator.pop(context);
-    final arguments = EditRecordPageArguments(
-      inputExam: widget.exam,
-      examStartedTime: _examStartedTime,
-    );
-    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
   }
 
   Future<bool> _onBackPressed() {

@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
           index: _selectedIndex,
           sizing: StackFit.expand,
           children: [
-            const TakeExamView(),
+            TakeExamView(navigateToRecordTab: () => _onItemTapped(1)),
             RecordListView(eventStream: _recordListViewEventStreamController.stream),
             SettingsView(eventStream: _settingsViewEventStreamController.stream),
           ],
