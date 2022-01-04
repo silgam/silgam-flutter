@@ -72,9 +72,11 @@ class ExamRecordRepository {
   }
 
   Future<String> _uploadImage(String imagePath) async {
+    final File imageFile = File(imagePath);
     final reference = _problemImagesRef.child(_user.uid).child(_uuid.v1());
-    final TaskSnapshot snapshot = await reference.putFile(File(imagePath));
+    final TaskSnapshot snapshot = await reference.putFile(imageFile);
     final String url = await snapshot.ref.getDownloadURL();
+    await imageFile.delete();
     return url;
   }
 
