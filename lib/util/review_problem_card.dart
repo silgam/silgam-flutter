@@ -16,6 +16,13 @@ class ReviewProblemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int imageCount = problem.imagePaths.length;
+    String imageCountText;
+    if (imageCount == 0) {
+      imageCountText = '사진 없음';
+    } else {
+      imageCountText = '사진 $imageCount개';
+    }
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -70,18 +77,38 @@ class ReviewProblemCard extends StatelessWidget {
               margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(100)),
+                borderRadius: BorderRadius.circular(8),
                 color: Colors.white.withAlpha(200),
               ),
-              child: Text(
-                problem.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 1.2,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.ideographic,
+                children: [
+                  Flexible(
+                    child: Text(
+                      problem.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    imageCountText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w300,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
