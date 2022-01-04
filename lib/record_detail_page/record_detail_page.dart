@@ -372,7 +372,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     setState(() {
       _isDeleting = true;
     });
-    _recordRepository.deleteExamRecord(_record);
+    await _recordRepository.deleteExamRecord(_record);
     Navigator.pop(context);
   }
 

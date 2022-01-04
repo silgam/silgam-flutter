@@ -54,6 +54,10 @@ class ExamRecordRepository {
   }
 
   Future<void> deleteExamRecord(ExamRecord examRecord) async {
+    final allImages = examRecord.reviewProblems.expand((element) => element.imagePaths);
+    for (final imageUrl in allImages) {
+      await _deleteImage(imageUrl);
+    }
     return await _recordsRef.doc(examRecord.documentId).delete();
   }
 
