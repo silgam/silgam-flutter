@@ -67,11 +67,11 @@ class _HomePageState extends State<HomePage> {
           currentIndex: _selectedIndex,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.create),
+              icon: Icon(Icons.alarm),
               label: TakeExamView.title,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.format_list_bulleted),
+              icon: Icon(Icons.create),
               label: RecordListView.title,
             ),
             BottomNavigationBarItem(
