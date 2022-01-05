@@ -32,7 +32,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.black38,
+        statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -54,6 +54,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
               ),
             ),
             SafeArea(
+              top: false,
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
                 child: _hideUi ? const SizedBox.shrink() : _buildMenuBar(),
@@ -73,8 +74,9 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
 
   Widget _buildMenuBar() {
     final problem = widget.reviewProblem;
+    final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(4).add(EdgeInsets.only(top: statusBarHeight)),
       color: Colors.black38,
       child: Column(
         mainAxisSize: MainAxisSize.min,
