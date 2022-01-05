@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../login_page/login_page.dart';
 import '../repository/user_repository.dart';
@@ -42,10 +44,28 @@ class _SettingsViewState extends State<SettingsView> {
         delegate: SliverChildListDelegate([
           _user == null
               ? Padding(
-            padding: const EdgeInsets.all(12),
-            child: LoginButton(onTap: _onLoginTap),
-          )
+                  padding: const EdgeInsets.all(12),
+                  child: LoginButton(onTap: _onLoginTap),
+                )
               : _buildLoginInfo(),
+          const _Divider(),
+          _SettingTile(
+            onTap: _onWriteReviewButtonTap,
+            title: '리뷰 쓰기',
+            description: '리뷰는 실감 팀에게 큰 도움이 됩니다.',
+          ),
+          const _Divider(),
+          _SettingTile(
+            onTap: _onGoFacebookPageButtonTap,
+            title: '실감 페이스북 페이지 보러 가기',
+            description: '좋아요 눌러주세요!',
+          ),
+          const _Divider(),
+          _SettingTile(
+            onTap: _onGoFacebookMessengerButtonTap,
+            title: '개발자와 대화하기',
+            description: '페이스북 메신저로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
+          ),
           const _Divider(),
           if (_user != null)
             _SettingTile(
@@ -158,19 +178,19 @@ class _SettingsViewState extends State<SettingsView> {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('로그아웃하실 건가요?'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(primary: Colors.grey),
-                child: const Text(
-                  '취소',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(primary: Colors.grey),
+            child: const Text(
+              '취소',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
               await FirebaseAuth.instance.signOut();
               _refreshUser();
               Navigator.pop(context);
@@ -180,6 +200,23 @@ class _SettingsViewState extends State<SettingsView> {
         ],
       ),
     );
+  }
+
+  void _onWriteReviewButtonTap() async {
+    final InAppReview inAppReview = InAppReview.instance;
+    if (await inAppReview.isAvailable()) {
+      await inAppReview.requestReview();
+    } else {
+      await inAppReview.openStoreListing(appStoreId: '1598576852');
+    }
+  }
+
+  void _onGoFacebookPageButtonTap() {
+    launch('https://fb.me/SilgamOfficial');
+  }
+
+  void _onGoFacebookMessengerButtonTap() {
+    launch('https://m.me/SilgamOfficial');
   }
 
   @override
@@ -192,11 +229,13 @@ class _SettingsViewState extends State<SettingsView> {
 class _SettingTile extends StatelessWidget {
   final GestureTapCallback? onTap;
   final String title;
+  final String? description;
 
   const _SettingTile({
     Key? key,
     this.onTap,
     required this.title,
+    this.description,
   }) : super(key: key);
 
   @override
@@ -205,8 +244,24 @@ class _SettingTile extends StatelessWidget {
       onTap: onTap,
       splashColor: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Text(title),
+        padding: EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: description == null ? 16 : 12,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title),
+            if (description != null)
+              Text(
+                description!,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
