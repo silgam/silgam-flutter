@@ -105,50 +105,53 @@ class _SettingsViewState extends State<SettingsView> {
       providerIconPath = 'assets/facebook_icon.svg';
     }
 
-    return Container(
-      margin: const EdgeInsets.all(12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.grey.shade200,
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(user.photoURL ?? ''),
-              backgroundColor: Colors.grey,
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.displayName ?? '',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  user.email ?? '',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-              ],
-            ),
-            const Expanded(child: SizedBox.shrink()),
-            Container(
-              height: double.infinity,
-              alignment: Alignment.bottomCenter,
-              child: SvgPicture.asset(
-                providerIconPath,
-                width: 28,
+    return GestureDetector(
+      onLongPress: () => _onLoginLongPress(user),
+      child: Container(
+        margin: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.grey.shade200,
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(user.photoURL ?? ''),
+                backgroundColor: Colors.grey,
               ),
-            ),
-          ],
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.displayName ?? '',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    user.email ?? '',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+              const Expanded(child: SizedBox.shrink()),
+              Container(
+                height: double.infinity,
+                alignment: Alignment.bottomCenter,
+                child: SvgPicture.asset(
+                  providerIconPath,
+                  width: 28,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -171,6 +174,15 @@ class _SettingsViewState extends State<SettingsView> {
   void _onLoginTap() async {
     await Navigator.pushNamed(context, LoginPage.routeName);
     _refreshUser();
+  }
+
+  void _onLoginLongPress(User user) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: SelectableText(user.uid),
+      ),
+    );
   }
 
   void _onLogoutTap() async {
