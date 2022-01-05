@@ -83,6 +83,7 @@ const int _indigoPrimaryValue = 0xFF283593;
 const SystemUiOverlayStyle defaultSystemUiOverlayStyle = SystemUiOverlayStyle(
   statusBarIconBrightness: Brightness.dark,
   statusBarColor: Colors.transparent,
+  statusBarBrightness: Brightness.light,
   systemNavigationBarIconBrightness: Brightness.dark,
   systemNavigationBarColor: Colors.transparent,
 );
