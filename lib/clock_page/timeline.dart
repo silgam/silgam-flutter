@@ -1,27 +1,43 @@
 import 'package:flutter/material.dart';
 
 class TimelineTile extends StatelessWidget {
+  final GestureTapCallback onTap;
   final String time;
   final String title;
   final bool disabled;
 
-  const TimelineTile(this.time, this.title, this.disabled, {Key? key}) : super(key: key);
+  const TimelineTile({
+    Key? key,
+    required this.onTap,
+    required this.time,
+    required this.title,
+    required this.disabled,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          time,
-          style: TextStyle(
-            color: _getTimelineColor(disabled),
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-          ),
+    return InkWell(
+      onTap: onTap,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.white12,
+      borderRadius: BorderRadius.circular(4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              time,
+              style: TextStyle(
+                color: _getTimelineColor(disabled),
+                fontWeight: FontWeight.w300,
+                fontSize: 12,
+              ),
+            ),
+            Column(children: _buildTitleTexts()),
+          ],
         ),
-        Column(children: _buildTitleTexts()),
-      ],
+      ),
     );
   }
 
@@ -76,7 +92,7 @@ class TimelineConnector extends StatelessWidget {
     }
     return Flexible(
       child: Container(
-        margin: const EdgeInsets.all(10),
+        margin: const EdgeInsets.all(4),
         width: width,
         height: height,
         decoration: BoxDecoration(
