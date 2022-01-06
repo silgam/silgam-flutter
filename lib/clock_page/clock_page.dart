@@ -202,10 +202,11 @@ class _ClockPageState extends State<ClockPage> {
       // Tile
       final time = '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
       tiles.add(TimelineTile(
-        time,
-        breakpoint.title,
-        disabled,
         key: _timelineTileKeys[index],
+        onTap: () => _onBreakpointTap(index),
+        time: time,
+        title: breakpoint.title,
+        disabled: disabled,
       ));
 
       // Connector
@@ -359,6 +360,12 @@ class _ClockPageState extends State<ClockPage> {
   void _moveToNextBreakpoint() {
     if (_isFinished) return;
     _currentBreakpointIndex++;
+    _saveExamStartedTime();
+    _moveBreakpoint();
+  }
+
+  void _onBreakpointTap(int index) {
+    _currentBreakpointIndex = index;
     _saveExamStartedTime();
     _moveBreakpoint();
   }
