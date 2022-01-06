@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -233,43 +232,25 @@ class _ClockPageState extends State<ClockPage> {
 
   Widget _buildNavigator() {
     Axis direction = Axis.horizontal;
-    int rotate = 0;
     if (_isSmallHeightScreen()) {
       direction = Axis.vertical;
-      rotate = 1;
     }
 
     return Flex(
       direction: direction,
       mainAxisSize: MainAxisSize.min,
       children: [
-        UiVisibility(
-          uiVisible: _currentBreakpointIndex > 0,
-          child: RotatedBox(
-            quarterTurns: rotate + 2,
-            child: IconButton(
-              onPressed: _moveToBeforeBreakpoint,
-              icon: SvgPicture.asset(
-                'assets/chevron.svg',
-                color: Colors.grey[700],
-              ),
-              splashRadius: 20,
-            ),
-          ),
+        IconButton(
+          onPressed: _subtract30Seconds,
+          icon: const Icon(Icons.replay_30),
+          color: Colors.grey.shade700,
+          splashRadius: 20,
         ),
-        UiVisibility(
-          uiVisible: !_isFinished,
-          child: RotatedBox(
-            quarterTurns: rotate,
-            child: IconButton(
-              onPressed: _moveToNextBreakpoint,
-              icon: SvgPicture.asset(
-                'assets/chevron.svg',
-                color: Colors.grey[700],
-              ),
-              splashRadius: 20,
-            ),
-          ),
+        IconButton(
+          onPressed: _add30Seconds,
+          icon: const Icon(Icons.forward_30),
+          color: Colors.grey.shade700,
+          splashRadius: 20,
         ),
       ],
     );
@@ -320,6 +301,36 @@ class _ClockPageState extends State<ClockPage> {
     });
   }
 
+  void _subtract30Seconds() {
+    final newTime = _currentTime.subtract(const Duration(seconds: 30));
+    _onTimeChanged(newTime);
+  }
+
+  void _add30Seconds() {
+    final newTime = _currentTime.add(const Duration(seconds: 30));
+    _onTimeChanged(newTime);
+  }
+
+  void _onTimeChanged(DateTime newTime) {
+    setState(() {
+      _currentTime = newTime;
+    });
+    if (_currentBreakpointIndex > 0) {
+      final currentBreakpoint = _breakpoints[_currentBreakpointIndex];
+      if (newTime.compareTo(currentBreakpoint.time) < 0) {
+        _moveToPreviousBreakpoint(adjustTime: false);
+        return;
+      }
+    }
+    if (!_isFinished) {
+      final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
+      if (newTime.compareTo(nextBreakpoint.time) >= 0) {
+        _moveToNextBreakpoint();
+        return;
+      }
+    }
+  }
+
   void _onCloseButtonPressed() async {
     if (_isFinished) {
       Navigator.pop(context);
@@ -351,10 +362,11 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _moveToBeforeBreakpoint() {
+  void _moveToPreviousBreakpoint({bool adjustTime = true}) {
     if (_currentBreakpointIndex <= 0) return;
     _currentBreakpointIndex--;
-    _moveBreakpoint();
+    _saveExamStartedTime();
+    _moveBreakpoint(adjustTime: adjustTime);
   }
 
   void _moveToNextBreakpoint() {
@@ -377,13 +389,14 @@ class _ClockPageState extends State<ClockPage> {
     }
   }
 
-  void _moveBreakpoint() {
+  void _moveBreakpoint({bool adjustTime = true}) {
     player.pause();
-    setState(() {
+    if (adjustTime) {
       _currentTime = _breakpoints[_currentBreakpointIndex].time;
-    });
+      setState(() {});
+      _playAnnouncement();
+    }
     _animateTimeline();
-    _playAnnouncement();
   }
 
   void _animateTimeline() {
