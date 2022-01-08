@@ -97,28 +97,34 @@ class _LoginPageState extends State<LoginPage> {
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.w300),
           ),
-          const SizedBox(height: 40),
-          Row(
-            mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 24),
+          Column(
             children: [
               _LoginButton(
                 onTap: _onGoogleLoginTapped,
                 assetName: 'assets/google_icon.svg',
+                provider: '구글',
+                color: Colors.white,
               ),
-              const SizedBox(width: 28),
+              const SizedBox(height: 12),
               _LoginButton(
                 onTap: _onFacebookLoginTapped,
                 assetName: 'assets/facebook_icon.svg',
+                provider: '페이스북',
+                color: const Color(0xFF4267b2),
+                lightText: true,
               ),
-              if (Platform.isIOS) const SizedBox(width: 28),
+              if (Platform.isIOS) const SizedBox(height: 12),
               if (Platform.isIOS)
                 _LoginButton(
                   onTap: _onAppleLoginTapped,
                   assetName: 'assets/apple_icon.svg',
+                  provider: '애플',
+                  color: Colors.black,
+                  lightText: true,
                 ),
             ],
           ),
-          const SizedBox(height: 12),
         ],
       ),
     );
@@ -183,31 +189,62 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class _LoginButton extends StatelessWidget {
-  final String assetName;
+  final String assetName, provider;
+  final Color color;
+  final bool lightText;
   final GestureTapCallback onTap;
 
   const _LoginButton({
     Key? key,
     required this.onTap,
     required this.assetName,
+    required this.provider,
+    required this.color,
+    this.lightText = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(20),
-              offset: const Offset(0, 1),
-              blurRadius: 8,
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(28),
+            offset: const Offset(1, 2),
+            blurRadius: 6,
+          ),
+        ],
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.grey.withAlpha(60),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 24,
+                  child: SvgPicture.asset(assetName, height: 24),
+                ),
+                Expanded(
+                  child: Text(
+                    '$provider 로그인',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: lightText ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-        child: SvgPicture.asset(assetName, height: 48, width: 48),
       ),
     );
   }
