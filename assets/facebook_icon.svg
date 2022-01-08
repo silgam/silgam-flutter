@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><g id="Layer_2-2" data-name="Layer 2"><g id="Layer_1-2-2" data-name="Layer 1-2"><path fill="#4267b2" d="M20,0A20,20,0,1,0,40,20,20,20,0,0,0,20,0Z"/><path fill="#fff" d="M22.71,25.26h5.17L28.69,20h-6V17.17c0-2.18.71-4.12,2.75-4.12h3.29V8.42a26.92,26.92,0,0,0-4.11-.25c-4.81,0-7.63,2.55-7.63,8.34V20H12v5.26h5V39.77A20.28,20.28,0,0,0,20,40a19.62,19.62,0,0,0,2.71-.19Z"/></g></g></g></g></svg>
+<svg data-name="Layer 1" id="Layer_1" viewBox="0 0 21.02 40" xmlns="http://www.w3.org/2000/svg">
+    <g data-name="Layer 2" id="Layer_2">
+        <g data-name="Layer 1-2" id="Layer_1-2">
+            <g data-name="Layer 2-2" id="Layer_2-2">
+                <g data-name="Layer 1-2-2" id="Layer_1-2-2">
+                    <path
+                        d="M23,21.48h6.49l1-6.61H22.92V11.31c0-2.74.89-5.17,3.46-5.17h4.13V.32A34.3,34.3,0,0,0,25.35,0c-6.05,0-9.59,3.21-9.59,10.48v4.39H9.49v6.61h6.28V39.71a25.09,25.09,0,0,0,3.77.29A24.33,24.33,0,0,0,23,39.76Z"
+                        fill="#fff" transform="translate(-9.49 0)" />
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
