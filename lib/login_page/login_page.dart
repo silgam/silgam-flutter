@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
@@ -105,6 +110,12 @@ class _LoginPageState extends State<LoginPage> {
                 onTap: _onFacebookLoginTapped,
                 assetName: 'assets/facebook_icon.svg',
               ),
+              if (Platform.isIOS) const SizedBox(width: 28),
+              if (Platform.isIOS)
+                _LoginButton(
+                  onTap: _onAppleLoginTapped,
+                  assetName: 'assets/apple_icon.svg',
+                ),
             ],
           ),
           const SizedBox(height: 12),
@@ -135,6 +146,30 @@ class _LoginPageState extends State<LoginPage> {
     if (accessToken == null) return;
     final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(accessToken.token);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+    _loginFinished();
+  }
+
+  void _onAppleLoginTapped() async {
+    final rawNonce = generateNonce();
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: rawNonce.toSha256(),
+    );
+    final credential = OAuthProvider('apple.com').credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
+    );
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser?.displayName == null) {
+      await currentUser?.updateDisplayName('${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}');
+    }
+    if (currentUser?.email == null) {
+      await currentUser?.updateEmail(appleCredential.email ?? '');
+    }
     _loginFinished();
   }
 
@@ -172,8 +207,16 @@ class _LoginButton extends StatelessWidget {
             ),
           ],
         ),
-        child: SvgPicture.asset(assetName, width: 48),
+        child: SvgPicture.asset(assetName, height: 48, width: 48),
       ),
     );
+  }
+}
+
+extension on String {
+  String toSha256() {
+    final bytes = utf8.encode(this);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 }
