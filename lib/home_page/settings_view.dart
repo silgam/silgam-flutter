@@ -103,6 +103,8 @@ class _SettingsViewState extends State<SettingsView> {
       providerIconPath = 'assets/google_icon.svg';
     } else if (providerId.contains('facebook')) {
       providerIconPath = 'assets/facebook_icon.svg';
+    } else if (providerId.contains('apple')) {
+      providerIconPath = 'assets/apple_icon.svg';
     }
 
     return GestureDetector(
@@ -118,36 +120,37 @@ class _SettingsViewState extends State<SettingsView> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(user.photoURL ?? ''),
+                backgroundImage: NetworkImage(user.photoURL ?? 'https://via.placeholder.com/150?text=ㅇ'),
                 backgroundColor: Colors.grey,
               ),
               const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.displayName ?? '',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.displayName ?? '',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  Text(
-                    user.email ?? '',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade700,
+                    Text(
+                      user.email ?? '',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade700,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const Expanded(child: SizedBox.shrink()),
               Container(
                 height: double.infinity,
                 alignment: Alignment.bottomCenter,
                 child: SvgPicture.asset(
                   providerIconPath,
-                  width: 28,
+                  height: 28,
                 ),
               ),
             ],
