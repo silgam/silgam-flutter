@@ -230,7 +230,11 @@ class _LoginButton extends StatelessWidget {
               children: [
                 SizedBox(
                   width: 24,
-                  child: SvgPicture.asset(assetName, height: 24),
+                  child: SvgPicture.asset(
+                    assetName,
+                    height: 24,
+                    color: lightText ? Colors.white : null,
+                  ),
                 ),
                 Expanded(
                   child: Text(
