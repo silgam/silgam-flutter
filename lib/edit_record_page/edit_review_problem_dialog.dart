@@ -28,6 +28,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   final List<String> _tempImagePaths = [];
 
   bool _isTitleEmpty = true;
+  bool _isTitleFirstEdit = true;
 
   @override
   void initState() {
@@ -64,11 +65,15 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             TextField(
               controller: _titleEditingController,
               onChanged: _onTitleChanged,
-              decoration: const InputDecoration(
-                hintText: '제목',
+              decoration: InputDecoration(
+                hintText: '제목 (문제 번호)',
                 isCollapsed: true,
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.all(12),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.all(12),
+                errorStyle: const TextStyle(fontSize: 0, height: 0),
+                errorText: _isTitleEmpty && !_isTitleFirstEdit ? '' : null,
+                errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                focusedErrorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
               ),
             ),
             const SizedBox(height: 16),
@@ -113,7 +118,10 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           child: const Text('취소'),
         ),
         TextButton(
-          onPressed: _isTitleEmpty ? null : _onConfirmButtonPressed,
+          onPressed: _onConfirmButtonPressed,
+          style: TextButton.styleFrom(
+            primary: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
+          ),
           child: Text(
             widget.reviewProblemAddModeParams == null ? '수정' : '추가',
             style: TextStyle(
@@ -199,6 +207,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onTitleChanged(String title) {
+    _isTitleFirstEdit = false;
     if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
       setState(() {
         _isTitleEmpty = false;
@@ -240,7 +249,12 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onConfirmButtonPressed() {
-    if (_isTitleEmpty) return;
+    if (_isTitleEmpty) {
+      setState(() {
+        _isTitleFirstEdit = false;
+      });
+      return;
+    }
 
     final newProblem = ReviewProblem(
       title: _titleEditingController.text,

@@ -327,10 +327,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
         ),
         Expanded(
           child: TextButton(
-            onPressed: _isTitleEmpty ? null : _onSavePressed,
+            onPressed: _onSavePressed,
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              primary: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
             ),
             child: Text(
               _isEditingMode ? '수정' : '저장',
@@ -448,7 +449,16 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _onSavePressed() async {
-    if (_isTitleEmpty) return;
+    if (_isTitleEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('모의고사 이름을 입력해주세요.'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
     await saveRecord();
     Navigator.pop(context);
   }
