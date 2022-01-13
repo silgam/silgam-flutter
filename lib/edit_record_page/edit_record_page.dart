@@ -47,6 +47,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   void initState() {
+    _onSelectedSubjectChanged(null);
     final recordToEdit = widget.arguments.recordToEdit;
     if (recordToEdit == null) {
       _isEditingMode = false;
@@ -363,6 +364,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _onSelectedSubjectChanged(Subject? newSubject) {
     setState(() {
       _selectedSubject = newSubject ?? Subject.language;
+      _examDurationEditingController.text = _selectedSubject.defaultExamDuration.toString();
     });
   }
 

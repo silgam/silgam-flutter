@@ -1,3 +1,5 @@
+import '../repository/exam_repository.dart';
+
 enum Subject {
   language,
   math,
@@ -56,6 +58,15 @@ extension SubjectExtension on Subject {
         return 0xFF8F6CE0;
       case Subject.secondLanguage:
         return 0xFFF7B061;
+    }
+  }
+
+  int get defaultExamDuration {
+    final defaultExam = ExamRepository.defaultExams.firstWhere((exam) => exam.subject == this);
+    if (this == Subject.investigation) {
+      return 30;
+    } else {
+      return defaultExam.examDuration;
     }
   }
 }
