@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wakelock/wakelock.dart';
 
+import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
 import '../util/android_audio_manager.dart';
@@ -32,7 +33,7 @@ class _ClockPageState extends State<ClockPage> {
   late final List<Breakpoint> _breakpoints;
   late int _currentBreakpointIndex = 0;
   DateTime _currentTime = DateTime.now();
-  DateTime? _examStartedTime;
+  DateTime _examStartedTime = DateTime.now();
 
   final AudioPlayer player = AudioPlayer();
 
@@ -365,27 +366,27 @@ class _ClockPageState extends State<ClockPage> {
   void _moveToPreviousBreakpoint({bool adjustTime = true}) {
     if (_currentBreakpointIndex <= 0) return;
     _currentBreakpointIndex--;
-    _saveExamStartedTime();
+    _trySavingExamStartedTime();
     _moveBreakpoint(adjustTime: adjustTime);
   }
 
   void _moveToNextBreakpoint() {
     if (_isFinished) return;
     _currentBreakpointIndex++;
-    _saveExamStartedTime();
+    _trySavingExamStartedTime();
     _moveBreakpoint();
   }
 
   void _onBreakpointTap(int index) {
     _currentBreakpointIndex = index;
-    _saveExamStartedTime();
+    _trySavingExamStartedTime();
     _moveBreakpoint();
   }
 
-  void _saveExamStartedTime() {
+  void _trySavingExamStartedTime() {
     final currentAnnouncementTime = _breakpoints[_currentBreakpointIndex].announcement?.time;
     if (currentAnnouncementTime == const RelativeTime.beforeStart(minutes: 0)) {
-      _examStartedTime ??= DateTime.now();
+      _examStartedTime = DateTime.now();
     }
   }
 
@@ -434,7 +435,12 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
+    final arguments = EditRecordPageArguments(
+      inputExam: widget.exam,
+      examStartedTime: _examStartedTime,
+    );
     Navigator.pop(context);
+    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
   }
 
   Future<bool> _onBackPressed() {
