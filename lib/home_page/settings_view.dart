@@ -11,6 +11,7 @@ import '../login_page/login_page.dart';
 import '../repository/user_repository.dart';
 import '../util/login_button.dart';
 import '../util/scaffold_body.dart';
+import '../util/shared_preferences_holder.dart';
 
 class SettingsView extends StatefulWidget {
   static const title = '설정';
@@ -48,6 +49,13 @@ class _SettingsViewState extends State<SettingsView> {
                   child: LoginButton(onTap: _onLoginTap),
                 )
               : _buildLoginInfo(),
+          const _Divider(),
+          const _SettingTile(
+            title: '시험 종료 후 바로 기록하기',
+            description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어갑니다.',
+            disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
+            preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
+          ),
           const _Divider(),
           _SettingTile(
             onTap: _onWriteReviewButtonTap,
@@ -241,44 +249,97 @@ class _SettingsViewState extends State<SettingsView> {
   }
 }
 
-class _SettingTile extends StatelessWidget {
+class _SettingTile extends StatefulWidget {
   final GestureTapCallback? onTap;
   final String title;
   final String? description;
+  final String? disabledDescription;
+  final String? preferenceKey;
 
   const _SettingTile({
     Key? key,
     this.onTap,
     required this.title,
     this.description,
+    this.disabledDescription,
+    this.preferenceKey,
   }) : super(key: key);
+
+  @override
+  State<_SettingTile> createState() => _SettingTileState();
+}
+
+class _SettingTileState extends State<_SettingTile> {
+  bool _isSwitchEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final preferenceKey = widget.preferenceKey;
+    if (preferenceKey != null) {
+      _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ?? true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: widget.preferenceKey == null ? widget.onTap : () => _onSwitchChanged(!_isSwitchEnabled),
       splashColor: Colors.transparent,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
-          vertical: description == null ? 16 : 12,
+          vertical: widget.description == null ? 16 : 12,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text(title),
-            if (description != null)
-              Text(
-                description!,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.title),
+                  if (widget.description != null)
+                    Text(
+                      _getDescription(),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                ],
               ),
+            ),
+            if (widget.preferenceKey != null)
+              Switch(
+                value: _isSwitchEnabled,
+                onChanged: _onSwitchChanged,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              )
           ],
         ),
       ),
     );
+  }
+
+  String _getDescription() {
+    final description = widget.description;
+    final disabledDescription = widget.disabledDescription;
+    if (disabledDescription == null) {
+      return description ?? '';
+    } else {
+      if (_isSwitchEnabled) {
+        return description ?? '';
+      } else {
+        return disabledDescription;
+      }
+    }
+  }
+
+  void _onSwitchChanged(bool isEnabled) {
+    SharedPreferencesHolder.get.setBool(widget.preferenceKey.toString(), isEnabled);
+    setState(() {
+      _isSwitchEnabled = isEnabled;
+    });
   }
 }
 

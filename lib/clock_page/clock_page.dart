@@ -9,6 +9,7 @@ import '../model/relative_time.dart';
 import '../util/android_audio_manager.dart';
 import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
+import '../util/shared_preferences_holder.dart';
 import 'breakpoint.dart';
 import 'timeline.dart';
 import 'ui_visibility.dart';
@@ -440,7 +441,13 @@ class _ClockPageState extends State<ClockPage> {
       examStartedTime: _examStartedTime,
     );
     Navigator.pop(context);
-    Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
+
+    final sharedPreferences = SharedPreferencesHolder.get;
+    const key = PreferenceKey.showAddRecordPageAfterExamFinished;
+    final showAddRecordPageAfterExamFinished = sharedPreferences.getBool(key);
+    if (showAddRecordPageAfterExamFinished == true) {
+      Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
+    }
   }
 
   Future<bool> _onBackPressed() {
