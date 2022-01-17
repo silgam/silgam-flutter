@@ -47,6 +47,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   void initState() {
+    if (_userRepository.isNotSignedIn()) {
+      Navigator.pop(context);
+      return;
+    }
+
     _onSelectedSubjectChanged(null);
     final recordToEdit = widget.arguments.recordToEdit;
     if (recordToEdit == null) {
