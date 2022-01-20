@@ -7,8 +7,8 @@ import '../app.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../repository/user_repository.dart';
 import 'record_list/record_list_view.dart';
-import 'settings_view.dart';
-import 'take_exam_view.dart';
+import 'settings/settings_view.dart';
+import 'take_exam/take_exam_view.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/';

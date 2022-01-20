@@ -7,11 +7,11 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../login_page/login_page.dart';
-import '../repository/user_repository.dart';
-import '../util/login_button.dart';
-import '../util/scaffold_body.dart';
-import '../util/shared_preferences_holder.dart';
+import '../../login_page/login_page.dart';
+import '../../repository/user_repository.dart';
+import '../../util/login_button.dart';
+import '../../util/scaffold_body.dart';
+import '../../util/shared_preferences_holder.dart';
 
 class SettingsView extends StatefulWidget {
   static const title = '설정';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../clock_page/clock_page.dart';
-import '../model/exam.dart';
-import '../model/subject.dart';
-import '../repository/exam_repository.dart';
-import '../util/scaffold_body.dart';
+import '../../clock_page/clock_page.dart';
+import '../../model/exam.dart';
+import '../../model/subject.dart';
+import '../../repository/exam_repository.dart';
+import '../../util/scaffold_body.dart';
 
 class TakeExamView extends StatelessWidget {
   static const title = '시험보기';
