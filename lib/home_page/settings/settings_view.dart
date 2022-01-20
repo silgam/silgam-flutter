@@ -12,6 +12,7 @@ import '../../repository/user_repository.dart';
 import '../../util/login_button.dart';
 import '../../util/scaffold_body.dart';
 import '../../util/shared_preferences_holder.dart';
+import '../settings/noise_setting_page.dart';
 
 class SettingsView extends StatefulWidget {
   static const title = '설정';
@@ -49,6 +50,12 @@ class _SettingsViewState extends State<SettingsView> {
                   child: LoginButton(onTap: _onLoginTap),
                 )
               : _buildLoginInfo(),
+          const _Divider(),
+          _SettingTile(
+            onTap: _onNoiseSettingButtonTap,
+            title: '백색 소음, 시험장 소음 설정',
+            description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
+          ),
           const _Divider(),
           const _SettingTile(
             title: '시험 종료 후 바로 기록하기',
@@ -223,6 +230,10 @@ class _SettingsViewState extends State<SettingsView> {
         ],
       ),
     );
+  }
+
+  void _onNoiseSettingButtonTap() {
+    Navigator.pushNamed(context, NoiseSettingPage.routeName);
   }
 
   void _onWriteReviewButtonTap() async {
