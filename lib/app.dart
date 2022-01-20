@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-import '../review_problem_detail_page/review_problem_detail_page.dart';
 import 'clock_page/clock_page.dart';
 import 'edit_record_page/edit_record_page.dart';
 import 'home_page/home_page.dart';
+import 'home_page/settings/noise_setting_page.dart';
 import 'login_page/login_page.dart';
 import 'record_detail_page/record_detail_page.dart';
+import 'review_problem_detail_page/review_problem_detail_page.dart';
 
 class SilgamApp extends StatelessWidget {
   const SilgamApp({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class SilgamApp extends StatelessWidget {
       routes: {
         HomePage.routeName: (_) => const HomePage(),
         LoginPage.routeName: (_) => const LoginPage(),
+        NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
