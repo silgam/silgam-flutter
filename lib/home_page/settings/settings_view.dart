@@ -12,7 +12,8 @@ import '../../repository/user_repository.dart';
 import '../../util/login_button.dart';
 import '../../util/scaffold_body.dart';
 import '../../util/shared_preferences_holder.dart';
-import '../settings/noise_setting_page.dart';
+import 'noise_setting_page.dart';
+import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {
   static const title = '설정';
@@ -51,39 +52,39 @@ class _SettingsViewState extends State<SettingsView> {
                 )
               : _buildLoginInfo(),
           const _Divider(),
-          _SettingTile(
+          SettingTile(
             onTap: _onNoiseSettingButtonTap,
             title: '백색 소음, 시험장 소음 설정',
             description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
           ),
           const _Divider(),
-          const _SettingTile(
+          const SettingTile(
             title: '시험 종료 후 바로 기록하기',
             description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어갑니다.',
             disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
             preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
           ),
           const _Divider(),
-          _SettingTile(
+          SettingTile(
             onTap: _onWriteReviewButtonTap,
             title: '리뷰 쓰기',
             description: '리뷰는 실감 팀에게 큰 도움이 됩니다.',
           ),
           const _Divider(),
-          _SettingTile(
+          SettingTile(
             onTap: _onGoFacebookPageButtonTap,
             title: '실감 페이스북 페이지 보러 가기',
             description: '좋아요 눌러주세요!',
           ),
           const _Divider(),
-          _SettingTile(
+          SettingTile(
             onTap: _onGoFacebookMessengerButtonTap,
             title: '개발자와 대화하기',
             description: '페이스북 메신저로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
           ),
           const _Divider(),
           if (_user != null)
-            _SettingTile(
+            SettingTile(
               onTap: _onLogoutTap,
               title: '로그아웃',
             ),
@@ -257,100 +258,6 @@ class _SettingsViewState extends State<SettingsView> {
   void dispose() {
     _eventStreamSubscription.cancel();
     super.dispose();
-  }
-}
-
-class _SettingTile extends StatefulWidget {
-  final GestureTapCallback? onTap;
-  final String title;
-  final String? description;
-  final String? disabledDescription;
-  final String? preferenceKey;
-
-  const _SettingTile({
-    Key? key,
-    this.onTap,
-    required this.title,
-    this.description,
-    this.disabledDescription,
-    this.preferenceKey,
-  }) : super(key: key);
-
-  @override
-  State<_SettingTile> createState() => _SettingTileState();
-}
-
-class _SettingTileState extends State<_SettingTile> {
-  bool _isSwitchEnabled = true;
-
-  @override
-  void initState() {
-    super.initState();
-    final preferenceKey = widget.preferenceKey;
-    if (preferenceKey != null) {
-      _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ?? true;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: widget.preferenceKey == null ? widget.onTap : () => _onSwitchChanged(!_isSwitchEnabled),
-      splashColor: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: widget.description == null ? 16 : 12,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.title),
-                  if (widget.description != null)
-                    Text(
-                      _getDescription(),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            if (widget.preferenceKey != null)
-              Switch(
-                value: _isSwitchEnabled,
-                onChanged: _onSwitchChanged,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              )
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _getDescription() {
-    final description = widget.description;
-    final disabledDescription = widget.disabledDescription;
-    if (disabledDescription == null) {
-      return description ?? '';
-    } else {
-      if (_isSwitchEnabled) {
-        return description ?? '';
-      } else {
-        return disabledDescription;
-      }
-    }
-  }
-
-  void _onSwitchChanged(bool isEnabled) {
-    SharedPreferencesHolder.get.setBool(widget.preferenceKey.toString(), isEnabled);
-    setState(() {
-      _isSwitchEnabled = isEnabled;
-    });
   }
 }
 
