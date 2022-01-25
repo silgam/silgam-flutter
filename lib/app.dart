@@ -54,6 +54,14 @@ class SilgamApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: indigoSwatch,
         fontFamily: 'NotoSansKR',
+        sliderTheme: SliderTheme.of(context).copyWith(
+          trackHeight: 3,
+          trackShape: const RectangularSliderTrackShape(),
+          overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+          overlayColor: Colors.transparent,
+          thumbShape: SliderComponentShape.noThumb,
+          showValueIndicator: ShowValueIndicator.always,
+        ),
       ),
       debugShowCheckedModeBanner: false,
     );

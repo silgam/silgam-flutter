@@ -12,4 +12,5 @@ class SharedPreferencesHolder {
 
 class PreferenceKey {
   static const showAddRecordPageAfterExamFinished = 'showAddRecordPageAfterExamFinished';
+  static const useWhiteNoise = 'whiteNoise';
 }
