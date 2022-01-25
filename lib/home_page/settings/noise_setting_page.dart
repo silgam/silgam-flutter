@@ -15,7 +15,14 @@ class NoiseSettingPage extends StatefulWidget {
 
 class _NoiseSettingPageState extends State<NoiseSettingPage> {
   NoisePreset _noisePreset = NoisePreset.disabled;
+  bool _useWhiteNoise = false;
   final Map<int, int> _noiseLevels = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAll();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,28 +150,49 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
   }
 
   void _onPresetChanged(NoisePreset? preset) {
-    setState(() {
-      _noisePreset = preset ?? NoisePreset.disabled;
-      if (preset == NoisePreset.custom) return;
-      for (Noise defaultNoise in defaultNoises) {
-        _noiseLevels[defaultNoise.id] = defaultNoise.getDefaultLevel(_noisePreset);
-      }
-      final useWhiteNoise = preset != NoisePreset.disabled;
-      SharedPreferencesHolder.get.setBool(PreferenceKey.useWhiteNoise, useWhiteNoise);
-    });
+    _noisePreset = preset ?? NoisePreset.disabled;
+    if (preset == NoisePreset.custom) return;
+    for (Noise defaultNoise in defaultNoises) {
+      _noiseLevels[defaultNoise.id] = defaultNoise.getDefaultLevel(_noisePreset);
+    }
+    _useWhiteNoise = preset != NoisePreset.disabled;
+    _saveAll();
+    setState(() {});
   }
 
   void _onWhiteNoiseChanged(bool isEnabled) {
-    setState(() {
-      _onPresetChanged(NoisePreset.custom);
-    });
+    _noisePreset = NoisePreset.custom;
+    _useWhiteNoise = isEnabled;
+    _saveAll();
+    setState(() {});
   }
 
   void _onSliderChanged(Noise noise, int value) {
     if (_noiseLevels[noise.id] == value) return;
-    setState(() {
-      _noiseLevels[noise.id] = value;
-      _onPresetChanged(NoisePreset.custom);
-    });
+    _noiseLevels[noise.id] = value;
+    _noisePreset = NoisePreset.custom;
+    _saveAll();
+    setState(() {});
+  }
+
+  void _loadAll() {
+    final sharedPreferences = SharedPreferencesHolder.get;
+    final presetName = sharedPreferences.getString(PreferenceKey.noisePreset) ?? NoisePreset.disabled.name;
+    _noisePreset = NoisePreset.values.byName(presetName);
+    _useWhiteNoise = sharedPreferences.getBool(PreferenceKey.useWhiteNoise) ?? false;
+    for (Noise defaultNoise in defaultNoises) {
+      final level = sharedPreferences.getInt(defaultNoise.preferenceKey) ?? 0;
+      _noiseLevels[defaultNoise.id] = level;
+    }
+  }
+
+  void _saveAll() {
+    final sharedPreferences = SharedPreferencesHolder.get;
+    sharedPreferences.setString(PreferenceKey.noisePreset, _noisePreset.name);
+    sharedPreferences.setBool(PreferenceKey.useWhiteNoise, _useWhiteNoise);
+    for (Noise defaultNoise in defaultNoises) {
+      final level = _noiseLevels[defaultNoise.id] ?? 0;
+      sharedPreferences.setInt(defaultNoise.preferenceKey, level);
+    }
   }
 }
