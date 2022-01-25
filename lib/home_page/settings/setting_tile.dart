@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../../util/shared_preferences_holder.dart';
 
+const settingTitleTextStyle = TextStyle(
+  fontSize: 14,
+);
+const settingDescriptionTextStyle = TextStyle(
+  fontSize: 12,
+  color: Colors.grey,
+);
+
 class SettingTile extends StatefulWidget {
   final GestureTapCallback? onTap;
   final String title;
   final String? description;
   final String? disabledDescription;
   final String? preferenceKey;
+  final ValueChanged<bool>? onSwitchChanged;
 
   const SettingTile({
     Key? key,
@@ -16,6 +25,7 @@ class SettingTile extends StatefulWidget {
     this.description,
     this.disabledDescription,
     this.preferenceKey,
+    this.onSwitchChanged,
   }) : super(key: key);
 
   @override
@@ -26,16 +36,11 @@ class _SettingTileState extends State<SettingTile> {
   bool _isSwitchEnabled = true;
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     final preferenceKey = widget.preferenceKey;
     if (preferenceKey != null) {
       _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ?? true;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return InkWell(
       onTap: widget.preferenceKey == null ? widget.onTap : () => _onSwitchChanged(!_isSwitchEnabled),
       splashColor: Colors.transparent,
@@ -50,14 +55,14 @@ class _SettingTileState extends State<SettingTile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.title),
+                  Text(
+                    widget.title,
+                    style: settingTitleTextStyle,
+                  ),
                   if (widget.description != null)
                     Text(
                       _getDescription(),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
+                      style: settingDescriptionTextStyle,
                     ),
                 ],
               ),
@@ -92,6 +97,7 @@ class _SettingTileState extends State<SettingTile> {
     SharedPreferencesHolder.get.setBool(widget.preferenceKey.toString(), isEnabled);
     setState(() {
       _isSwitchEnabled = isEnabled;
+      widget.onSwitchChanged?.call(isEnabled);
     });
   }
 }
