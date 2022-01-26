@@ -83,7 +83,8 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
               maxLines: null,
               minLines: 2,
               decoration: const InputDecoration(
-                hintText: '메모',
+                hintText: '메모 (이 문제를 틀린 이유, 복습할 점을 적어보세요.)',
+                hintMaxLines: 3,
                 isCollapsed: true,
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12),

@@ -178,9 +178,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
         Wrap(
           spacing: 24,
           children: [
-            _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60),
-            _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 56),
-            _buildNumberInputWithTitle(_examDurationEditingController, '시험 시간', '분', 60),
+            _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60, maxLength: 3),
+            _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 56, maxLength: 1),
+            _buildNumberInputWithTitle(_examDurationEditingController, '시험 시간', '분', 60, maxLength: 3),
           ],
         ),
         const SizedBox(height: 8),
@@ -223,10 +223,13 @@ class _EditRecordPageState extends State<EditRecordPage> {
           keyboardType: TextInputType.multiline,
           maxLines: null,
           minLines: 2,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
+            hintText: '이번 모의고사는 어땠나요?\n다음 모의고사에서 개선할 점을 적어보세요.',
+            hintMaxLines: 3,
+            hintStyle: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w300),
             isCollapsed: true,
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.all(12),
+            border: const OutlineInputBorder(),
+            contentPadding: const EdgeInsets.all(12),
           ),
         ),
         const SizedBox(height: 8),
@@ -266,8 +269,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
     TextEditingController controller,
     String title,
     String suffix,
-    double width,
-  ) {
+    double width, {
+    int? maxLength,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -278,6 +282,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           child: OutlinedTextField(
             controller: controller,
             suffix: suffix,
+            maxLength: maxLength,
           ),
         ),
       ],
