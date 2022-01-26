@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../model/problem.dart';
@@ -20,54 +21,48 @@ class ReviewProblemDetailPage extends StatefulWidget {
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   bool _hideUi = false;
   bool _hideMemo = true;
-  int currentIndex = 0;
+  int _currentIndex = 0;
+  double _imageX = 0;
+  double _imageY = 0;
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: [SystemUiOverlay.top],
-    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     final problem = widget.reviewProblem;
-    return AnnotatedRegion(
-      value: const SystemUiOverlayStyle(
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            PhotoViewGallery.builder(
-              itemCount: problem.imagePaths.length,
-              scrollPhysics: const BouncingScrollPhysics(),
-              builder: (_, index) => PhotoViewGalleryPageOptions(
-                onTapUp: _onPhotoViewTapUp,
-                imageProvider: NetworkImage(problem.imagePaths[index]),
-              ),
-              onPageChanged: _onPhotoChanged,
-              loadingBuilder: (context, event) => const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PhotoViewGallery.builder(
+            itemCount: problem.imagePaths.length,
+            scrollPhysics: const BouncingScrollPhysics(),
+            builder: (_, index) => PhotoViewGalleryPageOptions(
+              onTapUp: (_, __, ___) => _onPhotoViewTapUp(),
+              onScaleEnd: _onPhotoViewScaleEnd,
+              imageProvider: NetworkImage(problem.imagePaths[index]),
+            ),
+            onPageChanged: _onPhotoChanged,
+            loadingBuilder: (context, event) => const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
               ),
             ),
-            SafeArea(
-              top: false,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 100),
-                child: _hideUi ? const SizedBox.shrink() : _buildMenuBar(),
-              ),
+          ),
+          SafeArea(
+            top: false,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              child: _hideUi ? const SizedBox.shrink() : _buildMenuBar(),
             ),
-            SafeArea(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 100),
-                child: _hideUi ? const SizedBox.shrink() : _buildPageIndicator(),
-              ),
+          ),
+          SafeArea(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              child: _hideUi ? const SizedBox.shrink() : _buildPageIndicator(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -151,7 +146,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
           color: Colors.black38,
         ),
         child: Text(
-          '${currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
+          '${_currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
           style: const TextStyle(
             color: Colors.white,
             height: 1.21,
@@ -161,15 +156,28 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     );
   }
 
-  void _onPhotoViewTapUp(_, __, ___) {
+  void _onPhotoViewTapUp() {
     setState(() {
       _hideUi = !_hideUi;
     });
   }
 
+  void _onPhotoViewScaleEnd(_, ScaleEndDetails details, PhotoViewControllerValue controllerValue) {
+    double x = controllerValue.position.dx;
+    double y = controllerValue.position.dy;
+    if ((x - _imageX).abs() < 2 &&
+        (y - _imageY).abs() < 2 &&
+        details.pointerCount == 0 &&
+        details.velocity.pixelsPerSecond.distance == 0) {
+      _onPhotoViewTapUp();
+    }
+    _imageX = x;
+    _imageY = y;
+  }
+
   void _onPhotoChanged(int index) {
     setState(() {
-      currentIndex = index;
+      _currentIndex = index;
     });
   }
 
