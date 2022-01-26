@@ -95,5 +95,5 @@ const SystemUiOverlayStyle defaultSystemUiOverlayStyle = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent,
   statusBarBrightness: Brightness.light,
   systemNavigationBarIconBrightness: Brightness.dark,
-  systemNavigationBarColor: Colors.transparent,
+  systemNavigationBarColor: Colors.white,
 );
