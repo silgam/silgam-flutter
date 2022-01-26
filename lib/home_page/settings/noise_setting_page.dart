@@ -145,8 +145,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 Slider(
                   value: _noiseLevels[noise.id]?.toDouble() ?? 0,
                   onChanged: (value) => _onSliderChanged(noise, value.toInt()),
-                  max: 10,
                   label: (_noiseLevels[noise.id]?.toDouble() ?? 0).toStringAsFixed(0),
+                  max: 10,
+                  divisions: 10,
                 ),
                 const SizedBox(height: 8),
               ],
