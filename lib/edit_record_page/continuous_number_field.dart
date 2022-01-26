@@ -29,9 +29,9 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: _keyListenerFocusNode,
-      onKey: _onKeyDetected,
+      onKeyEvent: _onKeyEvent,
       child: TextField(
         controller: _editingController,
         keyboardType: TextInputType.number,
@@ -49,8 +49,8 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
     );
   }
 
-  void _onKeyDetected(RawKeyEvent event) {
-    if (event is! RawKeyDownEvent) return;
+  void _onKeyEvent(KeyEvent event) {
+    if (event is! KeyDownEvent) return;
     if (event.logicalKey == LogicalKeyboardKey.backspace && _editingController.text.isEmpty) {
       widget.onDelete();
     }
