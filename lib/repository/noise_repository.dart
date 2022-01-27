@@ -1,12 +1,13 @@
 enum NoisePreset { disabled, easy, normal, hard, custom }
 
 class Noise {
+  static const int maxLevel = 20;
   final int id;
   final String name;
   final String preferenceKey;
   final Map<NoisePreset, int> presetLevels;
 
-  Noise({
+  const Noise({
     required this.id,
     required this.name,
     required this.preferenceKey,
@@ -16,53 +17,57 @@ class Noise {
   int getDefaultLevel(NoisePreset currentPreset) {
     return presetLevels[currentPreset] ?? 0;
   }
+
+  static Noise byId(int id) {
+    return defaultNoises.firstWhere((noise) => noise.id == id);
+  }
 }
 
-final defaultNoises = [
+const defaultNoises = [
   Noise(
     id: 0,
     name: '시험지 넘기는 소리',
     preferenceKey: 'paperFlippingNoise',
     presetLevels: {
-      NoisePreset.easy: 3,
-      NoisePreset.normal: 5,
-      NoisePreset.hard: 7,
+      NoisePreset.easy: 8,
+      NoisePreset.normal: 12,
+      NoisePreset.hard: 16,
     },
   ),
   Noise(
     id: 1,
-    name: '기침 소리',
-    preferenceKey: 'coughNoise',
+    name: '글씨 쓰는 소리',
+    preferenceKey: 'writingNoise',
     presetLevels: {
-      NoisePreset.easy: 2,
-      NoisePreset.normal: 3,
-      NoisePreset.hard: 4,
+      NoisePreset.easy: 6,
+      NoisePreset.normal: 8,
+      NoisePreset.hard: 10,
     },
   ),
   Noise(
     id: 2,
-    name: '글씨 쓰는 소리',
-    preferenceKey: 'writingNoise',
+    name: '지우개로 지우는 소리',
+    preferenceKey: 'erasingNoise',
     presetLevels: {
       NoisePreset.easy: 2,
-      NoisePreset.normal: 3,
-      NoisePreset.hard: 4,
+      NoisePreset.normal: 4,
+      NoisePreset.hard: 6,
     },
   ),
   Noise(
     id: 3,
-    name: '지우개로 지우는 소리',
-    preferenceKey: 'erasingNoise',
+    name: '샤프 딸깍하는 소리',
+    preferenceKey: 'sharpClickingNoise',
     presetLevels: {
-      NoisePreset.easy: 1,
-      NoisePreset.normal: 2,
-      NoisePreset.hard: 3,
+      NoisePreset.easy: 2,
+      NoisePreset.normal: 4,
+      NoisePreset.hard: 6,
     },
   ),
   Noise(
     id: 4,
-    name: '샤프 딸깍하는 소리',
-    preferenceKey: 'sharpClickingNoise',
+    name: '기침 소리',
+    preferenceKey: 'coughNoise',
     presetLevels: {
       NoisePreset.easy: 1,
       NoisePreset.normal: 2,
@@ -75,8 +80,8 @@ final defaultNoises = [
     preferenceKey: 'sniffleNoise',
     presetLevels: {
       NoisePreset.easy: 1,
-      NoisePreset.normal: 1,
-      NoisePreset.hard: 2,
+      NoisePreset.normal: 2,
+      NoisePreset.hard: 3,
     },
   ),
   Noise(
@@ -85,8 +90,8 @@ final defaultNoises = [
     preferenceKey: 'legShakingNoise',
     presetLevels: {
       NoisePreset.easy: 1,
-      NoisePreset.normal: 1,
-      NoisePreset.hard: 2,
+      NoisePreset.normal: 2,
+      NoisePreset.hard: 3,
     },
   ),
   Noise(
@@ -95,8 +100,8 @@ final defaultNoises = [
     preferenceKey: 'clothesNoise',
     presetLevels: {
       NoisePreset.easy: 1,
-      NoisePreset.normal: 1,
-      NoisePreset.hard: 2,
+      NoisePreset.normal: 2,
+      NoisePreset.hard: 3,
     },
   ),
   Noise(
@@ -105,8 +110,8 @@ final defaultNoises = [
     preferenceKey: 'chairMovingNoise',
     presetLevels: {
       NoisePreset.easy: 1,
-      NoisePreset.normal: 1,
-      NoisePreset.hard: 2,
+      NoisePreset.normal: 2,
+      NoisePreset.hard: 3,
     },
   ),
   Noise(
@@ -115,8 +120,8 @@ final defaultNoises = [
     preferenceKey: 'chairCreakingNoise',
     presetLevels: {
       NoisePreset.easy: 1,
-      NoisePreset.normal: 1,
-      NoisePreset.hard: 2,
+      NoisePreset.normal: 2,
+      NoisePreset.hard: 3,
     },
   ),
   Noise(
