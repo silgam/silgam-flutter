@@ -49,14 +49,16 @@ class _HomePageState extends State<HomePage> {
       value: defaultSystemUiOverlayStyle,
       child: Scaffold(
         backgroundColor: HomePage.backgroundColor,
-        body: IndexedStack(
-          index: _selectedIndex,
-          sizing: StackFit.expand,
-          children: [
-            TakeExamView(navigateToRecordTab: () => _onItemTapped(1)),
-            RecordListView(eventStream: _recordListViewEventStreamController.stream),
-            SettingsView(eventStream: _settingsViewEventStreamController.stream),
-          ],
+        body: SafeArea(
+          child: IndexedStack(
+            index: _selectedIndex,
+            sizing: StackFit.expand,
+            children: [
+              TakeExamView(navigateToRecordTab: () => _onItemTapped(1)),
+              RecordListView(eventStream: _recordListViewEventStreamController.stream),
+              SettingsView(eventStream: _settingsViewEventStreamController.stream),
+            ],
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 4,
