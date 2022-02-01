@@ -6,6 +6,7 @@ import 'package:wakelock/wakelock.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
+import '../repository/user_repository.dart';
 import '../util/android_audio_manager.dart';
 import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
@@ -444,8 +445,8 @@ class _ClockPageState extends State<ClockPage> {
 
     final sharedPreferences = SharedPreferencesHolder.get;
     const key = PreferenceKey.showAddRecordPageAfterExamFinished;
-    final showAddRecordPageAfterExamFinished = sharedPreferences.getBool(key);
-    if (showAddRecordPageAfterExamFinished == true) {
+    final showAddRecordPageAfterExamFinished = sharedPreferences.getBool(key) ?? true;
+    if (showAddRecordPageAfterExamFinished && UserRepository().isSignedIn()) {
       Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
     }
   }
