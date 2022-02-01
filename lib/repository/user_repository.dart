@@ -15,5 +15,7 @@ class UserRepository {
     return FirebaseAuth.instance.currentUser;
   }
 
+  bool isSignedIn() => getUserOrNull() != null;
+
   bool isNotSignedIn() => getUserOrNull() == null;
 }
