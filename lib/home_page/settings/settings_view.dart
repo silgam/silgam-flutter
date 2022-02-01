@@ -64,7 +64,7 @@ class _SettingsViewState extends State<SettingsView> {
             disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
             preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
           ),
-          const _Divider(),
+          const _Divider(thick: true),
           SettingTile(
             onTap: _onWriteReviewButtonTap,
             title: '리뷰 쓰기',
@@ -72,15 +72,21 @@ class _SettingsViewState extends State<SettingsView> {
           ),
           const _Divider(),
           SettingTile(
-            onTap: _onGoFacebookPageButtonTap,
-            title: '실감 페이스북 페이지 보러 가기',
-            description: '좋아요 눌러주세요!',
-          ),
-          const _Divider(),
-          SettingTile(
             onTap: _onGoFacebookMessengerButtonTap,
             title: '개발자와 대화하기',
             description: '페이스북 메신저로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
+          ),
+          const _Divider(),
+          SettingTile(
+            onTap: _onGoInstagramButtonTap,
+            title: '실감 인스타그램 보러 가기',
+            description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
+          ),
+          const _Divider(),
+          SettingTile(
+            onTap: _onGoFacebookPageButtonTap,
+            title: '실감 페이스북 페이지 보러 가기',
+            description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
           ),
           const _Divider(),
           if (_user != null)
@@ -246,6 +252,10 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
+  void _onGoInstagramButtonTap() {
+    launch('https://www.instagram.com/silgam.app');
+  }
+
   void _onGoFacebookPageButtonTap() {
     launch('https://fb.me/SilgamOfficial');
   }
@@ -262,11 +272,28 @@ class _SettingsViewState extends State<SettingsView> {
 }
 
 class _Divider extends StatelessWidget {
-  const _Divider({Key? key}) : super(key: key);
+  final bool thick;
+
+  const _Divider({
+    Key? key,
+    this.thick = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(height: 0.3, thickness: 0.3);
+    double thickness = 0.3;
+    double indent = 12;
+    if (thick) {
+      thickness = 1;
+      indent = 0;
+    }
+    return Divider(
+      color: Colors.grey.shade200,
+      height: thickness,
+      thickness: thickness,
+      indent: indent,
+      endIndent: indent,
+    );
   }
 }
 
