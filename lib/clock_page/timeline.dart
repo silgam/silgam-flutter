@@ -80,12 +80,18 @@ class TimelineConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = duration * 3.0;
-    double height = 1;
-    Alignment begin = Alignment.centerLeft;
-    Alignment end = Alignment.centerRight;
-    if (direction == Axis.vertical) {
-      height = width;
+    Size displaySize = MediaQuery.of(context).size;
+    double width, height;
+    Alignment begin, end;
+    if (direction == Axis.horizontal) {
+      double widthScale = (displaySize.width / 120).constraint(3, 10);
+      width = duration * widthScale;
+      height = 1;
+      begin = Alignment.centerLeft;
+      end = Alignment.centerRight;
+    } else {
+      double heightScale = (displaySize.height / 120).constraint(3, 10);
+      height = duration * heightScale;
       width = 1;
       begin = Alignment.topCenter;
       end = Alignment.bottomCenter;
@@ -111,4 +117,13 @@ class TimelineConnector extends StatelessWidget {
 Color _getTimelineColor(bool disabled) {
   if (disabled) return Colors.grey[700]!;
   return Colors.white;
+}
+
+extension on double {
+  double constraint(double min, double max) {
+    double result = this;
+    if (result < min) result = min;
+    if (result > max) result = max;
+    return result;
+  }
 }
