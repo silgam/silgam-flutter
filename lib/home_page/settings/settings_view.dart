@@ -52,12 +52,12 @@ class _SettingsViewState extends State<SettingsView> {
                 )
               : _buildLoginInfo(),
           const _Divider(),
-          // SettingTile(
-          //   onTap: _onNoiseSettingButtonTap,
-          //   title: '백색 소음, 시험장 소음 설정',
-          //   description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
-          // ),
-          // const _Divider(),
+          SettingTile(
+            onTap: _onNoiseSettingButtonTap,
+            title: '백색 소음, 시험장 소음 설정',
+            description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
+          ),
+          const _Divider(),
           const SettingTile(
             title: '시험 종료 후 바로 기록하기',
             description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어갑니다.',
