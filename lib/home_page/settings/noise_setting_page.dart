@@ -14,14 +14,12 @@ class NoiseSettingPage extends StatefulWidget {
 }
 
 class _NoiseSettingPageState extends State<NoiseSettingPage> {
-  NoisePreset _noisePreset = NoisePreset.disabled;
-  bool _useWhiteNoise = false;
-  final Map<int, int> _noiseLevels = {};
+  final NoiseSettings _noiseSettings = NoiseSettings();
 
   @override
   void initState() {
     super.initState();
-    _loadAll();
+    _noiseSettings.loadAll();
   }
 
   @override
@@ -72,7 +70,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         RadioListTile(
           onChanged: _onPresetChanged,
           value: NoisePreset.disabled,
-          groupValue: _noisePreset,
+          groupValue: _noiseSettings.noisePreset,
           title: const Text(
             '사용 안함',
             style: settingTitleTextStyle,
@@ -81,7 +79,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         RadioListTile(
           onChanged: _onPresetChanged,
           value: NoisePreset.easy,
-          groupValue: _noisePreset,
+          groupValue: _noiseSettings.noisePreset,
           title: const Text(
             '조용한 분위기',
             style: settingTitleTextStyle,
@@ -94,7 +92,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         RadioListTile(
           onChanged: _onPresetChanged,
           value: NoisePreset.normal,
-          groupValue: _noisePreset,
+          groupValue: _noiseSettings.noisePreset,
           title: const Text(
             '시험장 분위기',
             style: settingTitleTextStyle,
@@ -107,7 +105,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         RadioListTile(
           onChanged: _onPresetChanged,
           value: NoisePreset.hard,
-          groupValue: _noisePreset,
+          groupValue: _noiseSettings.noisePreset,
           title: const Text(
             '시끄러운 분위기',
             style: settingTitleTextStyle,
@@ -120,7 +118,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         RadioListTile(
           onChanged: _onPresetChanged,
           value: NoisePreset.custom,
-          groupValue: _noisePreset,
+          groupValue: _noiseSettings.noisePreset,
           title: const Text(
             '직접 설정',
             style: settingTitleTextStyle,
@@ -143,9 +141,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
               children: [
                 Text(noise.name),
                 Slider(
-                  value: _noiseLevels[noise.id]?.toDouble() ?? 0,
+                  value: _noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0,
                   onChanged: (value) => _onSliderChanged(noise, value.toInt()),
-                  label: (_noiseLevels[noise.id]?.toDouble() ?? 0).toStringAsFixed(0),
+                  label: (_noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0).toStringAsFixed(0),
                   max: Noise.maxLevel.toDouble(),
                   divisions: Noise.maxLevel,
                 ),
@@ -160,51 +158,30 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
 
   void _onPresetChanged(NoisePreset? preset) {
     setState(() {
-      _noisePreset = preset ?? NoisePreset.disabled;
+      _noiseSettings.noisePreset = preset ?? NoisePreset.disabled;
       if (preset == NoisePreset.custom) return;
       for (Noise defaultNoise in defaultNoises) {
-        _noiseLevels[defaultNoise.id] = defaultNoise.getDefaultLevel(_noisePreset);
+        _noiseSettings.noiseLevels[defaultNoise.id] = defaultNoise.getDefaultLevel(_noiseSettings.noisePreset);
       }
-      _useWhiteNoise = preset != NoisePreset.disabled;
+      _noiseSettings.useWhiteNoise = preset != NoisePreset.disabled;
     });
-    _saveAll();
+    _noiseSettings.saveAll();
   }
 
   void _onWhiteNoiseChanged(bool isEnabled) {
     setState(() {
-      _noisePreset = NoisePreset.custom;
-      _useWhiteNoise = isEnabled;
+      _noiseSettings.noisePreset = NoisePreset.custom;
+      _noiseSettings.useWhiteNoise = isEnabled;
     });
-    _saveAll();
+    _noiseSettings.saveAll();
   }
 
   void _onSliderChanged(Noise noise, int value) {
     setState(() {
-      if (_noiseLevels[noise.id] == value) return;
-      _noiseLevels[noise.id] = value;
-      _noisePreset = NoisePreset.custom;
+      if (_noiseSettings.noiseLevels[noise.id] == value) return;
+      _noiseSettings.noiseLevels[noise.id] = value;
+      _noiseSettings.noisePreset = NoisePreset.custom;
     });
-    _saveAll();
-  }
-
-  void _loadAll() {
-    final sharedPreferences = SharedPreferencesHolder.get;
-    final presetName = sharedPreferences.getString(PreferenceKey.noisePreset) ?? NoisePreset.disabled.name;
-    _noisePreset = NoisePreset.values.byName(presetName);
-    _useWhiteNoise = sharedPreferences.getBool(PreferenceKey.useWhiteNoise) ?? false;
-    for (Noise defaultNoise in defaultNoises) {
-      final level = sharedPreferences.getInt(defaultNoise.preferenceKey) ?? 0;
-      _noiseLevels[defaultNoise.id] = level;
-    }
-  }
-
-  void _saveAll() {
-    final sharedPreferences = SharedPreferencesHolder.get;
-    sharedPreferences.setString(PreferenceKey.noisePreset, _noisePreset.name);
-    sharedPreferences.setBool(PreferenceKey.useWhiteNoise, _useWhiteNoise);
-    for (Noise defaultNoise in defaultNoises) {
-      final level = _noiseLevels[defaultNoise.id] ?? 0;
-      sharedPreferences.setInt(defaultNoise.preferenceKey, level);
-    }
+    _noiseSettings.saveAll();
   }
 }

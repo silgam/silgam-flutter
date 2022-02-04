@@ -1,3 +1,5 @@
+import '../util/shared_preferences_holder.dart';
+
 enum NoisePreset { disabled, easy, normal, hard, custom }
 
 class Noise {
@@ -20,6 +22,33 @@ class Noise {
 
   static Noise byId(int id) {
     return defaultNoises.firstWhere((noise) => noise.id == id);
+  }
+}
+
+class NoiseSettings {
+  NoisePreset noisePreset = NoisePreset.disabled;
+  bool useWhiteNoise = false;
+  final Map<int, int> noiseLevels = {};
+
+  void loadAll() {
+    final sharedPreferences = SharedPreferencesHolder.get;
+    final presetName = sharedPreferences.getString(PreferenceKey.noisePreset) ?? NoisePreset.disabled.name;
+    noisePreset = NoisePreset.values.byName(presetName);
+    useWhiteNoise = sharedPreferences.getBool(PreferenceKey.useWhiteNoise) ?? false;
+    for (Noise defaultNoise in defaultNoises) {
+      final level = sharedPreferences.getInt(defaultNoise.preferenceKey) ?? 0;
+      noiseLevels[defaultNoise.id] = level;
+    }
+  }
+
+  void saveAll() {
+    final sharedPreferences = SharedPreferencesHolder.get;
+    sharedPreferences.setString(PreferenceKey.noisePreset, noisePreset.name);
+    sharedPreferences.setBool(PreferenceKey.useWhiteNoise, useWhiteNoise);
+    for (Noise defaultNoise in defaultNoises) {
+      final level = noiseLevels[defaultNoise.id] ?? 0;
+      sharedPreferences.setInt(defaultNoise.preferenceKey, level);
+    }
   }
 }
 
