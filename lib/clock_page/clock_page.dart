@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -37,6 +39,7 @@ class ClockPage extends StatefulWidget {
 class _ClockPageState extends State<ClockPage> {
   late final List<Breakpoint> _breakpoints;
   late int _currentBreakpointIndex = 0;
+  Timer? _timer;
   DateTime _currentTime = DateTime.now();
   DateTime _examStartedTime = DateTime.now();
 
@@ -104,8 +107,6 @@ class _ClockPageState extends State<ClockPage> {
                 alignment: Alignment.center,
                 child: WristWatch(
                   clockTime: _currentTime,
-                  onEverySecond: _onEverySecond,
-                  isLive: _isStarted,
                 ),
               ),
               _buildScreenOverlayIfNotStarted(),
@@ -443,6 +444,9 @@ class _ClockPageState extends State<ClockPage> {
 
   void _startExam() {
     _isStarted = true;
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _onEverySecond(_currentTime.add(const Duration(seconds: 1)));
+    });
     _playAnnouncement();
     _noiseGenerator?.start();
   }
@@ -500,6 +504,7 @@ class _ClockPageState extends State<ClockPage> {
 
     player.dispose();
     _noiseGenerator?.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
