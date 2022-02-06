@@ -9,6 +9,7 @@ class NoiseGenerator {
   final NoiseSettings noiseSettings;
   final NoisePlayer noisePlayer;
   final _random = Random();
+  Timer? _timer;
 
   NoiseGenerator({
     required this.noiseSettings,
@@ -19,13 +20,18 @@ class NoiseGenerator {
     if (noiseSettings.useWhiteNoise) {
       noisePlayer.playWhiteNoise();
     }
-    Timer.periodic(const Duration(milliseconds: 100), (_) {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       noiseSettings.noiseLevels.forEach((id, level) {
         if (_canPlay(level)) {
           noisePlayer.playNoise(id);
         }
       });
     });
+  }
+
+  void dispose() {
+    _timer?.cancel();
+    noisePlayer.dispose();
   }
 
   bool _canPlay(int level) {
