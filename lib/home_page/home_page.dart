@@ -69,15 +69,18 @@ class _HomePageState extends State<HomePage> {
           currentIndex: _selectedIndex,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.alarm),
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
               label: TakeExamView.title,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.create),
+              icon: Icon(Icons.view_list_outlined),
+              activeIcon: Icon(Icons.view_list),
               label: RecordListView.title,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.settings_outlined),
+              activeIcon: Icon(Icons.settings),
               label: SettingsView.title,
             ),
           ],

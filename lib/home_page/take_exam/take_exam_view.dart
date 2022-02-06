@@ -7,7 +7,7 @@ import '../../repository/exam_repository.dart';
 import '../../util/scaffold_body.dart';
 
 class TakeExamView extends StatelessWidget {
-  static const title = '시험보기';
+  static const title = '메인';
   final Function() navigateToRecordTab;
 
   const TakeExamView({
