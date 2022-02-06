@@ -53,6 +53,7 @@ flutter:
     - assets/
     - assets/announcements/
     - assets/app_icon/
+    - assets/noises/
   fonts:
     - family: NotoSansKR
       fonts:
