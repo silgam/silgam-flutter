@@ -6,11 +6,11 @@ import '../../model/subject.dart';
 import '../../repository/exam_repository.dart';
 import '../../util/scaffold_body.dart';
 
-class TakeExamView extends StatelessWidget {
+class MainView extends StatelessWidget {
   static const title = '메인';
   final Function() navigateToRecordTab;
 
-  const TakeExamView({
+  const MainView({
     Key? key,
     required this.navigateToRecordTab,
   }) : super(key: key);
