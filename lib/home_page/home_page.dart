@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import '../app.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../repository/user_repository.dart';
+import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';
 import 'settings/settings_view.dart';
-import 'take_exam/take_exam_view.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/';
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
             index: _selectedIndex,
             sizing: StackFit.expand,
             children: [
-              TakeExamView(navigateToRecordTab: () => _onItemTapped(1)),
+              MainView(navigateToRecordTab: () => _onItemTapped(1)),
               RecordListView(eventStream: _recordListViewEventStreamController.stream),
               SettingsView(eventStream: _settingsViewEventStreamController.stream),
             ],
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               activeIcon: Icon(Icons.home),
-              label: TakeExamView.title,
+              label: MainView.title,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.view_list_outlined),
