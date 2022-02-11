@@ -59,6 +59,7 @@ class _SettingTileState extends State<SettingTile> {
                     widget.title,
                     style: settingTitleTextStyle,
                   ),
+                  const SizedBox(height: 4),
                   if (widget.description != null)
                     Text(
                       _getDescription(),
