@@ -74,6 +74,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                 errorText: _isTitleEmpty && !_isTitleFirstEdit ? '' : null,
                 errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
                 focusedErrorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                hintStyle: const TextStyle(fontWeight: FontWeight.w300),
               ),
             ),
             const SizedBox(height: 16),
@@ -88,15 +89,16 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                 isCollapsed: true,
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12),
+                hintStyle: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  height: 1.2,
+                ),
               ),
             ),
             const SizedBox(height: 16),
             Text(
               '사진',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w300,
-              ),
+              style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w500, fontSize: 14),
             ),
             const SizedBox(height: 8),
             SingleChildScrollView(

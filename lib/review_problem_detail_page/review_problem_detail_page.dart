@@ -95,8 +95,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    height: 1.2,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -149,7 +148,6 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
           '${_currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
           style: const TextStyle(
             color: Colors.white,
-            height: 1.21,
           ),
         ),
       ),

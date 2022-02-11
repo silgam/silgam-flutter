@@ -145,7 +145,7 @@ class _ClockPageState extends State<ClockPage> {
     if (widget.exam.examNumber != null) {
       children.add(Container(
         margin: const EdgeInsets.only(bottom: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(1000)),
           border: Border.all(color: Colors.white),
@@ -156,10 +156,10 @@ class _ClockPageState extends State<ClockPage> {
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            height: 1.2,
           ),
         ),
       ));
+      children.add(const SizedBox(height: 4));
     }
 
     children.add(Text(
@@ -167,7 +167,7 @@ class _ClockPageState extends State<ClockPage> {
       style: const TextStyle(
         color: Colors.white,
         fontSize: 28,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w700,
       ),
     ));
 
@@ -354,14 +354,22 @@ class _ClockPageState extends State<ClockPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('아직 시험이 끝나지 않았어요!'),
+          title: const Text(
+            '아직 시험이 끝나지 않았어요!',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           content: const Text('시험을 종료하실 건가요?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('취소'),
+              child: Text(
+                '취소',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {

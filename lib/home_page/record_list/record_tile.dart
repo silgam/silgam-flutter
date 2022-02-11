@@ -159,15 +159,14 @@ class RecordTileState extends State<RecordTile> {
       );
     }
 
+    TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
     return RichText(
       textAlign: TextAlign.end,
       text: TextSpan(
-        style: const TextStyle(
+        style: defaultTextStyle?.copyWith(
           fontWeight: FontWeight.w300,
           fontSize: 18,
-          height: 1.2,
           color: Colors.black,
-          fontFamily: 'NotoSansKR',
         ),
         children: textSpans,
       ),

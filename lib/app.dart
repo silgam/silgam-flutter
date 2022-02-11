@@ -53,7 +53,7 @@ class SilgamApp extends StatelessWidget {
       },
       theme: ThemeData(
         primarySwatch: indigoSwatch,
-        fontFamily: 'NotoSansKR',
+        fontFamily: 'NanumSquare',
         sliderTheme: SliderTheme.of(context).copyWith(
           trackHeight: 3,
           trackShape: const RectangularSliderTrackShape(),
@@ -61,6 +61,14 @@ class SilgamApp extends StatelessWidget {
           overlayColor: Colors.transparent,
           thumbShape: SliderComponentShape.noThumb,
           showValueIndicator: ShowValueIndicator.always,
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(
+              fontFamily: 'NanumSquare',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
       ),
       debugShowCheckedModeBanner: false,
