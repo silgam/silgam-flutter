@@ -24,7 +24,7 @@ class Exam {
     required this.announcements,
   }) : examEndTime = examStartTime.add(Duration(minutes: examDuration));
 
-  String buildExamTimeString() {
+  String getExamTimeString() {
     final examEndTime = examStartTime.add(Duration(minutes: examDuration));
     final startHour = '${examStartTime.hour12}시 ';
     final String startMinute;
