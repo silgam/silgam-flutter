@@ -55,20 +55,12 @@ flutter:
     - assets/app_icon/
     - assets/noises/
   fonts:
-    - family: NotoSansKR
+    - family: NanumSquare
       fonts:
-        - asset: fonts/NotoSansKR-Thin.otf
-          weight: 100
-        - asset: fonts/NotoSansKR-Light.otf
-          weight: 300
-        - asset: fonts/NotoSansKR-Regular.otf
-          weight: 400
-        - asset: fonts/NotoSansKR-Medium.otf
-          weight: 500
-        - asset: fonts/NotoSansKR-Bold.otf
-          weight: 700
-        - asset: fonts/NotoSansKR-Black.otf
-          weight: 900
+        - asset: fonts/NanumSquareL.otf
+        - asset: fonts/NanumSquareR.otf
+        - asset: fonts/NanumSquareB.otf
+        - asset: fonts/NanumSquareEB.otf
     - family: NanumMyeongjo
       fonts:
         - asset: fonts/NanumMyeongjo-ExtraBold.ttf

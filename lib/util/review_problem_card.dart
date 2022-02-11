@@ -93,7 +93,6 @@ class ReviewProblemCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        height: 1.2,
                       ),
                     ),
                   ),
@@ -105,7 +104,6 @@ class ReviewProblemCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w300,
-                      height: 1.2,
                     ),
                   ),
                 ],

@@ -34,6 +34,7 @@ class TimelineTile extends StatelessWidget {
                 fontSize: 12,
               ),
             ),
+            const SizedBox(height: 1),
             Column(children: _buildTitleTexts()),
           ],
         ),

@@ -162,7 +162,6 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       labelStyle: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w400,
-                        height: 1.21,
                       ),
                     ),
                 ],
@@ -182,7 +181,10 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Text(_record.feedback),
+                child: Text(
+                  _record.feedback,
+                  style: const TextStyle(height: 1.2),
+                ),
               ),
             ],
           ),
@@ -334,7 +336,10 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('정말 이 기록을 삭제하실 건가요?'),
+          title: const Text(
+            '정말 이 기록을 삭제하실 건가요?',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
           content: Text(_record.title),
           actions: [
             TextButton(
