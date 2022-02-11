@@ -154,9 +154,10 @@ class _SettingsViewState extends State<SettingsView> {
                       user.displayName ?? '',
                       style: const TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
                       user.email ?? '',
                       style: TextStyle(
@@ -281,7 +282,7 @@ class _Divider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double thickness = 0.3;
+    double thickness = 0.5;
     double indent = 12;
     if (thick) {
       thickness = 1;
