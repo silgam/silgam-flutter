@@ -11,6 +11,8 @@ import 'login_page/login_page.dart';
 import 'record_detail_page/record_detail_page.dart';
 import 'review_problem_detail_page/review_problem_detail_page.dart';
 
+const double cardCornerRadius = 14;
+
 class SilgamApp extends StatelessWidget {
   const SilgamApp({Key? key}) : super(key: key);
 
