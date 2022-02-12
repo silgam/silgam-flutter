@@ -13,7 +13,6 @@ import '../../repository/user_repository.dart';
 import '../../util/login_button.dart';
 import '../../util/scaffold_body.dart';
 import '../../util/shared_preferences_holder.dart';
-import 'noise_setting_page.dart';
 import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {
@@ -216,7 +215,10 @@ class _SettingsViewState extends State<SettingsView> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('로그아웃하실 건가요?'),
+        title: const Text(
+          '로그아웃하실 건가요?',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           TextButton(
             onPressed: () {
@@ -241,9 +243,9 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
-  void _onNoiseSettingButtonTap() {
-    Navigator.pushNamed(context, NoiseSettingPage.routeName);
-  }
+  // void _onNoiseSettingButtonTap() {
+  //   Navigator.pushNamed(context, NoiseSettingPage.routeName);
+  // }
 
   void _onWriteReviewButtonTap() async {
     final InAppReview inAppReview = InAppReview.instance;
