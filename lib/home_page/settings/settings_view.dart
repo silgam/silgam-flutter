@@ -7,6 +7,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../app.dart';
 import '../../login_page/login_page.dart';
 import '../../repository/user_repository.dart';
 import '../../util/login_button.dart';
@@ -135,7 +136,7 @@ class _SettingsViewState extends State<SettingsView> {
         margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(cardCornerRadius),
           color: Colors.grey.shade200,
         ),
         child: IntrinsicHeight(

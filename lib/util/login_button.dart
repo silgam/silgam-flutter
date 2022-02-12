@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app.dart';
+
 class LoginButton extends StatelessWidget {
   final GestureTapCallback onTap;
   final String description;
@@ -14,7 +16,7 @@ class LoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(cardCornerRadius),
         color: Theme.of(context).primaryColor,
       ),
       clipBehavior: Clip.hardEdge,
