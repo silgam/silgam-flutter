@@ -201,13 +201,11 @@ class _ExamStartCardState extends State<_ExamStartCard> with TickerProviderState
     required String title,
     required String content,
   }) {
-    Color color = const Color(0xFF081146);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           iconData,
-          color: color,
           size: 28,
         ),
         const SizedBox(width: 8),
@@ -217,30 +215,16 @@ class _ExamStartCardState extends State<_ExamStartCard> with TickerProviderState
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  color: color,
+                style: const TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 14,
                 ),
               ),
               const SizedBox(height: 4),
-              Stack(
-                children: [
-                  const Text(
-                    '10시 30분 ~ 12시 10분 (100m)',
-                    style: TextStyle(
-                      color: Colors.transparent,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Text(
-                    content,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
+              Text(
+                content,
+                textWidthBasis: TextWidthBasis.longestLine,
+                style: const TextStyle(fontSize: 12),
               ),
             ],
           ),
