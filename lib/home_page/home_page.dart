@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: HomePage.backgroundColor,
         body: SafeArea(
           child: IndexedStack(
+            alignment: Alignment.center,
             index: _selectedIndex,
             sizing: StackFit.expand,
             children: [
@@ -70,6 +71,7 @@ class _HomePageState extends State<HomePage> {
           showSelectedLabels: false,
           onTap: _onItemTapped,
           currentIndex: _selectedIndex,
+          landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
