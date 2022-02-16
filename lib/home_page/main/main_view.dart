@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../app.dart';
 import '../../clock_page/clock_page.dart';
 import '../../edit_record_page/edit_record_page.dart';
 import '../../login_page/login_page.dart';
 import '../../model/exam.dart';
+import '../../repository/dday_repository.dart';
 import '../../repository/exam_repository.dart';
 import '../../repository/user_repository.dart';
 
 part 'button_card.dart';
 
 part 'card.dart';
+
+part 'd_days_card.dart';
 
 part 'exam_start_card.dart';
 
@@ -28,6 +32,9 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
+  final DateTime today = DateTime.now();
+  late final List<DDayItem> dDayItems = DDayRepository().getItemsToShow(today);
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -36,6 +43,7 @@ class _MainViewState extends State<MainView> {
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         child: Column(
           children: [
+            _DDaysCard(dDayItems: dDayItems),
             _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
             if (UserRepository().isNotSignedIn())
               _ButtonCard(
