@@ -11,11 +11,8 @@ import '../../repository/exam_repository.dart';
 import '../../repository/user_repository.dart';
 
 part 'button_card.dart';
-
 part 'card.dart';
-
 part 'd_days_card.dart';
-
 part 'exam_start_card.dart';
 
 class MainView extends StatefulWidget {
@@ -42,7 +39,32 @@ class _MainViewState extends State<MainView> {
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                DateFormat.MMMMEEEEd('ko_KR').format(today),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                '오늘도 빡공하세요!🔥', // todo
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Divider(indent: 20, endIndent: 20),
             _DDaysCard(dDayItems: dDayItems),
             _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
             if (UserRepository().isNotSignedIn())
