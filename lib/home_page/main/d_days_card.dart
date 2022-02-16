@@ -48,7 +48,7 @@ class _DDaysCard extends StatelessWidget {
               ],
             ),
             Text(
-              'D-${dDayItem.remainingDays}',
+              'D-${dDayItem.remainingDays == 0 ? 'Day' : dDayItem.remainingDays}',
               style: TextStyle(
                 height: 0.4,
                 color: primaryColor,
