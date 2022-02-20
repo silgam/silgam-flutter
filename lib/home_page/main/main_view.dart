@@ -1,14 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../app.dart';
 import '../../clock_page/clock_page.dart';
 import '../../edit_record_page/edit_record_page.dart';
 import '../../login_page/login_page.dart';
+import '../../model/ads.dart';
 import '../../model/exam.dart';
+import '../../repository/ads_repository.dart';
 import '../../repository/dday_repository.dart';
 import '../../repository/exam_repository.dart';
 import '../../repository/user_repository.dart';
+
+part 'ads_card.dart';
 
 part 'button_card.dart';
 part 'card.dart';
@@ -85,6 +92,17 @@ class _MainViewState extends State<MainView> {
                 onTap: _onRecordButtonTap,
                 iconData: Icons.edit,
                 title: '모의고사 기록하고 피드백하기',
+              ),
+              FutureBuilder(
+                future: AdsRepository().getAllAds(),
+                builder: (_, AsyncSnapshot<List<Ads>> snapshot) {
+                  final List<Ads> data = snapshot.data ?? [];
+                  if (data.isNotEmpty) {
+                    return AdsCard(ads: data);
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
               ),
             ],
           ),
