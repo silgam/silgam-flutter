@@ -1,13 +1,1 @@
-<svg data-name="Layer 1" id="Layer_1" viewBox="0 0 21.02 40" xmlns="http://www.w3.org/2000/svg">
-    <g data-name="Layer 2" id="Layer_2">
-        <g data-name="Layer 1-2" id="Layer_1-2">
-            <g data-name="Layer 2-2" id="Layer_2-2">
-                <g data-name="Layer 1-2-2" id="Layer_1-2-2">
-                    <path
-                        d="M23,21.48h6.49l1-6.61H22.92V11.31c0-2.74.89-5.17,3.46-5.17h4.13V.32A34.3,34.3,0,0,0,25.35,0c-6.05,0-9.59,3.21-9.59,10.48v4.39H9.49v6.61h6.28V39.71a25.09,25.09,0,0,0,3.77.29A24.33,24.33,0,0,0,23,39.76Z"
-                        fill="#4267b2" transform="translate(-9.49 0)" />
-                </g>
-            </g>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 21.02 40"><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1-2"><g id="Layer_2-2" data-name="Layer 2-2"><g id="Layer_1-2-2" data-name="Layer 1-2-2"><path fill="#4267b2" d="M23,21.48h6.49l1-6.61H22.92V11.31c0-2.74.89-5.17,3.46-5.17h4.13V.32A34.3,34.3,0,0,0,25.35,0c-6.05,0-9.59,3.21-9.59,10.48v4.39H9.49v6.61h6.28V39.71a25.09,25.09,0,0,0,3.77.29A24.33,24.33,0,0,0,23,39.76Z" transform="translate(-9.49 0)"/></g></g></g></g></svg>
