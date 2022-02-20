@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -16,11 +17,13 @@ import '../../repository/exam_repository.dart';
 import '../../repository/user_repository.dart';
 
 part 'ads_card.dart';
-
 part 'button_card.dart';
 part 'card.dart';
 part 'd_days_card.dart';
+
 part 'exam_start_card.dart';
+
+part 'welcome_messages.dart';
 
 class MainView extends StatefulWidget {
   static const title = '메인';
@@ -62,11 +65,11 @@ class _MainViewState extends State<MainView> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  '오늘도 빡공하세요!🔥', // todo
-                  style: TextStyle(
+                  _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
+                  style: const TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 13,
                   ),
