@@ -20,9 +20,7 @@ part 'ads_card.dart';
 part 'button_card.dart';
 part 'card.dart';
 part 'd_days_card.dart';
-
 part 'exam_start_card.dart';
-
 part 'welcome_messages.dart';
 
 class MainView extends StatefulWidget {
@@ -53,7 +51,7 @@ class _MainViewState extends State<MainView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
@@ -75,7 +73,7 @@ class _MainViewState extends State<MainView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               const Divider(indent: 20, endIndent: 20),
               _DDaysCard(dDayItems: dDayItems),
               _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
