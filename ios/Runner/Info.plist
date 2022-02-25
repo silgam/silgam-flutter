@@ -36,6 +36,14 @@
 				<string>com.googleusercontent.apps.55232180944-jm8sqs01dn3uu7ntj2hj8r84cl8or3us</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao75edb119450e8355c4506a8623a2010e</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
@@ -47,6 +55,8 @@
 	<string>실감</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>kakaolink</string>
+		<string>kakaokompassauth</string>
 		<string>fbapi</string>
 		<string>fbapi20130214</string>
 		<string>fbapi20130410</string>
