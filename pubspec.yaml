@@ -34,6 +34,7 @@ dependencies:
   url_launcher: ^6.0.17
   crypto: ^3.0.1
   shared_preferences: ^2.0.12
+  kakao_flutter_sdk: ^0.9.0
   flutter_datetime_picker:
     git:
       url: git://github.com/Realank/flutter_datetime_picker.git
