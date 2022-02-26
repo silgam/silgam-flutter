@@ -8,7 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kakao_flutter_sdk/all.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:silgam/repository/auth_repoitory.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
@@ -101,6 +103,13 @@ class _LoginPageState extends State<LoginPage> {
           Column(
             children: [
               _LoginButton(
+                onTap: _onKakaoLoginTapped,
+                assetName: 'assets/kakao_icon.svg',
+                provider: '카카오',
+                color: const Color(0xFFFEE500),
+              ),
+              const SizedBox(height: 12),
+              _LoginButton(
                 onTap: _onGoogleLoginTapped,
                 assetName: 'assets/google_icon.svg',
                 provider: '구글',
@@ -132,6 +141,19 @@ class _LoginPageState extends State<LoginPage> {
 
   void _onCloseButtonPressed() {
     Navigator.pop(context);
+  }
+
+  void _onKakaoLoginTapped() async {
+    final isAppInstalled = await isKakaoTalkInstalled();
+    final OAuthToken oAuthToken;
+    if (isAppInstalled) {
+      oAuthToken = await UserApi.instance.loginWithKakaoTalk();
+    } else {
+      oAuthToken = await UserApi.instance.loginWithKakaoAccount();
+    }
+    final String firebaseToken = await AuthRepository().getFirebaseToken(oAuthToken);
+    await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
+    _loginFinished();
   }
 
   void _onGoogleLoginTapped() async {
@@ -228,6 +250,7 @@ class _LoginButton extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
+                const SizedBox(width: 1),
                 SizedBox(
                   width: 24,
                   child: SvgPicture.asset(
