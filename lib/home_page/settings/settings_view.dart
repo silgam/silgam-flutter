@@ -119,15 +119,7 @@ class _SettingsViewState extends State<SettingsView> {
   Widget _buildLoginInfo() {
     final User? user = _user;
     if (user == null) throw Exception('User is null.');
-    String providerIconPath = '';
-    final String providerId = user.providerData.first.providerId;
-    if (providerId.contains('google')) {
-      providerIconPath = 'assets/google_icon.svg';
-    } else if (providerId.contains('facebook')) {
-      providerIconPath = 'assets/facebook_icon.svg';
-    } else if (providerId.contains('apple')) {
-      providerIconPath = 'assets/apple_icon.svg';
-    }
+    final String providerIconPath = getProviderIconPath(user);
 
     return GestureDetector(
       onLongPress: () => _onLoginLongPress(user),
@@ -272,6 +264,26 @@ class _SettingsViewState extends State<SettingsView> {
   void dispose() {
     _eventStreamSubscription.cancel();
     super.dispose();
+  }
+
+  String getProviderIconPath(User user) {
+    String providerId = '';
+    if (user.providerData.isNotEmpty) {
+      providerId = user.providerData.first.providerId;
+    } else if (user.uid.startsWith('kakao')) {
+      providerId = 'kakao.com';
+    }
+    String providerIconPath = '';
+    if (providerId.contains('google')) {
+      providerIconPath = 'assets/google_icon.svg';
+    } else if (providerId.contains('facebook')) {
+      providerIconPath = 'assets/facebook_icon.svg';
+    } else if (providerId.contains('apple')) {
+      providerIconPath = 'assets/apple_icon.svg';
+    } else if (providerId.contains('kakao')) {
+      providerIconPath = 'assets/kakao_icon_with_text.svg';
+    }
+    return providerIconPath;
   }
 }
 
