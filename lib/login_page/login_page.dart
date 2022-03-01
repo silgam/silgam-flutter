@@ -103,21 +103,21 @@ class _LoginPageState extends State<LoginPage> {
           Column(
             children: [
               _LoginButton(
-                onTap: _onKakaoLoginTapped,
+                onTap: () => _onLoginButtonTap(_loginKakao),
                 assetName: 'assets/kakao_icon.svg',
                 provider: '카카오',
                 color: const Color(0xFFFEE500),
               ),
               const SizedBox(height: 12),
               _LoginButton(
-                onTap: _onGoogleLoginTapped,
+                onTap: () => _onLoginButtonTap(_loginGoogle),
                 assetName: 'assets/google_icon.svg',
                 provider: '구글',
                 color: Colors.white,
               ),
               const SizedBox(height: 12),
               _LoginButton(
-                onTap: _onFacebookLoginTapped,
+                onTap: () => _onLoginButtonTap(_loginFacebook),
                 assetName: 'assets/facebook_icon.svg',
                 provider: '페이스북',
                 color: const Color(0xFF4267b2),
@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
               if (Platform.isIOS) const SizedBox(height: 12),
               if (Platform.isIOS)
                 _LoginButton(
-                  onTap: _onAppleLoginTapped,
+                  onTap: () => _onLoginButtonTap(_loginApple),
                   assetName: 'assets/apple_icon.svg',
                   provider: '애플',
                   color: Colors.black,
@@ -143,7 +143,12 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pop(context);
   }
 
-  void _onKakaoLoginTapped() async {
+  void _onLoginButtonTap(Future<void> Function() loginFunction) async {
+    await loginFunction();
+    _loginFinished();
+  }
+
+  Future<void> _loginKakao() async {
     final isAppInstalled = await isKakaoTalkInstalled();
     final OAuthToken oAuthToken;
     if (isAppInstalled) {
@@ -153,10 +158,9 @@ class _LoginPageState extends State<LoginPage> {
     }
     final String firebaseToken = await AuthRepository().getFirebaseToken(oAuthToken);
     await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
-    _loginFinished();
   }
 
-  void _onGoogleLoginTapped() async {
+  Future<void> _loginGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) return;
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -165,19 +169,17 @@ class _LoginPageState extends State<LoginPage> {
       accessToken: googleAuth.accessToken,
     );
     await FirebaseAuth.instance.signInWithCredential(credential);
-    _loginFinished();
   }
 
-  void _onFacebookLoginTapped() async {
+  Future<void> _loginFacebook() async {
     final LoginResult loginResult = await FacebookAuth.instance.login();
     final AccessToken? accessToken = loginResult.accessToken;
     if (accessToken == null) return;
     final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(accessToken.token);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-    _loginFinished();
   }
 
-  void _onAppleLoginTapped() async {
+  Future<void> _loginApple() async {
     final rawNonce = generateNonce();
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
@@ -198,7 +200,6 @@ class _LoginPageState extends State<LoginPage> {
     if (currentUser?.email == null) {
       await currentUser?.updateEmail(appleCredential.email ?? '');
     }
-    _loginFinished();
   }
 
   void _loginFinished() {
