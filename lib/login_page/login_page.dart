@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -10,7 +11,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:silgam/repository/auth_repoitory.dart';
+
+import '../repository/auth_repoitory.dart';
+import '../repository/user_repository.dart';
+import '../util/progress_overlay.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
@@ -22,6 +26,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _isProgressing = false;
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(
@@ -33,35 +39,40 @@ class _LoginPageState extends State<LoginPage> {
         systemNavigationBarColor: Theme.of(context).primaryColor,
       ),
       child: Scaffold(
-        body: Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [const Color(0xFF3F50A8), Theme.of(context).primaryColor],
+        body: ProgressOverlay(
+          isProgressing: _isProgressing,
+          fast: true,
+          description: '로그인 하는 중입니다.',
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [const Color(0xFF3F50A8), Theme.of(context).primaryColor],
+                  ),
                 ),
               ),
-            ),
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: _buildLoginLayout(),
-            ),
-            SafeArea(
-              child: Container(
-                alignment: Alignment.topLeft,
-                margin: const EdgeInsets.all(8),
-                child: IconButton(
-                  onPressed: _onCloseButtonPressed,
-                  icon: const Icon(Icons.arrow_back),
-                  splashRadius: 20,
-                  color: Colors.white,
+              SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: _buildLoginLayout(),
+              ),
+              SafeArea(
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.all(8),
+                  child: IconButton(
+                    onPressed: _onCloseButtonPressed,
+                    icon: const Icon(Icons.arrow_back),
+                    splashRadius: 20,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -144,8 +155,22 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onLoginButtonTap(Future<void> Function() loginFunction) async {
-    await loginFunction();
-    _loginFinished();
+    _isProgressing = true;
+    setState(() {});
+    try {
+      await loginFunction();
+      final userRepository = UserRepository();
+      if (userRepository.isNotSignedIn()) throw Exception('Not signed in');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${userRepository.getUser().displayName}님 반갑습니다!'),
+      ));
+      Navigator.pop(context);
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      _isProgressing = false;
+      setState(() {});
+    }
   }
 
   Future<void> _loginKakao() async {
@@ -200,14 +225,6 @@ class _LoginPageState extends State<LoginPage> {
     if (currentUser?.email == null) {
       await currentUser?.updateEmail(appleCredential.email ?? '');
     }
-  }
-
-  void _loginFinished() {
-    final String? userName = FirebaseAuth.instance.currentUser?.displayName;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('$userName님 반갑습니다!'),
-    ));
-    Navigator.pop(context);
   }
 }
 
