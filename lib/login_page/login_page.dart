@@ -12,7 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../repository/auth_repoitory.dart';
+import '../repository/auth_repository.dart';
 import '../repository/user_repository.dart';
 import '../util/progress_overlay.dart';
 
