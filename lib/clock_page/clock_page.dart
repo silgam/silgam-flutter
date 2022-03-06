@@ -80,35 +80,37 @@ class _ClockPageState extends State<ClockPage> {
       onWillPop: _onBackPressed,
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: GestureDetector(
-          onTap: _onScreenTap,
-          behavior: HitTestBehavior.opaque,
-          child: Stack(
-            children: [
-              UiVisibility(
-                uiVisible: _isUiVisible,
-                child: Container(
-                  margin: const EdgeInsets.all(8),
-                  child: IconButton(
-                    splashRadius: 20,
-                    icon: const Icon(Icons.close),
-                    onPressed: _onCloseButtonPressed,
-                    color: Colors.white,
+        body: SafeArea(
+          child: GestureDetector(
+            onTap: _onScreenTap,
+            behavior: HitTestBehavior.opaque,
+            child: Stack(
+              children: [
+                UiVisibility(
+                  uiVisible: _isUiVisible,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    child: IconButton(
+                      splashRadius: 20,
+                      icon: const Icon(Icons.close),
+                      onPressed: _onCloseButtonPressed,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              UiVisibility(
-                uiVisible: _isUiVisible,
-                child: _buildBackgroundUi(),
-              ),
-              Container(
-                alignment: Alignment.center,
-                child: WristWatch(
-                  clockTime: _currentTime,
+                UiVisibility(
+                  uiVisible: _isUiVisible,
+                  child: _buildBackgroundUi(),
                 ),
-              ),
-              _buildScreenOverlayIfNotStarted(),
-            ],
+                Container(
+                  alignment: Alignment.center,
+                  child: WristWatch(
+                    clockTime: _currentTime,
+                  ),
+                ),
+                _buildScreenOverlayIfNotStarted(),
+              ],
+            ),
           ),
         ),
       ),
