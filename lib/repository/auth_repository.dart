@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:kakao_flutter_sdk/auth.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 import '../model/auth.dart';
 
