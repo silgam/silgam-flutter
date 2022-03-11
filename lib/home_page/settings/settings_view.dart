@@ -151,7 +151,7 @@ class _SettingsViewState extends State<SettingsView> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      user.email ?? '',
+                      user.email ?? '이메일 없음',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade700,
