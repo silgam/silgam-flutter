@@ -7,6 +7,7 @@ import '../model/problem.dart';
 import '../model/subject.dart';
 import '../repository/exam_record_repository.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
+import '../save_image_page/save_image_page.dart';
 import '../util/material_hero.dart';
 import '../util/progress_overlay.dart';
 import '../util/review_problem_card.dart';
@@ -95,6 +96,15 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             ),
           ),
           const Expanded(child: SizedBox.shrink()),
+          Material(
+            type: MaterialType.transparency,
+            child: IconButton(
+              onPressed: _onSaveImageButtonPressed,
+              icon: const Icon(Icons.image),
+              splashRadius: 20,
+              tooltip: '이미지 저장',
+            ),
+          ),
           Material(
             type: MaterialType.transparency,
             child: IconButton(
@@ -323,6 +333,10 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   void _refresh() async {
     _record = await _recordRepository.getExamRecordById(_record.documentId);
     setState(() {});
+  }
+
+  void _onSaveImageButtonPressed() async {
+    await Navigator.pushNamed(context, SaveImagePage.routeName);
   }
 
   void _onEditButtonPressed() async {
