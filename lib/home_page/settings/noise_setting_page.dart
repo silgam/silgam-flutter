@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../repository/noise_repository.dart';
+import '../../util/menu_bar.dart';
 import '../../util/shared_preferences_holder.dart';
 import 'setting_tile.dart';
 
@@ -28,9 +29,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 8),
-            _buildMenuBar(),
-            const SizedBox(height: 4),
+            const MenuBar(title: '백색 소음, 시험장 소음 설정'),
             Expanded(
               child: SingleChildScrollView(
                 child: _buildSettingBody(),
@@ -39,27 +38,6 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildMenuBar() {
-    return Row(
-      children: [
-        const SizedBox(width: 8),
-        IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back),
-          splashRadius: 20,
-        ),
-        const SizedBox(width: 8),
-        const Text(
-          '백색 소음, 시험장 소음 설정',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
     );
   }
 

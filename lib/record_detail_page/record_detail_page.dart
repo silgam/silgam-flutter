@@ -9,6 +9,7 @@ import '../repository/exam_record_repository.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../save_image_page/save_image_page.dart';
 import '../util/material_hero.dart';
+import '../util/menu_bar.dart';
 import '../util/progress_overlay.dart';
 import '../util/review_problem_card.dart';
 
@@ -48,8 +49,25 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
-              _buildMenuBar(),
+              MenuBar(
+                actionButtons: [
+                  ActionButton(
+                    icon: const Icon(Icons.image),
+                    tooltip: '이미지 저장',
+                    onPressed: _onSaveImageButtonPressed,
+                  ),
+                  ActionButton(
+                    icon: const Icon(Icons.edit),
+                    tooltip: '수정',
+                    onPressed: _onEditButtonPressed,
+                  ),
+                  ActionButton(
+                    icon: const Icon(Icons.delete),
+                    tooltip: '삭제',
+                    onPressed: _onDeleteButtonPressed,
+                  ),
+                ],
+              ),
               Expanded(
                 child: Stack(
                   children: [
@@ -78,52 +96,6 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMenuBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: [
-          Material(
-            type: MaterialType.transparency,
-            child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.arrow_back),
-              splashRadius: 20,
-            ),
-          ),
-          const Expanded(child: SizedBox.shrink()),
-          Material(
-            type: MaterialType.transparency,
-            child: IconButton(
-              onPressed: _onSaveImageButtonPressed,
-              icon: const Icon(Icons.image),
-              splashRadius: 20,
-              tooltip: '이미지 저장',
-            ),
-          ),
-          Material(
-            type: MaterialType.transparency,
-            child: IconButton(
-              onPressed: _onEditButtonPressed,
-              icon: const Icon(Icons.edit),
-              splashRadius: 20,
-              tooltip: '수정',
-            ),
-          ),
-          Material(
-            type: MaterialType.transparency,
-            child: IconButton(
-              onPressed: _onDeleteButtonPressed,
-              icon: const Icon(Icons.delete),
-              splashRadius: 20,
-              tooltip: '삭제',
-            ),
-          ),
-        ],
       ),
     );
   }
