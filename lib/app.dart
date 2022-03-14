@@ -10,6 +10,7 @@ import 'home_page/settings/noise_setting_page.dart';
 import 'login_page/login_page.dart';
 import 'record_detail_page/record_detail_page.dart';
 import 'review_problem_detail_page/review_problem_detail_page.dart';
+import 'save_image_page/save_image_page.dart';
 
 const double cardCornerRadius = 14;
 
@@ -26,6 +27,7 @@ class SilgamApp extends StatelessWidget {
         HomePage.routeName: (_) => const HomePage(),
         LoginPage.routeName: (_) => const LoginPage(),
         NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
+        SaveImagePage.routeName: (_) => const SaveImagePage(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
