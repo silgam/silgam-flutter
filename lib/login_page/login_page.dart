@@ -14,6 +14,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../repository/auth_repository.dart';
 import '../repository/user_repository.dart';
+import '../util/menu_bar.dart';
 import '../util/progress_overlay.dart';
 
 class LoginPage extends StatefulWidget {
@@ -62,13 +63,7 @@ class _LoginPageState extends State<LoginPage> {
               SafeArea(
                 child: Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.all(8),
-                  child: IconButton(
-                    onPressed: _onCloseButtonPressed,
-                    icon: const Icon(Icons.arrow_back),
-                    splashRadius: 20,
-                    color: Colors.white,
-                  ),
+                  child: const MenuBar(lightText: true),
                 ),
               ),
             ],
@@ -148,10 +143,6 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }
-
-  void _onCloseButtonPressed() {
-    Navigator.pop(context);
   }
 
   void _onLoginButtonTap(Future<void> Function() loginFunction) async {

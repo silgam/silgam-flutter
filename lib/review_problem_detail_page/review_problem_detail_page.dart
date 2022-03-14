@@ -4,6 +4,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../model/problem.dart';
+import '../util/menu_bar.dart';
 
 class ReviewProblemDetailPage extends StatefulWidget {
   static const routeName = '/review_problem_detail';
@@ -71,44 +72,20 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     final problem = widget.reviewProblem;
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Container(
-      padding: const EdgeInsets.all(4).add(EdgeInsets.only(top: statusBarHeight)),
+      padding: EdgeInsets.only(top: statusBarHeight),
       color: Colors.black38,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Material(
-                type: MaterialType.transparency,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back),
-                  splashRadius: 20,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  problem.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              Material(
-                type: MaterialType.transparency,
-                child: IconButton(
-                  onPressed: _onMemoIconPressed,
-                  icon: const Icon(Icons.description),
-                  splashRadius: 20,
-                  color: Colors.white,
-                  tooltip: '메모 보기/숨기기',
-                ),
+          MenuBar(
+            title: problem.title,
+            lightText: true,
+            actionButtons: [
+              ActionButton(
+                icon: const Icon(Icons.description),
+                tooltip: '메모 보기/숨기기',
+                onPressed: _onMemoIconPressed,
               ),
             ],
           ),
@@ -116,12 +93,8 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
               ? const SizedBox.shrink()
               : Container(
                   width: double.infinity,
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.black38,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  padding: const EdgeInsets.all(16),
+                  color: Colors.black38,
                   child: Text(
                     problem.memo,
                     style: const TextStyle(
