@@ -1,5 +1,1 @@
-<svg data-name="Layer 1" id="Layer_1" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-    <path style="isolation:isolate"
-        d="M18,1.12c-9.42,0-18,6.25-18,14,0,4.8,3.12,9,7.86,11.55L5.86,34A.74.74,0,0,0,7,34.76L15.75,29c.74.07,1.49.11,2.25.11,9.94,0,18-6.25,18-14s-8.06-14-18-14"
-        fill-rule="evenodd" opacity="0.9" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 36 36"><path style="isolation:isolate" fill-rule="evenodd" d="M18,1.12c-9.42,0-18,6.25-18,14,0,4.8,3.12,9,7.86,11.55L5.86,34A.74.74,0,0,0,7,34.76L15.75,29c.74.07,1.49.11,2.25.11,9.94,0,18-6.25,18-14s-8.06-14-18-14" opacity=".9"/></svg>
