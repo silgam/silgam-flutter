@@ -308,7 +308,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   void _onSaveImageButtonPressed() async {
-    await Navigator.pushNamed(context, SaveImagePage.routeName);
+    final arguments = SaveImagePageArguments(recordToSave: _record);
+    await Navigator.pushNamed(context, SaveImagePage.routeName, arguments: arguments);
   }
 
   void _onEditButtonPressed() async {
