@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rich_text_controller/rich_text_controller.dart';
 
+import '../model/exam_record.dart';
+import '../model/subject.dart';
 import '../util/menu_bar.dart';
 
 const double _strokeWidth = 0.5;
 
 class SaveImagePage extends StatelessWidget {
   static const routeName = '/record_detail/save_image';
+  final ExamRecord examRecord;
 
-  const SaveImagePage({Key? key}) : super(key: key);
+  const SaveImagePage({
+    Key? key,
+    required this.examRecord,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +67,11 @@ class SaveImagePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
-                  '2022. 1. 9. (일)',
-                  style: TextStyle(
+                  DateFormat.yMEd('ko_KR').format(examRecord.examStartedTime),
+                  style: const TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.w700,
                     fontSize: 11,
@@ -76,19 +83,19 @@ class SaveImagePage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: const [
+                  children: [
                     Text(
-                      '힐링캠프 모의고사 시즌1 1회',
-                      style: TextStyle(
+                      examRecord.title,
+                      style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                       ),
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
-                      '수학',
+                      examRecord.subject.subjectName,
                       style: TextStyle(
-                        color: Colors.red,
+                        color: Color(examRecord.subject.firstColor),
                         fontSize: 9,
                       ),
                     ),
@@ -99,45 +106,48 @@ class SaveImagePage extends StatelessWidget {
               Divider(color: primaryColor, thickness: _strokeWidth),
               const SizedBox(height: 12),
               Row(
-                children: const [
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: _InfoBox(
-                      title: 'SCORE',
-                      content: '80',
-                      suffix: '점',
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  if (examRecord.score != null)
+                    SizedBox(
+                      width: 72,
+                      child: _InfoBox(
+                        title: 'SCORE',
+                        content: examRecord.score.toString(),
+                        suffix: '점',
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: _InfoBox(
-                      title: 'GRADE',
-                      content: '2',
-                      suffix: '등급',
+                  if (examRecord.grade != null)
+                    SizedBox(
+                      width: 72,
+                      child: _InfoBox(
+                        title: 'GRADE',
+                        content: examRecord.grade.toString(),
+                        suffix: '등급',
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: _InfoBox(
-                      title: 'TIME',
-                      content: '60',
-                      suffix: '분',
-                    ),
-                  ),
-                  SizedBox(width: 12),
+                  if (examRecord.examDurationMinutes != null)
+                    SizedBox(
+                      width: 72,
+                      child: _InfoBox(
+                        title: 'TIME',
+                        content: examRecord.examDurationMinutes.toString(),
+                        suffix: '분',
+                      ),
+                    )
                 ],
               ),
               const SizedBox(height: 20),
-              const _InfoBox(
+              _InfoBox(
                 title: '틀린 문제',
-                content: '12,13',
+                content: examRecord.wrongProblems.map((e) => e.problemNumber.toString()).join(', '),
                 longText: true,
               ),
               const SizedBox(height: 20),
-              const Expanded(
+              Expanded(
                 child: _InfoBox(
                   title: '피드백',
-                  content: '피드백 피드백',
+                  content: examRecord.feedback,
                   longText: true,
                   expands: true,
                 ),
@@ -221,4 +231,12 @@ class _InfoBox extends StatelessWidget {
       ),
     );
   }
+}
+
+class SaveImagePageArguments {
+  final ExamRecord recordToSave;
+
+  const SaveImagePageArguments({
+    required this.recordToSave,
+  });
 }

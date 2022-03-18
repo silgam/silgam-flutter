@@ -27,7 +27,6 @@ class SilgamApp extends StatelessWidget {
         HomePage.routeName: (_) => const HomePage(),
         LoginPage.routeName: (_) => const LoginPage(),
         NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
-        SaveImagePage.routeName: (_) => const SaveImagePage(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
@@ -53,7 +52,13 @@ class SilgamApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => ReviewProblemDetailPage(reviewProblem: args.problem),
             );
+          case SaveImagePage.routeName:
+            final args = settings.arguments as SaveImagePageArguments;
+            return MaterialPageRoute(
+              builder: (_) => SaveImagePage(examRecord: args.recordToSave),
+            );
         }
+        return null;
       },
       theme: ThemeData(
         primarySwatch: indigoSwatch,
