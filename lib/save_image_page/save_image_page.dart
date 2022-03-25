@@ -8,7 +8,7 @@ import '../util/menu_bar.dart';
 
 const double _strokeWidth = 0.5;
 
-class SaveImagePage extends StatelessWidget {
+class SaveImagePage extends StatefulWidget {
   static const routeName = '/record_detail/save_image';
   final ExamRecord examRecord;
 
@@ -18,16 +18,50 @@ class SaveImagePage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<SaveImagePage> createState() => _SaveImagePageState();
+}
+
+class _SaveImagePageState extends State<SaveImagePage> {
+  bool showScore = true;
+  bool showGrade = true;
+  bool showDuration = true;
+  bool showWrongProblems = true;
+
+  @override
+  void initState() {
+    super.initState();
+    showScore = widget.examRecord.score != null;
+    showGrade = widget.examRecord.grade != null;
+    showDuration = widget.examRecord.examDurationMinutes != null;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            const MenuBar(title: '이미지 저장'),
-            AspectRatio(
-              aspectRatio: 1,
-              child: _buildPreview(Theme.of(context).primaryColor),
+            MenuBar(
+              title: '이미지 저장',
+              actionButtons: [
+                ActionButton(
+                  tooltip: '공유하기',
+                  icon: const Icon(Icons.share),
+                  onPressed: () {},
+                ),
+                ActionButton(
+                  tooltip: '저장하기',
+                  icon: const Icon(Icons.download),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: _buildBody(),
+              ),
             ),
           ],
         ),
@@ -35,7 +69,65 @@ class SaveImagePage extends StatelessWidget {
     );
   }
 
-  Widget _buildPreview(Color primaryColor) {
+  Widget _buildBody() {
+    return Column(
+      children: [
+        AspectRatio(
+          aspectRatio: 1,
+          child: _buildPreview(),
+        ),
+        const SizedBox(height: 8),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          child: Row(
+            children: [
+              const SizedBox(width: 12),
+              _ChoiceChip(
+                label: '점수',
+                selected: showScore,
+                onSelected: (value) => setState(() {
+                  showScore = value;
+                }),
+              ),
+              _ChoiceChip(
+                label: '등급',
+                selected: showGrade,
+                onSelected: (value) => setState(() {
+                  showGrade = value;
+                }),
+              ),
+              _ChoiceChip(
+                label: '시간',
+                selected: showDuration,
+                onSelected: (value) => setState(() {
+                  showDuration = value;
+                }),
+              ),
+              _ChoiceChip(
+                label: '틀린 문제',
+                selected: showWrongProblems,
+                onSelected: (value) => setState(() {
+                  showWrongProblems = value;
+                }),
+              ),
+              const SizedBox(width: 12),
+            ],
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            '추후에 다양한 테마와 커스터마이징 기능이 추가될 예정입니다.',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPreview() {
     return Container(
       clipBehavior: Clip.hardEdge,
       alignment: Alignment.bottomCenter,
@@ -60,7 +152,7 @@ class SaveImagePage extends StatelessWidget {
               ),
             ],
             border: Border(
-              top: BorderSide(color: primaryColor, width: 20),
+              top: BorderSide(color: Theme.of(context).primaryColor, width: 20),
             ),
           ),
           child: Column(
@@ -70,7 +162,7 @@ class SaveImagePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
-                  DateFormat.yMEd('ko_KR').format(examRecord.examStartedTime),
+                  DateFormat.yMEd('ko_KR').format(widget.examRecord.examStartedTime),
                   style: const TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.w700,
@@ -85,7 +177,7 @@ class SaveImagePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      examRecord.title,
+                      widget.examRecord.title,
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
@@ -93,9 +185,9 @@ class SaveImagePage extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      examRecord.subject.subjectName,
+                      widget.examRecord.subject.subjectName,
                       style: TextStyle(
-                        color: Color(examRecord.subject.firstColor),
+                        color: Color(widget.examRecord.subject.firstColor),
                         fontSize: 9,
                       ),
                     ),
@@ -103,51 +195,53 @@ class SaveImagePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Divider(color: primaryColor, thickness: _strokeWidth),
+              Divider(color: Theme.of(context).primaryColor, thickness: _strokeWidth),
               const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  if (examRecord.score != null)
-                    SizedBox(
-                      width: 72,
-                      child: _InfoBox(
-                        title: 'SCORE',
-                        content: examRecord.score.toString(),
-                        suffix: '점',
+              if (showScore || showGrade || showDuration)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    if (showScore)
+                      SizedBox(
+                        width: 72,
+                        child: _InfoBox(
+                          title: 'SCORE',
+                          content: widget.examRecord.score.toString(),
+                          suffix: '점',
+                        ),
                       ),
-                    ),
-                  if (examRecord.grade != null)
-                    SizedBox(
-                      width: 72,
-                      child: _InfoBox(
-                        title: 'GRADE',
-                        content: examRecord.grade.toString(),
-                        suffix: '등급',
+                    if (showGrade)
+                      SizedBox(
+                        width: 72,
+                        child: _InfoBox(
+                          title: 'GRADE',
+                          content: widget.examRecord.grade.toString(),
+                          suffix: '등급',
+                        ),
                       ),
-                    ),
-                  if (examRecord.examDurationMinutes != null)
-                    SizedBox(
-                      width: 72,
-                      child: _InfoBox(
-                        title: 'TIME',
-                        content: examRecord.examDurationMinutes.toString(),
-                        suffix: '분',
-                      ),
-                    )
-                ],
-              ),
-              const SizedBox(height: 20),
-              _InfoBox(
-                title: '틀린 문제',
-                content: examRecord.wrongProblems.map((e) => e.problemNumber.toString()).join(', '),
-                longText: true,
-              ),
-              const SizedBox(height: 20),
+                    if (showDuration)
+                      SizedBox(
+                        width: 72,
+                        child: _InfoBox(
+                          title: 'TIME',
+                          content: widget.examRecord.examDurationMinutes.toString(),
+                          suffix: '분',
+                        ),
+                      )
+                  ],
+                ),
+              if (showScore || showGrade || showDuration) const SizedBox(height: 20),
+              if (showWrongProblems)
+                _InfoBox(
+                  title: '틀린 문제',
+                  content: widget.examRecord.wrongProblems.map((e) => e.problemNumber.toString()).join(', '),
+                  longText: true,
+                ),
+              if (showWrongProblems) const SizedBox(height: 20),
               Expanded(
                 child: _InfoBox(
                   title: '피드백',
-                  content: examRecord.feedback,
+                  content: widget.examRecord.feedback,
                   longText: true,
                   expands: true,
                 ),
@@ -228,6 +322,38 @@ class _InfoBox extends StatelessWidget {
         ),
         floatingLabelAlignment: longText ? null : FloatingLabelAlignment.center,
         floatingLabelBehavior: FloatingLabelBehavior.always,
+      ),
+    );
+  }
+}
+
+class _ChoiceChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final ValueChanged<bool> onSelected;
+
+  const _ChoiceChip({
+    Key? key,
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: FilterChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: onSelected,
+        selectedColor: Theme.of(context).primaryColor,
+        checkmarkColor: Colors.white,
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.w700,
+          color: selected ? Colors.white : Colors.black,
+        ),
+        pressElevation: 0,
       ),
     );
   }
