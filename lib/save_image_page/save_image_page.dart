@@ -71,10 +71,13 @@ class _SaveImagePageState extends State<SaveImagePage> {
 
   Widget _buildBody() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AspectRatio(
-          aspectRatio: 1,
-          child: _buildPreview(),
+        MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+          child: FittedBox(
+            child: _buildPreview(),
+          ),
         ),
         const SizedBox(height: 8),
         SingleChildScrollView(
@@ -120,6 +123,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
           padding: EdgeInsets.all(16),
           child: Text(
             '추후에 다양한 테마와 커스터마이징 기능이 추가될 예정입니다.',
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ),
@@ -129,6 +133,8 @@ class _SaveImagePageState extends State<SaveImagePage> {
 
   Widget _buildPreview() {
     return Container(
+      width: 390,
+      height: 390,
       clipBehavior: Clip.hardEdge,
       alignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
