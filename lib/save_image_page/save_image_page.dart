@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rich_text_controller/rich_text_controller.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../model/exam_record.dart';
 import '../model/subject.dart';
@@ -22,6 +28,7 @@ class SaveImagePage extends StatefulWidget {
 }
 
 class _SaveImagePageState extends State<SaveImagePage> {
+  final ScreenshotController _screenshotController = ScreenshotController();
   bool showScore = true;
   bool showGrade = true;
   bool showDuration = true;
@@ -48,12 +55,12 @@ class _SaveImagePageState extends State<SaveImagePage> {
                 ActionButton(
                   tooltip: '공유하기',
                   icon: const Icon(Icons.share),
-                  onPressed: () {},
+                  onPressed: onShareButtonPressed,
                 ),
                 ActionButton(
                   tooltip: '저장하기',
                   icon: const Icon(Icons.download),
-                  onPressed: () {},
+                  onPressed: onSaveButtonPressed,
                 ),
               ],
             ),
@@ -76,7 +83,10 @@ class _SaveImagePageState extends State<SaveImagePage> {
         MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
           child: FittedBox(
-            child: _buildPreview(),
+            child: Screenshot(
+              controller: _screenshotController,
+              child: _buildPreview(),
+            ),
           ),
         ),
         const SizedBox(height: 8),
@@ -258,6 +268,19 @@ class _SaveImagePageState extends State<SaveImagePage> {
         ),
       ),
     );
+  }
+
+  void onShareButtonPressed() async {
+    final temporaryDirectory = await getTemporaryDirectory();
+    final imagePath = await _screenshotController.captureAndSave(temporaryDirectory.path, pixelRatio: 4) ?? '';
+    await Share.shareFiles([imagePath]);
+    await File(imagePath).delete();
+  }
+
+  void onSaveButtonPressed() async {
+    final imageBytes = await _screenshotController.capture(pixelRatio: 4);
+    if (imageBytes == null) throw Exception('Capture failed: return value is null');
+    ImageGallerySaver.saveImage(imageBytes, quality: 100, name: widget.examRecord.title);
   }
 }
 
