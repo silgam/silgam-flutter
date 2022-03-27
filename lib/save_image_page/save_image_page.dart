@@ -280,7 +280,10 @@ class _SaveImagePageState extends State<SaveImagePage> {
   void onSaveButtonPressed() async {
     final imageBytes = await _screenshotController.capture(pixelRatio: 4);
     if (imageBytes == null) throw Exception('Capture failed: return value is null');
-    ImageGallerySaver.saveImage(imageBytes, quality: 100, name: widget.examRecord.title);
+    await ImageGallerySaver.saveImage(imageBytes, quality: 100, name: widget.examRecord.title);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('이미지가 저장되었습니다.')),
+    );
   }
 }
 
