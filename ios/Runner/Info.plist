@@ -81,9 +81,11 @@
 		<true/>
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>We don't need microphone access actually</string>
+	<string>We don&apos;t need microphone access actually</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need photo library access to upload problem photos</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>모의고사 기록 이미지를 저장하는 데 필요합니다.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
