@@ -29,6 +29,7 @@ class SaveImagePage extends StatefulWidget {
 
 class _SaveImagePageState extends State<SaveImagePage> {
   final ScreenshotController _screenshotController = ScreenshotController();
+  final GlobalKey _shareButtonKey = GlobalKey();
   bool showScore = true;
   bool showGrade = true;
   bool showDuration = true;
@@ -53,6 +54,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
               title: '이미지 저장',
               actionButtons: [
                 ActionButton(
+                  key: _shareButtonKey,
                   tooltip: '공유하기',
                   icon: const Icon(Icons.share),
                   onPressed: onShareButtonPressed,
@@ -273,7 +275,15 @@ class _SaveImagePageState extends State<SaveImagePage> {
   void onShareButtonPressed() async {
     final temporaryDirectory = await getTemporaryDirectory();
     final imagePath = await _screenshotController.captureAndSave(temporaryDirectory.path, pixelRatio: 4) ?? '';
-    await Share.shareFiles([imagePath]);
+    RenderBox shareButtonBox = _shareButtonKey.currentContext?.findRenderObject() as RenderBox;
+    Offset shareButtonPosition = shareButtonBox.localToGlobal(Offset.zero);
+    Rect shareButtonRect = Rect.fromLTWH(
+      shareButtonPosition.dx,
+      shareButtonPosition.dy,
+      shareButtonBox.paintBounds.width,
+      shareButtonBox.paintBounds.height,
+    );
+    await Share.shareFiles([imagePath], text: widget.examRecord.title, sharePositionOrigin: shareButtonRect);
     await File(imagePath).delete();
   }
 

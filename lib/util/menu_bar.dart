@@ -46,6 +46,7 @@ class MenuBar extends StatelessWidget {
             Material(
               type: MaterialType.transparency,
               child: IconButton(
+                key: button.key,
                 onPressed: button.onPressed,
                 icon: button.icon,
                 splashRadius: 20,
@@ -63,10 +64,12 @@ class ActionButton {
   final Widget icon;
   final String tooltip;
   final VoidCallback? onPressed;
+  final Key? key;
 
   const ActionButton({
     required this.icon,
     required this.tooltip,
     this.onPressed,
+    this.key,
   });
 }
