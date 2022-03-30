@@ -34,7 +34,7 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
       onKeyEvent: _onKeyEvent,
       child: TextField(
         controller: _editingController,
-        keyboardType: TextInputType.number,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textInputAction: TextInputAction.next,
         decoration: const InputDecoration(
           hintText: '번호 입력',
@@ -57,13 +57,15 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
   }
 
   void _onTextFieldChanged(String text) {
-    if (text.endsWith(' ')) {
+    if (text.endsWith(' ') || text.endsWith('.') || text.endsWith(',') || text.length >= 2) {
       _onSubmitted(_editingController.text);
     }
   }
 
   void _onSubmitted(String text) {
     _editingController.clear();
+    text = text.replaceAll('.', '');
+    text = text.replaceAll(',', '');
     int inputNumber = int.tryParse(text) ?? -1;
     if (inputNumber == -1) return;
     widget.onSubmit(inputNumber);

@@ -132,6 +132,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
         TextField(
           controller: _titleEditingController,
           onChanged: _onTitleChanged,
+          autofocus: true,
           style: const TextStyle(
             fontSize: 24,
             color: Colors.black,
