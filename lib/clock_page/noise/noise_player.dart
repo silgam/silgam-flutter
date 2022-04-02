@@ -1,5 +1,7 @@
 import 'package:just_audio/just_audio.dart';
 
+import '../../repository/noise_repository.dart';
+
 abstract class NoisePlayer {
   void playWhiteNoise();
 
@@ -7,8 +9,6 @@ abstract class NoisePlayer {
 
   void dispose();
 }
-
-const _noiseAssetPath = 'assets/noises';
 
 class NoiseAudioPlayer implements NoisePlayer {
   AudioPlayer? whiteNoisePlayer;
@@ -19,14 +19,7 @@ class NoiseAudioPlayer implements NoisePlayer {
   @override
   void playWhiteNoise() async {
     whiteNoisePlayer ??= AudioPlayer();
-    await whiteNoisePlayer?.setAudioSource(
-      ConcatenatingAudioSource(
-        children: [
-          AudioSource.uri(Uri.parse('asset:///$_noiseAssetPath/white_noise.mp3')),
-          AudioSource.uri(Uri.parse('asset:///$_noiseAssetPath/white_noise.mp3')),
-        ],
-      ),
-    );
+    await whiteNoisePlayer?.setAsset(whiteNoisePath);
     await whiteNoisePlayer?.setLoopMode(LoopMode.all);
     await whiteNoisePlayer?.play();
   }

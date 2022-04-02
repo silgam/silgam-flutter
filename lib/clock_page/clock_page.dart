@@ -8,6 +8,7 @@ import 'package:wakelock/wakelock.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
+import '../repository/noise_repository.dart';
 import '../repository/user_repository.dart';
 import '../util/android_audio_manager.dart';
 import '../util/date_time_extension.dart';
@@ -15,6 +16,7 @@ import '../util/empty_scroll_behavior.dart';
 import '../util/shared_preferences_holder.dart';
 import 'breakpoint.dart';
 import 'noise/noise_generator.dart';
+import 'noise/noise_player.dart';
 import 'timeline.dart';
 import 'ui_visibility.dart';
 import 'wrist_watch.dart';
@@ -67,11 +69,11 @@ class _ClockPageState extends State<ClockPage> {
     _timelineTileKeys = List.generate(_breakpoints.length, (index) => GlobalKey());
     _timelineConnectorKeys = List.generate(_breakpoints.length - 1, (index) => GlobalKey());
 
-    // final noiseSettings = NoiseSettings()..loadAll();
-    // if (noiseSettings.noisePreset != NoisePreset.disabled) {
-    //   final noisePlayer = NoiseAudioPlayer();
-    //   _noiseGenerator = NoiseGenerator(noiseSettings: noiseSettings, noisePlayer: noisePlayer);
-    // }
+    final noiseSettings = NoiseSettings()..loadAll();
+    if (noiseSettings.noisePreset != NoisePreset.disabled) {
+      final noisePlayer = NoiseAudioPlayer();
+      _noiseGenerator = NoiseGenerator(noiseSettings: noiseSettings, noisePlayer: noisePlayer);
+    }
   }
 
   @override
