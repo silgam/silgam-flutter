@@ -52,6 +52,8 @@ class NoiseSettings {
   }
 }
 
+const _noiseAssetPath = 'assets/noises';
+const whiteNoisePath = '$_noiseAssetPath/white_noise.mp3';
 const defaultNoises = [
   Noise(
     id: 0,
