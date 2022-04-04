@@ -347,9 +347,9 @@ class _ClockPageState extends State<ClockPage> {
     }
   }
 
-  void _onCloseButtonPressed() async {
+  void _onCloseButtonPressed() {
     if (_isFinished) {
-      Navigator.pop(context);
+      _finishExam();
       return;
     }
     showDialog(
