@@ -14,7 +14,15 @@ class NoiseAudioPlayer implements NoisePlayer {
   AudioPlayer? whiteNoisePlayer;
 
   @override
-  void playNoise(int noiseId) {}
+  void playNoise(int noiseId) async {
+    Noise noise = Noise.byId(noiseId);
+    String? noisePath = noise.getRandomNoisePath();
+    if (noisePath == null) return;
+    final audioPlayer = AudioPlayer();
+    await audioPlayer.setAsset(noisePath);
+    await audioPlayer.play();
+    await audioPlayer.dispose();
+  }
 
   @override
   void playWhiteNoise() async {

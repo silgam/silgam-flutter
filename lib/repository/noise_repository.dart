@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../util/shared_preferences_holder.dart';
 
 enum NoisePreset { disabled, easy, normal, hard, custom }
@@ -8,13 +10,21 @@ class Noise {
   final String name;
   final String preferenceKey;
   final Map<NoisePreset, int> presetLevels;
+  final int existingFiles;
 
   const Noise({
     required this.id,
     required this.name,
     required this.preferenceKey,
     required this.presetLevels,
+    required this.existingFiles,
   });
+
+  String? getRandomNoisePath() {
+    if (existingFiles == 0) return null;
+    int randomNumber = Random().nextInt(existingFiles) + 1;
+    return '$_noiseAssetPath/$preferenceKey$randomNumber.mp3';
+  }
 
   int getDefaultLevel(NoisePreset currentPreset) {
     return presetLevels[currentPreset] ?? 0;
@@ -64,6 +74,7 @@ const defaultNoises = [
       NoisePreset.normal: 12,
       NoisePreset.hard: 16,
     },
+    existingFiles: 1,
   ),
   Noise(
     id: 1,
@@ -74,6 +85,7 @@ const defaultNoises = [
       NoisePreset.normal: 8,
       NoisePreset.hard: 10,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 2,
@@ -84,6 +96,7 @@ const defaultNoises = [
       NoisePreset.normal: 4,
       NoisePreset.hard: 6,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 3,
@@ -94,6 +107,7 @@ const defaultNoises = [
       NoisePreset.normal: 4,
       NoisePreset.hard: 6,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 4,
@@ -104,6 +118,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 5,
@@ -114,6 +129,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 6,
@@ -124,6 +140,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 7,
@@ -134,6 +151,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 8,
@@ -144,6 +162,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 9,
@@ -154,6 +173,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
+    existingFiles: 0,
   ),
   Noise(
     id: 10,
@@ -164,5 +184,6 @@ const defaultNoises = [
       NoisePreset.normal: 1,
       NoisePreset.hard: 2,
     },
+    existingFiles: 0,
   ),
 ];
