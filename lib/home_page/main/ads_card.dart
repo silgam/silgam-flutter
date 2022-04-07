@@ -13,37 +13,63 @@ class AdsCard extends StatefulWidget {
 }
 
 class _AdsCardState extends State<AdsCard> {
+  int _currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return _Card(
-      child: CarouselSlider(
-        options: CarouselOptions(
-          aspectRatio: 2,
-          viewportFraction: 1,
-          autoPlay: true,
-        ),
-        items: [
-          for (Ads ads in widget.ads)
-            GestureDetector(
-              onTap: () => _onAdsTap(ads),
-              child: Image.network(
-                ads.imagePath,
-                fit: BoxFit.cover,
-                loadingBuilder: (_, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(
-                    child: SizedBox(
-                      width: 36,
-                      height: 36,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  );
-                },
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          CarouselSlider(
+            options: CarouselOptions(
+              aspectRatio: 2,
+              viewportFraction: 1,
+              autoPlay: true,
+              onPageChanged: _onPageChanged,
+            ),
+            items: [
+              for (Ads ads in widget.ads)
+                GestureDetector(
+                  onTap: () => _onAdsTap(ads),
+                  child: Image.network(
+                    ads.imagePath,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (_, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: AnimatedSmoothIndicator(
+              activeIndex: _currentPageIndex,
+              count: widget.ads.length,
+              effect: WormEffect(
+                dotWidth: 6,
+                dotHeight: 6,
+                dotColor: Colors.white.withAlpha(50),
+                activeDotColor: Colors.white.withAlpha(150),
               ),
             ),
+          ),
         ],
       ),
     );
+  }
+
+  void _onPageChanged(int index, _) {
+    _currentPageIndex = index;
+    setState(() {});
   }
 
   void _onAdsTap(Ads ads) {
