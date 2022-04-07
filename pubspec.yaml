@@ -42,6 +42,7 @@ dependencies:
   share_plus: ^4.0.3
   image_gallery_saver: ^1.7.1
   carousel_slider: ^4.0.0
+  smooth_page_indicator: ^1.0.0+2
   flutter_datetime_picker:
     git:
       url: git://github.com/Realank/flutter_datetime_picker.git
