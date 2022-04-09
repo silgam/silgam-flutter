@@ -72,7 +72,14 @@ class _ClockPageState extends State<ClockPage> {
     final noiseSettings = NoiseSettings()..loadAll();
     if (noiseSettings.noisePreset != NoisePreset.disabled) {
       final noisePlayer = NoiseAudioPlayer();
-      _noiseGenerator = NoiseGenerator(noiseSettings: noiseSettings, noisePlayer: noisePlayer);
+      _noiseGenerator = NoiseGenerator(
+        noiseSettings: noiseSettings,
+        noisePlayer: noisePlayer,
+        fetchClockStatus: () => ClockStatus(
+          currentBreakpoint: _breakpoints[_currentBreakpointIndex],
+          currentTime: _currentTime,
+        ),
+      );
     }
   }
 
