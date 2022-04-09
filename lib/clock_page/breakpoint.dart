@@ -5,12 +5,12 @@ import '../model/relative_time.dart';
 class Breakpoint {
   final String title;
   final DateTime time;
-  final Announcement? announcement;
+  final Announcement announcement;
 
   Breakpoint({
     required this.title,
     required this.time,
-    this.announcement,
+    required this.announcement,
   });
 
   static List<Breakpoint> createBreakpointsFromExam(Exam exam) {

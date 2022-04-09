@@ -407,7 +407,7 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _trySavingExamStartedTime() {
-    final currentAnnouncementTime = _breakpoints[_currentBreakpointIndex].announcement?.time;
+    final currentAnnouncementTime = _breakpoints[_currentBreakpointIndex].announcement.time;
     if (currentAnnouncementTime == const RelativeTime.beforeStart(minutes: 0)) {
       _examStartedTime = DateTime.now();
     }
@@ -446,7 +446,7 @@ class _ClockPageState extends State<ClockPage> {
 
   Future<void> _playAnnouncement() async {
     await player.pause();
-    final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement?.fileName;
+    final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement.fileName;
     if (currentFileName == null) return;
     await player.setAsset('$_announcementsAssetPath/$currentFileName');
     await player.play();
