@@ -27,7 +27,7 @@ class ExamRepository {
         ),
         const Announcement(
           title: '본령',
-          time: RelativeTime.beforeStart(minutes: 0),
+          time: RelativeTime.afterStart(minutes: 0),
           fileName: '005_1_start.mp3',
         ),
         const Announcement(
@@ -63,7 +63,7 @@ class ExamRepository {
         ),
         const Announcement(
           title: '본령',
-          time: RelativeTime.beforeStart(minutes: 0),
+          time: RelativeTime.afterStart(minutes: 0),
           fileName: '011_2_start.mp3',
         ),
         const Announcement(
@@ -99,7 +99,7 @@ class ExamRepository {
         ),
         const Announcement(
           title: '본령 (타종X)',
-          time: RelativeTime.beforeStart(minutes: 0),
+          time: RelativeTime.afterStart(minutes: 0),
         ),
         const Announcement(
           title: '10분전',
@@ -134,7 +134,7 @@ class ExamRepository {
         ),
         const Announcement(
           title: '본령',
-          time: RelativeTime.beforeStart(minutes: 0),
+          time: RelativeTime.afterStart(minutes: 0),
           fileName: '022_4_start.mp3',
         ),
         const Announcement(
@@ -170,7 +170,7 @@ class ExamRepository {
         ),
         const Announcement(
           title: '본령 (탐구1)',
-          time: RelativeTime.beforeStart(minutes: 0),
+          time: RelativeTime.afterStart(minutes: 0),
           fileName: '027_4_start_first.mp3',
         ),
         const Announcement(
@@ -221,7 +221,7 @@ class ExamRepository {
         ),
         const Announcement(
           title: '본령',
-          time: RelativeTime.beforeStart(minutes: 0),
+          time: RelativeTime.afterStart(minutes: 0),
           fileName: '036_5_start.mp3',
         ),
         const Announcement(
