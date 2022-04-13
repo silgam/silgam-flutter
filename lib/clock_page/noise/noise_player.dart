@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:just_audio/just_audio.dart';
 
 import '../../repository/noise_repository.dart';
@@ -20,6 +22,8 @@ class NoiseAudioPlayer implements NoisePlayer {
     if (noisePath == null) return;
     final audioPlayer = AudioPlayer();
     await audioPlayer.setAsset(noisePath);
+    double volume = Random().nextDouble();
+    await audioPlayer.setVolume(volume);
     await audioPlayer.play();
     await audioPlayer.dispose();
   }
