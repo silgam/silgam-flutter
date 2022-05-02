@@ -56,6 +56,7 @@ class _ClockPageState extends State<ClockPage> {
   static const int defaultScreenOverlayAlpha = 220;
   int _screenOverlayAlpha = defaultScreenOverlayAlpha;
   bool _isStarted = false;
+  bool _isRunning = true;
   bool _isUiVisible = true;
 
   bool get _isFinished => _currentBreakpointIndex >= _breakpoints.length - 1;
@@ -280,6 +281,12 @@ class _ClockPageState extends State<ClockPage> {
           splashRadius: 20,
         ),
         IconButton(
+          onPressed: _onPausePlayButtonPressed,
+          icon: _isRunning ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+          color: Colors.grey.shade700,
+          splashRadius: 20,
+        ),
+        IconButton(
           onPressed: _add30Seconds,
           icon: const Icon(Icons.forward_30),
           color: Colors.grey.shade700,
@@ -343,6 +350,17 @@ class _ClockPageState extends State<ClockPage> {
   void _add30Seconds() {
     final newTime = _currentTime.add(const Duration(seconds: 30));
     _onTimeChanged(newTime);
+  }
+
+  void _onPausePlayButtonPressed() {
+    setState(() {
+      _isRunning = !_isRunning;
+    });
+    if (_isRunning) {
+      player.play();
+    } else {
+      player.pause();
+    }
   }
 
   void _onTimeChanged(DateTime newTime) {
@@ -469,13 +487,17 @@ class _ClockPageState extends State<ClockPage> {
     final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement.fileName;
     if (currentFileName == null) return;
     await player.setAsset('$_announcementsAssetPath/$currentFileName');
-    await player.play();
+    if (_isRunning) {
+      await player.play();
+    }
   }
 
   void _startExam() {
     _isStarted = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _onEverySecond(_currentTime.add(const Duration(seconds: 1)));
+      if (_isRunning) {
+        _onEverySecond(_currentTime.add(const Duration(seconds: 1)));
+      }
     });
     _playAnnouncement();
     _noiseGenerator?.start();
