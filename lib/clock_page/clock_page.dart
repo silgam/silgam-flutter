@@ -8,6 +8,7 @@ import 'package:wakelock/wakelock.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
+import '../model/subject.dart';
 import '../repository/noise_repository.dart';
 import '../repository/user_repository.dart';
 import '../util/android_audio_manager.dart';
@@ -15,6 +16,7 @@ import '../util/date_time_extension.dart';
 import '../util/empty_scroll_behavior.dart';
 import '../util/shared_preferences_holder.dart';
 import 'breakpoint.dart';
+import 'listening_audio/listening_audio_player.dart';
 import 'noise/noise_generator.dart';
 import 'noise/noise_player.dart';
 import 'timeline.dart';
@@ -45,6 +47,7 @@ class _ClockPageState extends State<ClockPage> {
 
   final AudioPlayer player = AudioPlayer();
   NoiseGenerator? _noiseGenerator;
+  ListeningAudioPlayer? _listeningAudioPlayer;
 
   final ScrollController _timelineController = ScrollController();
   late final List<GlobalKey> _timelineTileKeys;
@@ -79,6 +82,13 @@ class _ClockPageState extends State<ClockPage> {
           currentBreakpoint: _breakpoints[_currentBreakpointIndex],
           currentTime: _currentTime,
         ),
+      );
+    }
+    if (widget.exam.subject == Subject.english) {
+      _listeningAudioPlayer = ListeningAudioPlayer(
+        breakpoints: _breakpoints,
+        audioSource: AudioSource.uri(Uri.parse('asset:///assets/noises/english_listening_test.mp3')),
+        examStartPosition: const Duration(minutes: 1),
       );
     }
   }
@@ -318,6 +328,7 @@ class _ClockPageState extends State<ClockPage> {
   void _onEverySecond(DateTime newTime) {
     setState(() {
       _currentTime = newTime;
+      _listeningAudioPlayer?.updateState(_currentTime, timeJumped: false);
       if (_isFinished) return;
       final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
       if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
@@ -338,6 +349,7 @@ class _ClockPageState extends State<ClockPage> {
     setState(() {
       _currentTime = newTime;
     });
+    _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
     if (_currentBreakpointIndex > 0) {
       final currentBreakpoint = _breakpoints[_currentBreakpointIndex];
       if (newTime.compareTo(currentBreakpoint.time) < 0) {
@@ -427,6 +439,7 @@ class _ClockPageState extends State<ClockPage> {
       setState(() {});
       _playAnnouncement();
     }
+    _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
     _animateTimeline();
   }
 
@@ -466,6 +479,7 @@ class _ClockPageState extends State<ClockPage> {
     });
     _playAnnouncement();
     _noiseGenerator?.start();
+    _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
   }
 
   void _finishExam() {
@@ -521,6 +535,7 @@ class _ClockPageState extends State<ClockPage> {
 
     player.dispose();
     _noiseGenerator?.dispose();
+    _listeningAudioPlayer?.dispose();
     _timer?.cancel();
     super.dispose();
   }
