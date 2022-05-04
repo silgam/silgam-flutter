@@ -34,6 +34,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
   bool showGrade = true;
   bool showDuration = true;
   bool showWrongProblems = true;
+  bool showFeedback = true;
 
   @override
   void initState() {
@@ -125,6 +126,13 @@ class _SaveImagePageState extends State<SaveImagePage> {
                 selected: showWrongProblems,
                 onSelected: (value) => setState(() {
                   showWrongProblems = value;
+                }),
+              ),
+              _ChoiceChip(
+                label: '피드백',
+                selected: showFeedback,
+                onSelected: (value) => setState(() {
+                  showFeedback = value;
                 }),
               ),
               const SizedBox(width: 12),
@@ -256,15 +264,16 @@ class _SaveImagePageState extends State<SaveImagePage> {
                   longText: true,
                 ),
               if (showWrongProblems) const SizedBox(height: 20),
-              Expanded(
-                child: _InfoBox(
-                  title: '피드백',
-                  content: widget.examRecord.feedback,
-                  longText: true,
-                  expands: true,
+              if (showFeedback)
+                Expanded(
+                  child: _InfoBox(
+                    title: '피드백',
+                    content: widget.examRecord.feedback,
+                    longText: true,
+                    expands: true,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
+              if (showFeedback) const SizedBox(height: 12),
             ],
           ),
         ),
