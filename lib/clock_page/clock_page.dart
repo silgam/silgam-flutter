@@ -8,7 +8,6 @@ import 'package:wakelock/wakelock.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../model/exam.dart';
 import '../model/relative_time.dart';
-import '../model/subject.dart';
 import '../repository/noise_repository.dart';
 import '../repository/user_repository.dart';
 import '../util/android_audio_manager.dart';
@@ -85,13 +84,13 @@ class _ClockPageState extends State<ClockPage> {
         ),
       );
     }
-    if (widget.exam.subject == Subject.english) {
-      _listeningAudioPlayer = ListeningAudioPlayer(
-        breakpoints: _breakpoints,
-        audioSource: AudioSource.uri(Uri.parse('asset:///assets/noises/english_listening_test.mp3')),
-        examStartPosition: const Duration(minutes: 1),
-      );
-    }
+    // if (widget.exam.subject == Subject.english) {
+    //   _listeningAudioPlayer = ListeningAudioPlayer(
+    //     breakpoints: _breakpoints,
+    //     audioSource: AudioSource.uri(Uri.parse('asset:///assets/noises/english_listening_test.mp3')),
+    //     examStartPosition: const Duration(minutes: 1),
+    //   );
+    // }
   }
 
   @override
