@@ -74,7 +74,7 @@ const defaultNoises = [
       NoisePreset.normal: 12,
       NoisePreset.hard: 16,
     },
-    existingFiles: 1,
+    existingFiles: 9,
   ),
   Noise(
     id: 1,
@@ -96,7 +96,7 @@ const defaultNoises = [
       NoisePreset.normal: 4,
       NoisePreset.hard: 6,
     },
-    existingFiles: 0,
+    existingFiles: 6,
   ),
   Noise(
     id: 3,
@@ -107,7 +107,7 @@ const defaultNoises = [
       NoisePreset.normal: 4,
       NoisePreset.hard: 6,
     },
-    existingFiles: 0,
+    existingFiles: 12,
   ),
   Noise(
     id: 4,
@@ -184,6 +184,6 @@ const defaultNoises = [
       NoisePreset.normal: 1,
       NoisePreset.hard: 2,
     },
-    existingFiles: 0,
+    existingFiles: 6,
   ),
 ];
