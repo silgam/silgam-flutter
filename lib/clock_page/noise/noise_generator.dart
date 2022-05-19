@@ -29,17 +29,21 @@ class NoiseGenerator {
       RelativeTimeType currentRelativeTime = clockStatus.currentBreakpoint.announcement.time.type;
       noiseSettings.noiseLevels.forEach((id, level) {
         double levelMultiple = 1;
+        int delay = 0;
         // 시험지 넘기는 소리 예외 사항
         if (id == 0) {
           if (currentRelativeTime == RelativeTimeType.beforeStart) {
             levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
-          } else if (currentRelativeTime == RelativeTimeType.afterStart &&
-              clockStatus.currentTime.difference(clockStatus.currentBreakpoint.time).inSeconds <= 2) {
-            levelMultiple = 100; // 시험 시작 직후 시험지 많이 넘김
+          } else if (currentRelativeTime == RelativeTimeType.afterStart) {
+            int afterStart = clockStatus.currentTime.difference(clockStatus.currentBreakpoint.time).inSeconds;
+            if (afterStart <= 2) {
+              delay = 0;
+              levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
+            }
           }
         }
         if (_calculateProbability(level * levelMultiple)) {
-          noisePlayer.playNoise(id);
+          noisePlayer.playNoise(noiseId: id, delayMillis: delay);
         }
       });
     });
