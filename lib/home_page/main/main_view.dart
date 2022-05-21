@@ -16,6 +16,7 @@ import '../../repository/ads_repository.dart';
 import '../../repository/dday_repository.dart';
 import '../../repository/exam_repository.dart';
 import '../../repository/user_repository.dart';
+import '../settings/noise_setting_page.dart';
 
 part 'ads_card.dart';
 part 'button_card.dart';
@@ -85,11 +86,11 @@ class _MainViewState extends State<MainView> {
                   title: '간편로그인하고 더 많은 기능 이용하기',
                   primary: true,
                 ),
-              // _ButtonCard(
-              //   onTap: () {},
-              //   iconData: Icons.graphic_eq,
-              //   title: '백색 소음, 시험장 소음 설정하기',
-              // ),
+              _ButtonCard(
+                onTap: _onNoiseSettingButtonTap,
+                iconData: Icons.graphic_eq,
+                title: '백색 소음, 시험장 소음 설정하기',
+              ),
               _ButtonCard(
                 onTap: _onRecordButtonTap,
                 iconData: Icons.edit,
@@ -115,6 +116,10 @@ class _MainViewState extends State<MainView> {
 
   void _onLoginButtonTap() {
     Navigator.pushNamed(context, LoginPage.routeName);
+  }
+
+  void _onNoiseSettingButtonTap() {
+    Navigator.pushNamed(context, NoiseSettingPage.routeName);
   }
 
   void _onRecordButtonTap() async {
