@@ -81,6 +81,7 @@ class _ClockPageState extends State<ClockPage> {
         fetchClockStatus: () => ClockStatus(
           currentBreakpoint: _breakpoints[_currentBreakpointIndex],
           currentTime: _currentTime,
+          isRunning: _isRunning,
         ),
       );
     }
