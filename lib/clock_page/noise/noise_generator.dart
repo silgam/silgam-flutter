@@ -26,6 +26,7 @@ class NoiseGenerator {
     }
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       ClockStatus clockStatus = fetchClockStatus();
+      if (!clockStatus.isRunning) return;
       RelativeTimeType currentRelativeTime = clockStatus.currentBreakpoint.announcement.time.type;
       noiseSettings.noiseLevels.forEach((id, level) {
         double levelMultiple = 1;
@@ -62,9 +63,11 @@ class NoiseGenerator {
 class ClockStatus {
   final Breakpoint currentBreakpoint;
   final DateTime currentTime;
+  final bool isRunning;
 
   const ClockStatus({
     required this.currentBreakpoint,
     required this.currentTime,
+    required this.isRunning,
   });
 }
