@@ -63,7 +63,7 @@ class NoiseSettings {
 }
 
 const _noiseAssetPath = 'assets/noises';
-const whiteNoisePath = '$_noiseAssetPath/white_noise.mp3';
+const whiteNoisePath = '$_noiseAssetPath/whiteNoise.mp3';
 const defaultNoises = [
   Noise(
     id: 0,
@@ -74,7 +74,7 @@ const defaultNoises = [
       NoisePreset.normal: 12,
       NoisePreset.hard: 16,
     },
-    existingFiles: 9,
+    existingFiles: 15,
   ),
   Noise(
     id: 1,
@@ -96,7 +96,7 @@ const defaultNoises = [
       NoisePreset.normal: 4,
       NoisePreset.hard: 6,
     },
-    existingFiles: 6,
+    existingFiles: 10,
   ),
   Noise(
     id: 3,
@@ -107,7 +107,7 @@ const defaultNoises = [
       NoisePreset.normal: 4,
       NoisePreset.hard: 6,
     },
-    existingFiles: 12,
+    existingFiles: 20,
   ),
   Noise(
     id: 4,
@@ -184,6 +184,6 @@ const defaultNoises = [
       NoisePreset.normal: 1,
       NoisePreset.hard: 2,
     },
-    existingFiles: 6,
+    existingFiles: 10,
   ),
 ];

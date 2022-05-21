@@ -22,7 +22,7 @@ class NoiseAudioPlayer implements NoisePlayer {
     if (noisePath == null) return;
     final audioPlayer = AudioPlayer();
     await audioPlayer.setAsset(noisePath);
-    double volume = Random().nextDouble() * 2;
+    double volume = (Random().nextDouble() + 2) * 2;
     await audioPlayer.setVolume(volume);
     await Future.delayed(Duration(milliseconds: delayMillis));
     await audioPlayer.play();
@@ -34,6 +34,7 @@ class NoiseAudioPlayer implements NoisePlayer {
     whiteNoisePlayer ??= AudioPlayer();
     await whiteNoisePlayer?.setAsset(whiteNoisePath);
     await whiteNoisePlayer?.setLoopMode(LoopMode.all);
+    await whiteNoisePlayer?.setVolume(3);
     await whiteNoisePlayer?.play();
   }
 

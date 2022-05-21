@@ -37,7 +37,7 @@ class NoiseGenerator {
           } else if (currentRelativeTime == RelativeTimeType.afterStart) {
             int afterStart = clockStatus.currentTime.difference(clockStatus.currentBreakpoint.time).inSeconds;
             if (afterStart <= 2) {
-              delay = 0;
+              delay = 1000;
               levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
             }
           }
