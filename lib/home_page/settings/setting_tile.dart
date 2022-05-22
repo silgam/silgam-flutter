@@ -8,6 +8,7 @@ const settingTitleTextStyle = TextStyle(
 const settingDescriptionTextStyle = TextStyle(
   fontSize: 12,
   color: Colors.grey,
+  height: 1.4,
 );
 
 class SettingTile extends StatefulWidget {

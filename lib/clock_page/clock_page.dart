@@ -312,18 +312,21 @@ class _ClockPageState extends State<ClockPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              '화면을 터치하면 시작됩니다',
+              '화면을 터치하면 시작합니다',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
               ),
             ),
+            const SizedBox(height: 8),
             Text(
-              '소리를 켜면 안내방송을 들을 수 있어요!',
+              '소리를 켜면 안내방송을 들을 수 있어요!\n소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white.withAlpha(200),
                 fontSize: 12,
                 fontWeight: FontWeight.w300,
+                height: 1.3,
               ),
             ),
           ],

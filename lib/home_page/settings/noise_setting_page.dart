@@ -44,7 +44,26 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
   Widget _buildSettingBody() {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Text(
+            '실제 시험장에서 나는 소음들을 백색 소음과 함께 랜덤하게 재생하여 더욱 실감나는 실전 연습을 돕습니다.',
+            style: TextStyle(height: 1.35, color: Colors.grey.shade800),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Text(
+            '아래의 추천 설정값을 사용하거나 소음들의 재생 빈도를 직접 설정할 수도 있습니다.',
+            style: TextStyle(height: 1.35, color: Colors.grey.shade800),
+          ),
+        ),
+        const SizedBox(height: 18),
+        const Divider(height: 0.1),
         RadioListTile(
           onChanged: _onPresetChanged,
           value: NoisePreset.disabled,
@@ -109,7 +128,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           preferenceKey: PreferenceKey.useWhiteNoise,
           onSwitchChanged: _onWhiteNoiseChanged,
         ),
-        const Divider(indent: 20, endIndent: 20),
+        const Divider(),
         const SizedBox(height: 4),
         for (Noise noise in defaultNoises)
           Padding(
