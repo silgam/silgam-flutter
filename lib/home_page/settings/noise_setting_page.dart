@@ -44,9 +44,10 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
   Widget _buildSettingBody() {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 4),
+        const SizedBox(height: 36),
+        Image.asset('assets/phone_ringing_illustration.png'),
+        const SizedBox(height: 36),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Text(
