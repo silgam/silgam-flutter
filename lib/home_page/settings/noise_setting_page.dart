@@ -136,13 +136,20 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(noise.name),
+                Text(
+                  (noise.existingFiles == 0 ? '(지원 예정) ' : '') + noise.name,
+                  style: TextStyle(
+                    color: noise.existingFiles == 0 ? Colors.grey : null,
+                  ),
+                ),
                 Slider(
                   value: _noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0,
                   onChanged: (value) => _onSliderChanged(noise, value.toInt()),
                   label: (_noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0).toStringAsFixed(0),
                   max: Noise.maxLevel.toDouble(),
                   divisions: Noise.maxLevel,
+                  activeColor: Theme.of(context).primaryColor.withAlpha(noise.existingFiles == 0 ? 80 : 255),
+                  inactiveColor: noise.existingFiles == 0 ? Theme.of(context).primaryColor.withAlpha(20) : null,
                 ),
                 const SizedBox(height: 8),
               ],
