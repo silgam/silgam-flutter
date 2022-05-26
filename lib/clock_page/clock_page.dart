@@ -361,8 +361,10 @@ class _ClockPageState extends State<ClockPage> {
     });
     if (_isRunning) {
       player.play();
+      _noiseGenerator?.playWhiteNoiseIfEnabled();
     } else {
       player.pause();
+      _noiseGenerator?.pauseWhiteNoise();
     }
   }
 

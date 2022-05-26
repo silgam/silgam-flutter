@@ -7,13 +7,15 @@ import '../../repository/noise_repository.dart';
 abstract class NoisePlayer {
   void playWhiteNoise();
 
+  void pauseWhiteNoise();
+
   void playNoise({required int noiseId, int delayMillis = 0});
 
   void dispose();
 }
 
 class NoiseAudioPlayer implements NoisePlayer {
-  AudioPlayer? whiteNoisePlayer;
+  AudioPlayer whiteNoisePlayer = AudioPlayer();
 
   @override
   void playNoise({required int noiseId, int delayMillis = 0}) async {
@@ -31,15 +33,19 @@ class NoiseAudioPlayer implements NoisePlayer {
 
   @override
   void playWhiteNoise() async {
-    whiteNoisePlayer ??= AudioPlayer();
-    await whiteNoisePlayer?.setAsset(whiteNoisePath);
-    await whiteNoisePlayer?.setLoopMode(LoopMode.all);
-    await whiteNoisePlayer?.setVolume(3);
-    await whiteNoisePlayer?.play();
+    await whiteNoisePlayer.setAsset(whiteNoisePath);
+    await whiteNoisePlayer.setLoopMode(LoopMode.all);
+    await whiteNoisePlayer.setVolume(2);
+    await whiteNoisePlayer.play();
+  }
+
+  @override
+  void pauseWhiteNoise() async {
+    await whiteNoisePlayer.pause();
   }
 
   @override
   void dispose() async {
-    await whiteNoisePlayer?.dispose();
+    await whiteNoisePlayer.dispose();
   }
 }

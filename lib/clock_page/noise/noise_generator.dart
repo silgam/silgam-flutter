@@ -21,9 +21,7 @@ class NoiseGenerator {
   });
 
   void start() {
-    if (noiseSettings.useWhiteNoise) {
-      noisePlayer.playWhiteNoise();
-    }
+    playWhiteNoiseIfEnabled();
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       ClockStatus clockStatus = fetchClockStatus();
       if (!clockStatus.isRunning) return;
@@ -48,6 +46,16 @@ class NoiseGenerator {
         }
       });
     });
+  }
+
+  void playWhiteNoiseIfEnabled() {
+    if (noiseSettings.useWhiteNoise) {
+      noisePlayer.playWhiteNoise();
+    }
+  }
+
+  void pauseWhiteNoise() {
+    noisePlayer.pauseWhiteNoise();
   }
 
   void dispose() {
