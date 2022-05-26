@@ -2,7 +2,7 @@ name: silgam
 description: Silgam
 
 publish_to: 'none'
-version: 0.3.5+22
+version: 0.4.0+23
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -34,7 +34,7 @@ dependencies:
   url_launcher: ^6.0.20
   crypto: ^3.0.1
   shared_preferences: ^2.0.13
-  kakao_flutter_sdk: ^1.0.0
+  kakao_flutter_sdk: ^1.1.1
   http: ^0.13.4
   rich_text_controller: ^1.4.0
   screenshot: ^1.2.3
