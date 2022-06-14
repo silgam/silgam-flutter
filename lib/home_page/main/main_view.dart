@@ -77,6 +77,17 @@ class _MainViewState extends State<MainView> {
               ),
               const SizedBox(height: 4),
               const Divider(indent: 20, endIndent: 20),
+              FutureBuilder(
+                future: AdsRepository().getAllAds(),
+                builder: (_, AsyncSnapshot<List<Ads>> snapshot) {
+                  final List<Ads> data = snapshot.data ?? [];
+                  if (data.isNotEmpty) {
+                    return AdsCard(ads: data);
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
               _DDaysCard(dDayItems: dDayItems),
               _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
               if (UserRepository().isNotSignedIn())
@@ -95,17 +106,6 @@ class _MainViewState extends State<MainView> {
                 onTap: _onRecordButtonTap,
                 iconData: Icons.edit,
                 title: '모의고사 기록하고 피드백하기',
-              ),
-              FutureBuilder(
-                future: AdsRepository().getAllAds(),
-                builder: (_, AsyncSnapshot<List<Ads>> snapshot) {
-                  final List<Ads> data = snapshot.data ?? [];
-                  if (data.isNotEmpty) {
-                    return AdsCard(ads: data);
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
               ),
             ],
           ),
