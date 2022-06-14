@@ -25,7 +25,8 @@ class _AdsCardState extends State<AdsCard> {
             options: CarouselOptions(
               aspectRatio: 2,
               viewportFraction: 1,
-              autoPlay: true,
+              autoPlay: widget.ads.length > 1,
+              enableInfiniteScroll: widget.ads.length > 1,
               onPageChanged: _onPageChanged,
             ),
             items: [
@@ -49,19 +50,20 @@ class _AdsCardState extends State<AdsCard> {
                 ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: AnimatedSmoothIndicator(
-              activeIndex: _currentPageIndex,
-              count: widget.ads.length,
-              effect: WormEffect(
-                dotWidth: 6,
-                dotHeight: 6,
-                dotColor: Colors.white.withAlpha(50),
-                activeDotColor: Colors.white.withAlpha(150),
+          if (widget.ads.length > 1)
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: AnimatedSmoothIndicator(
+                activeIndex: _currentPageIndex,
+                count: widget.ads.length,
+                effect: WormEffect(
+                  dotWidth: 6,
+                  dotHeight: 6,
+                  dotColor: Colors.white.withAlpha(50),
+                  activeDotColor: Colors.white.withAlpha(150),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
