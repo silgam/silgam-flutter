@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:silgam/util/const.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app.dart';
@@ -73,19 +74,19 @@ class _SettingsViewState extends State<SettingsView> {
           ),
           const _Divider(),
           SettingTile(
-            onTap: _onGoFacebookMessengerButtonTap,
-            title: '개발자와 대화하기',
-            description: '페이스북 메신저로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
+            onTap: () => launch(urlKakaotalk),
+            title: '개발자와 대화하기/문의하기',
+            description: '카카오톡 익명 채팅으로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
           ),
           const _Divider(),
           SettingTile(
-            onTap: _onGoInstagramButtonTap,
+            onTap: () => launch(urlInstagram),
             title: '실감 인스타그램 보러 가기',
             description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
           ),
           const _Divider(),
           SettingTile(
-            onTap: _onGoFacebookPageButtonTap,
+            onTap: () => launch(urlFacebook),
             title: '실감 페이스북 페이지 보러 가기',
             description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
           ),
@@ -247,18 +248,6 @@ class _SettingsViewState extends State<SettingsView> {
     } else {
       await inAppReview.openStoreListing(appStoreId: '1598576852');
     }
-  }
-
-  void _onGoInstagramButtonTap() {
-    launch('https://www.instagram.com/silgam.app');
-  }
-
-  void _onGoFacebookPageButtonTap() {
-    launch('https://fb.me/SilgamOfficial');
-  }
-
-  void _onGoFacebookMessengerButtonTap() {
-    launch('https://m.me/SilgamOfficial');
   }
 
   @override
