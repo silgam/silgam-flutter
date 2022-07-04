@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:silgam/util/const.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -56,13 +58,7 @@ class _MainViewState extends State<MainView> {
               const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  DateFormat.MMMMEEEEd('ko_KR').format(today),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 24,
-                  ),
-                ),
+                child: _buildTitle(),
               ),
               const SizedBox(height: 4),
               Padding(
@@ -110,6 +106,41 @@ class _MainViewState extends State<MainView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Row(
+      children: [
+        Text(
+          DateFormat.MMMMEEEEd('ko_KR').format(today),
+          style: const TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 24,
+          ),
+        ),
+        const Expanded(child: SizedBox.shrink()),
+        _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
+        _buildSnsButton(snsName: "facebook", tooltip: '실감 페이스북', url: urlFacebook),
+        _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
+      ],
+    );
+  }
+
+  Widget _buildSnsButton({required String snsName, required String tooltip, required String url}) {
+    return IconButton(
+      onPressed: () => launch(url),
+      splashRadius: 20,
+      tooltip: tooltip,
+      visualDensity: const VisualDensity(
+        horizontal: VisualDensity.minimumDensity,
+        vertical: VisualDensity.minimumDensity,
+      ),
+      icon: SvgPicture.asset(
+        'assets/sns_$snsName.svg',
+        color: Colors.grey,
+        width: 20,
       ),
     );
   }
