@@ -53,6 +53,8 @@
 	<string>f3459711cfb25c80aa6abce7b815bc2c</string>
 	<key>FacebookDisplayName</key>
 	<string>실감</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-5293956621132135~2623749942</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaolink</string>
