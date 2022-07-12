@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                 _LoginButton(
                   onTap: () => _onLoginButtonTap(_loginApple),
                   assetName: 'assets/apple_icon.svg',
-                  provider: '애플',
+                  provider: 'Apple',
                   color: Colors.black,
                   lightText: true,
                 ),
