@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 import '../edit_record_page/edit_record_page.dart';
@@ -8,6 +9,7 @@ import '../model/subject.dart';
 import '../repository/exam_record_repository.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../save_image_page/save_image_page.dart';
+import '../util/ads_tile.dart';
 import '../util/material_hero.dart';
 import '../util/menu_bar.dart';
 import '../util/progress_overlay.dart';
@@ -30,12 +32,19 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   late ExamRecord _record;
   final ExamRecordRepository _recordRepository = ExamRecordRepository();
   bool _isDeleting = false;
+  final GlobalKey<AdTileState> _adKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     _record = widget.arguments.record;
     _refresh();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _adKey.currentState?.loadAd();
   }
 
   @override
@@ -193,6 +202,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             ],
           ),
         const SizedBox(height: 16),
+        AdTile(
+          key: _adKey,
+          margin: const EdgeInsets.only(bottom: 20),
+          adSize: AdSize.getInlineAdaptiveBannerAdSize(
+            MediaQuery.of(context).size.width.truncate() - 40,
+            100,
+          ),
+        ),
       ],
     );
   }

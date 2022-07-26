@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:silgam/util/const.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../edit_record_page/edit_record_page.dart';
@@ -44,6 +46,7 @@ class _ClockPageState extends State<ClockPage> {
   Timer? _timer;
   DateTime _currentTime = DateTime.now();
   DateTime _examStartedTime = DateTime.now();
+  final DateTime _pageStartedTime = DateTime.now();
 
   final AudioPlayer player = AudioPlayer();
   NoiseGenerator? _noiseGenerator;
@@ -58,6 +61,8 @@ class _ClockPageState extends State<ClockPage> {
   bool _isStarted = false;
   bool _isRunning = true;
   bool _isUiVisible = true;
+
+  InterstitialAd? _interstitialAd;
 
   bool get _isFinished => _currentBreakpointIndex >= _breakpoints.length - 1;
 
@@ -87,6 +92,8 @@ class _ClockPageState extends State<ClockPage> {
         ),
       );
     }
+
+    _loadAd();
     // if (widget.exam.subject == Subject.english) {
     //   _listeningAudioPlayer = ListeningAudioPlayer(
     //     breakpoints: _breakpoints,
@@ -512,6 +519,10 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
+    if (DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
+      _interstitialAd?.show();
+    }
+
     final arguments = EditRecordPageArguments(
       inputExam: widget.exam,
       examStartedTime: _examStartedTime,
@@ -554,6 +565,23 @@ class _ClockPageState extends State<ClockPage> {
     setState(() {
       _screenOverlayAlpha = defaultScreenOverlayAlpha;
     });
+  }
+
+  Future<void> _loadAd() async {
+    await InterstitialAd.load(
+      adUnitId: interstitialAdId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (InterstitialAd ad) => ad.dispose(),
+            onAdFailedToShowFullScreenContent: (InterstitialAd ad, _) => ad.dispose(),
+          );
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (_) {},
+      ),
+    );
   }
 
   @override
