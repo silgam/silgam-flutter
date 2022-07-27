@@ -10,12 +10,13 @@
 ## 스크린샷
 
 <div>
-  <img src="markdown_assets/1.png" width="200"/>
-  <img src="markdown_assets/2.png" width="200"/>
-  <img src="markdown_assets/3.png" width="200"/>
-  <img src="markdown_assets/4.png" width="432"/>
-  <img src="markdown_assets/5.png" width="200"/>
-  <img src="markdown_assets/6.png" width="200"/>
-  <img src="markdown_assets/7.png" width="200"/>
-  <img src="markdown_assets/8.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_1.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_2.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_3.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_4.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_5.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_6.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_7.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_8.png" width="200"/>
+  <img src="markdown_assets/mobile_1242x2688_9.png" width="200"/>
 </div>
