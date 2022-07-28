@@ -23,15 +23,10 @@ import '../../repository/user_repository.dart';
 import '../settings/noise_setting_page.dart';
 
 part 'ads_card.dart';
-
 part 'button_card.dart';
-
 part 'card.dart';
-
 part 'd_days_card.dart';
-
 part 'exam_start_card.dart';
-
 part 'welcome_messages.dart';
 
 const double maxWidth = 500;
@@ -121,7 +116,7 @@ class _MainViewState extends State<MainView> {
               ),
               AdTile(
                 key: _adKey,
-                margin: const EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                 adSize: AdSize.getInlineAdaptiveBannerAdSize(
                   MediaQuery.of(context).size.width.clamp(0, maxWidth).truncate() - 40,
                   100,

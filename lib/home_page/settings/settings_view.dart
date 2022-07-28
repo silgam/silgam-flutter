@@ -64,7 +64,7 @@ class _SettingsViewState extends State<SettingsView> {
               : _buildLoginInfo(),
           AdTile(
             key: _adKey,
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
             adSize: AdSize.getInlineAdaptiveBannerAdSize(
               MediaQuery.of(context).size.width.truncate() - 32,
               100,

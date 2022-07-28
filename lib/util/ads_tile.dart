@@ -32,6 +32,7 @@ class AdTileState extends State<AdTile> {
     }
 
     return Container(
+      width: adSize.width.toDouble(),
       height: adSize.height.toDouble(),
       margin: widget.margin,
       child: AdWidget(
