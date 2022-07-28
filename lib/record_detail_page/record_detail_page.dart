@@ -9,7 +9,7 @@ import '../model/subject.dart';
 import '../repository/exam_record_repository.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../save_image_page/save_image_page.dart';
-import '../util/ads_tile.dart';
+import '../util/ad_tile.dart';
 import '../util/material_hero.dart';
 import '../util/menu_bar.dart';
 import '../util/progress_overlay.dart';

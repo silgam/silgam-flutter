@@ -12,7 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../app.dart';
 import '../../login_page/login_page.dart';
 import '../../repository/user_repository.dart';
-import '../../util/ads_tile.dart';
+import '../../util/ad_tile.dart';
 import '../../util/login_button.dart';
 import '../../util/scaffold_body.dart';
 import '../../util/shared_preferences_holder.dart';
