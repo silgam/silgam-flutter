@@ -16,6 +16,8 @@ class ExamRecord {
   final int? examDurationMinutes;
   final int? score;
   final int? grade;
+  final int? percentile;
+  final int? standardScore;
   @JsonKey(toJson: WrongProblem.toJsonList)
   final List<WrongProblem> wrongProblems;
   final String feedback;
@@ -31,6 +33,8 @@ class ExamRecord {
     this.examDurationMinutes,
     this.score,
     this.grade,
+    this.percentile,
+    this.standardScore,
     this.wrongProblems = const [],
     this.feedback = '',
     this.reviewProblems = const [],
@@ -42,7 +46,7 @@ class ExamRecord {
 
   @override
   String toString() {
-    return 'ExamRecord{documentId: $documentId, userId: $userId, title: $title, subject: $subject, examStartedTime: $examStartedTime, examDurationMinutes: $examDurationMinutes, score: $score, grade: $grade, wrongProblems: $wrongProblems, feedback: $feedback, reviewProblems: $reviewProblems}';
+    return 'ExamRecord{documentId: $documentId, userId: $userId, title: $title, subject: $subject, examStartedTime: $examStartedTime, examDurationMinutes: $examDurationMinutes, score: $score, grade: $grade, percentile: $percentile, standardScore: $standardScore, wrongProblems: $wrongProblems, feedback: $feedback, reviewProblems: $reviewProblems}';
   }
 
   int getGradeColor() {

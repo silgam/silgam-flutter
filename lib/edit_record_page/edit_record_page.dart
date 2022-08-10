@@ -33,6 +33,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final TextEditingController _examDurationEditingController = TextEditingController();
   final TextEditingController _scoreEditingController = TextEditingController();
   final TextEditingController _gradeEditingController = TextEditingController();
+  final TextEditingController _percentileEditingController = TextEditingController();
+  final TextEditingController _standardScoreEditingController = TextEditingController();
   final TextEditingController _feedbackEditingController = TextEditingController();
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
@@ -84,6 +86,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
     _examStartedTime = recordToEdit.examStartedTime;
     _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
     _gradeEditingController.text = recordToEdit.grade?.toString() ?? '';
+    _percentileEditingController.text = recordToEdit.percentile?.toString() ?? '';
+    _standardScoreEditingController.text = recordToEdit.standardScore?.toString() ?? '';
     _examDurationEditingController.text = recordToEdit.examDurationMinutes?.toString() ?? '';
     _wrongProblems.addAll(recordToEdit.wrongProblems);
     _feedbackEditingController.text = recordToEdit.feedback;
@@ -178,9 +182,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
         const SizedBox(height: 8),
         Wrap(
           spacing: 24,
+          runSpacing: 12,
           children: [
             _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60, maxLength: 3),
             _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 52, maxLength: 1),
+            _buildNumberInputWithTitle(_percentileEditingController, '백분위', '%', 60, maxLength: 3),
+            _buildNumberInputWithTitle(_standardScoreEditingController, '표준점수', '점', 60, maxLength: 3),
             _buildNumberInputWithTitle(_examDurationEditingController, '시험 시간', '분', 60, maxLength: 3),
           ],
         ),
@@ -489,6 +496,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
       examDurationMinutes: int.tryParse(_examDurationEditingController.text),
       score: int.tryParse(_scoreEditingController.text),
       grade: int.tryParse(_gradeEditingController.text),
+      percentile: int.tryParse(_percentileEditingController.text),
+      standardScore: int.tryParse(_standardScoreEditingController.text),
       wrongProblems: _wrongProblems,
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,

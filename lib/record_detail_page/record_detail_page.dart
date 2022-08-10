@@ -128,11 +128,21 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             ],
           ),
         ),
-        if (_record.score != null || _record.grade != null || _record.examDurationMinutes != null)
+        if (_record.score != null ||
+            _record.grade != null ||
+            _record.percentile != null ||
+            _record.standardScore != null ||
+            _record.examDurationMinutes != null)
           Column(
             children: [
               const SizedBox(height: 32),
-              _buildScoreBoard(),
+              Center(
+                child: SingleChildScrollView(
+                  clipBehavior: Clip.none,
+                  scrollDirection: Axis.horizontal,
+                  child: _buildScoreBoard(),
+                ),
+              ),
               const SizedBox(height: 8),
             ],
           ),
@@ -268,44 +278,46 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   Widget _buildScoreBoard() {
     int? score = _record.score;
     int? grade = _record.grade;
+    int? percentile = _record.percentile;
+    int? standardScore = _record.standardScore;
     int? examDurationMinutes = _record.examDurationMinutes;
 
     final List<Widget> scoreItems = [
       if (score != null) _buildScoreItem('점수', score),
       if (grade != null) _buildScoreItem('등급', grade),
+      if (percentile != null) _buildScoreItem('백분위', percentile),
+      if (standardScore != null) _buildScoreItem('표준점수', standardScore),
       if (examDurationMinutes != null) _buildScoreItem('시험 시간', examDurationMinutes),
     ];
 
-    const divider = VerticalDivider(indent: 6, endIndent: 6);
-    if (scoreItems.length == 3) {
-      scoreItems.insert(2, divider);
-      scoreItems.insert(1, divider);
-    }
-    if (scoreItems.length == 2) {
-      scoreItems.insert(1, divider);
+    for (var i = scoreItems.length - 1; i >= 0; i--) {
+      if (i == 0) continue;
+      scoreItems.insert(i, const VerticalDivider(indent: 6, endIndent: 6));
     }
 
     return IntrinsicHeight(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: scoreItems,
       ),
     );
   }
 
   Widget _buildScoreItem(String title, int value) {
-    return Column(
-      children: [
-        _buildSubTitle(title),
-        const SizedBox(height: 4),
-        Text(
-          value.toString(),
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w300,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        children: [
+          _buildSubTitle(title),
+          const SizedBox(height: 4),
+          Text(
+            value.toString(),
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w300,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
