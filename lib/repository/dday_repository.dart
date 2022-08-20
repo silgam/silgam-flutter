@@ -11,7 +11,7 @@ class DDayRepository {
     _Test(testType: TestType.mockTest, title: '4월 학력평가', date: DateTime(2022, 4, 13)),
     _Test(testType: TestType.mockTest, title: '6월 모의평가', date: DateTime(2022, 6, 9)),
     _Test(testType: TestType.mockTest, title: '7월 학력평가', date: DateTime(2022, 7, 6)),
-    _Test(testType: TestType.mockTest, title: '9월 모의평가', date: DateTime(2022, 9, 1)),
+    _Test(testType: TestType.mockTest, title: '9월 모의평가', date: DateTime(2022, 8, 31)),
     _Test(testType: TestType.mockTest, title: '10월 학력평가', date: DateTime(2022, 10, 12)),
     _Test(testType: TestType.suneung, title: '대학수학능력시험', date: DateTime(2022, 11, 17)),
   ];
