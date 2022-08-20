@@ -2,7 +2,7 @@ name: silgam
 description: Silgam
 
 publish_to: 'none'
-version: 0.5.1+28
+version: 0.5.2+29
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
