@@ -110,6 +110,13 @@ class _SettingsViewState extends State<SettingsView> {
           const _Divider(),
           if (_user != null)
             SettingTile(
+              onTap: () => launch(urlAccountDeletion),
+              title: '계정 탈퇴',
+              description: '계정을 탈퇴하거나 개인정보를 삭제하고 싶으신 경우 문의할 수 있습니다.',
+            ),
+          if (_user != null) const _Divider(),
+          if (_user != null)
+            SettingTile(
               onTap: _onLogoutTap,
               title: '로그아웃',
             ),
