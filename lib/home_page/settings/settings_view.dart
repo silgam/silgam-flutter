@@ -110,15 +110,14 @@ class _SettingsViewState extends State<SettingsView> {
           const _Divider(),
           if (_user != null)
             SettingTile(
-              onTap: () => launch(urlAccountDeletion),
-              title: '계정 탈퇴',
-              description: '계정을 탈퇴하거나 개인정보를 삭제하고 싶으신 경우 문의할 수 있습니다.',
+              onTap: _onLogoutTap,
+              title: '로그아웃',
             ),
           if (_user != null) const _Divider(),
           if (_user != null)
             SettingTile(
-              onTap: _onLogoutTap,
-              title: '로그아웃',
+              onTap: () => _onDeleteAccountTap(), // 유저 삭제, 로그아웃
+              title: '계정 탈퇴',
             ),
           if (_user != null) const _Divider(),
           FutureBuilder(
@@ -242,7 +241,7 @@ class _SettingsViewState extends State<SettingsView> {
             onPressed: () {
               Navigator.pop(context);
             },
-            style: TextButton.styleFrom(primary: Colors.grey),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey),
             child: const Text(
               '취소',
               style: TextStyle(color: Colors.grey),
@@ -255,6 +254,39 @@ class _SettingsViewState extends State<SettingsView> {
               Navigator.pop(context);
             },
             child: const Text('로그아웃'),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _onDeleteAccountTap() async {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text(
+          '탈퇴하시겠습니까?',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        content: const Text('탈퇴하면 복구할 수 없습니다.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.grey),
+            child: const Text(
+              '취소',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.currentUser?.delete();
+              _refreshUser();
+              Navigator.pop(context);
+            },
+            child: const Text('계정 삭제'),
           )
         ],
       ),
