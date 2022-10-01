@@ -4,4 +4,5 @@
     <string name="facebook_app_id">457631255986966</string>
     <string name="fb_login_protocol_scheme">fb457631255986966</string>
     <string name="admob_app_id">ca-app-pub-5293956621132135~2623749942</string>
+    <string name="facebook_client_token">f3459711cfb25c80aa6abce7b815bc2c</string>
 </resources>
