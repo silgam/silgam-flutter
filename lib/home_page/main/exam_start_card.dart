@@ -174,6 +174,12 @@ class _ExamStartCardState extends State<_ExamStartCard> with TickerProviderState
       arguments: ClockPageArguments(_selectedExam),
     );
     widget.navigateToRecordTab();
+    FirebaseAnalytics.instance.logEvent(
+      name: 'exam_start_button_tapped',
+      parameters: {
+        'exam_name': _selectedExam.examName,
+      },
+    );
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 import '../../repository/noise_repository.dart';
@@ -171,6 +172,11 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       _noiseSettings.useWhiteNoise = preset != NoisePreset.disabled;
     });
     _noiseSettings.saveAll();
+
+    FirebaseAnalytics.instance.logEvent(
+      name: 'noise_preset_changed',
+      parameters: {'preset': preset?.name},
+    );
   }
 
   void _onWhiteNoiseChanged(bool isEnabled) {
@@ -179,6 +185,11 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       _noiseSettings.useWhiteNoise = isEnabled;
     });
     _noiseSettings.saveAll();
+
+    FirebaseAnalytics.instance.logEvent(
+      name: 'white_noise_changed',
+      parameters: {'enabled': isEnabled},
+    );
   }
 
   void _onSliderChanged(Noise noise, int value) {
@@ -188,5 +199,10 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       _noiseSettings.noisePreset = NoisePreset.custom;
     });
     _noiseSettings.saveAll();
+
+    FirebaseAnalytics.instance.logEvent(
+      name: 'noise_level_changed',
+      parameters: {'noise': noise.name, 'level': value},
+    );
   }
 }

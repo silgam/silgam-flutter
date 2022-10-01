@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -150,7 +151,13 @@ class _MainViewState extends State<MainView> {
 
   Widget _buildSnsButton({required String snsName, required String tooltip, required String url}) {
     return IconButton(
-      onPressed: () => launchUrl(Uri.parse(url)),
+      onPressed: () {
+        launchUrl(Uri.parse(url));
+        FirebaseAnalytics.instance.logEvent(
+          name: 'sns_button_tapped',
+          parameters: {'title': tooltip},
+        );
+      },
       splashRadius: 20,
       tooltip: tooltip,
       visualDensity: const VisualDensity(

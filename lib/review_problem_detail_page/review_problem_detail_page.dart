@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
@@ -25,6 +26,17 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   int _currentIndex = 0;
   double _imageX = 0;
   double _imageY = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAnalytics.instance.logEvent(
+      name: 'review_problem_detail_page_opened',
+      parameters: {
+        'problems_count': widget.reviewProblem.imagePaths.length,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +173,12 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    FirebaseAnalytics.instance.logEvent(
+      name: 'review_problem_detail_page_closed',
+      parameters: {
+        'problems_count': widget.reviewProblem.imagePaths.length,
+      },
+    );
     super.dispose();
   }
 }

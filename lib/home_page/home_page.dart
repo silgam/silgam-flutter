@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +39,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onItemTapped(int index) {
+    FirebaseAnalytics.instance.logEvent(
+      name: 'home_page_tab_selected',
+      parameters: {'index': index},
+    );
+
     setState(() {
       _selectedIndex = index;
       if (_selectedIndex == 1) {

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -465,6 +466,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   void _onCancelPressed() {
     Navigator.pop(context);
+    FirebaseAnalytics.instance.logEvent(
+      name: 'save_exam_record',
+      parameters: {
+        'subject': _selectedSubject.subjectName,
+        'is_editing_mode': _isEditingMode,
+        'input_exam_existed': widget.arguments.inputExam != null,
+      },
+    );
   }
 
   void _onSavePressed() async {
@@ -513,6 +522,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
     setState(() {
       _isSaving = false;
     });
+
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'save_exam_record',
+      parameters: {
+        'subject': _selectedSubject.subjectName,
+        'is_editing_mode': _isEditingMode,
+        'input_exam_existed': widget.arguments.inputExam != null,
+      },
+    );
   }
 }
 

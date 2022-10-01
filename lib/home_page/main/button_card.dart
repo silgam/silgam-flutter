@@ -19,7 +19,7 @@ class _ButtonCard extends StatelessWidget {
     return _Card(
       backgroundColor: primary ? Theme.of(context).primaryColor : Colors.white,
       child: InkWell(
-        onTap: onTap,
+        onTap: _onTap,
         splashColor: Colors.transparent,
         highlightColor: Colors.grey.withAlpha(60),
         child: Padding(
@@ -50,6 +50,14 @@ class _ButtonCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _onTap() {
+    onTap();
+    FirebaseAnalytics.instance.logEvent(
+      name: 'main_page_action_button_tapped',
+      parameters: {'title': title},
     );
   }
 }

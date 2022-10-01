@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 import '../../util/shared_preferences_holder.dart';
@@ -43,7 +44,7 @@ class _SettingTileState extends State<SettingTile> {
       _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ?? true;
     }
     return InkWell(
-      onTap: widget.preferenceKey == null ? widget.onTap : () => _onSwitchChanged(!_isSwitchEnabled),
+      onTap: widget.preferenceKey == null ? _onTap : () => _onSwitchChanged(!_isSwitchEnabled),
       splashColor: Colors.transparent,
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -81,6 +82,16 @@ class _SettingTileState extends State<SettingTile> {
     );
   }
 
+  void _onTap() {
+    widget.onTap?.call();
+    FirebaseAnalytics.instance.logEvent(
+      name: 'setting_tile_tap',
+      parameters: {
+        'title': widget.title,
+      },
+    );
+  }
+
   String _getDescription() {
     final description = widget.description;
     final disabledDescription = widget.disabledDescription;
@@ -101,5 +112,13 @@ class _SettingTileState extends State<SettingTile> {
       _isSwitchEnabled = isEnabled;
       widget.onSwitchChanged?.call(isEnabled);
     });
+
+    FirebaseAnalytics.instance.logEvent(
+      name: 'setting_tile_switch_changed',
+      parameters: {
+        'title': widget.title,
+        'is_enabled': isEnabled,
+      },
+    );
   }
 }

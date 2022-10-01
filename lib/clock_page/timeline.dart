@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 class TimelineTile extends StatelessWidget {
@@ -17,7 +18,7 @@ class TimelineTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: _onTap,
       splashColor: Colors.transparent,
       highlightColor: Colors.white12,
       borderRadius: BorderRadius.circular(4),
@@ -64,6 +65,14 @@ class TimelineTile extends StatelessWidget {
       texts.add(Text(title.substring(splitIndex).trim(), style: smallTextStyle));
     }
     return texts;
+  }
+
+  void _onTap() {
+    onTap();
+    FirebaseAnalytics.instance.logEvent(
+      name: 'clock_page_timeline_tile_tapped',
+      parameters: {'title': title},
+    );
   }
 }
 

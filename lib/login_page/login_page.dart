@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -158,6 +159,10 @@ class _LoginPageState extends State<LoginPage> {
         ));
         Navigator.pop(context);
       }
+      await FirebaseAnalytics.instance.logEvent(
+        name: 'login',
+        parameters: {'user_id': userRepository.getUser().uid},
+      );
     } catch (e) {
       log(e.toString());
       rethrow;

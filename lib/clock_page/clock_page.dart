@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -357,11 +358,27 @@ class _ClockPageState extends State<ClockPage> {
   void _subtract30Seconds() {
     final newTime = _currentTime.subtract(const Duration(seconds: 30));
     _onTimeChanged(newTime);
+
+    FirebaseAnalytics.instance.logEvent(
+      name: 'clock_page_subtract_30_seconds',
+      parameters: {
+        'exam_name': widget.exam.examName,
+        'current_time': _currentTime.toString(),
+      },
+    );
   }
 
   void _add30Seconds() {
     final newTime = _currentTime.add(const Duration(seconds: 30));
     _onTimeChanged(newTime);
+
+    FirebaseAnalytics.instance.logEvent(
+      name: 'clock_page_add_30_seconds',
+      parameters: {
+        'exam_name': widget.exam.examName,
+        'current_time': _currentTime.toString(),
+      },
+    );
   }
 
   void _onPausePlayButtonPressed() {
@@ -375,6 +392,15 @@ class _ClockPageState extends State<ClockPage> {
       player.pause();
       _noiseGenerator?.pauseWhiteNoise();
     }
+
+    FirebaseAnalytics.instance.logEvent(
+      name: 'clock_page_pause_play_button_pressed',
+      parameters: {
+        'exam_name': widget.exam.examName,
+        'current_time': _currentTime.toString(),
+        'running': _isRunning,
+      },
+    );
   }
 
   void _onTimeChanged(DateTime newTime) {
@@ -516,6 +542,10 @@ class _ClockPageState extends State<ClockPage> {
     _playAnnouncement();
     _noiseGenerator?.start();
     _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
+
+    FirebaseAnalytics.instance.logEvent(name: 'start_exam', parameters: {
+      'exam_name': widget.exam.examName,
+    });
   }
 
   void _finishExam() {
@@ -535,6 +565,11 @@ class _ClockPageState extends State<ClockPage> {
     if (showAddRecordPageAfterExamFinished && UserRepository().isSignedIn()) {
       Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
     }
+
+    FirebaseAnalytics.instance.logEvent(name: 'finish_exam', parameters: {
+      'exam_name': widget.exam.examName,
+      'is_exam_finished': _isFinished,
+    });
   }
 
   Future<bool> _onBackPressed() {

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
@@ -282,6 +283,8 @@ class _SaveImagePageState extends State<SaveImagePage> {
   }
 
   void onShareButtonPressed() async {
+    FirebaseAnalytics.instance.logEvent(name: 'share_exam_record_image_button_tapped');
+
     final temporaryDirectory = await getTemporaryDirectory();
     final imagePath = await _screenshotController.captureAndSave(temporaryDirectory.path, pixelRatio: 4) ?? '';
     RenderBox shareButtonBox = _shareButtonKey.currentContext?.findRenderObject() as RenderBox;
@@ -297,6 +300,8 @@ class _SaveImagePageState extends State<SaveImagePage> {
   }
 
   void onSaveButtonPressed() async {
+    FirebaseAnalytics.instance.logEvent(name: 'save_exam_record_image_button_tapped');
+
     final imageBytes = await _screenshotController.capture(pixelRatio: 4);
     if (imageBytes == null) throw Exception('Capture failed: return value is null');
     await ImageGallerySaver.saveImage(imageBytes, quality: 100, name: widget.examRecord.title);
