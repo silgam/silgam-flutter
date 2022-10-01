@@ -151,7 +151,7 @@ class ExamRepository {
     ),
     Exam(
       subject: Subject.investigation,
-      examName: Subject.investigation.subjectName,
+      examName: '탐구', // 예외
       examNumber: 4,
       examStartTime: DateTimeBuilder.fromHourMinute(15, 35),
       examDuration: 62,
