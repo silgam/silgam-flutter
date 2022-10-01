@@ -115,7 +115,6 @@ class AnalogClock extends StatelessWidget {
       height: height,
       decoration: decoration,
       child: CustomPaint(
-        child: child,
         painter: AnalogClockPainter(
           clockTime,
           dialPlateColor: dialPlateColor,
@@ -135,6 +134,7 @@ class AnalogClock extends StatelessWidget {
           hourNumberScale: hourNumberScale,
           hourNumbers: hourNumbers,
         ),
+        child: child,
       ),
     );
   }
@@ -248,14 +248,14 @@ class AnalogClockPainter extends CustomPainter {
     List<Offset> ticks = [];
     List<Offset> bigTicks = [];
     for (var i = 0; i < 60; i++) {
-      double _angle = i * 6.0;
+      double angle = i * 6.0;
       if (i % 5 != 0) {
-        double x = cos(getRadians(_angle)) * radius;
-        double y = sin(getRadians(_angle)) * radius;
+        double x = cos(getRadians(angle)) * radius;
+        double y = sin(getRadians(angle)) * radius;
         ticks.add(Offset(x, y));
       } else {
-        double x = cos(getRadians(_angle)) * radius;
-        double y = sin(getRadians(_angle)) * radius;
+        double x = cos(getRadians(angle)) * radius;
+        double y = sin(getRadians(angle)) * radius;
         bigTicks.add(Offset(x, y));
       }
     }
@@ -276,10 +276,10 @@ class AnalogClockPainter extends CustomPainter {
   double _paintHourText(Canvas canvas, double radius, double fontSize) {
     double maxTextHeight = 0;
     for (var i = 0; i < 12; i++) {
-      double _angle = i * 30.0;
+      double angle = i * 30.0;
       canvas.save();
-      double hourNumberX = cos(getRadians(_angle)) * radius;
-      double hourNumberY = sin(getRadians(_angle)) * radius;
+      double hourNumberX = cos(getRadians(angle)) * radius;
+      double hourNumberY = sin(getRadians(angle)) * radius;
       canvas.translate(hourNumberX, hourNumberY);
       int intHour = i + 3;
       if (intHour > 12) intHour = intHour - 12;

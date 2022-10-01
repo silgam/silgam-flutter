@@ -10,6 +10,7 @@ AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
       firebaseToken: json['firebaseToken'] as String,
     );
 
-Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) => <String, dynamic>{
+Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
+    <String, dynamic>{
       'firebaseToken': instance.firebaseToken,
     };

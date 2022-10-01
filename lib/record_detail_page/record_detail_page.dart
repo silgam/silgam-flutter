@@ -362,22 +362,22 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
+              style: TextButton.styleFrom(foregroundColor: Colors.grey),
               child: const Text(
                 '취소',
                 style: TextStyle(color: Colors.grey),
               ),
-              style: TextButton.styleFrom(primary: Colors.grey),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 _deleteRecord();
               },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text(
                 '삭제',
                 style: TextStyle(color: Colors.red),
               ),
-              style: TextButton.styleFrom(primary: Colors.red),
             ),
           ],
         );
@@ -390,7 +390,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       _isDeleting = true;
     });
     await _recordRepository.deleteExamRecord(_record);
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {

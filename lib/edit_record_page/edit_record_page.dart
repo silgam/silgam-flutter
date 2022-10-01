@@ -101,9 +101,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
       child: Scaffold(
         body: SafeArea(
           child: ProgressOverlay(
-            child: _buildBody(),
             isProgressing: _isSaving,
             description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+            child: _buildBody(),
           ),
         ),
       ),
@@ -347,9 +347,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
           child: TextButton(
             onPressed: _onSavePressed,
             style: TextButton.styleFrom(
+              foregroundColor: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 16),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              primary: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
             ),
             child: Text(
               _isEditingMode ? '수정' : '저장',
@@ -479,7 +479,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       return;
     }
     await saveRecord();
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   Future<void> saveRecord() async {

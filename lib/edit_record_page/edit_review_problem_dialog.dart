@@ -123,7 +123,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
         TextButton(
           onPressed: _onConfirmButtonPressed,
           style: TextButton.styleFrom(
-            primary: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
+            foregroundColor: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
           ),
           child: Text(
             widget.reviewProblemAddModeParams == null ? '수정' : '추가',

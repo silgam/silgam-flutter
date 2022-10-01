@@ -12,7 +12,7 @@ class ContinuousNumberField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ContinuousNumberFieldState createState() => _ContinuousNumberFieldState();
+  State<ContinuousNumberField> createState() => _ContinuousNumberFieldState();
 }
 
 class _ContinuousNumberFieldState extends State<ContinuousNumberField> {

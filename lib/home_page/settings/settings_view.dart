@@ -6,13 +6,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:silgam/util/const.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app.dart';
 import '../../login_page/login_page.dart';
 import '../../repository/user_repository.dart';
 import '../../util/ad_tile.dart';
+import '../../util/const.dart';
 import '../../util/login_button.dart';
 import '../../util/scaffold_body.dart';
 import '../../util/shared_preferences_holder.dart';
@@ -91,19 +91,19 @@ class _SettingsViewState extends State<SettingsView> {
           ),
           const _Divider(),
           SettingTile(
-            onTap: () => launch(urlKakaotalk),
+            onTap: () => launchUrl(Uri.parse(urlKakaotalk)),
             title: '개발자와 대화하기/문의하기',
             description: '카카오톡 익명 채팅으로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
           ),
           const _Divider(),
           SettingTile(
-            onTap: () => launch(urlInstagram),
+            onTap: () => launchUrl(Uri.parse(urlInstagram)),
             title: '실감 인스타그램 보러 가기',
             description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
           ),
           const _Divider(),
           SettingTile(
-            onTap: () => launch(urlFacebook),
+            onTap: () => launchUrl(Uri.parse(urlFacebook)),
             title: '실감 페이스북 페이지 보러 가기',
             description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
           ),
@@ -251,7 +251,7 @@ class _SettingsViewState extends State<SettingsView> {
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               _refreshUser();
-              Navigator.pop(context);
+              if (mounted) Navigator.pop(context);
             },
             child: const Text('로그아웃'),
           )
@@ -284,7 +284,7 @@ class _SettingsViewState extends State<SettingsView> {
             onPressed: () async {
               await FirebaseAuth.instance.currentUser?.delete();
               _refreshUser();
-              Navigator.pop(context);
+              if (mounted) Navigator.pop(context);
             },
             child: const Text('계정 삭제'),
           )

@@ -11,7 +11,7 @@ class NoiseSettingPage extends StatefulWidget {
   const NoiseSettingPage({Key? key}) : super(key: key);
 
   @override
-  _NoiseSettingPageState createState() => _NoiseSettingPageState();
+  State<NoiseSettingPage> createState() => _NoiseSettingPageState();
 }
 
 class _NoiseSettingPageState extends State<NoiseSettingPage> {

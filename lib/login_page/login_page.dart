@@ -23,7 +23,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -152,10 +152,12 @@ class _LoginPageState extends State<LoginPage> {
       await loginFunction();
       final userRepository = UserRepository();
       if (userRepository.isNotSignedIn()) throw Exception('Not signed in');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${userRepository.getUser().displayName}님 반갑습니다!'),
-      ));
-      Navigator.pop(context);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${userRepository.getUser().displayName}님 반갑습니다!'),
+        ));
+        Navigator.pop(context);
+      }
     } catch (e) {
       log(e.toString());
       rethrow;

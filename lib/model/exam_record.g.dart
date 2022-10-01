@@ -31,7 +31,7 @@ Map<String, dynamic> _$ExamRecordToJson(ExamRecord instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'title': instance.title,
-      'subject': _$SubjectEnumMap[instance.subject],
+      'subject': _$SubjectEnumMap[instance.subject]!,
       'examStartedTime': instance.examStartedTime.toIso8601String(),
       'examDurationMinutes': instance.examDurationMinutes,
       'score': instance.score,

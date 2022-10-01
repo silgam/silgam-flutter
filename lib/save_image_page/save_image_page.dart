@@ -300,6 +300,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
     final imageBytes = await _screenshotController.capture(pixelRatio: 4);
     if (imageBytes == null) throw Exception('Capture failed: return value is null');
     await ImageGallerySaver.saveImage(imageBytes, quality: 100, name: widget.examRecord.title);
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('이미지가 저장되었습니다.')),
     );

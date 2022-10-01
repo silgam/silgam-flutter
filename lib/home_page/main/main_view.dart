@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
-import 'package:silgam/util/ad_tile.dart';
-import 'package:silgam/util/const.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,6 +18,8 @@ import '../../repository/ads_repository.dart';
 import '../../repository/dday_repository.dart';
 import '../../repository/exam_repository.dart';
 import '../../repository/user_repository.dart';
+import '../../util/ad_tile.dart';
+import '../../util/const.dart';
 import '../settings/noise_setting_page.dart';
 
 part 'ads_card.dart';
@@ -150,7 +150,7 @@ class _MainViewState extends State<MainView> {
 
   Widget _buildSnsButton({required String snsName, required String tooltip, required String url}) {
     return IconButton(
-      onPressed: () => launch(url),
+      onPressed: () => launchUrl(Uri.parse(url)),
       splashRadius: 20,
       tooltip: tooltip,
       visualDensity: const VisualDensity(

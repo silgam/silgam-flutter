@@ -48,3 +48,11 @@ app.*.map.json
 # Custom
 /assets/announcements
 /assets/noises
+
+# generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+*.gr.dart
+*.config.dart
+lib/firebase_options.dart
