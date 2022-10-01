@@ -7,16 +7,18 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 import 'app.dart';
+import 'firebase_options.dart';
 import 'util/shared_preferences_holder.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(kReleaseMode);
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode);
   await SharedPreferencesHolder.initializeSharedPreferences();
   KakaoSdk.init(nativeAppKey: "75edb119450e8355c4506a8623a2010e");
   MobileAds.instance.initialize();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   runApp(const SilgamApp());
 }
