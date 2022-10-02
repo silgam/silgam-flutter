@@ -30,6 +30,7 @@ class _RecordListViewState extends State<RecordListView> {
   bool _isRefreshing = false;
   late final StreamSubscription _eventStreamSubscription;
 
+  bool get _isSignedIn => UserRepository().isSignedIn();
   bool get _isNotSignedIn => UserRepository().isNotSignedIn();
 
   @override
@@ -46,49 +47,63 @@ class _RecordListViewState extends State<RecordListView> {
       isRefreshing: _isRefreshing,
       onRefresh: _isNotSignedIn ? null : _onRefresh,
       slivers: [
-        _buildMainBody(),
+        if (_isNotSignedIn) _buildLoginButton(),
+        if (_isSignedIn) _buildQuerySection(),
+        if (_isSignedIn) _buildListSection(),
+        if (_isSignedIn && _records.isEmpty) _buildDescription(),
       ],
     );
   }
 
-  Widget _buildMainBody() {
-    if (_isNotSignedIn) {
-      return SliverFillRemaining(
-        hasScrollBody: false,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          alignment: Alignment.center,
-          child: LoginButton(
-            onTap: _onLoginTap,
-            description: '로그인하면 모의고사를 기록할 수 있어요!',
-          ),
+  Widget _buildLoginButton() {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        alignment: Alignment.center,
+        child: LoginButton(
+          onTap: _onLoginTap,
+          description: '로그인하면 모의고사를 기록할 수 있어요!',
         ),
-      );
-    } else if (_records.isEmpty) {
-      return SliverFillRemaining(
-        hasScrollBody: false,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          alignment: Alignment.center,
-          child: const Text('오른쪽 아래 버튼을 눌러 모의고사를 기록해보세요!'),
+      ),
+    );
+  }
+
+  Widget _buildQuerySection() {
+    return SliverToBoxAdapter(
+      child: Container(
+        height: 100,
+        color: Colors.red,
+      ),
+    );
+  }
+
+  Widget _buildListSection() {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return RecordTile(
+              record: _records[index],
+              onTileTap: () => _onTileTap(index),
+            );
+          },
+          childCount: _records.length,
         ),
-      );
-    } else {
-      return SliverPadding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        sliver: SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return RecordTile(
-                record: _records[index],
-                onTileTap: () => _onTileTap(index),
-              );
-            },
-            childCount: _records.length,
-          ),
-        ),
-      );
-    }
+      ),
+    );
+  }
+
+  Widget _buildDescription() {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        alignment: Alignment.center,
+        child: const Text('오른쪽 아래 버튼을 눌러 모의고사를 기록해보세요!'),
+      ),
+    );
   }
 
   Future<void> _onRefresh() async {
