@@ -1,6 +1,6 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
+import '../../../util/analytics_manager.dart';
 import '../../../util/shared_preferences_holder.dart';
 
 const settingTitleTextStyle = TextStyle(
@@ -84,9 +84,9 @@ class _SettingTileState extends State<SettingTile> {
 
   void _onTap() {
     widget.onTap?.call();
-    FirebaseAnalytics.instance.logEvent(
-      name: 'setting_tile_tap',
-      parameters: {
+    AnalyticsManager.logEvent(
+      name: '[HomePage-settings] Setting tile button tapped',
+      properties: {
         'title': widget.title,
       },
     );
@@ -113,9 +113,9 @@ class _SettingTileState extends State<SettingTile> {
       widget.onSwitchChanged?.call(isEnabled);
     });
 
-    FirebaseAnalytics.instance.logEvent(
-      name: 'setting_tile_switch_changed',
-      parameters: {
+    AnalyticsManager.logEvent(
+      name: '[HomePage-settings] Setting tile switch toggled',
+      properties: {
         'title': widget.title,
         'is_enabled': isEnabled,
       },

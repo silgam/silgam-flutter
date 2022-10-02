@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../model/exam_record.dart';
 import '../../model/subject.dart';
+import '../../util/analytics_manager.dart';
 import '../common/menu_bar.dart';
 
 const double _strokeWidth = 0.5;
@@ -283,7 +283,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
   }
 
   void onShareButtonPressed() async {
-    FirebaseAnalytics.instance.logEvent(name: 'share_exam_record_image_button_tapped');
+    AnalyticsManager.logEvent(name: '[SaveExamRecordImagePage] Share button tapped');
 
     final temporaryDirectory = await getTemporaryDirectory();
     final imagePath = await _screenshotController.captureAndSave(temporaryDirectory.path, pixelRatio: 4) ?? '';
@@ -300,7 +300,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
   }
 
   void onSaveButtonPressed() async {
-    FirebaseAnalytics.instance.logEvent(name: 'save_exam_record_image_button_tapped');
+    AnalyticsManager.logEvent(name: '[SaveExamRecordImagePage] Save button tapped');
 
     final imageBytes = await _screenshotController.capture(pixelRatio: 4);
     if (imageBytes == null) throw Exception('Capture failed: return value is null');

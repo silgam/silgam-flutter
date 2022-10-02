@@ -56,3 +56,4 @@ app.*.map.json
 *.gr.dart
 *.config.dart
 lib/firebase_options.dart
+lib/app_env.dart

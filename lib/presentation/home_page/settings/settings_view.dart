@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app.dart';
 import '../../../repository/user_repository.dart';
+import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/shared_preferences_holder.dart';
 import '../../common/ad_tile.dart';
@@ -253,7 +253,7 @@ class _SettingsViewState extends State<SettingsView> {
               await FirebaseAuth.instance.signOut();
               _refreshUser();
               if (mounted) Navigator.pop(context);
-              await FirebaseAnalytics.instance.logEvent(name: 'delete_account');
+              await AnalyticsManager.logEvent(name: '[HomePage-settings] Logout');
             },
             child: const Text('로그아웃'),
           )
@@ -287,7 +287,7 @@ class _SettingsViewState extends State<SettingsView> {
               await FirebaseAuth.instance.currentUser?.delete();
               _refreshUser();
               if (mounted) Navigator.pop(context);
-              await FirebaseAnalytics.instance.logEvent(name: 'logout');
+              await AnalyticsManager.logEvent(name: '[HomePage-settings] Delete account');
             },
             child: const Text('계정 삭제'),
           )

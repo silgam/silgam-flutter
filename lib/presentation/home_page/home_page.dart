@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../app.dart';
 import '../../repository/user_repository.dart';
+import '../../util/analytics_manager.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';
@@ -39,9 +39,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onItemTapped(int index) {
-    FirebaseAnalytics.instance.logEvent(
-      name: 'home_page_tab_selected',
-      parameters: {'index': index},
+    AnalyticsManager.logEvent(
+      name: '[HomePage] Tab selected',
+      properties: {'index': index},
     );
 
     setState(() {

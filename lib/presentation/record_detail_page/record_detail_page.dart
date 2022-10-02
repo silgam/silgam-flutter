@@ -1,4 +1,3 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +6,7 @@ import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../model/subject.dart';
 import '../../repository/exam_record_repository.dart';
+import '../../util/analytics_manager.dart';
 import '../common/ad_tile.dart';
 import '../common/material_hero.dart';
 import '../common/menu_bar.dart';
@@ -393,7 +393,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     await _recordRepository.deleteExamRecord(_record);
     if (mounted) Navigator.pop(context);
 
-    await FirebaseAnalytics.instance.logEvent(name: 'delete_exam_record');
+    await AnalyticsManager.logEvent(name: '[ExamRecordDetailPage] Delete exam record');
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {

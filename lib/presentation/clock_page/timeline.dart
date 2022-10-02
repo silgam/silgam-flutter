@@ -1,5 +1,6 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+
+import '../../util/analytics_manager.dart';
 
 class TimelineTile extends StatelessWidget {
   final GestureTapCallback onTap;
@@ -69,9 +70,9 @@ class TimelineTile extends StatelessWidget {
 
   void _onTap() {
     onTap();
-    FirebaseAnalytics.instance.logEvent(
-      name: 'clock_page_timeline_tile_tapped',
-      parameters: {'title': title},
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Timeline tile tapped',
+      properties: {'title': title},
     );
   }
 }

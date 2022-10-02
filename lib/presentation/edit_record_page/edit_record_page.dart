@@ -1,4 +1,3 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +9,7 @@ import '../../model/problem.dart';
 import '../../model/subject.dart';
 import '../../repository/exam_record_repository.dart';
 import '../../repository/user_repository.dart';
+import '../../util/analytics_manager.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import 'continuous_number_field.dart';
@@ -65,7 +65,22 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _initializeEditMode(recordToEdit);
     }
     _isTitleEmpty = _titleEditingController.text.isEmpty;
+
+    AnalyticsManager.eventStartTime(name: '[EditExamRecordPage] Edit finished');
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    AnalyticsManager.logEvent(
+      name: '[EditExamRecordPage] Edit finished',
+      properties: {
+        'subject': _selectedSubject.subjectName,
+        'is_editing_mode': _isEditingMode,
+        'input_exam_existed': widget.arguments.inputExam != null,
+      },
+    );
   }
 
   void _initializeCreateMode() {
@@ -466,9 +481,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   void _onCancelPressed() {
     Navigator.pop(context);
-    FirebaseAnalytics.instance.logEvent(
-      name: 'save_exam_record',
-      parameters: {
+    AnalyticsManager.logEvent(
+      name: '[EditExamRecordPage] Cancel button tapped',
+      properties: {
         'subject': _selectedSubject.subjectName,
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.arguments.inputExam != null,
@@ -523,9 +538,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _isSaving = false;
     });
 
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'save_exam_record',
-      parameters: {
+    await AnalyticsManager.logEvent(
+      name: '[EditExamRecordPage] Exam record saved',
+      properties: {
         'subject': _selectedSubject.subjectName,
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.arguments.inputExam != null,

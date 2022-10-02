@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +14,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../repository/auth_repository.dart';
 import '../../repository/user_repository.dart';
+import '../../util/analytics_manager.dart';
 import '../common/menu_bar.dart';
 import '../common/progress_overlay.dart';
 
@@ -159,9 +159,9 @@ class _LoginPageState extends State<LoginPage> {
         ));
         Navigator.pop(context);
       }
-      await FirebaseAnalytics.instance.logEvent(
-        name: 'login',
-        parameters: {'user_id': userRepository.getUser().uid},
+      await AnalyticsManager.logEvent(
+        name: '[LoginPage] Login',
+        properties: {'user_id': userRepository.getUser().uid},
       );
     } catch (e) {
       log(e.toString());

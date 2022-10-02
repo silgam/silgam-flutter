@@ -55,9 +55,9 @@ class _ButtonCard extends StatelessWidget {
 
   void _onTap() {
     onTap();
-    FirebaseAnalytics.instance.logEvent(
-      name: 'main_page_action_button_tapped',
-      parameters: {'title': title},
+    AnalyticsManager.logEvent(
+      name: '[HomePage-main] Action button tapped',
+      properties: {'title': title},
     );
   }
 }

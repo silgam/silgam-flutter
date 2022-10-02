@@ -1,23 +1,23 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wakelock/wakelock.dart';
 
-import '../edit_record_page/edit_record_page.dart';
 import '../../model/exam.dart';
 import '../../model/relative_time.dart';
 import '../../repository/noise_repository.dart';
 import '../../repository/user_repository.dart';
+import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
 import '../../util/date_time_extension.dart';
-import '../common/empty_scroll_behavior.dart';
 import '../../util/shared_preferences_holder.dart';
+import '../common/empty_scroll_behavior.dart';
+import '../edit_record_page/edit_record_page.dart';
 import 'breakpoint.dart';
 import 'listening_audio/listening_audio_player.dart';
 import 'noise/noise_generator.dart';
@@ -359,9 +359,9 @@ class _ClockPageState extends State<ClockPage> {
     final newTime = _currentTime.subtract(const Duration(seconds: 30));
     _onTimeChanged(newTime);
 
-    FirebaseAnalytics.instance.logEvent(
-      name: 'clock_page_subtract_30_seconds',
-      parameters: {
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Substract 30 seconds',
+      properties: {
         'exam_name': widget.exam.examName,
         'current_time': _currentTime.toString(),
       },
@@ -372,9 +372,9 @@ class _ClockPageState extends State<ClockPage> {
     final newTime = _currentTime.add(const Duration(seconds: 30));
     _onTimeChanged(newTime);
 
-    FirebaseAnalytics.instance.logEvent(
-      name: 'clock_page_add_30_seconds',
-      parameters: {
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Add 30 seconds',
+      properties: {
         'exam_name': widget.exam.examName,
         'current_time': _currentTime.toString(),
       },
@@ -393,9 +393,9 @@ class _ClockPageState extends State<ClockPage> {
       _noiseGenerator?.pauseWhiteNoise();
     }
 
-    FirebaseAnalytics.instance.logEvent(
-      name: 'clock_page_pause_play_button_pressed',
-      parameters: {
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Play/Pause Button Pressed',
+      properties: {
         'exam_name': widget.exam.examName,
         'current_time': _currentTime.toString(),
         'running': _isRunning,
@@ -543,9 +543,13 @@ class _ClockPageState extends State<ClockPage> {
     _noiseGenerator?.start();
     _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
 
-    FirebaseAnalytics.instance.logEvent(name: 'start_exam', parameters: {
-      'exam_name': widget.exam.examName,
-    });
+    AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Start exam',
+      properties: {
+        'exam_name': widget.exam.examName,
+      },
+    );
   }
 
   void _finishExam() {
@@ -566,10 +570,13 @@ class _ClockPageState extends State<ClockPage> {
       Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
     }
 
-    FirebaseAnalytics.instance.logEvent(name: 'finish_exam', parameters: {
-      'exam_name': widget.exam.examName,
-      'is_exam_finished': _isFinished,
-    });
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Finish exam',
+      properties: {
+        'exam_name': widget.exam.examName,
+        'is_exam_finished': _isFinished,
+      },
+    );
   }
 
   Future<bool> _onBackPressed() {

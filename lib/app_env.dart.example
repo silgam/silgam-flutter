@@ -1,0 +1,4 @@
+class AppEnv {
+  static const mixpanelToken = "";
+  static const kakaoNativeAppKey = "";
+}

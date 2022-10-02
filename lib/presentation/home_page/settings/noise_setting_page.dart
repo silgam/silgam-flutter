@@ -1,7 +1,7 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 import '../../../repository/noise_repository.dart';
+import '../../../util/analytics_manager.dart';
 import '../../../util/shared_preferences_holder.dart';
 import '../../common/menu_bar.dart';
 import 'setting_tile.dart';
@@ -173,9 +173,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
     });
     _noiseSettings.saveAll();
 
-    FirebaseAnalytics.instance.logEvent(
-      name: 'noise_preset_changed',
-      parameters: {'preset': preset?.name},
+    AnalyticsManager.logEvent(
+      name: '[NoiseSettingPage] Noise preset changed',
+      properties: {'preset': preset?.name},
     );
   }
 
@@ -186,9 +186,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
     });
     _noiseSettings.saveAll();
 
-    FirebaseAnalytics.instance.logEvent(
-      name: 'white_noise_changed',
-      parameters: {'enabled': isEnabled},
+    AnalyticsManager.logEvent(
+      name: '[NoiseSettingPage] White noise changed',
+      properties: {'enabled': isEnabled},
     );
   }
 
@@ -200,9 +200,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
     });
     _noiseSettings.saveAll();
 
-    FirebaseAnalytics.instance.logEvent(
-      name: 'noise_level_changed',
-      parameters: {'noise': noise.name, 'level': value},
+    AnalyticsManager.logEvent(
+      name: '[NoiseSettingPage] Noise level changed',
+      properties: {'noise': noise.name, 'level': value},
     );
   }
 }

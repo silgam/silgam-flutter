@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:silgam/util/analytics_manager.dart';
 
 import 'presentation/clock_page/clock_page.dart';
 import 'presentation/edit_record_page/edit_record_page.dart';
@@ -35,11 +36,13 @@ class SilgamApp extends StatelessWidget {
             final args = settings.arguments as ClockPageArguments;
             return MaterialPageRoute(
               builder: (_) => ClockPage(exam: args.exam),
+              settings: settings,
             );
           case EditRecordPage.routeName:
             final args = settings.arguments as EditRecordPageArguments;
             return MaterialPageRoute(
               builder: (_) => EditRecordPage(arguments: args),
+              settings: settings,
             );
           case RecordDetailPage.routeName:
             final args = settings.arguments as RecordDetailPageArguments;
@@ -47,16 +50,19 @@ class SilgamApp extends StatelessWidget {
               pageBuilder: (_, __, ___) => RecordDetailPage(arguments: args),
               transitionsBuilder: (_, Animation<double> animation, __, Widget child) =>
                   FadeTransition(opacity: animation, child: child),
+              settings: settings,
             );
           case ReviewProblemDetailPage.routeName:
             final args = settings.arguments as ReviewProblemDetailPageArguments;
             return MaterialPageRoute(
               builder: (_) => ReviewProblemDetailPage(reviewProblem: args.problem),
+              settings: settings,
             );
           case SaveImagePage.routeName:
             final args = settings.arguments as SaveImagePageArguments;
             return MaterialPageRoute(
               builder: (_) => SaveImagePage(examRecord: args.recordToSave),
+              settings: settings,
             );
         }
         return null;
@@ -84,6 +90,7 @@ class SilgamApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+        AnalyticsRouteObserver(),
       ],
     );
   }

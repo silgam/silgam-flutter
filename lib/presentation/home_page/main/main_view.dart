@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -16,6 +15,7 @@ import '../../../repository/ads_repository.dart';
 import '../../../repository/dday_repository.dart';
 import '../../../repository/exam_repository.dart';
 import '../../../repository/user_repository.dart';
+import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../clock_page/clock_page.dart';
 import '../../common/ad_tile.dart';
@@ -153,9 +153,9 @@ class _MainViewState extends State<MainView> {
     return IconButton(
       onPressed: () {
         launchUrl(Uri.parse(url));
-        FirebaseAnalytics.instance.logEvent(
-          name: 'sns_button_tapped',
-          parameters: {'title': tooltip},
+        AnalyticsManager.logEvent(
+          name: '[HomePage-main] SNS button tapped',
+          properties: {'title': tooltip},
         );
       },
       splashRadius: 20,

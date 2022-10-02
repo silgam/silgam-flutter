@@ -77,9 +77,9 @@ class _AdsCardState extends State<AdsCard> {
   void _onAdsTap(Ads ads) {
     String? url = ads.url;
     if (url != null) launchUrl(Uri.parse(url));
-    FirebaseAnalytics.instance.logEvent(
-      name: 'silgam_ads_tapped',
-      parameters: {
+    AnalyticsManager.logEvent(
+      name: '[HomePage-main] Silgam ads tapped',
+      properties: {
         'title': ads.title,
         'url': url,
       },
