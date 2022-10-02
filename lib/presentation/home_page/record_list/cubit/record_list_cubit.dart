@@ -26,4 +26,11 @@ class RecordListCubit extends Cubit<RecordListState> {
     _records = await _recordRepository.getMyExamRecords();
     emit(RecordListLoaded(records: _records));
   }
+
+  void onSearchTextChanged(String query) {
+    final filteredRecords = _records.where(
+      (exam) => exam.title.contains(query) || exam.feedback.contains(query),
+    );
+    emit(RecordListLoaded(records: filteredRecords.toList()));
+  }
 }
