@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../model/exam_record.dart';
-import '../../../repository/exam_record_repository.dart';
-import '../../../repository/user_repository.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
 import '../../record_detail_page/record_detail_page.dart';
+import 'cubit/record_list_cubit.dart';
 import 'record_tile.dart';
 
 class RecordListView extends StatefulWidget {
@@ -25,33 +25,36 @@ class RecordListView extends StatefulWidget {
 }
 
 class _RecordListViewState extends State<RecordListView> {
-  final ExamRecordRepository _recordRepository = ExamRecordRepository();
-  List<ExamRecord> _records = [];
-  bool _isRefreshing = false;
   late final StreamSubscription _eventStreamSubscription;
-
-  bool get _isSignedIn => UserRepository().isSignedIn();
-  bool get _isNotSignedIn => UserRepository().isNotSignedIn();
+  final RecordListCubit cubit = RecordListCubit();
 
   @override
   void initState() {
     super.initState();
-    _onRefresh();
     _eventStreamSubscription = widget.eventStream.listen(_onEventReceived);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldBody(
-      title: RecordListView.title,
-      isRefreshing: _isRefreshing,
-      onRefresh: _isNotSignedIn ? null : _onRefresh,
-      slivers: [
-        if (_isNotSignedIn) _buildLoginButton(),
-        if (_isSignedIn) _buildQuerySection(),
-        if (_isSignedIn) _buildListSection(),
-        if (_isSignedIn && _records.isEmpty) _buildDescription(),
-      ],
+    return BlocProvider(
+      create: (context) => cubit,
+      child: BlocBuilder<RecordListCubit, RecordListState>(
+        builder: (context, state) {
+          return ScaffoldBody(
+            title: RecordListView.title,
+            isRefreshing: state is RecordListLoading,
+            onRefresh: state is RecordListNotSignedIn ? null : cubit.refresh,
+            slivers: [
+              _buildQuerySection(),
+              if (state is RecordListNotSignedIn) _buildLoginButton(),
+              if (state is RecordListLoaded) _buildListSection(state.records),
+              if (state is RecordListLoading) _buildListSection(state.records),
+              if (state is RecordListLoaded && state.records.isEmpty) _buildDescription(),
+              if (state is RecordListLoading && state.records.isEmpty) _buildDescription(),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -78,18 +81,18 @@ class _RecordListViewState extends State<RecordListView> {
     );
   }
 
-  Widget _buildListSection() {
+  Widget _buildListSection(List<ExamRecord> records) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             return RecordTile(
-              record: _records[index],
-              onTileTap: () => _onTileTap(index),
+              record: records[index],
+              onTileTap: () => _onTileTap(records[index]),
             );
           },
-          childCount: _records.length,
+          childCount: records.length,
         ),
       ),
     );
@@ -106,37 +109,26 @@ class _RecordListViewState extends State<RecordListView> {
     );
   }
 
-  Future<void> _onRefresh() async {
-    if (_isNotSignedIn) return;
-    setState(() {
-      _isRefreshing = true;
-    });
-    _records = await _recordRepository.getMyExamRecords();
-    setState(() {
-      _isRefreshing = false;
-    });
-  }
-
   void _onEventReceived(RecordListViewEvent event) {
     switch (event) {
       case RecordListViewEvent.refresh:
-        _onRefresh();
+        cubit.refresh();
         break;
       case RecordListViewEvent.refreshUser:
-        _onRefresh();
+        cubit.refresh();
         break;
     }
   }
 
   void _onLoginTap() async {
     await Navigator.pushNamed(context, LoginPage.routeName);
-    _onRefresh();
+    await cubit.refresh();
   }
 
-  void _onTileTap(int index) async {
-    final args = RecordDetailPageArguments(record: _records[index]);
+  void _onTileTap(ExamRecord record) async {
+    final args = RecordDetailPageArguments(record: record);
     await Navigator.pushNamed(context, RecordDetailPage.routeName, arguments: args);
-    _onRefresh();
+    await cubit.refresh();
   }
 
   @override
