@@ -3,7 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:silgam/util/analytics_manager.dart';
 
 import 'presentation/clock_page/clock_page.dart';
 import 'presentation/edit_record_page/edit_record_page.dart';
@@ -13,6 +12,7 @@ import 'presentation/login_page/login_page.dart';
 import 'presentation/record_detail_page/record_detail_page.dart';
 import 'presentation/review_problem_detail_page/review_problem_detail_page.dart';
 import 'presentation/save_image_page/save_image_page.dart';
+import 'util/analytics_manager.dart';
 
 const double cardCornerRadius = 14;
 

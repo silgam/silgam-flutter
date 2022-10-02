@@ -1,72 +1,51 @@
 import '../repository/exam_repository.dart';
 
 enum Subject {
-  language,
-  math,
-  english,
-  history,
-  investigation,
-  investigation2,
-  secondLanguage,
-}
+  language(
+    subjectName: '국어',
+    firstColor: 0xFF55B99E,
+    secondColor: 0xFF68D69B,
+  ),
+  math(
+    subjectName: '수학',
+    firstColor: 0xFFE05FA9,
+    secondColor: 0xFFF574DD,
+  ),
+  english(
+    subjectName: '영어',
+    firstColor: 0xFF0098C3,
+    secondColor: 0xFF03BAEB,
+  ),
+  history(
+    subjectName: '한국사',
+    firstColor: 0xFF7B4DB9,
+    secondColor: 0xFF8F6CE0,
+  ),
+  investigation(
+    subjectName: '탐구1',
+    firstColor: 0xFF7B4DB9,
+    secondColor: 0xFF8F6CE0,
+  ),
+  investigation2(
+    subjectName: '탐구2',
+    firstColor: 0xFF7B4DB9,
+    secondColor: 0xFF8F6CE0,
+  ),
+  secondLanguage(
+    subjectName: '제2외국어/한문',
+    firstColor: 0xFFF39328,
+    secondColor: 0xFFF7B061,
+  );
 
-extension SubjectExtension on Subject {
-  String get subjectName {
-    switch (this) {
-      case Subject.language:
-        return '국어';
-      case Subject.math:
-        return '수학';
-      case Subject.english:
-        return '영어';
-      case Subject.history:
-        return '한국사';
-      case Subject.investigation:
-        return '탐구1';
-      case Subject.investigation2:
-        return '탐구2';
-      case Subject.secondLanguage:
-        return '제2외국어/한문';
-    }
-  }
+  const Subject({
+    required this.subjectName,
+    required this.firstColor,
+    required this.secondColor,
+  });
 
-  int get firstColor {
-    switch (this) {
-      case Subject.language:
-        return 0xFF55B99E;
-      case Subject.math:
-        return 0xFFE05FA9;
-      case Subject.english:
-        return 0xFF0098C3;
-      case Subject.history:
-        return 0xFF7B4DB9;
-      case Subject.investigation:
-        return 0xFF7B4DB9;
-      case Subject.investigation2:
-        return 0xFF7B4DB9;
-      case Subject.secondLanguage:
-        return 0xFFF39328;
-    }
-  }
-
-  int get secondColor {
-    switch (this) {
-      case Subject.language:
-        return 0xFF68D69B;
-      case Subject.math:
-        return 0xFFF574DD;
-      case Subject.english:
-        return 0xFF03BAEB;
-      case Subject.history:
-        return 0xFF8F6CE0;
-      case Subject.investigation:
-        return 0xFF8F6CE0;
-      case Subject.investigation2:
-        return 0xFF8F6CE0;
-      case Subject.secondLanguage:
-        return 0xFFF7B061;
-    }
-  }
+  final String subjectName;
+  final int firstColor;
+  final int secondColor;
 
   int get defaultExamDuration {
     final defaultExam = ExamRepository.defaultExams.firstWhere((exam) {

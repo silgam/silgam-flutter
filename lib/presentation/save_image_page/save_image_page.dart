@@ -9,7 +9,6 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../model/exam_record.dart';
-import '../../model/subject.dart';
 import '../../util/analytics_manager.dart';
 import '../common/menu_bar.dart';
 

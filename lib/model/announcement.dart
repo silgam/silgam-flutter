@@ -1,13 +1,14 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'relative_time.dart';
 
-class Announcement {
-  final String title;
-  final RelativeTime time;
-  final String? fileName;
+part 'announcement.freezed.dart';
 
-  const Announcement({
-    required this.time,
-    required this.title,
-    this.fileName,
-  });
+@freezed
+class Announcement with _$Announcement {
+  const factory Announcement({
+    required String title,
+    required RelativeTime time,
+    String? fileName,
+  }) = _Announcement;
 }

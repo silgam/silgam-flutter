@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:silgam/app_env.dart';
-import 'package:silgam/util/analytics_manager.dart';
 
 import 'app.dart';
+import 'app_env.dart';
 import 'firebase_options.dart';
+import 'util/analytics_manager.dart';
 import 'util/shared_preferences_holder.dart';
 
 void main() async {

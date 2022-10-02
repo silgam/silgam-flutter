@@ -1,18 +1,15 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'problem.freezed.dart';
 part 'problem.g.dart';
 
-@JsonSerializable()
-class WrongProblem {
-  final int problemNumber;
-
-  WrongProblem(
-    this.problemNumber,
-  );
+@freezed
+class WrongProblem with _$WrongProblem {
+  const factory WrongProblem(
+    int problemNumber,
+  ) = _WrongProblem;
 
   factory WrongProblem.fromJson(Map<String, dynamic> json) => _$WrongProblemFromJson(json);
-
-  Map<String, dynamic> toJson() => _$WrongProblemToJson(this);
 
   static List<Map<String, dynamic>> toJsonList(List<WrongProblem> instances) {
     return instances.map((e) => e.toJson()).toList();

@@ -1,28 +1,27 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../util/date_time_extension.dart';
 import 'announcement.dart';
 import 'subject.dart';
 
-class Exam {
-  final Subject subject;
-  final String examName;
-  final int? examNumber;
-  final DateTime examStartTime;
-  final DateTime examEndTime;
-  final int examDuration;
-  final int numberOfQuestions;
-  final int perfectScore;
-  final List<Announcement> announcements;
+part 'exam.freezed.dart';
 
-  Exam({
-    required this.subject,
-    required this.examName,
-    this.examNumber,
-    required this.examStartTime,
-    required this.examDuration,
-    required this.numberOfQuestions,
-    required this.perfectScore,
-    required this.announcements,
-  }) : examEndTime = examStartTime.add(Duration(minutes: examDuration));
+@freezed
+class Exam with _$Exam {
+  const Exam._();
+
+  const factory Exam({
+    required Subject subject,
+    required String examName,
+    int? examNumber,
+    required DateTime examStartTime,
+    required int examDuration,
+    required int numberOfQuestions,
+    required int perfectScore,
+    required List<Announcement> announcements,
+  }) = _Exam;
+
+  DateTime get examEndTime => examStartTime.add(Duration(minutes: examDuration));
 
   String getExamTimeString() {
     final examEndTime = examStartTime.add(Duration(minutes: examDuration));

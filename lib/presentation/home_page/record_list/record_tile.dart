@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
-import '../../../model/subject.dart';
 import '../../common/material_hero.dart';
 
 class RecordTile extends StatefulWidget {

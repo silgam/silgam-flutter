@@ -1,53 +1,32 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'problem.dart';
 import 'subject.dart';
 
+part 'exam_record.freezed.dart';
 part 'exam_record.g.dart';
 
-@JsonSerializable()
-class ExamRecord {
-  @JsonKey(ignore: true)
-  String documentId;
-  final String userId;
-  final String title;
-  final Subject subject;
-  final DateTime examStartedTime;
-  final int? examDurationMinutes;
-  final int? score;
-  final int? grade;
-  final int? percentile;
-  final int? standardScore;
-  @JsonKey(toJson: WrongProblem.toJsonList)
-  final List<WrongProblem> wrongProblems;
-  final String feedback;
-  @JsonKey(toJson: ReviewProblem.toJsonList)
-  final List<ReviewProblem> reviewProblems;
+@unfreezed
+class ExamRecord with _$ExamRecord {
+  const ExamRecord._();
 
-  ExamRecord({
-    this.documentId = '',
-    required this.userId,
-    required this.title,
-    required this.subject,
-    required this.examStartedTime,
-    this.examDurationMinutes,
-    this.score,
-    this.grade,
-    this.percentile,
-    this.standardScore,
-    this.wrongProblems = const [],
-    this.feedback = '',
-    this.reviewProblems = const [],
-  });
+  factory ExamRecord({
+    @JsonKey(ignore: true) @Default('') String documentId,
+    required final String userId,
+    required final String title,
+    required final Subject subject,
+    required final DateTime examStartedTime,
+    final int? examDurationMinutes,
+    final int? score,
+    final int? grade,
+    final int? percentile,
+    final int? standardScore,
+    @JsonKey(toJson: WrongProblem.toJsonList) required final List<WrongProblem> wrongProblems,
+    required final String feedback,
+    @JsonKey(toJson: ReviewProblem.toJsonList) required final List<ReviewProblem> reviewProblems,
+  }) = _ExamRecord;
 
   factory ExamRecord.fromJson(Map<String, dynamic> json) => _$ExamRecordFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ExamRecordToJson(this);
-
-  @override
-  String toString() {
-    return 'ExamRecord{documentId: $documentId, userId: $userId, title: $title, subject: $subject, examStartedTime: $examStartedTime, examDurationMinutes: $examDurationMinutes, score: $score, grade: $grade, percentile: $percentile, standardScore: $standardScore, wrongProblems: $wrongProblems, feedback: $feedback, reviewProblems: $reviewProblems}';
-  }
 
   int getGradeColor() {
     switch (grade) {
