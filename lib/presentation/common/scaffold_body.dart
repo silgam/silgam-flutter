@@ -7,14 +7,14 @@ import '../home_page/home_page.dart';
 
 class ScaffoldBody extends StatelessWidget {
   final String title;
-  final Widget child;
+  final List<Widget> slivers;
   final RefreshCallback? onRefresh;
   final bool isRefreshing;
 
   const ScaffoldBody({
     Key? key,
     required this.title,
-    required this.child,
+    required this.slivers,
     this.onRefresh,
     this.isRefreshing = false,
   }) : super(key: key);
@@ -77,7 +77,7 @@ class ScaffoldBody extends StatelessWidget {
           // Because of this https://github.com/flutter/flutter/issues/24893
           systemOverlayStyle: Platform.isIOS ? null : systemOverlayStyle,
         ),
-        child,
+        ...slivers,
       ],
     );
   }

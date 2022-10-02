@@ -45,7 +45,9 @@ class _RecordListViewState extends State<RecordListView> {
       title: RecordListView.title,
       isRefreshing: _isRefreshing,
       onRefresh: _isNotSignedIn ? null : _onRefresh,
-      child: _buildMainBody(),
+      slivers: [
+        _buildMainBody(),
+      ],
     );
   }
 

@@ -55,91 +55,99 @@ class _SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     return ScaffoldBody(
       title: SettingsView.title,
-      child: SliverList(
-        delegate: SliverChildListDelegate([
-          _user == null
-              ? Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: LoginButton(onTap: _onLoginTap),
-                )
-              : _buildLoginInfo(),
-          AdTile(
-            key: _adKey,
-            margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
-            adSize: AdSize.getInlineAdaptiveBannerAdSize(
-              MediaQuery.of(context).size.width.truncate() - 32,
-              100,
-            ),
+      slivers: [
+        SliverList(
+          delegate: SliverChildListDelegate(
+            _buildSettingTiles(),
           ),
-          const _Divider(),
-          SettingTile(
-            onTap: _onNoiseSettingButtonTap,
-            title: '백색 소음, 시험장 소음 설정',
-            description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
-          ),
-          const _Divider(),
-          const SettingTile(
-            title: '시험 종료 후 바로 기록하기',
-            description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어갑니다.',
-            disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
-            preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
-          ),
-          const _Divider(thick: true),
-          SettingTile(
-            onTap: _onWriteReviewButtonTap,
-            title: '리뷰 쓰기',
-            description: '리뷰는 실감 팀에게 큰 도움이 됩니다.',
-          ),
-          const _Divider(),
-          SettingTile(
-            onTap: () => launchUrl(Uri.parse(urlKakaotalk)),
-            title: '개발자와 대화하기/문의하기',
-            description: '카카오톡 익명 채팅으로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
-          ),
-          const _Divider(),
-          SettingTile(
-            onTap: () => launchUrl(Uri.parse(urlInstagram)),
-            title: '실감 인스타그램 보러 가기',
-            description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
-          ),
-          const _Divider(),
-          SettingTile(
-            onTap: () => launchUrl(Uri.parse(urlFacebook)),
-            title: '실감 페이스북 페이지 보러 가기',
-            description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
-          ),
-          const _Divider(),
-          if (_user != null)
-            SettingTile(
-              onTap: _onLogoutTap,
-              title: '로그아웃',
-            ),
-          if (_user != null) const _Divider(),
-          if (_user != null)
-            SettingTile(
-              onTap: () => _onDeleteAccountTap(), // 유저 삭제, 로그아웃
-              title: '계정 탈퇴',
-            ),
-          if (_user != null) const _Divider(),
-          FutureBuilder(
-            future: PackageInfo.fromPlatform(),
-            builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Text(
-                  '버전 정보 ${snapshot.data?.version}+${snapshot.data?.buildNumber}',
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              );
-            },
-          ),
-        ]),
-      ),
+        ),
+      ],
     );
+  }
+
+  List<Widget> _buildSettingTiles() {
+    return [
+      _user == null
+          ? Padding(
+              padding: const EdgeInsets.all(12),
+              child: LoginButton(onTap: _onLoginTap),
+            )
+          : _buildLoginInfo(),
+      AdTile(
+        key: _adKey,
+        margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
+        adSize: AdSize.getInlineAdaptiveBannerAdSize(
+          MediaQuery.of(context).size.width.truncate() - 32,
+          100,
+        ),
+      ),
+      const _Divider(),
+      SettingTile(
+        onTap: _onNoiseSettingButtonTap,
+        title: '백색 소음, 시험장 소음 설정',
+        description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
+      ),
+      const _Divider(),
+      const SettingTile(
+        title: '시험 종료 후 바로 기록하기',
+        description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어갑니다.',
+        disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
+        preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
+      ),
+      const _Divider(thick: true),
+      SettingTile(
+        onTap: _onWriteReviewButtonTap,
+        title: '리뷰 쓰기',
+        description: '리뷰는 실감 팀에게 큰 도움이 됩니다.',
+      ),
+      const _Divider(),
+      SettingTile(
+        onTap: () => launchUrl(Uri.parse(urlKakaotalk)),
+        title: '개발자와 대화하기/문의하기',
+        description: '카카오톡 익명 채팅으로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
+      ),
+      const _Divider(),
+      SettingTile(
+        onTap: () => launchUrl(Uri.parse(urlInstagram)),
+        title: '실감 인스타그램 보러 가기',
+        description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
+      ),
+      const _Divider(),
+      SettingTile(
+        onTap: () => launchUrl(Uri.parse(urlFacebook)),
+        title: '실감 페이스북 페이지 보러 가기',
+        description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
+      ),
+      const _Divider(),
+      if (_user != null)
+        SettingTile(
+          onTap: _onLogoutTap,
+          title: '로그아웃',
+        ),
+      if (_user != null) const _Divider(),
+      if (_user != null)
+        SettingTile(
+          onTap: () => _onDeleteAccountTap(), // 유저 삭제, 로그아웃
+          title: '계정 탈퇴',
+        ),
+      if (_user != null) const _Divider(),
+      FutureBuilder(
+        future: PackageInfo.fromPlatform(),
+        builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              '버전 정보 ${snapshot.data?.version}+${snapshot.data?.buildNumber}',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          );
+        },
+      ),
+    ];
   }
 
   Widget _buildLoginInfo() {
