@@ -218,6 +218,12 @@ PODS:
     - Flutter
   - kakao_flutter_sdk_common (1.2.2):
     - Flutter
+  - Mixpanel-swift (4.0.1):
+    - Mixpanel-swift/Complete (= 4.0.1)
+  - Mixpanel-swift/Complete (4.0.1)
+  - mixpanel_flutter (2.0.0):
+    - Flutter
+    - Mixpanel-swift (= 4.0.1)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -259,6 +265,7 @@ DEPENDENCIES:
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - kakao_flutter_sdk_common (from `.symlinks/plugins/kakao_flutter_sdk_common/ios`)
+  - mixpanel_flutter (from `.symlinks/plugins/mixpanel_flutter/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -296,6 +303,7 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
+    - Mixpanel-swift
     - nanopb
     - PromisesObjC
 
@@ -339,6 +347,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/just_audio/ios"
   kakao_flutter_sdk_common:
     :path: ".symlinks/plugins/kakao_flutter_sdk_common/ios"
+  mixpanel_flutter:
+    :path: ".symlinks/plugins/mixpanel_flutter/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_ios:
@@ -406,6 +416,8 @@ SPEC CHECKSUMS:
   in_app_review: 4a97249f7a2f539a0f294c2d9196b7fe35e49541
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   kakao_flutter_sdk_common: 2fcd2c17ef69300497b9369f390766dd9af0514c
+  Mixpanel-swift: 6e970d16daf10283cd30a3e6e1a08f4410b25183
+  mixpanel_flutter: b10020fd7e671b28dca0a3a426a5b10662cc0697
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
