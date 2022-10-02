@@ -1,11 +1,11 @@
 name: silgam
 description: Silgam
 
-publish_to: 'none'
+publish_to: "none"
 version: 0.5.4+31
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -53,6 +53,9 @@ dependencies:
       url: https://github.com/bluefireteam/photo_view
       ref: 8156907eecfa812b181a5a729d790f6d399f311b
   mixpanel_flutter: ^2.0.0
+  flutter_bloc: ^8.1.1
+  bloc: ^8.1.0
+  freezed_annotation: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +66,7 @@ dev_dependencies:
   flutter_native_splash: ^2.1.2+1
   build_runner: ^2.1.7
   json_serializable: ^6.1.5
+  freezed: ^2.1.1
 
 flutter:
   uses-material-design: true
@@ -83,7 +87,7 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/app_icon/app_icon.png"
-  adaptive_icon_background: '#ffffff'
+  adaptive_icon_background: "#ffffff"
   adaptive_icon_foreground: "assets/app_icon/app_icon_responsive.png"
 
 flutter_native_splash:
