@@ -5,6 +5,7 @@ import '../../../../model/exam_record.dart';
 import '../../../../model/subject.dart';
 import '../../../../repository/exam_record_repository.dart';
 import '../../../../repository/user_repository.dart';
+import '../../../../util/analytics_manager.dart';
 
 part 'record_list_cubit.freezed.dart';
 part 'record_list_state.dart';
@@ -37,6 +38,13 @@ class RecordListCubit extends Cubit<RecordListState> {
   void onSortDateButtonTapped() {
     final records = _getFilteredAndSortedRecords(sortNewestFirst: !state.sortNewestFirst);
     emit(state.copyWith(sortNewestFirst: !state.sortNewestFirst, records: records));
+
+    AnalyticsManager.logEvent(
+      name: '[HomePage-list] Sort-by-date button tapped',
+      properties: {
+        'sort_newest_first': state.sortNewestFirst,
+      },
+    );
   }
 
   void onSubjectFilterButtonTapped(Subject subject) {
@@ -48,11 +56,21 @@ class RecordListCubit extends Cubit<RecordListState> {
     }
     final records = _getFilteredAndSortedRecords(selectedSubjects: selectedSubjects);
     emit(state.copyWith(selectedSubjects: selectedSubjects, records: records));
+
+    AnalyticsManager.logEvent(
+      name: '[HomePage-list] Subject filter button tapped',
+      properties: {
+        'subject': subject.subjectName,
+        'selected': state.selectedSubjects.contains(subject),
+      },
+    );
   }
 
   void onFilterResetButtonTapped() {
     final records = _getFilteredAndSortedRecords(sortNewestFirst: true, selectedSubjects: []);
     emit(state.copyWith(sortNewestFirst: true, selectedSubjects: [], records: records));
+
+    AnalyticsManager.logEvent(name: '[HomePage-list] Filter reset button tapped');
   }
 
   List<ExamRecord> _getFilteredAndSortedRecords({

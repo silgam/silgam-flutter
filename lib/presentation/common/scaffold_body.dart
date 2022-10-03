@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../util/analytics_manager.dart';
 import '../home_page/home_page.dart';
 
 class ScaffoldBody extends StatelessWidget {
@@ -63,7 +64,7 @@ class ScaffoldBody extends StatelessWidget {
                     );
                   } else {
                     return IconButton(
-                      onPressed: onRefresh,
+                      onPressed: _onRefresh,
                       icon: const Icon(Icons.refresh),
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
@@ -79,6 +80,14 @@ class ScaffoldBody extends StatelessWidget {
         ),
         ...slivers,
       ],
+    );
+  }
+
+  void _onRefresh() {
+    onRefresh?.call();
+    AnalyticsManager.logEvent(
+      name: '[ScaffoldBody] Refresh',
+      properties: {'page': title},
     );
   }
 }
