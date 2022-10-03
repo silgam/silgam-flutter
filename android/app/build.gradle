@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -50,7 +50,7 @@ android {
     defaultConfig {
         applicationId "com.seunghyun.silgam"
         minSdkVersion 19
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -70,6 +70,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    namespace 'com.seunghyun.silgam'
 }
 
 flutter {
@@ -79,7 +80,7 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.facebook.android:facebook-login:12.3.0'
+    implementation 'com.facebook.android:facebook-login:14.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
