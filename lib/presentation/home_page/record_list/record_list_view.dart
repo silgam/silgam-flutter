@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../model/exam_record.dart';
+import '../../../model/subject.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
@@ -37,22 +38,20 @@ class _RecordListViewState extends State<RecordListView> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => cubit..refresh(),
       child: BlocBuilder<RecordListCubit, RecordListState>(
         builder: (context, state) {
           return GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: ScaffoldBody(
               title: RecordListView.title,
-              isRefreshing: state is RecordListLoading,
-              onRefresh: state is RecordListNotSignedIn ? null : cubit.refresh,
+              isRefreshing: state.isLoading,
+              onRefresh: state.isSignedIn ? cubit.refresh : null,
               slivers: [
                 _buildQuerySection(state),
-                if (state is RecordListNotSignedIn) _buildLoginButton(),
-                if (state is RecordListLoaded) _buildListSection(state.records),
-                if (state is RecordListLoading) _buildListSection(state.records),
-                if (state is RecordListLoaded && state.records.isEmpty) _buildDescription(),
-                if (state is RecordListLoading && state.records.isEmpty) _buildDescription(),
+                if (!state.isSignedIn) _buildLoginButton(),
+                if (state.isSignedIn) _buildListSection(state.records),
+                if (state.isSignedIn && state.records.isEmpty) _buildDescription(),
               ],
             ),
           );
@@ -78,7 +77,7 @@ class _RecordListViewState extends State<RecordListView> {
   Widget _buildQuerySection(RecordListState state) {
     return SliverToBoxAdapter(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -102,30 +101,85 @@ class _RecordListViewState extends State<RecordListView> {
               ),
             ),
           ),
-          const SizedBox(height: 8),
-          const Divider(
-            indent: 8,
-            endIndent: 8,
-          ),
-          const SizedBox(height: 8),
-          if (state is RecordListLoaded)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                '${state.records.length}개',
-                style: const TextStyle(color: Colors.grey),
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  const SizedBox(width: 16),
+                  ActionChip(
+                    label: Icon(Icons.replay, size: 16, color: Colors.grey.shade700),
+                    onPressed: cubit.onFilterResetButtonTapped,
+                    tooltip: '초기화',
+                    pressElevation: 0,
+                    backgroundColor: Colors.grey.shade700.withAlpha(10),
+                    padding: EdgeInsets.zero,
+                    side: BorderSide(color: Colors.grey.shade700, width: 0.4),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  const SizedBox(width: 6),
+                  ActionChip(
+                    label: Text(
+                      state.sortNewestFirst ? '최신순' : '오래된순',
+                      style: TextStyle(color: Colors.grey.shade700),
+                    ),
+                    onPressed: cubit.onSortDateButtonTapped,
+                    pressElevation: 0,
+                    backgroundColor: Colors.grey.shade700.withAlpha(10),
+                    side: BorderSide(color: Colors.grey.shade700, width: 0.4),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  const VerticalDivider(
+                    indent: 6,
+                    endIndent: 6,
+                  ),
+                  for (Subject subject in Subject.values) _buildSubjectFilterChip(state, subject),
+                  const SizedBox(width: 13),
+                ],
               ),
             ),
-          if (state is RecordListLoading)
+          ),
+          const SizedBox(height: 16),
+          if (state.isSignedIn)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                '${state.records.length}개',
+                '${state.records.length}개 / ${state.originalRecords.length}개',
                 style: const TextStyle(color: Colors.grey),
               ),
             ),
           const SizedBox(height: 4),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSubjectFilterChip(RecordListState state, Subject subject) {
+    final bool selected = state.selectedSubjects.contains(subject);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: AnimatedSwitcher(
+        duration: const Duration(seconds: 1),
+        child: FilterChip(
+          label: Text(
+            subject.subjectName,
+            style: TextStyle(
+              color: selected ? Colors.white : Color(subject.secondColor),
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
+          onSelected: (value) => cubit.onSubjectFilterButtonTapped(subject),
+          selected: false,
+          side: BorderSide(
+            color: Color(subject.secondColor),
+            width: 0.4,
+          ),
+          backgroundColor: Color(subject.firstColor).withAlpha(selected ? 255 : 10),
+          pressElevation: 0,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
       ),
     );
   }
