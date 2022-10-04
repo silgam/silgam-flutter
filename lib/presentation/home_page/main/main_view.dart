@@ -152,7 +152,7 @@ class _MainViewState extends State<MainView> {
   Widget _buildSnsButton({required String snsName, required String tooltip, required String url}) {
     return IconButton(
       onPressed: () {
-        launchUrl(Uri.parse(url));
+        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
         AnalyticsManager.logEvent(
           name: '[HomePage-main] SNS button tapped',
           properties: {'title': tooltip},

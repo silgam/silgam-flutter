@@ -102,19 +102,19 @@ class _SettingsViewState extends State<SettingsView> {
       ),
       const _Divider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlKakaotalk)),
+        onTap: () => launchUrl(Uri.parse(urlKakaotalk), mode: LaunchMode.externalApplication),
         title: '개발자와 대화하기/문의하기',
         description: '카카오톡 익명 채팅으로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
       ),
       const _Divider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlInstagram)),
+        onTap: () => launchUrl(Uri.parse(urlInstagram), mode: LaunchMode.externalApplication),
         title: '실감 인스타그램 보러 가기',
         description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
       ),
       const _Divider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlFacebook)),
+        onTap: () => launchUrl(Uri.parse(urlFacebook), mode: LaunchMode.externalApplication),
         title: '실감 페이스북 페이지 보러 가기',
         description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
       ),
