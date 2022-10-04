@@ -9,16 +9,15 @@ import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
 import '../../record_detail_page/record_detail_page.dart';
+import '../home_page.dart';
 import 'cubit/record_list_cubit.dart';
 import 'record_tile.dart';
 
 class RecordListView extends StatefulWidget {
   static const title = '기록';
-  final Stream<RecordListViewEvent> eventStream;
 
   const RecordListView({
     Key? key,
-    required this.eventStream,
   }) : super(key: key);
 
   @override
@@ -32,7 +31,7 @@ class _RecordListViewState extends State<RecordListView> {
   @override
   void initState() {
     super.initState();
-    _eventStreamSubscription = widget.eventStream.listen(_onEventReceived);
+    _eventStreamSubscription = HomePage.recordListViewEventStreamController.stream.listen(_onEventReceived);
   }
 
   @override

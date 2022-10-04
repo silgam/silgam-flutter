@@ -14,6 +14,7 @@ import 'settings/settings_view.dart';
 class HomePage extends StatefulWidget {
   static const routeName = '/';
   static final backgroundColor = Colors.grey[50];
+  static final StreamController<RecordListViewEvent> recordListViewEventStreamController = StreamController.broadcast();
 
   const HomePage({Key? key}) : super(key: key);
 
@@ -23,7 +24,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  final StreamController<RecordListViewEvent> _recordListViewEventStreamController = StreamController.broadcast();
   final StreamController<SettingsViewEvent> _settingsViewEventStreamController = StreamController.broadcast();
 
   bool get _isNotSignedIn => UserRepository().isNotSignedIn();
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     FirebaseAuth.instance.userChanges().listen((_) {
-      _recordListViewEventStreamController.add(RecordListViewEvent.refreshUser);
+      HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refreshUser);
       _settingsViewEventStreamController.add(SettingsViewEvent.refreshUser);
       setState(() {});
     });
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
       if (_selectedIndex == 1) {
-        _recordListViewEventStreamController.add(RecordListViewEvent.refresh);
+        HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refresh);
       }
     });
   }
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
             sizing: StackFit.expand,
             children: [
               MainView(navigateToRecordTab: () => _onItemTapped(1)),
-              RecordListView(eventStream: _recordListViewEventStreamController.stream),
+              const RecordListView(),
               SettingsView(eventStream: _settingsViewEventStreamController.stream),
             ],
           ),
@@ -108,7 +108,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _recordListViewEventStreamController.close();
     _settingsViewEventStreamController.close();
     super.dispose();
   }
@@ -116,6 +115,6 @@ class _HomePageState extends State<HomePage> {
   void _onAddExamRecordButtonPressed() async {
     final args = EditRecordPageArguments();
     await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: args);
-    _recordListViewEventStreamController.add(RecordListViewEvent.refresh);
+    HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refresh);
   }
 }

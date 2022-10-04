@@ -12,6 +12,8 @@ import '../../repository/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
+import '../home_page/home_page.dart';
+import '../home_page/record_list/record_list_view.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
@@ -503,6 +505,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       return;
     }
     await saveRecord();
+    HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refresh);
     if (mounted) Navigator.pop(context);
   }
 
