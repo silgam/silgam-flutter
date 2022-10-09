@@ -121,7 +121,7 @@ class _RecordListViewState extends State<RecordListView> {
                   const SizedBox(width: 6),
                   ActionChip(
                     label: Text(
-                      state.sortNewestFirst ? '최신순' : '오래된순',
+                      state.sortType.name,
                       style: TextStyle(color: Colors.grey.shade700),
                     ),
                     onPressed: cubit.onSortDateButtonTapped,
@@ -243,4 +243,15 @@ class _RecordListViewState extends State<RecordListView> {
 enum RecordListViewEvent {
   refresh,
   refreshUser,
+}
+
+enum RecordSortType {
+  dateDesc('최신순'),
+  dateAsc('오래된순'),
+  titleAsc('이름 오름차순'),
+  titleDesc('이름 내림차순');
+
+  final String name;
+
+  const RecordSortType(this.name);
 }

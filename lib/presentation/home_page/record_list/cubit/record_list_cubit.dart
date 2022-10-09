@@ -6,6 +6,7 @@ import '../../../../model/subject.dart';
 import '../../../../repository/exam_record_repository.dart';
 import '../../../../repository/user_repository.dart';
 import '../../../../util/analytics_manager.dart';
+import '../record_list_view.dart';
 
 part 'record_list_cubit.freezed.dart';
 part 'record_list_state.dart';
@@ -36,13 +37,14 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   void onSortDateButtonTapped() {
-    final records = _getFilteredAndSortedRecords(sortNewestFirst: !state.sortNewestFirst);
-    emit(state.copyWith(sortNewestFirst: !state.sortNewestFirst, records: records));
+    RecordSortType sortType = RecordSortType.values[(state.sortType.index + 1) % RecordSortType.values.length];
+    final records = _getFilteredAndSortedRecords(sortType: sortType);
+    emit(state.copyWith(sortType: sortType, records: records));
 
     AnalyticsManager.logEvent(
       name: '[HomePage-list] Sort-by-date button tapped',
       properties: {
-        'sort_newest_first': state.sortNewestFirst,
+        'sort_newest_first': state.sortType.name,
       },
     );
   }
@@ -67,8 +69,8 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   void onFilterResetButtonTapped() {
-    final records = _getFilteredAndSortedRecords(sortNewestFirst: true, selectedSubjects: []);
-    emit(state.copyWith(sortNewestFirst: true, selectedSubjects: [], records: records));
+    final records = _getFilteredAndSortedRecords(sortType: RecordSortType.dateDesc, selectedSubjects: []);
+    emit(state.copyWith(sortType: RecordSortType.dateDesc, selectedSubjects: [], records: records));
 
     AnalyticsManager.logEvent(name: '[HomePage-list] Filter reset button tapped');
   }
@@ -76,12 +78,12 @@ class RecordListCubit extends Cubit<RecordListState> {
   List<ExamRecord> _getFilteredAndSortedRecords({
     List<ExamRecord>? originalRecords,
     String? searchQuery,
-    bool? sortNewestFirst,
+    RecordSortType? sortType,
     List<Subject>? selectedSubjects,
   }) {
     originalRecords ??= state.originalRecords;
     searchQuery ??= state.searchQuery;
-    sortNewestFirst ??= state.sortNewestFirst;
+    sortType ??= state.sortType;
     selectedSubjects ??= state.selectedSubjects;
 
     return originalRecords.where(
@@ -94,10 +96,15 @@ class RecordListCubit extends Cubit<RecordListState> {
       return selectedSubjects.contains(exam.subject);
     }).toList()
       ..sort((a, b) {
-        if (sortNewestFirst!) {
-          return b.examStartedTime.compareTo(a.examStartedTime);
-        } else {
-          return a.examStartedTime.compareTo(b.examStartedTime);
+        switch (sortType!) {
+          case RecordSortType.dateDesc:
+            return b.examStartedTime.compareTo(a.examStartedTime);
+          case RecordSortType.dateAsc:
+            return a.examStartedTime.compareTo(b.examStartedTime);
+          case RecordSortType.titleAsc:
+            return a.title.compareTo(b.title);
+          case RecordSortType.titleDesc:
+            return b.title.compareTo(a.title);
         }
       });
   }

@@ -8,7 +8,7 @@ class RecordListState with _$RecordListState {
     required List<ExamRecord> originalRecords,
     required List<ExamRecord> records,
     required String searchQuery,
-    required bool sortNewestFirst,
+    required RecordSortType sortType,
     required List<Subject> selectedSubjects,
   }) = _RecordListState;
 
@@ -19,7 +19,7 @@ class RecordListState with _$RecordListState {
       originalRecords: [],
       records: [],
       searchQuery: '',
-      sortNewestFirst: true,
+      sortType: RecordSortType.dateDesc,
       selectedSubjects: [],
     );
   }
