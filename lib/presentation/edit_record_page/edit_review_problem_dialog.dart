@@ -233,8 +233,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
   void _onImageAddButtonPressed() async {
     final picker = ImagePicker();
-    List<XFile>? files = await picker.pickMultiImage();
-    if (files == null) return;
+    List<XFile> files = await picker.pickMultiImage();
     setState(() {
       _tempImagePaths.addAll(files.map((e) => e.path));
     });
