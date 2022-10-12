@@ -98,7 +98,7 @@ class _SettingsViewState extends State<SettingsView> {
       SettingTile(
         onTap: () => launchUrl(Uri.parse(urlDonation), mode: LaunchMode.externalApplication),
         title: '실감팀 후원하기 💕',
-        description: '실감팀에게 익명으로 후원을 할 수 있습니다. 후원금은 서버 비용과 앱 개발에 사용됩니다.',
+        description: '실감팀에 익명으로 후원을 할 수 있습니다. 후원금은 서버 비용과 앱 개발에 사용됩니다.',
       ),
       const _Divider(),
       SettingTile(
