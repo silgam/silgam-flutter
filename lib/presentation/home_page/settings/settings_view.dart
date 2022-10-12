@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,19 +35,12 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   User? _user;
   late final StreamSubscription _eventStreamSubscription;
-  final GlobalKey<AdTileState> _adKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     _refreshUser();
     _eventStreamSubscription = widget.eventStream.listen(_onEventReceived);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _adKey.currentState?.loadAd();
   }
 
   @override
@@ -74,12 +66,8 @@ class _SettingsViewState extends State<SettingsView> {
             )
           : _buildLoginInfo(),
       AdTile(
-        key: _adKey,
+        width: MediaQuery.of(context).size.width.truncate() - 32,
         margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
-        adSize: AdSize.getInlineAdaptiveBannerAdSize(
-          MediaQuery.of(context).size.width.truncate() - 32,
-          100,
-        ),
       ),
       const _Divider(),
       SettingTile(

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,13 +47,6 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   final DateTime today = DateTime.now();
   late final List<DDayItem> dDayItems = DDayRepository().getItemsToShow(today);
-  final GlobalKey<AdTileState> _adKey = GlobalKey();
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _adKey.currentState?.loadAd();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,12 +108,8 @@ class _MainViewState extends State<MainView> {
                 title: '모의고사 기록하고 피드백하기',
               ),
               AdTile(
-                key: _adKey,
+                width: MediaQuery.of(context).size.width.clamp(0, maxWidth).truncate() - 40,
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                adSize: AdSize.getInlineAdaptiveBannerAdSize(
-                  MediaQuery.of(context).size.width.clamp(0, maxWidth).truncate() - 40,
-                  100,
-                ),
               ),
               const SizedBox(height: 20),
             ],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
@@ -32,19 +31,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   late ExamRecord _record;
   final ExamRecordRepository _recordRepository = ExamRecordRepository();
   bool _isDeleting = false;
-  final GlobalKey<AdTileState> _adKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     _record = widget.arguments.record;
     _refresh();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _adKey.currentState?.loadAd();
   }
 
   @override
@@ -213,12 +205,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           ),
         const SizedBox(height: 16),
         AdTile(
-          key: _adKey,
+          width: MediaQuery.of(context).size.width.truncate() - 40,
           margin: const EdgeInsets.only(bottom: 20),
-          adSize: AdSize.getInlineAdaptiveBannerAdSize(
-            MediaQuery.of(context).size.width.truncate() - 40,
-            100,
-          ),
         ),
       ],
     );
