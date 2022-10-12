@@ -60,10 +60,7 @@ class _MainViewState extends State<MainView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 32),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildTitle(),
-              ),
+              _buildTitle(),
               const SizedBox(height: 4),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -121,18 +118,46 @@ class _MainViewState extends State<MainView> {
 
   Widget _buildTitle() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          DateFormat.MMMMEEEEd('ko_KR').format(today),
-          style: const TextStyle(
-            fontWeight: FontWeight.w900,
-            fontSize: 24,
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Text(
+            DateFormat.MMMMEEEEd('ko_KR').format(today),
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 24,
+            ),
           ),
         ),
-        const Expanded(child: SizedBox.shrink()),
-        _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
-        _buildSnsButton(snsName: "facebook", tooltip: '실감 페이스북', url: urlFacebook),
-        _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
+        const SizedBox(width: 12),
+        Flexible(
+          child: IntrinsicHeight(
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
+                      _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
+                      _buildSnsButton(snsName: "facebook", tooltip: '실감 페이스북', url: urlFacebook),
+                      const SizedBox(width: 12),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 10,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.grey.shade50, Colors.grey.shade50.withAlpha(0)],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
