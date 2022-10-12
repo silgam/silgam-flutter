@@ -91,8 +91,14 @@ class _SettingsViewState extends State<SettingsView> {
       const _Divider(),
       SettingTile(
         onTap: () => launchUrl(Uri.parse(urlKakaotalk), mode: LaunchMode.externalApplication),
-        title: '개발자와 대화하기/문의하기',
-        description: '카카오톡 익명 채팅으로 실감 팀에게 의견을 보내거나 문의할 수 있습니다.',
+        title: '실감팀과 대화하기 / 실감팀에게 문의하기',
+        description: '실감 카카오톡 채널로 의견을 보내거나 문의할 수 있습니다.',
+      ),
+      const _Divider(),
+      SettingTile(
+        onTap: () => launchUrl(Uri.parse(urlDonation), mode: LaunchMode.externalApplication),
+        title: '실감팀 후원하기 💕',
+        description: '실감팀에게 익명으로 후원을 할 수 있습니다. 후원금은 서버 비용과 앱 개발에 사용됩니다.',
       ),
       const _Divider(),
       SettingTile(
