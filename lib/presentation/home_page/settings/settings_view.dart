@@ -158,6 +158,7 @@ class _SettingsViewState extends State<SettingsView> {
               CircleAvatar(
                 backgroundImage: NetworkImage(user.photoURL ?? 'https://via.placeholder.com/150?text=ㅇ'),
                 backgroundColor: Colors.grey,
+                onBackgroundImageError: (exception, stackTrace) {},
               ),
               const SizedBox(width: 16),
               Expanded(
