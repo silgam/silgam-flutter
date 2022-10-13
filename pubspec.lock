@@ -429,11 +429,9 @@ packages:
   flutter_datetime_picker:
     dependency: "direct main"
     description:
-      path: "."
-      ref: eb66486c47d50bf550950c196486121ffcea8885
-      resolved-ref: eb66486c47d50bf550950c196486121ffcea8885
-      url: "git://github.com/Realank/flutter_datetime_picker.git"
-    source: git
+      name: flutter_datetime_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "1.5.1"
   flutter_facebook_auth:
     dependency: "direct main"
@@ -973,12 +971,10 @@ packages:
   photo_view:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "8156907eecfa812b181a5a729d790f6d399f311b"
-      resolved-ref: "8156907eecfa812b181a5a729d790f6d399f311b"
-      url: "https://github.com/bluefireteam/photo_view"
-    source: git
-    version: "0.13.0"
+      name: photo_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.14.0"
   platform:
     dependency: transitive
     description:
