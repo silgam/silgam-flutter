@@ -431,6 +431,7 @@ class _ClockPageState extends State<ClockPage> {
     }
     showDialog(
       context: context,
+      routeSettings: const RouteSettings(name: 'finish_exam_dialog'),
       builder: (context) {
         return AlertDialog(
           title: const Text(

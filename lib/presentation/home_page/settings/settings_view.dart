@@ -226,6 +226,7 @@ class _SettingsViewState extends State<SettingsView> {
   void _onLoginLongPress(User user) {
     showDialog(
       context: context,
+      routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
       builder: (_) => AlertDialog(
         content: SelectableText(user.uid),
       ),
@@ -235,6 +236,7 @@ class _SettingsViewState extends State<SettingsView> {
   void _onLogoutTap() async {
     showDialog(
       context: context,
+      routeSettings: const RouteSettings(name: 'logout_confirm_dialog'),
       builder: (_) => AlertDialog(
         title: const Text(
           '로그아웃하실 건가요?',
@@ -268,6 +270,7 @@ class _SettingsViewState extends State<SettingsView> {
   void _onDeleteAccountTap() async {
     showDialog(
       context: context,
+      routeSettings: const RouteSettings(name: 'account_delete_confirm_dialog'),
       builder: (_) => AlertDialog(
         title: const Text(
           '탈퇴하시겠습니까?',

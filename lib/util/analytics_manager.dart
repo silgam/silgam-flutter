@@ -34,14 +34,17 @@ class AnalyticsManager {
 
     FirebaseAuth.instance.authStateChanges().listen((event) {
       registerUserProperties({'Firebase User ID': event?.uid});
+      setUserId(userId: event?.uid);
     });
   }
 
   static Future<void> logEvent({required String name, Map<String, dynamic> properties = const {}}) async {
     log('Event Logged: $name, $properties');
     _mixpanel.track(name, properties: properties);
+
     String firebaaseEventName = name.replaceAll(' ', '_').replaceAll('[', '').replaceAll(']', '');
-    await _firebaseAnalytics.logEvent(name: firebaaseEventName, parameters: properties);
+    Map<String, dynamic> firebaseProperties = properties.map((key, value) => MapEntry(key.replaceAll(' ', '_'), value));
+    await _firebaseAnalytics.logEvent(name: firebaaseEventName, parameters: firebaseProperties);
   }
 
   static void eventStartTime({required String name}) {
@@ -51,6 +54,11 @@ class AnalyticsManager {
   static Future<void> registerUserProperties(Map<String, dynamic> properties) async {
     _mixpanel.registerSuperProperties(properties);
     await _firebaseAnalytics.setDefaultEventParameters(properties);
+  }
+
+  static Future<void> setUserId({required String? userId}) async {
+    if (userId != null) _mixpanel.identify(userId);
+    await _firebaseAnalytics.setUserId(id: userId);
   }
 }
 

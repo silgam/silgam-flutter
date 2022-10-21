@@ -338,6 +338,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   void _onDeleteButtonPressed() {
     showDialog(
       context: context,
+      routeSettings: const RouteSettings(name: 'delete_record_confirm_dialog'),
       builder: (context) {
         return AlertDialog(
           title: const Text(

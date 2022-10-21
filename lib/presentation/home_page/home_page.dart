@@ -11,6 +11,24 @@ import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';
 import 'settings/settings_view.dart';
 
+const bottomNavBarItems = [
+  BottomNavigationBarItem(
+    icon: Icon(Icons.home_outlined),
+    activeIcon: Icon(Icons.home),
+    label: MainView.title,
+  ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.view_list_outlined),
+    activeIcon: Icon(Icons.view_list),
+    label: RecordListView.title,
+  ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.settings_outlined),
+    activeIcon: Icon(Icons.settings),
+    label: SettingsView.title,
+  ),
+];
+
 class HomePage extends StatefulWidget {
   static const routeName = '/';
   static final backgroundColor = Colors.grey[50];
@@ -41,7 +59,10 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     AnalyticsManager.logEvent(
       name: '[HomePage] Tab selected',
-      properties: {'index': index},
+      properties: {
+        'label': bottomNavBarItems[index].label,
+        'index': index,
+      },
     );
 
     setState(() {
@@ -78,23 +99,7 @@ class _HomePageState extends State<HomePage> {
           onTap: _onItemTapped,
           currentIndex: _selectedIndex,
           landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: MainView.title,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.view_list_outlined),
-              activeIcon: Icon(Icons.view_list),
-              label: RecordListView.title,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              activeIcon: Icon(Icons.settings),
-              label: SettingsView.title,
-            ),
-          ],
+          items: bottomNavBarItems,
         ),
         floatingActionButton: _selectedIndex == 1 && !_isNotSignedIn
             ? FloatingActionButton(

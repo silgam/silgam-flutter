@@ -440,6 +440,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _onReviewProblemCardTapped(ReviewProblem problem) {
     showDialog(
       context: context,
+      routeSettings: const RouteSettings(name: 'review_problem_view_dialog'),
       builder: (context) {
         return EditReviewProblemDialog.edit(ReviewProblemEditModeParams(
           onReviewProblemEdited: _onReviewProblemEdited,
@@ -467,6 +468,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _onReviewProblemAddCardTapped() {
     showDialog(
       context: context,
+      routeSettings: const RouteSettings(name: 'review_problem_add_dialog'),
       builder: (context) {
         return EditReviewProblemDialog.add(ReviewProblemAddModeParams(
           onReviewProblemAdded: _onReviewProblemAdded,
