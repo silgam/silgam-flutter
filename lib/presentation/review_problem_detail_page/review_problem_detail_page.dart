@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -88,6 +93,11 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
             lightText: true,
             actionButtons: [
               ActionButton(
+                icon: const Icon(Icons.download),
+                tooltip: '이미지 다운로드',
+                onPressed: _onDownloadPressed,
+              ),
+              ActionButton(
                 icon: const Icon(Icons.description),
                 tooltip: '메모 보기/숨기기',
                 onPressed: _onMemoIconPressed,
@@ -155,6 +165,30 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  void _onDownloadPressed() async {
+    final appDocDir = await getTemporaryDirectory();
+    String savePath = "${appDocDir.path}/temp.jpg";
+    String imageUrl = widget.reviewProblem.imagePaths[_currentIndex];
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('다운로드하는 중입니다...'),
+        ),
+      );
+    }
+    await Dio().download(imageUrl, savePath);
+    await ImageGallerySaver.saveFile(savePath, name: DateTime.now().toString());
+    await File(savePath).delete();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        const SnackBar(content: Text('저장되었습니다.')),
+      );
   }
 
   void _onMemoIconPressed() {
