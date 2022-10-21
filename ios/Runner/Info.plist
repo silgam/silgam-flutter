@@ -57,6 +57,8 @@
 	<string>실감</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-5293956621132135~5058341597</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaolink</string>
