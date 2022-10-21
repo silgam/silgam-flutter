@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -37,8 +38,10 @@ class AnalyticsManager {
   }
 
   static Future<void> logEvent({required String name, Map<String, dynamic> properties = const {}}) async {
+    log('Event Logged: $name, $properties');
     _mixpanel.track(name, properties: properties);
-    await _firebaseAnalytics.logEvent(name: name, parameters: properties);
+    String firebaaseEventName = name.replaceAll(' ', '_').replaceAll('[', '').replaceAll(']', '');
+    await _firebaseAnalytics.logEvent(name: firebaaseEventName, parameters: properties);
   }
 
   static void eventStartTime({required String name}) {
