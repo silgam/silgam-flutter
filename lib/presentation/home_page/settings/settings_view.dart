@@ -96,12 +96,6 @@ class _SettingsViewState extends State<SettingsView> {
       ),
       const _Divider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlDonation), mode: LaunchMode.externalApplication),
-        title: '실감팀 후원하기 💕',
-        description: '실감팀에 익명으로 후원을 할 수 있습니다. 후원금은 서버 비용과 앱 개발에 사용됩니다.',
-      ),
-      const _Divider(),
-      SettingTile(
         onTap: () => launchUrl(Uri.parse(urlInstagram), mode: LaunchMode.externalApplication),
         title: '실감 인스타그램 보러 가기',
         description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
