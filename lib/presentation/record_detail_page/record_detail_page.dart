@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:silgam/util/const.dart';
 
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
@@ -204,10 +205,11 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             ],
           ),
         const SizedBox(height: 16),
-        AdTile(
-          width: MediaQuery.of(context).size.width.truncate() - 40,
-          margin: const EdgeInsets.only(bottom: 20),
-        ),
+        if (isAdsEnabled)
+          AdTile(
+            width: MediaQuery.of(context).size.width.truncate() - 40,
+            margin: const EdgeInsets.only(bottom: 20),
+          ),
       ],
     );
   }

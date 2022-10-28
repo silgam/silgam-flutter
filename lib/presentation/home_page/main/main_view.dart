@@ -104,10 +104,11 @@ class _MainViewState extends State<MainView> {
                 iconData: Icons.edit,
                 title: '모의고사 기록하고 피드백하기',
               ),
-              AdTile(
-                width: MediaQuery.of(context).size.width.clamp(0, maxWidth).truncate() - 40,
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-              ),
+              if (isAdsEnabled)
+                AdTile(
+                  width: MediaQuery.of(context).size.width.clamp(0, maxWidth).truncate() - 40,
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                ),
               const SizedBox(height: 20),
             ],
           ),

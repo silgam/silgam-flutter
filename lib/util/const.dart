@@ -8,3 +8,4 @@ final String bannerAdId =
     Platform.isAndroid ? "ca-app-pub-5293956621132135/7574334463" : "ca-app-pub-5293956621132135/7145274842";
 final String interstitialAdId =
     Platform.isAndroid ? "ca-app-pub-5293956621132135/1155168299" : "ca-app-pub-5293956621132135/5094413305";
+const bool isAdsEnabled = false;

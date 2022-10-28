@@ -554,7 +554,7 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    if (DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
+    if (isAdsEnabled && DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
       _interstitialAd?.show();
     }
 
@@ -611,6 +611,7 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Future<void> _loadAd() async {
+    if (!isAdsEnabled) return;
     await InterstitialAd.load(
       adUnitId: interstitialAdId,
       request: const AdRequest(),

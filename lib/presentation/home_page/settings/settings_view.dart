@@ -65,10 +65,11 @@ class _SettingsViewState extends State<SettingsView> {
               child: LoginButton(onTap: _onLoginTap),
             )
           : _buildLoginInfo(),
-      AdTile(
-        width: MediaQuery.of(context).size.width.truncate() - 32,
-        margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
-      ),
+      if (isAdsEnabled)
+        AdTile(
+          width: MediaQuery.of(context).size.width.truncate() - 32,
+          margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
+        ),
       const _Divider(),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
