@@ -40,8 +40,10 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+const _defaultPageIndex = 0;
+
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = _defaultPageIndex;
   final StreamController<SettingsViewEvent> _settingsViewEventStreamController = StreamController.broadcast();
 
   bool get _isNotSignedIn => UserRepository().isNotSignedIn();
@@ -77,36 +79,39 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return AnnotatedRegion(
       value: defaultSystemUiOverlayStyle,
-      child: Scaffold(
-        backgroundColor: HomePage.backgroundColor,
-        body: SafeArea(
-          child: IndexedStack(
-            alignment: Alignment.center,
-            index: _selectedIndex,
-            sizing: StackFit.expand,
-            children: [
-              MainView(navigateToRecordTab: () => _onItemTapped(1)),
-              const RecordListView(),
-              SettingsView(eventStream: _settingsViewEventStreamController.stream),
-            ],
+      child: WillPopScope(
+        onWillPop: _onBackButtonPressed,
+        child: Scaffold(
+          backgroundColor: HomePage.backgroundColor,
+          body: SafeArea(
+            child: IndexedStack(
+              alignment: Alignment.center,
+              index: _selectedIndex,
+              sizing: StackFit.expand,
+              children: [
+                MainView(navigateToRecordTab: () => _onItemTapped(1)),
+                const RecordListView(),
+                SettingsView(eventStream: _settingsViewEventStreamController.stream),
+              ],
+            ),
           ),
+          bottomNavigationBar: BottomNavigationBar(
+            elevation: 4,
+            backgroundColor: Colors.white,
+            showUnselectedLabels: false,
+            showSelectedLabels: false,
+            onTap: _onItemTapped,
+            currentIndex: _selectedIndex,
+            landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+            items: bottomNavBarItems,
+          ),
+          floatingActionButton: _selectedIndex == 1 && !_isNotSignedIn
+              ? FloatingActionButton(
+                  onPressed: _onAddExamRecordButtonPressed,
+                  child: const Icon(Icons.add),
+                )
+              : null,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 4,
-          backgroundColor: Colors.white,
-          showUnselectedLabels: false,
-          showSelectedLabels: false,
-          onTap: _onItemTapped,
-          currentIndex: _selectedIndex,
-          landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-          items: bottomNavBarItems,
-        ),
-        floatingActionButton: _selectedIndex == 1 && !_isNotSignedIn
-            ? FloatingActionButton(
-                onPressed: _onAddExamRecordButtonPressed,
-                child: const Icon(Icons.add),
-              )
-            : null,
       ),
     );
   }
@@ -115,6 +120,15 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _settingsViewEventStreamController.close();
     super.dispose();
+  }
+
+  Future<bool> _onBackButtonPressed() async {
+    if (_selectedIndex == _defaultPageIndex) {
+      return true;
+    } else {
+      _onItemTapped(_defaultPageIndex);
+      return false;
+    }
   }
 
   void _onAddExamRecordButtonPressed() async {
