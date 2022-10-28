@@ -35,6 +35,8 @@ class AnalyticsManager {
     FirebaseAuth.instance.authStateChanges().listen((event) {
       registerUserProperties({'Firebase User ID': event?.uid});
       setUserId(userId: event?.uid);
+      setPeopleProperty("\$name", event?.uid);
+      setPeopleProperty('\$email', event?.email);
     });
   }
 
@@ -59,6 +61,10 @@ class AnalyticsManager {
   static Future<void> setUserId({required String? userId}) async {
     if (userId != null) _mixpanel.identify(userId);
     await _firebaseAnalytics.setUserId(id: userId);
+  }
+
+  static setPeopleProperty(String prop, dynamic to) {
+    _mixpanel.getPeople().set(prop, to);
   }
 }
 

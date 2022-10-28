@@ -175,8 +175,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
 
     AnalyticsManager.logEvent(
       name: '[NoiseSettingPage] Noise preset changed',
-      properties: {'preset': preset?.name},
+      properties: {'preset': _noiseSettings.noisePreset.name},
     );
+    AnalyticsManager.setPeopleProperty('[Noise] Preset', _noiseSettings.noisePreset.name);
   }
 
   void _onWhiteNoiseChanged(bool isEnabled) {
@@ -188,8 +189,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
 
     AnalyticsManager.logEvent(
       name: '[NoiseSettingPage] White noise changed',
-      properties: {'enabled': isEnabled},
+      properties: {'enabled': _noiseSettings.useWhiteNoise},
     );
+    AnalyticsManager.setPeopleProperty('[Noise] Use White Noise', _noiseSettings.useWhiteNoise);
   }
 
   void _onSliderChanged(Noise noise, int value) {
@@ -204,5 +206,6 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       name: '[NoiseSettingPage] Noise level changed',
       properties: {'noise': noise.name, 'level': value},
     );
+    AnalyticsManager.setPeopleProperty('[Noise] Levels', _noiseSettings.noiseLevels.toString());
   }
 }

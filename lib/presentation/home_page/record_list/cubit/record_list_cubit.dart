@@ -29,6 +29,8 @@ class RecordListCubit extends Cubit<RecordListState> {
     final records = await _recordRepository.getMyExamRecords();
     final filteredRecords = _getFilteredAndSortedRecords(originalRecords: records);
     emit(state.copyWith(isLoading: false, originalRecords: records, records: filteredRecords));
+
+    AnalyticsManager.setPeopleProperty('Number of Exam Records', records.length);
   }
 
   void onSearchTextChanged(String query) {
