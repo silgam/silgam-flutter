@@ -143,6 +143,7 @@ class _MainViewState extends State<MainView> {
                       _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
                       _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
                       _buildSnsButton(snsName: "facebook", tooltip: '실감 페이스북', url: urlFacebook),
+                      _buildSnsButton(snsName: "donation", tooltip: '실감팀 후원하기', url: urlDonation),
                       const SizedBox(width: 12),
                     ],
                   ),
