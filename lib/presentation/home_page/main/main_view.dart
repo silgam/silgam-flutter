@@ -138,6 +138,7 @@ class _MainViewState extends State<MainView> {
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   child: Row(
                     children: [
                       _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
