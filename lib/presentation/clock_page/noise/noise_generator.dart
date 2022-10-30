@@ -38,6 +38,9 @@ class NoiseGenerator {
             if (afterStart <= 2) {
               delay = 1000;
               levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
+            } else if (2 < afterStart && afterStart <= 7) {
+              delay = 1000;
+              levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
             }
           }
         }
