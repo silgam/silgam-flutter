@@ -85,7 +85,7 @@ const defaultNoises = [
       NoisePreset.normal: 8,
       NoisePreset.hard: 10,
     },
-    existingFiles: 0,
+    existingFiles: 15,
   ),
   Noise(
     id: 2,
@@ -111,14 +111,25 @@ const defaultNoises = [
   ),
   Noise(
     id: 4,
-    name: '기침 소리',
-    preferenceKey: 'coughNoise',
+    name: '기침 소리 (남자)',
+    preferenceKey: 'manCoughNoise',
     presetLevels: {
       NoisePreset.easy: 1,
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
-    existingFiles: 0,
+    existingFiles: 25,
+  ),
+  Noise(
+    id: 11,
+    name: '기침 소리 (여자)',
+    preferenceKey: 'womanCoughNoise',
+    presetLevels: {
+      NoisePreset.easy: 1,
+      NoisePreset.normal: 2,
+      NoisePreset.hard: 3,
+    },
+    existingFiles: 30,
   ),
   Noise(
     id: 5,
@@ -129,7 +140,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
-    existingFiles: 0,
+    existingFiles: 25,
   ),
   Noise(
     id: 6,
@@ -140,7 +151,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
-    existingFiles: 0,
+    existingFiles: 20,
   ),
   Noise(
     id: 7,
@@ -151,7 +162,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
-    existingFiles: 0,
+    existingFiles: 20,
   ),
   Noise(
     id: 8,
@@ -162,7 +173,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
-    existingFiles: 0,
+    existingFiles: 25,
   ),
   Noise(
     id: 9,
@@ -173,7 +184,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
-    existingFiles: 0,
+    existingFiles: 25,
   ),
   Noise(
     id: 10,
