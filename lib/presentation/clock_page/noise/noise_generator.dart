@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:silgam/model/subject.dart';
+
+import '../../../model/exam.dart';
 import '../../../model/relative_time.dart';
 import '../../../repository/noise_repository.dart';
 import '../breakpoint.dart';
@@ -42,6 +45,19 @@ class NoiseGenerator {
               delay = 1000;
               levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
             }
+          } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
+            int beforeFinish = clockStatus.currentTime.difference(clockStatus.currentBreakpoint.time).inMinutes;
+            if (clockStatus.exam.subject == Subject.investigation ||
+                clockStatus.exam.subject == Subject.investigation2) {
+              beforeFinish = 5 - beforeFinish;
+            } else {
+              beforeFinish = 10 - beforeFinish;
+            }
+            if (beforeFinish <= 2) {
+              levelMultiple = 10; // 시험 종료 직전 시험지 많이 넘김
+            } else if (2 < beforeFinish && beforeFinish <= 10) {
+              levelMultiple = 2; // 시험 종료 전 일정 시간 동안 시험지 조금 넘김
+            }
           }
         }
         if (_calculateProbability(level * levelMultiple)) {
@@ -72,11 +88,13 @@ class NoiseGenerator {
 }
 
 class ClockStatus {
+  final Exam exam;
   final Breakpoint currentBreakpoint;
   final DateTime currentTime;
   final bool isRunning;
 
   const ClockStatus({
+    required this.exam,
     required this.currentBreakpoint,
     required this.currentTime,
     required this.isRunning,

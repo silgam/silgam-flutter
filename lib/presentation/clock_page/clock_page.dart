@@ -87,6 +87,7 @@ class _ClockPageState extends State<ClockPage> {
         noiseSettings: noiseSettings,
         noisePlayer: noisePlayer,
         fetchClockStatus: () => ClockStatus(
+          exam: widget.exam,
           currentBreakpoint: _breakpoints[_currentBreakpointIndex],
           currentTime: _currentTime,
           isRunning: _isRunning,
