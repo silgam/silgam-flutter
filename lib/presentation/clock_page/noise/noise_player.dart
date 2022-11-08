@@ -28,7 +28,12 @@ class NoiseAudioPlayer implements NoisePlayer {
     int playerId = DateTime.now().millisecondsSinceEpoch;
     _noisePlayers[playerId] = audioPlayer;
 
-    await audioPlayer.setAsset(noisePath);
+    await audioPlayer.setAsset(
+      noisePath,
+      initialPosition: Duration.zero,
+      preload: false,
+    );
+    await audioPlayer.load();
     double volume = (Random().nextDouble() + 2) * 2;
     await audioPlayer.setVolume(volume);
     await Future.delayed(Duration(milliseconds: delayMillis));
@@ -40,7 +45,12 @@ class NoiseAudioPlayer implements NoisePlayer {
 
   @override
   void playWhiteNoise() async {
-    await _whiteNoisePlayer.setAsset(whiteNoisePath);
+    await _whiteNoisePlayer.setAsset(
+      whiteNoisePath,
+      initialPosition: Duration.zero,
+      preload: false,
+    );
+    await _whiteNoisePlayer.load();
     await _whiteNoisePlayer.setLoopMode(LoopMode.all);
     await _whiteNoisePlayer.setVolume(2);
     await _whiteNoisePlayer.play();

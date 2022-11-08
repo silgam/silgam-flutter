@@ -528,7 +528,12 @@ class _ClockPageState extends State<ClockPage> {
     await player.pause();
     final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement.fileName;
     if (currentFileName == null) return;
-    await player.setAsset('$_announcementsAssetPath/$currentFileName');
+    await player.setAsset(
+      '$_announcementsAssetPath/$currentFileName',
+      initialPosition: Duration.zero,
+      preload: false,
+    );
+    await player.load();
     if (_isRunning) {
       await player.play();
     }
