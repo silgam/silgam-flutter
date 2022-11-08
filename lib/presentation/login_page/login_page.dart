@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../repository/auth_repository.dart';
 import '../../repository/user_repository.dart';
@@ -139,6 +141,32 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.black,
                   lightText: true,
                 ),
+              const SizedBox(height: 16),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: Theme.of(context).primaryTextTheme.bodyLarge?.copyWith(
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11,
+                      ),
+                  children: [
+                    const TextSpan(text: '로그인하면 '),
+                    TextSpan(
+                      text: '개인정보처리방침',
+                      style: const TextStyle(color: Colors.blueAccent),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(
+                            Uri.parse('https://silgam.app/privacy'),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                    ),
+                    const TextSpan(text: '에 동의하는 것으로 간주됩니다.'),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
