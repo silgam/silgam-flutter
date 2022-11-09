@@ -74,7 +74,7 @@ const defaultNoises = [
       NoisePreset.normal: 12,
       NoisePreset.hard: 16,
     },
-    existingFiles: 15,
+    existingFiles: 35,
   ),
   Noise(
     id: 1,
@@ -130,6 +130,17 @@ const defaultNoises = [
       NoisePreset.hard: 3,
     },
     existingFiles: 30,
+  ),
+  Noise(
+    id: 12,
+    name: '한숨 소리',
+    preferenceKey: 'sighNoise',
+    presetLevels: {
+      NoisePreset.easy: 1,
+      NoisePreset.normal: 2,
+      NoisePreset.hard: 3,
+    },
+    existingFiles: 25,
   ),
   Noise(
     id: 5,
