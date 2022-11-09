@@ -19,6 +19,7 @@ class SettingTile extends StatefulWidget {
   final String? disabledDescription;
   final String? preferenceKey;
   final ValueChanged<bool>? onSwitchChanged;
+  final bool defaultValue;
 
   const SettingTile({
     Key? key,
@@ -28,6 +29,7 @@ class SettingTile extends StatefulWidget {
     this.disabledDescription,
     this.preferenceKey,
     this.onSwitchChanged,
+    this.defaultValue = true,
   }) : super(key: key);
 
   @override
@@ -41,7 +43,7 @@ class _SettingTileState extends State<SettingTile> {
   Widget build(BuildContext context) {
     final preferenceKey = widget.preferenceKey;
     if (preferenceKey != null) {
-      _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ?? true;
+      _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ?? widget.defaultValue;
     }
     return InkWell(
       onTap: widget.preferenceKey == null ? _onTap : () => _onSwitchChanged(!_isSwitchEnabled),

@@ -129,6 +129,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           description: '백색 소음으로 집중력을 높이고 현장감을 살릴 수 있습니다.',
           preferenceKey: PreferenceKey.useWhiteNoise,
           onSwitchChanged: _onWhiteNoiseChanged,
+          defaultValue: false,
         ),
         const Divider(),
         const SizedBox(height: 4),
