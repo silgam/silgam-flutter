@@ -88,8 +88,6 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>실제로 마이크를 사용하진 않지만 시스템상 권한이 필요합니다.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>모의고사 기록 이미지를 저장하는 데 권한이 필요합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
