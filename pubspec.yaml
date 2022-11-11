@@ -52,6 +52,7 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   photo_view: ^0.14.0
   dio: ^4.0.6
+  audio_session: ^0.1.10
 
 dev_dependencies:
   flutter_test:
