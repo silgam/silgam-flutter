@@ -1,3 +1,4 @@
+import 'package:audio_session/audio_session.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -22,6 +23,17 @@ void main() async {
 
   KakaoSdk.init(nativeAppKey: AppEnv.kakaoNativeAppKey);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+  final AudioSession audioSession = await AudioSession.instance;
+  await audioSession.configure(const AudioSessionConfiguration(
+    avAudioSessionCategory: AVAudioSessionCategory.playback,
+    avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.mixWithOthers,
+    androidAudioAttributes: AndroidAudioAttributes(
+      contentType: AndroidAudioContentType.music,
+      usage: AndroidAudioUsage.media,
+    ),
+    androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+  ));
 
   runApp(const SilgamApp());
 }
