@@ -291,7 +291,22 @@ class _SettingsViewState extends State<SettingsView> {
           ),
           TextButton(
             onPressed: () async {
-              await FirebaseAuth.instance.currentUser?.delete();
+              try {
+                await FirebaseAuth.instance.currentUser?.delete();
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'requires-recent-login') {
+                  await FirebaseAuth.instance.signOut();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        duration: Duration(seconds: 7),
+                        content: Text('로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
+                      ),
+                    );
+                    Navigator.pushNamed(context, LoginPage.routeName);
+                  }
+                }
+              }
               _refreshUser();
               if (mounted) Navigator.pop(context);
               await AnalyticsManager.logEvent(name: '[HomePage-settings] Delete account');
