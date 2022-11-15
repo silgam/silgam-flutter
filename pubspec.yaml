@@ -53,6 +53,7 @@ dependencies:
   photo_view: ^0.14.0
   dio: ^4.0.6
   audio_session: ^0.1.10
+  cached_network_image: ^3.2.2
 
 dev_dependencies:
   flutter_test:
