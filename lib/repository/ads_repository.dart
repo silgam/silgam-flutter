@@ -17,6 +17,7 @@ class AdsRepository {
   Future<List<Ads>> getAllAds() async {
     final snapshot = await _adsRef.get();
     final unsortedAds = snapshot.docs.map((document) => document.data()).toList();
+    unsortedAds.shuffle();
     unsortedAds.sort((a, b) => a.priority - b.priority);
     return unsortedAds;
   }
