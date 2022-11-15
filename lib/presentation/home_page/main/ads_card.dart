@@ -33,19 +33,9 @@ class _AdsCardState extends State<AdsCard> {
               for (Ads ads in widget.ads)
                 GestureDetector(
                   onTap: () => _onAdsTap(ads),
-                  child: Image.network(
-                    ads.imagePath,
+                  child: CachedNetworkImage(
+                    imageUrl: ads.imagePath,
                     fit: BoxFit.cover,
-                    loadingBuilder: (_, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(
-                        child: SizedBox(
-                          width: 36,
-                          height: 36,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      );
-                    },
                   ),
                 ),
             ],
