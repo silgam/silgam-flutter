@@ -48,7 +48,6 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     return AlertDialog(
       contentPadding: EdgeInsets.zero,
       content: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.only(left: 24, right: 24, top: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,

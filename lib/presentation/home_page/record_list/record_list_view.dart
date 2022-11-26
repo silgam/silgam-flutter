@@ -103,7 +103,7 @@ class _RecordListViewState extends State<RecordListView> {
           const SizedBox(height: 12),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: IntrinsicHeight(
               child: Row(
                 children: [

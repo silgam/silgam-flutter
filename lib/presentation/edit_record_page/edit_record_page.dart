@@ -134,7 +134,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: _buildForm(),
           ),
         ),

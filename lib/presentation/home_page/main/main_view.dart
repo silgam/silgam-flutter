@@ -54,7 +54,7 @@ class _MainViewState extends State<MainView> {
     return SizedBox(
       height: double.infinity,
       child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
           constraints: const BoxConstraints(maxWidth: maxWidth),
           child: Column(
@@ -139,9 +139,10 @@ class _MainViewState extends State<MainView> {
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
                   child: Row(
                     children: [
+                      _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
+                      _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
                       _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
                       _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
                       _buildSnsButton(snsName: "facebook", tooltip: '실감 페이스북', url: urlFacebook),

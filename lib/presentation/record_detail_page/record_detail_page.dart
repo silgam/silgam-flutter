@@ -75,7 +75,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                   children: [
                     Positioned.fill(
                       child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: _buildContent(),

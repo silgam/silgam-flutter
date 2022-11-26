@@ -87,6 +87,9 @@ class SilgamApp extends StatelessWidget {
           ),
         ),
       ),
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        physics: const BouncingScrollPhysics(),
+      ),
       debugShowCheckedModeBanner: false,
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),

@@ -46,7 +46,6 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
         children: [
           PhotoViewGallery.builder(
             itemCount: problem.imagePaths.length,
-            scrollPhysics: const BouncingScrollPhysics(),
             builder: (_, index) => PhotoViewGalleryPageOptions(
               onTapUp: (_, __, ___) => _onPhotoViewTapUp(),
               onScaleEnd: _onPhotoViewScaleEnd,

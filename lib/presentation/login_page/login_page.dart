@@ -60,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
                 child: _buildLoginLayout(),
               ),
               SafeArea(

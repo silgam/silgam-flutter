@@ -28,7 +28,7 @@ class ScaffoldBody extends StatelessWidget {
     );
 
     return CustomScrollView(
-      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverAppBar(
           toolbarHeight: 80,

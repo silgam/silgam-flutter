@@ -70,7 +70,6 @@ class _SaveImagePageState extends State<SaveImagePage> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
                 child: _buildBody(),
               ),
             ),
@@ -97,7 +96,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           clipBehavior: Clip.none,
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Row(
             children: [
               const SizedBox(width: 12),
