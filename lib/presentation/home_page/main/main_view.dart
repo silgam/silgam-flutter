@@ -142,8 +142,6 @@ class _MainViewState extends State<MainView> {
                   child: Row(
                     children: [
                       _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
-                      _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
-                      _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
                       _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
                       _buildSnsButton(snsName: "facebook", tooltip: '실감 페이스북', url: urlFacebook),
                       const SizedBox(width: 12),
