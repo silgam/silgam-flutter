@@ -44,7 +44,8 @@ class AnalyticsManager {
     log('Event Logged: $name, $properties');
     _mixpanel.track(name, properties: properties);
 
-    String firebaaseEventName = name.replaceAll(' ', '_').replaceAll('[', '').replaceAll(']', '');
+    String firebaaseEventName =
+        name.replaceAll(' ', '_').replaceAll('[', '').replaceAll(']', '').replaceAll('-', '_').replaceAll('/', '_');
     Map<String, dynamic> firebaseProperties = properties.map((key, value) => MapEntry(key.replaceAll(' ', '_'), value));
     await _firebaseAnalytics.logEvent(name: firebaaseEventName, parameters: firebaseProperties);
   }
