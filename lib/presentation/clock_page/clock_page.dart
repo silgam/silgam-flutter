@@ -49,7 +49,7 @@ class _ClockPageState extends State<ClockPage> {
   DateTime _examStartedTime = DateTime.now();
   final DateTime _pageStartedTime = DateTime.now();
 
-  final AudioPlayer player = AudioPlayer();
+  final AudioPlayer _announcementPlayer = AudioPlayer();
   NoiseGenerator? _noiseGenerator;
   ListeningAudioPlayer? _listeningAudioPlayer;
 
@@ -57,8 +57,8 @@ class _ClockPageState extends State<ClockPage> {
   late final List<GlobalKey> _timelineTileKeys;
   late final List<GlobalKey> _timelineConnectorKeys;
 
-  static const int defaultScreenOverlayAlpha = 220;
-  int _screenOverlayAlpha = defaultScreenOverlayAlpha;
+  static const int _defaultScreenOverlayAlpha = 220;
+  int _screenOverlayAlpha = _defaultScreenOverlayAlpha;
   bool _isStarted = false;
   bool _isRunning = true;
   bool _isUiVisible = true;
@@ -73,7 +73,7 @@ class _ClockPageState extends State<ClockPage> {
     Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     AndroidAudioManager.controlMediaVolume();
-    if (Platform.isAndroid) player.setVolume(0.4);
+    if (Platform.isAndroid) _announcementPlayer.setVolume(0.4);
 
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
     _currentTime = _breakpoints[_currentBreakpointIndex].time;
@@ -393,10 +393,10 @@ class _ClockPageState extends State<ClockPage> {
       _isRunning = !_isRunning;
     });
     if (_isRunning) {
-      player.play();
+      _announcementPlayer.play();
       _noiseGenerator?.playWhiteNoiseIfEnabled();
     } else {
-      player.pause();
+      _announcementPlayer.pause();
       _noiseGenerator?.pauseWhiteNoise();
     }
 
@@ -500,7 +500,7 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _moveBreakpoint({bool adjustTime = true}) {
-    player.pause();
+    _announcementPlayer.pause();
     if (adjustTime) {
       _currentTime = _breakpoints[_currentBreakpointIndex].time;
       setState(() {});
@@ -535,13 +535,14 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Future<void> _playAnnouncement() async {
-    await player.pause();
+    await _announcementPlayer.pause();
     final String? currentFileName =
         _breakpoints[_currentBreakpointIndex].announcement.fileName;
     if (currentFileName == null) return;
-    await player.setAsset('$_announcementsAssetPath/$currentFileName');
+    await _announcementPlayer
+        .setAsset('$_announcementsAssetPath/$currentFileName');
     if (_isRunning) {
-      await player.play();
+      await _announcementPlayer.play();
     }
   }
 
@@ -621,7 +622,7 @@ class _ClockPageState extends State<ClockPage> {
 
   void _onOverlayTapCancel() {
     setState(() {
-      _screenOverlayAlpha = defaultScreenOverlayAlpha;
+      _screenOverlayAlpha = _defaultScreenOverlayAlpha;
     });
   }
 
@@ -650,7 +651,7 @@ class _ClockPageState extends State<ClockPage> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     AndroidAudioManager.controlDefaultVolume();
 
-    player.dispose();
+    _announcementPlayer.dispose();
     _noiseGenerator?.dispose();
     _listeningAudioPlayer?.dispose();
     _timer?.cancel();
