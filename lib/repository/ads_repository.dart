@@ -9,14 +9,16 @@ class AdsRepository {
 
   factory AdsRepository() => _instance;
 
-  final CollectionReference<Ads> _adsRef = FirebaseFirestore.instance.collection('ads').withConverter(
-        fromFirestore: (snapshot, _) => Ads.fromJson(snapshot.data()!),
-        toFirestore: (ads, _) => ads.toJson(),
-      );
+  final CollectionReference<Ads> _adsRef =
+      FirebaseFirestore.instance.collection('ads').withConverter(
+            fromFirestore: (snapshot, _) => Ads.fromJson(snapshot.data()!),
+            toFirestore: (ads, _) => ads.toJson(),
+          );
 
   Future<List<Ads>> getAllAds() async {
     final snapshot = await _adsRef.get();
-    final unsortedAds = snapshot.docs.map((document) => document.data()).toList();
+    final unsortedAds =
+        snapshot.docs.map((document) => document.data()).toList();
     unsortedAds.shuffle();
     unsortedAds.sort((a, b) => a.priority - b.priority);
     return unsortedAds;

@@ -31,7 +31,9 @@ class _RecordListViewState extends State<RecordListView> {
   @override
   void initState() {
     super.initState();
-    _eventStreamSubscription = HomePage.recordListViewEventStreamController.stream.listen(_onEventReceived);
+    _eventStreamSubscription = HomePage
+        .recordListViewEventStreamController.stream
+        .listen(_onEventReceived);
   }
 
   @override
@@ -50,7 +52,8 @@ class _RecordListViewState extends State<RecordListView> {
                 _buildQuerySection(state),
                 if (!state.isSignedIn) _buildLoginButton(),
                 if (state.isSignedIn) _buildListSection(state.records),
-                if (state.isSignedIn && state.records.isEmpty) _buildDescription(),
+                if (state.isSignedIn && state.records.isEmpty)
+                  _buildDescription(),
               ],
             ),
           );
@@ -85,7 +88,8 @@ class _RecordListViewState extends State<RecordListView> {
               cursorWidth: 1,
               cursorColor: Colors.grey.shade700,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 isCollapsed: true,
                 filled: true,
                 fillColor: Colors.grey.shade200,
@@ -109,7 +113,8 @@ class _RecordListViewState extends State<RecordListView> {
                 children: [
                   const SizedBox(width: 16),
                   ActionChip(
-                    label: Icon(Icons.replay, size: 16, color: Colors.grey.shade700),
+                    label: Icon(Icons.replay,
+                        size: 16, color: Colors.grey.shade700),
                     onPressed: cubit.onFilterResetButtonTapped,
                     tooltip: '초기화',
                     pressElevation: 0,
@@ -134,7 +139,8 @@ class _RecordListViewState extends State<RecordListView> {
                     indent: 6,
                     endIndent: 6,
                   ),
-                  for (Subject subject in Subject.values) _buildSubjectFilterChip(state, subject),
+                  for (Subject subject in Subject.values)
+                    _buildSubjectFilterChip(state, subject),
                   const SizedBox(width: 13),
                 ],
               ),
@@ -175,7 +181,8 @@ class _RecordListViewState extends State<RecordListView> {
             color: Color(subject.secondColor),
             width: 0.4,
           ),
-          backgroundColor: Color(subject.firstColor).withAlpha(selected ? 255 : 10),
+          backgroundColor:
+              Color(subject.firstColor).withAlpha(selected ? 255 : 10),
           pressElevation: 0,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
@@ -229,7 +236,8 @@ class _RecordListViewState extends State<RecordListView> {
 
   void _onTileTap(ExamRecord record) async {
     final args = RecordDetailPageArguments(record: record);
-    await Navigator.pushNamed(context, RecordDetailPage.routeName, arguments: args);
+    await Navigator.pushNamed(context, RecordDetailPage.routeName,
+        arguments: args);
     await cubit.refresh();
   }
 

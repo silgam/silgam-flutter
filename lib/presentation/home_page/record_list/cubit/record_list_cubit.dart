@@ -27,10 +27,13 @@ class RecordListCubit extends Cubit<RecordListState> {
 
     emit(state.copyWith(isLoading: true));
     final records = await _recordRepository.getMyExamRecords();
-    final filteredRecords = _getFilteredAndSortedRecords(originalRecords: records);
-    emit(state.copyWith(isLoading: false, originalRecords: records, records: filteredRecords));
+    final filteredRecords =
+        _getFilteredAndSortedRecords(originalRecords: records);
+    emit(state.copyWith(
+        isLoading: false, originalRecords: records, records: filteredRecords));
 
-    AnalyticsManager.setPeopleProperty('Number of Exam Records', records.length);
+    AnalyticsManager.setPeopleProperty(
+        'Number of Exam Records', records.length);
   }
 
   void onSearchTextChanged(String query) {
@@ -39,7 +42,8 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   void onSortDateButtonTapped() {
-    RecordSortType sortType = RecordSortType.values[(state.sortType.index + 1) % RecordSortType.values.length];
+    RecordSortType sortType = RecordSortType
+        .values[(state.sortType.index + 1) % RecordSortType.values.length];
     final records = _getFilteredAndSortedRecords(sortType: sortType);
     emit(state.copyWith(sortType: sortType, records: records));
 
@@ -58,7 +62,8 @@ class RecordListCubit extends Cubit<RecordListState> {
     } else {
       selectedSubjects.add(subject);
     }
-    final records = _getFilteredAndSortedRecords(selectedSubjects: selectedSubjects);
+    final records =
+        _getFilteredAndSortedRecords(selectedSubjects: selectedSubjects);
     emit(state.copyWith(selectedSubjects: selectedSubjects, records: records));
 
     AnalyticsManager.logEvent(
@@ -71,10 +76,15 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   void onFilterResetButtonTapped() {
-    final records = _getFilteredAndSortedRecords(sortType: RecordSortType.dateDesc, selectedSubjects: []);
-    emit(state.copyWith(sortType: RecordSortType.dateDesc, selectedSubjects: [], records: records));
+    final records = _getFilteredAndSortedRecords(
+        sortType: RecordSortType.dateDesc, selectedSubjects: []);
+    emit(state.copyWith(
+        sortType: RecordSortType.dateDesc,
+        selectedSubjects: [],
+        records: records));
 
-    AnalyticsManager.logEvent(name: '[HomePage-list] Filter reset button tapped');
+    AnalyticsManager.logEvent(
+        name: '[HomePage-list] Filter reset button tapped');
   }
 
   List<ExamRecord> _getFilteredAndSortedRecords({
@@ -91,7 +101,8 @@ class RecordListCubit extends Cubit<RecordListState> {
     return originalRecords.where(
       (exam) {
         if (searchQuery!.isEmpty) return true;
-        return exam.title.contains(searchQuery) || exam.feedback.contains(searchQuery);
+        return exam.title.contains(searchQuery) ||
+            exam.feedback.contains(searchQuery);
       },
     ).where((exam) {
       if (selectedSubjects!.isEmpty) return true;

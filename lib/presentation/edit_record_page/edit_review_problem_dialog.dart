@@ -14,7 +14,8 @@ class EditReviewProblemDialog extends StatefulWidget {
       : reviewProblemEditModeParams = null,
         super(key: key);
 
-  const EditReviewProblemDialog.edit(this.reviewProblemEditModeParams, {Key? key})
+  const EditReviewProblemDialog.edit(this.reviewProblemEditModeParams,
+      {Key? key})
       : reviewProblemAddModeParams = null,
         super(key: key);
 
@@ -71,8 +72,10 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                 contentPadding: const EdgeInsets.all(12),
                 errorStyle: const TextStyle(fontSize: 0, height: 0),
                 errorText: _isTitleEmpty && !_isTitleFirstEdit ? '' : null,
-                errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                focusedErrorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red)),
+                focusedErrorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red)),
                 hintStyle: const TextStyle(fontWeight: FontWeight.w300),
               ),
             ),
@@ -97,7 +100,10 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             const SizedBox(height: 16),
             Text(
               '사진',
-              style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w500, fontSize: 14),
+              style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14),
             ),
             const SizedBox(height: 8),
             SingleChildScrollView(
@@ -122,7 +128,8 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
         TextButton(
           onPressed: _onConfirmButtonPressed,
           style: TextButton.styleFrom(
-            foregroundColor: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
+            foregroundColor:
+                _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
           ),
           child: Text(
             widget.reviewProblemAddModeParams == null ? '수정' : '추가',
@@ -240,7 +247,8 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
   void _onDeleteButtonPressed() {
     final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
-    reviewProblemEditModeParams?.onReviewProblemDeleted(reviewProblemEditModeParams.initialData);
+    reviewProblemEditModeParams
+        ?.onReviewProblemDeleted(reviewProblemEditModeParams.initialData);
 
     Navigator.pop(context);
   }
@@ -267,7 +275,8 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
 
     reviewProblemAddModeParams?.onReviewProblemAdded(newProblem);
-    reviewProblemEditModeParams?.onReviewProblemEdited(reviewProblemEditModeParams.initialData, newProblem);
+    reviewProblemEditModeParams?.onReviewProblemEdited(
+        reviewProblemEditModeParams.initialData, newProblem);
 
     Navigator.pop(context);
   }
@@ -282,7 +291,8 @@ class ReviewProblemAddModeParams {
 }
 
 class ReviewProblemEditModeParams {
-  final Function(ReviewProblem oldProblem, ReviewProblem newProblem) onReviewProblemEdited;
+  final Function(ReviewProblem oldProblem, ReviewProblem newProblem)
+      onReviewProblemEdited;
   final Function(ReviewProblem) onReviewProblemDeleted;
   final ReviewProblem initialData;
 

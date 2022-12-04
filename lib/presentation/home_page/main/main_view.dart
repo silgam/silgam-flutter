@@ -107,8 +107,14 @@ class _MainViewState extends State<MainView> {
               ),
               if (isAdsEnabled)
                 AdTile(
-                  width: MediaQuery.of(context).size.width.clamp(0, maxWidth).truncate() - 40,
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                  width: MediaQuery.of(context)
+                          .size
+                          .width
+                          .clamp(0, maxWidth)
+                          .truncate() -
+                      40,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                 ),
               const SizedBox(height: 20),
             ],
@@ -141,9 +147,18 @@ class _MainViewState extends State<MainView> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildSnsButton(snsName: "kakaotalk", tooltip: '카카오톡으로 문의하기', url: urlKakaotalk),
-                      _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
-                      _buildSnsButton(snsName: "facebook", tooltip: '실감 페이스북', url: urlFacebook),
+                      _buildSnsButton(
+                          snsName: "kakaotalk",
+                          tooltip: '카카오톡으로 문의하기',
+                          url: urlKakaotalk),
+                      _buildSnsButton(
+                          snsName: "instagram",
+                          tooltip: '실감 인스타그램',
+                          url: urlInstagram),
+                      _buildSnsButton(
+                          snsName: "facebook",
+                          tooltip: '실감 페이스북',
+                          url: urlFacebook),
                       const SizedBox(width: 12),
                     ],
                   ),
@@ -152,7 +167,10 @@ class _MainViewState extends State<MainView> {
                   width: 10,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.grey.shade50, Colors.grey.shade50.withAlpha(0)],
+                      colors: [
+                        Colors.grey.shade50,
+                        Colors.grey.shade50.withAlpha(0)
+                      ],
                     ),
                   ),
                 )
@@ -164,7 +182,8 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildSnsButton({required String snsName, required String tooltip, required String url}) {
+  Widget _buildSnsButton(
+      {required String snsName, required String tooltip, required String url}) {
     return IconButton(
       onPressed: () {
         launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -197,7 +216,8 @@ class _MainViewState extends State<MainView> {
 
   void _onRecordButtonTap() async {
     if (UserRepository().isSignedIn()) {
-      await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: EditRecordPageArguments());
+      await Navigator.pushNamed(context, EditRecordPage.routeName,
+          arguments: EditRecordPageArguments());
     }
     widget.navigateToRecordTab();
   }

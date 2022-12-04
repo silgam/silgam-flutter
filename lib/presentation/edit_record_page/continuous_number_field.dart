@@ -51,13 +51,17 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
 
   void _onKeyEvent(KeyEvent event) {
     if (event is! KeyDownEvent) return;
-    if (event.logicalKey == LogicalKeyboardKey.backspace && _editingController.text.isEmpty) {
+    if (event.logicalKey == LogicalKeyboardKey.backspace &&
+        _editingController.text.isEmpty) {
       widget.onDelete();
     }
   }
 
   void _onTextFieldChanged(String text) {
-    if (text.endsWith(' ') || text.endsWith('.') || text.endsWith(',') || text.length >= 2) {
+    if (text.endsWith(' ') ||
+        text.endsWith('.') ||
+        text.endsWith(',') ||
+        text.length >= 2) {
       _onSubmitted(_editingController.text);
     }
   }

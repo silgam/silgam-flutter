@@ -18,7 +18,8 @@ class ListeningAudioPlayer {
   }
 
   void updateState(DateTime currentTime, {required bool timeJumped}) {
-    DateTime audioStartTime = _examStartBreakpoint.time.subtract(examStartPosition);
+    DateTime audioStartTime =
+        _examStartBreakpoint.time.subtract(examStartPosition);
     if (currentTime.compareTo(audioStartTime) >= 0) {}
   }
 
@@ -27,7 +28,8 @@ class ListeningAudioPlayer {
   }
 
   void _init() async {
-    _examStartBreakpoint = breakpoints.firstWhere((e) => e.title.contains('본령'));
+    _examStartBreakpoint =
+        breakpoints.firstWhere((e) => e.title.contains('본령'));
     await _audioPlayer.setAudioSource(audioSource);
   }
 }

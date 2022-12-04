@@ -21,13 +21,15 @@ class Breakpoint {
       final DateTime breakpointTime;
       switch (announcement.time.type) {
         case RelativeTimeType.beforeStart:
-          breakpointTime = exam.examStartTime.subtract(Duration(minutes: minutes));
+          breakpointTime =
+              exam.examStartTime.subtract(Duration(minutes: minutes));
           break;
         case RelativeTimeType.afterStart:
           breakpointTime = exam.examStartTime.add(Duration(minutes: minutes));
           break;
         case RelativeTimeType.beforeFinish:
-          breakpointTime = exam.examEndTime.subtract(Duration(minutes: minutes));
+          breakpointTime =
+              exam.examEndTime.subtract(Duration(minutes: minutes));
           break;
         case RelativeTimeType.afterFinish:
           breakpointTime = exam.examEndTime.add(Duration(minutes: minutes));

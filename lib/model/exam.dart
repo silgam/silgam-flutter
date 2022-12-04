@@ -21,7 +21,8 @@ class Exam with _$Exam {
     required List<Announcement> announcements,
   }) = _Exam;
 
-  DateTime get examEndTime => examStartTime.add(Duration(minutes: examDuration));
+  DateTime get examEndTime =>
+      examStartTime.add(Duration(minutes: examDuration));
 
   String getExamTimeString() {
     final examEndTime = examStartTime.add(Duration(minutes: examDuration));

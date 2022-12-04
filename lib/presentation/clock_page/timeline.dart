@@ -62,8 +62,10 @@ class TimelineTile extends StatelessWidget {
       texts.add(Text(title, style: defaultTextStyle));
     } else {
       final splitIndex = allMatches.last.start;
-      texts.add(Text(title.substring(0, splitIndex).trim(), style: defaultTextStyle));
-      texts.add(Text(title.substring(splitIndex).trim(), style: smallTextStyle));
+      texts.add(
+          Text(title.substring(0, splitIndex).trim(), style: defaultTextStyle));
+      texts
+          .add(Text(title.substring(splitIndex).trim(), style: smallTextStyle));
     }
     return texts;
   }

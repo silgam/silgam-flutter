@@ -77,8 +77,10 @@ class _ClockPageState extends State<ClockPage> {
 
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
     _currentTime = _breakpoints[_currentBreakpointIndex].time;
-    _timelineTileKeys = List.generate(_breakpoints.length, (index) => GlobalKey());
-    _timelineConnectorKeys = List.generate(_breakpoints.length - 1, (index) => GlobalKey());
+    _timelineTileKeys =
+        List.generate(_breakpoints.length, (index) => GlobalKey());
+    _timelineConnectorKeys =
+        List.generate(_breakpoints.length - 1, (index) => GlobalKey());
 
     final noiseSettings = NoiseSettings()..loadAll();
     if (noiseSettings.noisePreset != NoisePreset.disabled) {
@@ -244,7 +246,8 @@ class _ClockPageState extends State<ClockPage> {
       if (index > _currentBreakpointIndex) disabled = true;
 
       // Tile
-      final time = '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
+      final time =
+          '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
       tiles.add(TimelineTile(
         key: _timelineTileKeys[index],
         onTap: () => _onBreakpointTap(index),
@@ -262,7 +265,8 @@ class _ClockPageState extends State<ClockPage> {
       if (disabled) {
         progress = 0;
       } else if (index == _currentBreakpointIndex) {
-        progress = _currentTime.difference(breakpoint.time).inSeconds / duration.inSeconds;
+        progress = _currentTime.difference(breakpoint.time).inSeconds /
+            duration.inSeconds;
       }
 
       tiles.add(TimelineConnector(
@@ -293,7 +297,9 @@ class _ClockPageState extends State<ClockPage> {
         ),
         IconButton(
           onPressed: _onPausePlayButtonPressed,
-          icon: _isRunning ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+          icon: _isRunning
+              ? const Icon(Icons.pause)
+              : const Icon(Icons.play_arrow),
           color: Colors.grey.shade700,
           splashRadius: 20,
         ),
@@ -486,7 +492,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _trySavingExamStartedTime() {
-    final currentAnnouncementTime = _breakpoints[_currentBreakpointIndex].announcement.time;
+    final currentAnnouncementTime =
+        _breakpoints[_currentBreakpointIndex].announcement.time;
     if (currentAnnouncementTime == const RelativeTime.beforeStart(minutes: 0)) {
       _examStartedTime = DateTime.now();
     }
@@ -507,13 +514,16 @@ class _ClockPageState extends State<ClockPage> {
     double progressedSize = 0;
     if (_isSmallHeightScreen()) {
       for (int i = 0; i < _currentBreakpointIndex; i++) {
-        progressedSize += _timelineTileKeys[i].currentContext?.size?.height ?? 0;
-        progressedSize += _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
+        progressedSize +=
+            _timelineTileKeys[i].currentContext?.size?.height ?? 0;
+        progressedSize +=
+            _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
       }
     } else {
       for (int i = 0; i < _currentBreakpointIndex; i++) {
         progressedSize += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
-        progressedSize += _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
+        progressedSize +=
+            _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
       }
     }
 
@@ -526,7 +536,8 @@ class _ClockPageState extends State<ClockPage> {
 
   Future<void> _playAnnouncement() async {
     await player.pause();
-    final String? currentFileName = _breakpoints[_currentBreakpointIndex].announcement.fileName;
+    final String? currentFileName =
+        _breakpoints[_currentBreakpointIndex].announcement.fileName;
     if (currentFileName == null) return;
     await player.setAsset('$_announcementsAssetPath/$currentFileName');
     if (_isRunning) {
@@ -555,7 +566,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    if (isAdsEnabled && DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
+    if (isAdsEnabled &&
+        DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
       _interstitialAd?.show();
     }
 
@@ -567,9 +579,11 @@ class _ClockPageState extends State<ClockPage> {
 
     final sharedPreferences = SharedPreferencesHolder.get;
     const key = PreferenceKey.showAddRecordPageAfterExamFinished;
-    final showAddRecordPageAfterExamFinished = sharedPreferences.getBool(key) ?? true;
+    final showAddRecordPageAfterExamFinished =
+        sharedPreferences.getBool(key) ?? true;
     if (showAddRecordPageAfterExamFinished && UserRepository().isSignedIn()) {
-      Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
+      Navigator.pushNamed(context, EditRecordPage.routeName,
+          arguments: arguments);
     }
 
     AnalyticsManager.logEvent(
@@ -620,7 +634,8 @@ class _ClockPageState extends State<ClockPage> {
         onAdLoaded: (InterstitialAd ad) {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (InterstitialAd ad) => ad.dispose(),
-            onAdFailedToShowFullScreenContent: (InterstitialAd ad, _) => ad.dispose(),
+            onAdFailedToShowFullScreenContent: (InterstitialAd ad, _) =>
+                ad.dispose(),
           );
           _interstitialAd = ad;
         },

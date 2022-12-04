@@ -277,7 +277,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       if (grade != null) _buildScoreItem('등급', grade),
       if (percentile != null) _buildScoreItem('백분위', percentile),
       if (standardScore != null) _buildScoreItem('표준점수', standardScore),
-      if (examDurationMinutes != null) _buildScoreItem('시험 시간', examDurationMinutes),
+      if (examDurationMinutes != null)
+        _buildScoreItem('시험 시간', examDurationMinutes),
     ];
 
     for (var i = scoreItems.length - 1; i >= 0; i--) {
@@ -328,12 +329,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 
   void _onSaveImageButtonPressed() async {
     final arguments = SaveImagePageArguments(recordToSave: _record);
-    await Navigator.pushNamed(context, SaveImagePage.routeName, arguments: arguments);
+    await Navigator.pushNamed(context, SaveImagePage.routeName,
+        arguments: arguments);
   }
 
   void _onEditButtonPressed() async {
     final arguments = EditRecordPageArguments(recordToEdit: _record);
-    await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
+    await Navigator.pushNamed(context, EditRecordPage.routeName,
+        arguments: arguments);
     _refresh();
   }
 
@@ -383,12 +386,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     await _recordRepository.deleteExamRecord(_record);
     if (mounted) Navigator.pop(context);
 
-    await AnalyticsManager.logEvent(name: '[ExamRecordDetailPage] Delete exam record');
+    await AnalyticsManager.logEvent(
+        name: '[ExamRecordDetailPage] Delete exam record');
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {
     final arguments = ReviewProblemDetailPageArguments(problem: problem);
-    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName, arguments: arguments);
+    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName,
+        arguments: arguments);
   }
 }
 

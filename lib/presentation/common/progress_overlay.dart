@@ -21,7 +21,9 @@ class ProgressOverlay extends StatelessWidget {
         child,
         Positioned.fill(
           child: AnimatedSwitcher(
-            duration: fast ? const Duration(milliseconds: 100) : const Duration(seconds: 2),
+            duration: fast
+                ? const Duration(milliseconds: 100)
+                : const Duration(seconds: 2),
             child: isProgressing
                 ? Container(
                     padding: const EdgeInsets.all(8),

@@ -148,11 +148,16 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 Slider(
                   value: _noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0,
                   onChanged: (value) => _onSliderChanged(noise, value.toInt()),
-                  label: (_noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0).toStringAsFixed(0),
+                  label: (_noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0)
+                      .toStringAsFixed(0),
                   max: Noise.maxLevel.toDouble(),
                   divisions: Noise.maxLevel,
-                  activeColor: Theme.of(context).primaryColor.withAlpha(noise.existingFiles == 0 ? 80 : 255),
-                  inactiveColor: noise.existingFiles == 0 ? Theme.of(context).primaryColor.withAlpha(20) : null,
+                  activeColor: Theme.of(context)
+                      .primaryColor
+                      .withAlpha(noise.existingFiles == 0 ? 80 : 255),
+                  inactiveColor: noise.existingFiles == 0
+                      ? Theme.of(context).primaryColor.withAlpha(20)
+                      : null,
                 ),
                 const SizedBox(height: 8),
               ],
@@ -168,7 +173,8 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       _noiseSettings.noisePreset = preset ?? NoisePreset.disabled;
       if (preset == NoisePreset.custom) return;
       for (Noise defaultNoise in defaultNoises) {
-        _noiseSettings.noiseLevels[defaultNoise.id] = defaultNoise.getDefaultLevel(_noiseSettings.noisePreset);
+        _noiseSettings.noiseLevels[defaultNoise.id] =
+            defaultNoise.getDefaultLevel(_noiseSettings.noisePreset);
       }
       _noiseSettings.useWhiteNoise = preset != NoisePreset.disabled;
     });
@@ -178,7 +184,8 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       name: '[NoiseSettingPage] Noise preset changed',
       properties: {'preset': _noiseSettings.noisePreset.name},
     );
-    AnalyticsManager.setPeopleProperty('[Noise] Preset', _noiseSettings.noisePreset.name);
+    AnalyticsManager.setPeopleProperty(
+        '[Noise] Preset', _noiseSettings.noisePreset.name);
   }
 
   void _onWhiteNoiseChanged(bool isEnabled) {
@@ -192,7 +199,8 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       name: '[NoiseSettingPage] White noise changed',
       properties: {'enabled': _noiseSettings.useWhiteNoise},
     );
-    AnalyticsManager.setPeopleProperty('[Noise] Use White Noise', _noiseSettings.useWhiteNoise);
+    AnalyticsManager.setPeopleProperty(
+        '[Noise] Use White Noise', _noiseSettings.useWhiteNoise);
   }
 
   void _onSliderChanged(Noise noise, int value) {
@@ -207,6 +215,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       name: '[NoiseSettingPage] Noise level changed',
       properties: {'noise': noise.name, 'level': value},
     );
-    AnalyticsManager.setPeopleProperty('[Noise] Levels', _noiseSettings.noiseLevels.toString());
+    AnalyticsManager.setPeopleProperty(
+        '[Noise] Levels', _noiseSettings.noiseLevels.toString());
   }
 }

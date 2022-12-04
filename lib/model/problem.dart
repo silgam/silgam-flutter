@@ -9,7 +9,8 @@ class WrongProblem with _$WrongProblem {
     int problemNumber,
   ) = _WrongProblem;
 
-  factory WrongProblem.fromJson(Map<String, dynamic> json) => _$WrongProblemFromJson(json);
+  factory WrongProblem.fromJson(Map<String, dynamic> json) =>
+      _$WrongProblemFromJson(json);
 
   static List<Map<String, dynamic>> toJsonList(List<WrongProblem> instances) {
     return instances.map((e) => e.toJson()).toList();
@@ -33,7 +34,8 @@ class ReviewProblem {
     this.imagePaths = const [],
   });
 
-  factory ReviewProblem.fromJson(Map<String, dynamic> json) => _$ReviewProblemFromJson(json);
+  factory ReviewProblem.fromJson(Map<String, dynamic> json) =>
+      _$ReviewProblemFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReviewProblemToJson(this);
 

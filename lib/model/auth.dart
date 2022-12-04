@@ -11,7 +11,9 @@ class AuthResponse with _$AuthResponse {
     required String firebaseToken,
   }) = _AuthResponse;
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);
+  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
+      _$AuthResponseFromJson(json);
 
-  factory AuthResponse.fromJsonString(String json) => AuthResponse.fromJson(jsonDecode(json));
+  factory AuthResponse.fromJsonString(String json) =>
+      AuthResponse.fromJson(jsonDecode(json));
 }

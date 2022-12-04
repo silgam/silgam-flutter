@@ -46,7 +46,8 @@ class RecordTileState extends State<RecordTile> {
               onTap: widget.onTileTap,
               splashColor: Colors.transparent,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: _buildContent(),
               ),
             ),
@@ -66,7 +67,9 @@ class RecordTileState extends State<RecordTile> {
               MaterialHero(
                 tag: 'time ${widget.record.hashCode}',
                 child: Text(
-                  DateFormat.yMEd('ko_KR').add_Hm().format(widget.record.examStartedTime),
+                  DateFormat.yMEd('ko_KR')
+                      .add_Hm()
+                      .format(widget.record.examStartedTime),
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 12,

@@ -55,7 +55,10 @@ class _LoginPageState extends State<LoginPage> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [const Color(0xFF3F50A8), Theme.of(context).primaryColor],
+                    colors: [
+                      const Color(0xFF3F50A8),
+                      Theme.of(context).primaryColor
+                    ],
                   ),
                 ),
               ),
@@ -207,14 +210,16 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       oAuthToken = await UserApi.instance.loginWithKakaoAccount();
     }
-    final String firebaseToken = await AuthRepository().getFirebaseToken(oAuthToken);
+    final String firebaseToken =
+        await AuthRepository().getFirebaseToken(oAuthToken);
     await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
   }
 
   Future<void> _loginGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) return;
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
     final OAuthCredential credential = GoogleAuthProvider.credential(
       idToken: googleAuth.idToken,
       accessToken: googleAuth.accessToken,
@@ -226,7 +231,8 @@ class _LoginPageState extends State<LoginPage> {
     final LoginResult loginResult = await FacebookAuth.instance.login();
     final AccessToken? accessToken = loginResult.accessToken;
     if (accessToken == null) return;
-    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(accessToken.token);
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(accessToken.token);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
@@ -246,7 +252,8 @@ class _LoginPageState extends State<LoginPage> {
     await FirebaseAuth.instance.signInWithCredential(credential);
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser?.displayName == null) {
-      await currentUser?.updateDisplayName('${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}');
+      await currentUser?.updateDisplayName(
+          '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}');
     }
     if (currentUser?.email == null) {
       await currentUser?.updateEmail(appleCredential.email ?? '');

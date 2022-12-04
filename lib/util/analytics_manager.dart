@@ -11,7 +11,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../app_env.dart';
 
 class AnalyticsManager {
-  static final FirebaseAnalytics _firebaseAnalytics = FirebaseAnalytics.instance;
+  static final FirebaseAnalytics _firebaseAnalytics =
+      FirebaseAnalytics.instance;
   static late final Mixpanel _mixpanel;
 
   static Future<void> init() async {
@@ -40,21 +41,30 @@ class AnalyticsManager {
     });
   }
 
-  static Future<void> logEvent({required String name, Map<String, dynamic> properties = const {}}) async {
+  static Future<void> logEvent(
+      {required String name,
+      Map<String, dynamic> properties = const {}}) async {
     log('Event Logged: $name, $properties');
     _mixpanel.track(name, properties: properties);
 
-    String firebaaseEventName =
-        name.replaceAll(' ', '_').replaceAll('[', '').replaceAll(']', '').replaceAll('-', '_').replaceAll('/', '_');
-    Map<String, dynamic> firebaseProperties = properties.map((key, value) => MapEntry(key.replaceAll(' ', '_'), value));
-    await _firebaseAnalytics.logEvent(name: firebaaseEventName, parameters: firebaseProperties);
+    String firebaaseEventName = name
+        .replaceAll(' ', '_')
+        .replaceAll('[', '')
+        .replaceAll(']', '')
+        .replaceAll('-', '_')
+        .replaceAll('/', '_');
+    Map<String, dynamic> firebaseProperties = properties
+        .map((key, value) => MapEntry(key.replaceAll(' ', '_'), value));
+    await _firebaseAnalytics.logEvent(
+        name: firebaaseEventName, parameters: firebaseProperties);
   }
 
   static void eventStartTime({required String name}) {
     _mixpanel.timeEvent(name);
   }
 
-  static Future<void> registerUserProperties(Map<String, dynamic> properties) async {
+  static Future<void> registerUserProperties(
+      Map<String, dynamic> properties) async {
     _mixpanel.registerSuperProperties(properties);
     await _firebaseAnalytics.setDefaultEventParameters(properties);
   }

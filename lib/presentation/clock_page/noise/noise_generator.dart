@@ -28,7 +28,8 @@ class NoiseGenerator {
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       ClockStatus clockStatus = fetchClockStatus();
       if (!clockStatus.isRunning) return;
-      RelativeTimeType currentRelativeTime = clockStatus.currentBreakpoint.announcement.time.type;
+      RelativeTimeType currentRelativeTime =
+          clockStatus.currentBreakpoint.announcement.time.type;
       noiseSettings.noiseLevels.forEach((id, level) {
         double levelMultiple = 1;
         int delay = 0;
@@ -37,7 +38,9 @@ class NoiseGenerator {
           if (currentRelativeTime == RelativeTimeType.beforeStart) {
             levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
           } else if (currentRelativeTime == RelativeTimeType.afterStart) {
-            int afterStart = clockStatus.currentTime.difference(clockStatus.currentBreakpoint.time).inSeconds;
+            int afterStart = clockStatus.currentTime
+                .difference(clockStatus.currentBreakpoint.time)
+                .inSeconds;
             if (afterStart <= 2) {
               delay = 1000;
               levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
@@ -46,7 +49,9 @@ class NoiseGenerator {
               levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
             }
           } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
-            int beforeFinish = clockStatus.currentTime.difference(clockStatus.currentBreakpoint.time).inMinutes;
+            int beforeFinish = clockStatus.currentTime
+                .difference(clockStatus.currentBreakpoint.time)
+                .inMinutes;
             if (clockStatus.exam.subject == Subject.investigation ||
                 clockStatus.exam.subject == Subject.investigation2) {
               beforeFinish = 5 - beforeFinish;

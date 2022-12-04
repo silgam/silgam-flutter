@@ -91,19 +91,22 @@ class _SettingsViewState extends State<SettingsView> {
       ),
       const _Divider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlKakaotalk), mode: LaunchMode.externalApplication),
+        onTap: () => launchUrl(Uri.parse(urlKakaotalk),
+            mode: LaunchMode.externalApplication),
         title: '실감팀과 대화하기 / 실감팀에게 문의하기',
         description: '실감 카카오톡 채널로 의견을 보내거나 문의할 수 있습니다.',
       ),
       const _Divider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlInstagram), mode: LaunchMode.externalApplication),
+        onTap: () => launchUrl(Uri.parse(urlInstagram),
+            mode: LaunchMode.externalApplication),
         title: '실감 인스타그램 보러 가기',
         description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
       ),
       const _Divider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlFacebook), mode: LaunchMode.externalApplication),
+        onTap: () => launchUrl(Uri.parse(urlFacebook),
+            mode: LaunchMode.externalApplication),
         title: '실감 페이스북 페이지 보러 가기',
         description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
       ),
@@ -157,7 +160,8 @@ class _SettingsViewState extends State<SettingsView> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(user.photoURL ?? 'https://via.placeholder.com/150?text=ㅇ'),
+                backgroundImage: NetworkImage(
+                    user.photoURL ?? 'https://via.placeholder.com/150?text=ㅇ'),
                 backgroundColor: Colors.grey,
                 onBackgroundImageError: (exception, stackTrace) {},
               ),
@@ -253,7 +257,8 @@ class _SettingsViewState extends State<SettingsView> {
               await FirebaseAuth.instance.signOut();
               _refreshUser();
               if (mounted) Navigator.pop(context);
-              await AnalyticsManager.logEvent(name: '[HomePage-settings] Logout');
+              await AnalyticsManager.logEvent(
+                  name: '[HomePage-settings] Logout');
             },
             child: const Text('로그아웃'),
           )
@@ -294,7 +299,8 @@ class _SettingsViewState extends State<SettingsView> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         duration: Duration(seconds: 7),
-                        content: Text('로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
+                        content: Text(
+                            '로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
                       ),
                     );
                     Navigator.pushNamed(context, LoginPage.routeName);
@@ -303,7 +309,8 @@ class _SettingsViewState extends State<SettingsView> {
               }
               _refreshUser();
               if (mounted) Navigator.pop(context);
-              await AnalyticsManager.logEvent(name: '[HomePage-settings] Delete account');
+              await AnalyticsManager.logEvent(
+                  name: '[HomePage-settings] Delete account');
             },
             child: const Text('계정 삭제'),
           )

@@ -32,7 +32,8 @@ const bottomNavBarItems = [
 class HomePage extends StatefulWidget {
   static const routeName = '/';
   static final backgroundColor = Colors.grey[50];
-  static final StreamController<RecordListViewEvent> recordListViewEventStreamController = StreamController.broadcast();
+  static final StreamController<RecordListViewEvent>
+      recordListViewEventStreamController = StreamController.broadcast();
 
   const HomePage({Key? key}) : super(key: key);
 
@@ -44,7 +45,8 @@ const _defaultPageIndex = 0;
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = _defaultPageIndex;
-  final StreamController<SettingsViewEvent> _settingsViewEventStreamController = StreamController.broadcast();
+  final StreamController<SettingsViewEvent> _settingsViewEventStreamController =
+      StreamController.broadcast();
 
   bool get _isNotSignedIn => UserRepository().isNotSignedIn();
 
@@ -52,7 +54,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     FirebaseAuth.instance.userChanges().listen((_) {
-      HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refreshUser);
+      HomePage.recordListViewEventStreamController
+          .add(RecordListViewEvent.refreshUser);
       _settingsViewEventStreamController.add(SettingsViewEvent.refreshUser);
       setState(() {});
     });
@@ -70,7 +73,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
       if (_selectedIndex == 1) {
-        HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refresh);
+        HomePage.recordListViewEventStreamController
+            .add(RecordListViewEvent.refresh);
       }
     });
   }
@@ -91,7 +95,8 @@ class _HomePageState extends State<HomePage> {
               children: [
                 MainView(navigateToRecordTab: () => _onItemTapped(1)),
                 const RecordListView(),
-                SettingsView(eventStream: _settingsViewEventStreamController.stream),
+                SettingsView(
+                    eventStream: _settingsViewEventStreamController.stream),
               ],
             ),
           ),
@@ -133,7 +138,9 @@ class _HomePageState extends State<HomePage> {
 
   void _onAddExamRecordButtonPressed() async {
     final args = EditRecordPageArguments();
-    await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: args);
-    HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refresh);
+    await Navigator.pushNamed(context, EditRecordPage.routeName,
+        arguments: args);
+    HomePage.recordListViewEventStreamController
+        .add(RecordListViewEvent.refresh);
   }
 }

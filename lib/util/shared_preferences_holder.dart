@@ -11,7 +11,8 @@ abstract class SharedPreferencesHolder {
 }
 
 abstract class PreferenceKey {
-  static const showAddRecordPageAfterExamFinished = 'showAddRecordPageAfterExamFinished';
+  static const showAddRecordPageAfterExamFinished =
+      'showAddRecordPageAfterExamFinished';
   static const noisePreset = 'noisePreset';
   static const useWhiteNoise = 'whiteNoise';
 }

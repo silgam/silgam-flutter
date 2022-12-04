@@ -43,15 +43,20 @@ class _SettingTileState extends State<SettingTile> {
   Widget build(BuildContext context) {
     final preferenceKey = widget.preferenceKey;
     if (preferenceKey != null) {
-      _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ?? widget.defaultValue;
+      _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ??
+          widget.defaultValue;
     }
     return InkWell(
-      onTap: widget.preferenceKey == null ? _onTap : () => _onSwitchChanged(!_isSwitchEnabled),
+      onTap: widget.preferenceKey == null
+          ? _onTap
+          : () => _onSwitchChanged(!_isSwitchEnabled),
       splashColor: Colors.transparent,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
-          vertical: widget.description == null && widget.preferenceKey == null ? 16 : 12,
+          vertical: widget.description == null && widget.preferenceKey == null
+              ? 16
+              : 12,
         ),
         child: Row(
           children: [
@@ -109,7 +114,8 @@ class _SettingTileState extends State<SettingTile> {
   }
 
   void _onSwitchChanged(bool isEnabled) {
-    SharedPreferencesHolder.get.setBool(widget.preferenceKey.toString(), isEnabled);
+    SharedPreferencesHolder.get
+        .setBool(widget.preferenceKey.toString(), isEnabled);
     setState(() {
       _isSwitchEnabled = isEnabled;
       widget.onSwitchChanged?.call(isEnabled);

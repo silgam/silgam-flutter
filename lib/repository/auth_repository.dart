@@ -14,7 +14,8 @@ class AuthRepository {
 
   Future<String> getFirebaseToken(OAuthToken kakaoOAuthToken) async {
     final url = Uri.parse('$apiUrl/auth/kakao');
-    final response = await http.post(url, body: {'token': kakaoOAuthToken.accessToken});
+    final response =
+        await http.post(url, body: {'token': kakaoOAuthToken.accessToken});
     final authResponse = AuthResponse.fromJsonString(response.body);
     return authResponse.firebaseToken;
   }

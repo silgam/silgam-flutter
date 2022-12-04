@@ -15,7 +15,8 @@ class _DDaysCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           children: [
-            for (DDayItem item in dDayItems) _buildDDayWidget(item, Theme.of(context).primaryColor),
+            for (DDayItem item in dDayItems)
+              _buildDDayWidget(item, Theme.of(context).primaryColor),
           ],
         ),
       ),

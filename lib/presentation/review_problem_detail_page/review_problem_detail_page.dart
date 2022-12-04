@@ -21,7 +21,8 @@ class ReviewProblemDetailPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ReviewProblemDetailPage> createState() => _ReviewProblemDetailPageState();
+  State<ReviewProblemDetailPage> createState() =>
+      _ReviewProblemDetailPageState();
 }
 
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
@@ -147,7 +148,8 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     });
   }
 
-  void _onPhotoViewScaleEnd(_, ScaleEndDetails details, PhotoViewControllerValue controllerValue) {
+  void _onPhotoViewScaleEnd(
+      _, ScaleEndDetails details, PhotoViewControllerValue controllerValue) {
     double x = controllerValue.position.dx;
     double y = controllerValue.position.dy;
     if ((x - _imageX).abs() < 2 &&

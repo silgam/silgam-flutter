@@ -12,14 +12,16 @@ class _ExamStartCard extends StatefulWidget {
   _ExamStartCardState createState() => _ExamStartCardState();
 }
 
-class _ExamStartCardState extends State<_ExamStartCard> with TickerProviderStateMixin {
+class _ExamStartCardState extends State<_ExamStartCard>
+    with TickerProviderStateMixin {
   late final TabController _subjectController;
   Exam _selectedExam = ExamRepository.defaultExams[0];
 
   @override
   void initState() {
     super.initState();
-    _subjectController = TabController(length: ExamRepository.defaultExams.length, vsync: this);
+    _subjectController =
+        TabController(length: ExamRepository.defaultExams.length, vsync: this);
     _subjectController.addListener(() {
       final index = _subjectController.index;
       Exam exam = ExamRepository.defaultExams[index];
@@ -51,10 +53,13 @@ class _ExamStartCardState extends State<_ExamStartCard> with TickerProviderState
                   overlayColor: MaterialStateProperty.all(Colors.transparent),
                   labelColor: Theme.of(context).primaryColor,
                   unselectedLabelColor: disabledColor,
-                  labelStyle: defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
-                  unselectedLabelStyle: defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
+                  labelStyle:
+                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
+                  unselectedLabelStyle:
+                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
-                    for (Exam exam in ExamRepository.defaultExams) Tab(text: exam.examName),
+                    for (Exam exam in ExamRepository.defaultExams)
+                      Tab(text: exam.examName),
                   ],
                 ),
               ],
@@ -78,7 +83,8 @@ class _ExamStartCardState extends State<_ExamStartCard> with TickerProviderState
                     _buildInfo(
                       iconData: Icons.text_snippet_outlined,
                       title: '문제 수 / 만점',
-                      content: '${_selectedExam.numberOfQuestions}문제 / ${_selectedExam.perfectScore}점',
+                      content:
+                          '${_selectedExam.numberOfQuestions}문제 / ${_selectedExam.perfectScore}점',
                     ),
                   ],
                 ),

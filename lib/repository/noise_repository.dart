@@ -42,9 +42,11 @@ class NoiseSettings {
 
   void loadAll() {
     final sharedPreferences = SharedPreferencesHolder.get;
-    final presetName = sharedPreferences.getString(PreferenceKey.noisePreset) ?? NoisePreset.disabled.name;
+    final presetName = sharedPreferences.getString(PreferenceKey.noisePreset) ??
+        NoisePreset.disabled.name;
     noisePreset = NoisePreset.values.byName(presetName);
-    useWhiteNoise = sharedPreferences.getBool(PreferenceKey.useWhiteNoise) ?? false;
+    useWhiteNoise =
+        sharedPreferences.getBool(PreferenceKey.useWhiteNoise) ?? false;
     for (Noise defaultNoise in defaultNoises) {
       final level = sharedPreferences.getInt(defaultNoise.preferenceKey) ?? 0;
       noiseLevels[defaultNoise.id] = level;

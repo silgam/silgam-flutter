@@ -33,12 +33,16 @@ class EditRecordPage extends StatefulWidget {
 
 class _EditRecordPageState extends State<EditRecordPage> {
   final TextEditingController _titleEditingController = TextEditingController();
-  final TextEditingController _examDurationEditingController = TextEditingController();
+  final TextEditingController _examDurationEditingController =
+      TextEditingController();
   final TextEditingController _scoreEditingController = TextEditingController();
   final TextEditingController _gradeEditingController = TextEditingController();
-  final TextEditingController _percentileEditingController = TextEditingController();
-  final TextEditingController _standardScoreEditingController = TextEditingController();
-  final TextEditingController _feedbackEditingController = TextEditingController();
+  final TextEditingController _percentileEditingController =
+      TextEditingController();
+  final TextEditingController _standardScoreEditingController =
+      TextEditingController();
+  final TextEditingController _feedbackEditingController =
+      TextEditingController();
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
   Subject _selectedSubject = Subject.language;
@@ -104,9 +108,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
     _examStartedTime = recordToEdit.examStartedTime;
     _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
     _gradeEditingController.text = recordToEdit.grade?.toString() ?? '';
-    _percentileEditingController.text = recordToEdit.percentile?.toString() ?? '';
-    _standardScoreEditingController.text = recordToEdit.standardScore?.toString() ?? '';
-    _examDurationEditingController.text = recordToEdit.examDurationMinutes?.toString() ?? '';
+    _percentileEditingController.text =
+        recordToEdit.percentile?.toString() ?? '';
+    _standardScoreEditingController.text =
+        recordToEdit.standardScore?.toString() ?? '';
+    _examDurationEditingController.text =
+        recordToEdit.examDurationMinutes?.toString() ?? '';
     _wrongProblems.addAll(recordToEdit.wrongProblems);
     _feedbackEditingController.text = recordToEdit.feedback;
     _reviewProblems.addAll(recordToEdit.reviewProblems);
@@ -202,11 +209,19 @@ class _EditRecordPageState extends State<EditRecordPage> {
           spacing: 24,
           runSpacing: 12,
           children: [
-            _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60, maxLength: 3),
-            _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 52, maxLength: 1),
-            _buildNumberInputWithTitle(_percentileEditingController, '백분위', '%', 60, maxLength: 3),
-            _buildNumberInputWithTitle(_standardScoreEditingController, '표준점수', '점', 60, maxLength: 3),
-            _buildNumberInputWithTitle(_examDurationEditingController, '시험 시간', '분', 60, maxLength: 3),
+            _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60,
+                maxLength: 3),
+            _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 52,
+                maxLength: 1),
+            _buildNumberInputWithTitle(
+                _percentileEditingController, '백분위', '%', 60,
+                maxLength: 3),
+            _buildNumberInputWithTitle(
+                _standardScoreEditingController, '표준점수', '점', 60,
+                maxLength: 3),
+            _buildNumberInputWithTitle(
+                _examDurationEditingController, '시험 시간', '분', 60,
+                maxLength: 3),
           ],
         ),
         const SizedBox(height: 8),
@@ -252,7 +267,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
           decoration: InputDecoration(
             hintText: '이번 모의고사는 어땠나요?\n다음 모의고사에서 개선할 점을 적어보세요.',
             hintMaxLines: 3,
-            hintStyle: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w300),
+            hintStyle: TextStyle(
+                color: Colors.grey.shade500, fontWeight: FontWeight.w300),
             isCollapsed: true,
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.all(12),
@@ -365,7 +381,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
           child: TextButton(
             onPressed: _onSavePressed,
             style: TextButton.styleFrom(
-              foregroundColor: _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
+              foregroundColor:
+                  _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 16),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
@@ -399,7 +416,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _onSelectedSubjectChanged(Subject? newSubject) {
     setState(() {
       _selectedSubject = newSubject ?? Subject.language;
-      _examDurationEditingController.text = _selectedSubject.defaultExamDuration.toString();
+      _examDurationEditingController.text =
+          _selectedSubject.defaultExamDuration.toString();
     });
   }
 
@@ -451,7 +469,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  void _onReviewProblemEdited(ReviewProblem oldProblem, ReviewProblem newProblem) {
+  void _onReviewProblemEdited(
+      ReviewProblem oldProblem, ReviewProblem newProblem) {
     final oldProblemIndex = _reviewProblems.indexOf(oldProblem);
     if (oldProblemIndex == -1) return;
     setState(() {
@@ -507,7 +526,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
       return;
     }
     await saveRecord();
-    HomePage.recordListViewEventStreamController.add(RecordListViewEvent.refresh);
+    HomePage.recordListViewEventStreamController
+        .add(RecordListViewEvent.refresh);
     if (mounted) Navigator.pop(context);
   }
 

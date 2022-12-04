@@ -66,7 +66,8 @@ class _AdsCardState extends State<AdsCard> {
 
   void _onAdsTap(Ads ads) {
     String? url = ads.url;
-    if (url != null) launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    if (url != null)
+      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     AnalyticsManager.logEvent(
       name: '[HomePage-main] Silgam ads tapped',
       properties: {

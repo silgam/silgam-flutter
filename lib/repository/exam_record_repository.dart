@@ -11,18 +11,21 @@ import '../repository/user_repository.dart';
 class ExamRecordRepository {
   ExamRecordRepository._privateConstructor();
 
-  static final ExamRecordRepository _instance = ExamRecordRepository._privateConstructor();
+  static final ExamRecordRepository _instance =
+      ExamRecordRepository._privateConstructor();
 
   factory ExamRecordRepository() => _instance;
 
-  final CollectionReference<ExamRecord> _recordsRef =
-      FirebaseFirestore.instance.collection('exam_records').withConverter(
-            fromFirestore: (snapshot, _) => ExamRecord.fromJson(snapshot.data()!),
-            toFirestore: (record, _) => record.toJson(),
-          );
+  final CollectionReference<ExamRecord> _recordsRef = FirebaseFirestore.instance
+      .collection('exam_records')
+      .withConverter(
+        fromFirestore: (snapshot, _) => ExamRecord.fromJson(snapshot.data()!),
+        toFirestore: (record, _) => record.toJson(),
+      );
 
   User get _user => UserRepository().getUser();
-  final Reference _problemImagesRef = FirebaseStorage.instance.ref('problem_images');
+  final Reference _problemImagesRef =
+      FirebaseStorage.instance.ref('problem_images');
   final Uuid _uuid = const Uuid();
 
   Future<DocumentReference<ExamRecord>> addExamRecord(ExamRecord record) async {
@@ -36,25 +39,36 @@ class ExamRecordRepository {
   }
 
   Future<List<ExamRecord>> getMyExamRecords() async {
-    final querySnapshot =
-        await _recordsRef.where('userId', isEqualTo: _user.uid).orderBy('examStartedTime', descending: true).get();
-    final examRecords = querySnapshot.docs.map((snapshot) => snapshot.toExamRecord()).toList();
+    final querySnapshot = await _recordsRef
+        .where('userId', isEqualTo: _user.uid)
+        .orderBy('examStartedTime', descending: true)
+        .get();
+    final examRecords =
+        querySnapshot.docs.map((snapshot) => snapshot.toExamRecord()).toList();
     return examRecords;
   }
 
-  Future<void> updateExamRecord(ExamRecord oldRecord, ExamRecord newRecord) async {
-    List<String> oldImages = oldRecord.reviewProblems.expand((element) => element.imagePaths).toList();
-    List<String> newImages = newRecord.reviewProblems.expand((element) => element.imagePaths).toList();
+  Future<void> updateExamRecord(
+      ExamRecord oldRecord, ExamRecord newRecord) async {
+    List<String> oldImages = oldRecord.reviewProblems
+        .expand((element) => element.imagePaths)
+        .toList();
+    List<String> newImages = newRecord.reviewProblems
+        .expand((element) => element.imagePaths)
+        .toList();
     for (final oldImage in oldImages) {
       final isImageRemoved = !newImages.contains(oldImage);
       if (isImageRemoved) await _deleteImage(oldImage);
     }
     await _uploadProblemImages(newRecord);
-    return await _recordsRef.doc(newRecord.documentId).update(newRecord.toJson());
+    return await _recordsRef
+        .doc(newRecord.documentId)
+        .update(newRecord.toJson());
   }
 
   Future<void> deleteExamRecord(ExamRecord examRecord) async {
-    final allImages = examRecord.reviewProblems.expand((element) => element.imagePaths);
+    final allImages =
+        examRecord.reviewProblems.expand((element) => element.imagePaths);
     for (final imageUrl in allImages) {
       await _deleteImage(imageUrl);
     }

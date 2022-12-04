@@ -21,12 +21,15 @@ class ExamRecord with _$ExamRecord {
     final int? grade,
     final int? percentile,
     final int? standardScore,
-    @JsonKey(toJson: WrongProblem.toJsonList) required final List<WrongProblem> wrongProblems,
+    @JsonKey(toJson: WrongProblem.toJsonList)
+        required final List<WrongProblem> wrongProblems,
     required final String feedback,
-    @JsonKey(toJson: ReviewProblem.toJsonList) required final List<ReviewProblem> reviewProblems,
+    @JsonKey(toJson: ReviewProblem.toJsonList)
+        required final List<ReviewProblem> reviewProblems,
   }) = _ExamRecord;
 
-  factory ExamRecord.fromJson(Map<String, dynamic> json) => _$ExamRecordFromJson(json);
+  factory ExamRecord.fromJson(Map<String, dynamic> json) =>
+      _$ExamRecordFromJson(json);
 
   int getGradeColor() {
     switch (grade) {
