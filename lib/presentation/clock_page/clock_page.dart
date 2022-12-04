@@ -364,6 +364,10 @@ class _ClockPageState extends State<ClockPage> {
 
   void _subtract30Seconds() {
     final newTime = _currentTime.subtract(const Duration(seconds: 30));
+    if (_announcementPlayer.position != _announcementPlayer.duration) {
+      _announcementPlayer
+          .seek(_announcementPlayer.position - const Duration(seconds: 30));
+    }
     _onTimeChanged(newTime);
 
     AnalyticsManager.logEvent(
@@ -377,6 +381,8 @@ class _ClockPageState extends State<ClockPage> {
 
   void _add30Seconds() {
     final newTime = _currentTime.add(const Duration(seconds: 30));
+    _announcementPlayer
+        .seek(_announcementPlayer.position + const Duration(seconds: 30));
     _onTimeChanged(newTime);
 
     AnalyticsManager.logEvent(
