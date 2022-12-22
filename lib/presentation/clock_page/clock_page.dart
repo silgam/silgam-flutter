@@ -500,7 +500,7 @@ class _ClockPageState extends State<ClockPage> {
   void _trySavingExamStartedTime() {
     final currentAnnouncementTime =
         _breakpoints[_currentBreakpointIndex].announcement.time;
-    if (currentAnnouncementTime == const RelativeTime.beforeStart(minutes: 0)) {
+    if (currentAnnouncementTime == const RelativeTime.afterStart(minutes: 0)) {
       _examStartedTime = DateTime.now();
     }
   }
