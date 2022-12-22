@@ -102,6 +102,10 @@ class ExamRepository {
           time: RelativeTime.afterStart(minutes: 0),
         ),
         const Announcement(
+          title: '듣기 끝',
+          time: RelativeTime.afterStart(minutes: 23),
+        ),
+        const Announcement(
           title: '10분전',
           time: RelativeTime.beforeFinish(minutes: 10),
           fileName: '017_3_10min_left.mp3',
