@@ -47,7 +47,7 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   final DateTime today = DateTime.now();
-  // late final List<DDayItem> dDayItems = DDayRepository().getItemsToShow(today);
+  late final List<DDayItem> dDayItems = DDayRepository().getItemsToShow(today);
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,7 @@ class _MainViewState extends State<MainView> {
                   }
                 },
               ),
-              // _DDaysCard(dDayItems: dDayItems),
+              if (dDayItems.isNotEmpty) _DDaysCard(dDayItems: dDayItems),
               _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
               if (UserRepository().isNotSignedIn())
                 _ButtonCard(

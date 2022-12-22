@@ -42,19 +42,21 @@ class DDayRepository {
 
   List<DDayItem> getItemsToShow(DateTime today) {
     today = DateTime(today.year, today.month, today.day);
-    DDayItem suneungDDay = _getSuneungDDay(today);
+    DDayItem? suneungDDay = _getSuneungDDay(today);
     DDayItem? mockTestDDay = _getMockTestDDay(today);
     return [
-      suneungDDay,
+      if (suneungDDay != null) suneungDDay,
       if (mockTestDDay != null) mockTestDDay,
     ];
   }
 
-  DDayItem _getSuneungDDay(DateTime today) {
+  DDayItem? _getSuneungDDay(DateTime today) {
     final List<_Test> suneungs =
         _tests.where((test) => test.testType == TestType.suneung).toList();
-    final _Test previousSuneung = _getPreviousTest(today, suneungs);
-    final _Test nextSuneung = _getNextTest(today, suneungs);
+    final _Test? previousSuneung = _getPreviousTest(today, suneungs);
+    final _Test? nextSuneung = _getNextTest(today, suneungs);
+    if (previousSuneung == null || nextSuneung == null) return null;
+
     final remainingDays = nextSuneung.date.difference(today).inDays;
     final totalDays = nextSuneung.date.difference(previousSuneung.date).inDays;
     return DDayItem(
@@ -66,9 +68,12 @@ class DDayRepository {
   }
 
   DDayItem? _getMockTestDDay(DateTime today) {
-    final _Test previousMockTest = _getPreviousTest(today, _tests);
-    final _Test nextMockTest = _getNextTest(today, _tests);
-    if (nextMockTest.testType == TestType.suneung) return null;
+    final _Test? previousMockTest = _getPreviousTest(today, _tests);
+    final _Test? nextMockTest = _getNextTest(today, _tests);
+    if (previousMockTest == null ||
+        nextMockTest == null ||
+        nextMockTest.testType == TestType.suneung) return null;
+
     final remainingDays = nextMockTest.date.difference(today).inDays;
     final totalDays =
         nextMockTest.date.difference(previousMockTest.date).inDays;
@@ -80,14 +85,18 @@ class DDayRepository {
     );
   }
 
-  _Test _getPreviousTest(DateTime today, List<_Test> tests) {
-    return tests.lastWhere(
-        (test) => test.date.add(const Duration(seconds: 1)).isBefore(today));
+  _Test? _getPreviousTest(DateTime today, List<_Test> tests) {
+    final previousTests = tests.where(
+      (test) => test.date.add(const Duration(seconds: 1)).isBefore(today),
+    );
+    return previousTests.isEmpty ? null : previousTests.last;
   }
 
-  _Test _getNextTest(DateTime today, List<_Test> tests) {
-    return tests.firstWhere(
-        (test) => test.date.add(const Duration(seconds: 1)).isAfter(today));
+  _Test? _getNextTest(DateTime today, List<_Test> tests) {
+    final nextTests = tests.where(
+      (test) => test.date.add(const Duration(seconds: 1)).isAfter(today),
+    );
+    return nextTests.isEmpty ? null : nextTests.first;
   }
 }
 
