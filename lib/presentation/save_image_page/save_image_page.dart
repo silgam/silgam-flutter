@@ -318,8 +318,9 @@ class _SaveImagePageState extends State<SaveImagePage> {
         name: '[SaveExamRecordImagePage] Save button tapped');
 
     final imageBytes = await _screenshotController.capture(pixelRatio: 4);
-    if (imageBytes == null)
+    if (imageBytes == null) {
       throw Exception('Capture failed: return value is null');
+    }
     await ImageGallerySaver.saveImage(imageBytes,
         quality: 100, name: widget.examRecord.title);
     if (!mounted) return;

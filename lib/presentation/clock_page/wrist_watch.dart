@@ -311,8 +311,9 @@ class AnalogClockPainter extends CustomPainter {
             fontWeight: FontWeight.w900),
       );
       _hourTextPainter.layout();
-      if (_hourTextPainter.height > maxTextHeight)
+      if (_hourTextPainter.height > maxTextHeight) {
         maxTextHeight = _hourTextPainter.height;
+      }
       _hourTextPainter.paint(canvas,
           Offset(-_hourTextPainter.width / 2, -_hourTextPainter.height / 2));
       canvas.restore();
