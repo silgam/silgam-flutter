@@ -363,11 +363,14 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _subtract30Seconds() {
-    final newTime = _currentTime.subtract(const Duration(seconds: 30));
-    if (_announcementPlayer.position != _announcementPlayer.duration) {
-      _announcementPlayer
-          .seek(_announcementPlayer.position - const Duration(seconds: 30));
+    final announcementPosition = _announcementPlayer.position.inMilliseconds;
+    final announcementDuration =
+        _announcementPlayer.duration?.inMilliseconds ?? 0;
+    if ((announcementPosition - announcementDuration).abs() > 100) {
+      _announcementPlayer.seek(_announcementPlayer.position - 30.seconds);
     }
+
+    final newTime = _currentTime.subtract(30.seconds);
     _onTimeChanged(newTime);
 
     AnalyticsManager.logEvent(
@@ -380,9 +383,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _add30Seconds() {
-    final newTime = _currentTime.add(const Duration(seconds: 30));
-    _announcementPlayer
-        .seek(_announcementPlayer.position + const Duration(seconds: 30));
+    final newTime = _currentTime.add(30.seconds);
+    _announcementPlayer.seek(_announcementPlayer.position + 30.seconds);
     _onTimeChanged(newTime);
 
     AnalyticsManager.logEvent(
@@ -554,9 +556,9 @@ class _ClockPageState extends State<ClockPage> {
 
   void _startExam() {
     _isStarted = true;
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(1.seconds, (_) {
       if (_isRunning) {
-        _onEverySecond(_currentTime.add(const Duration(seconds: 1)));
+        _onEverySecond(_currentTime.add(1.seconds));
       }
     });
     _playAnnouncement();
@@ -673,4 +675,8 @@ class ClockPageArguments {
   final Exam exam;
 
   ClockPageArguments(this.exam);
+}
+
+extension on int {
+  Duration get seconds => Duration(seconds: this);
 }
