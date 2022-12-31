@@ -38,8 +38,7 @@ class Noise {
 }
 
 class NoiseSettings {
-  NoiseSettings(SharedPreferences sharedPreferences)
-      : _sharedPreferences = sharedPreferences;
+  NoiseSettings(this._sharedPreferences);
 
   final SharedPreferences _sharedPreferences;
 

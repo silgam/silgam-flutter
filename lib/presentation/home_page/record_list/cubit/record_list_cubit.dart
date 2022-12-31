@@ -14,11 +14,8 @@ part 'record_list_state.dart';
 
 @injectable
 class RecordListCubit extends Cubit<RecordListState> {
-  RecordListCubit(
-      ExamRecordRepository examRecordRepository, UserRepository userRepository)
-      : _examRecordRepository = examRecordRepository,
-        _userRepository = userRepository,
-        super(RecordListState.initial());
+  RecordListCubit(this._examRecordRepository, this._userRepository)
+      : super(RecordListState.initial());
 
   final ExamRecordRepository _examRecordRepository;
   final UserRepository _userRepository;

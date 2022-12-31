@@ -11,8 +11,7 @@ import '../repository/user_repository.dart';
 
 @lazySingleton
 class ExamRecordRepository {
-  ExamRecordRepository(UserRepository userRepository)
-      : _userRepository = userRepository;
+  ExamRecordRepository(this._userRepository);
 
   final UserRepository _userRepository;
   final CollectionReference<ExamRecord> _recordsRef = FirebaseFirestore.instance
