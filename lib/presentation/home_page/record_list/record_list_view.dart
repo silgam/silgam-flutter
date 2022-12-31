@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
+import '../../../util/injection.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
@@ -26,7 +27,7 @@ class RecordListView extends StatefulWidget {
 
 class _RecordListViewState extends State<RecordListView> {
   late final StreamSubscription _eventStreamSubscription;
-  final RecordListCubit cubit = RecordListCubit();
+  final RecordListCubit cubit = getIt.get();
 
   @override
   void initState() {

@@ -1,10 +1,7 @@
+import 'package:injectable/injectable.dart';
+
+@lazySingleton
 class DDayRepository {
-  DDayRepository._privateConstructor();
-
-  static final _instance = DDayRepository._privateConstructor();
-
-  factory DDayRepository() => _instance;
-
   final List<_Test> _tests = [
     _Test(
         testType: TestType.suneung,

@@ -11,7 +11,7 @@ import '../../../app.dart';
 import '../../../repository/user_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
-import '../../../util/shared_preferences_holder.dart';
+import '../../../util/injection.dart';
 import '../../common/ad_tile.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
@@ -33,8 +33,9 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  User? _user;
+  final UserRepository _userRepository = getIt.get();
   late final StreamSubscription _eventStreamSubscription;
+  User? _user;
 
   @override
   void initState() {
@@ -205,7 +206,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   void _refreshUser() {
     setState(() {
-      _user = UserRepository().getUserOrNull();
+      _user = _userRepository.getUserOrNull();
     });
   }
 

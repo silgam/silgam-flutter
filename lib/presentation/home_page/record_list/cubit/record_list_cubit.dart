@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../../model/exam_record.dart';
 import '../../../../model/subject.dart';
@@ -11,10 +12,16 @@ import '../record_list_view.dart';
 part 'record_list_cubit.freezed.dart';
 part 'record_list_state.dart';
 
+@injectable
 class RecordListCubit extends Cubit<RecordListState> {
-  RecordListCubit() : super(RecordListState.initial());
-  final ExamRecordRepository _recordRepository = ExamRecordRepository();
-  final UserRepository _userRepository = UserRepository();
+  RecordListCubit(
+      ExamRecordRepository examRecordRepository, UserRepository userRepository)
+      : _examRecordRepository = examRecordRepository,
+        _userRepository = userRepository,
+        super(RecordListState.initial());
+
+  final ExamRecordRepository _examRecordRepository;
+  final UserRepository _userRepository;
 
   Future<void> refresh() async {
     if (_userRepository.isNotSignedIn()) {
@@ -26,7 +33,7 @@ class RecordListCubit extends Cubit<RecordListState> {
     if (state.isLoading) return;
 
     emit(state.copyWith(isLoading: true));
-    final records = await _recordRepository.getMyExamRecords();
+    final records = await _examRecordRepository.getMyExamRecords();
     final filteredRecords =
         _getFilteredAndSortedRecords(originalRecords: records);
     emit(state.copyWith(

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:silgam/util/const.dart';
 
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../repository/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/const.dart';
+import '../../util/injection.dart';
 import '../common/ad_tile.dart';
 import '../common/material_hero.dart';
 import '../common/menu_bar.dart';
@@ -29,8 +30,8 @@ class RecordDetailPage extends StatefulWidget {
 }
 
 class _RecordDetailPageState extends State<RecordDetailPage> {
+  final ExamRecordRepository _recordRepository = getIt.get();
   late ExamRecord _record;
-  final ExamRecordRepository _recordRepository = ExamRecordRepository();
   bool _isDeleting = false;
 
   @override

@@ -17,6 +17,7 @@ import '../../../repository/exam_repository.dart';
 import '../../../repository/user_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
+import '../../../util/injection.dart';
 import '../../clock_page/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../edit_record_page/edit_record_page.dart';
@@ -46,8 +47,11 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
+  final DDayRepository _dDayRepository = getIt.get();
+  final AdsRepository _adsRepository = getIt.get();
+  final UserRepository _userRepository = getIt.get();
   final DateTime today = DateTime.now();
-  late final List<DDayItem> dDayItems = DDayRepository().getItemsToShow(today);
+  late final List<DDayItem> dDayItems = _dDayRepository.getItemsToShow(today);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +80,7 @@ class _MainViewState extends State<MainView> {
               const SizedBox(height: 4),
               const Divider(indent: 20, endIndent: 20),
               FutureBuilder(
-                future: AdsRepository().getAllAds(),
+                future: _adsRepository.getAllAds(),
                 builder: (_, AsyncSnapshot<List<Ads>> snapshot) {
                   final List<Ads> data = snapshot.data ?? [];
                   if (data.isNotEmpty) {
@@ -88,7 +92,7 @@ class _MainViewState extends State<MainView> {
               ),
               if (dDayItems.isNotEmpty) _DDaysCard(dDayItems: dDayItems),
               _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
-              if (UserRepository().isNotSignedIn())
+              if (_userRepository.isNotSignedIn())
                 _ButtonCard(
                   onTap: _onLoginButtonTap,
                   iconData: Icons.login,
@@ -215,9 +219,12 @@ class _MainViewState extends State<MainView> {
   }
 
   void _onRecordButtonTap() async {
-    if (UserRepository().isSignedIn()) {
-      await Navigator.pushNamed(context, EditRecordPage.routeName,
-          arguments: EditRecordPageArguments());
+    if (_userRepository.isSignedIn()) {
+      await Navigator.pushNamed(
+        context,
+        EditRecordPage.routeName,
+        arguments: EditRecordPageArguments(),
+      );
     }
     widget.navigateToRecordTab();
   }

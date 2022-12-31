@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../repository/auth_repository.dart';
 import '../../repository/user_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/injection.dart';
 import '../common/menu_bar.dart';
 import '../common/progress_overlay.dart';
 
@@ -30,6 +31,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final UserRepository _userRepository = getIt.get();
+  final AuthRepository _authRepository = getIt.get();
+
   bool _isProgressing = false;
 
   @override
@@ -181,17 +185,16 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {});
     try {
       await loginFunction();
-      final userRepository = UserRepository();
-      if (userRepository.isNotSignedIn()) throw Exception('Not signed in');
+      if (_userRepository.isNotSignedIn()) throw Exception('Not signed in');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('${userRepository.getUser().displayName}님 반갑습니다!'),
+          content: Text('${_userRepository.getUser().displayName}님 반갑습니다!'),
         ));
         Navigator.pop(context);
       }
       await AnalyticsManager.logEvent(
         name: '[LoginPage] Login',
-        properties: {'user_id': userRepository.getUser().uid},
+        properties: {'user_id': _userRepository.getUser().uid},
       );
     } catch (e) {
       log(e.toString());
@@ -211,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
       oAuthToken = await UserApi.instance.loginWithKakaoAccount();
     }
     final String firebaseToken =
-        await AuthRepository().getFirebaseToken(oAuthToken);
+        await _authRepository.getFirebaseToken(oAuthToken);
     await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
   }
 

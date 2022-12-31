@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:injectable/injectable.dart';
 
 import '../model/ads.dart';
 
+@lazySingleton
 class AdsRepository {
-  AdsRepository._privateConstructor();
-
-  static final AdsRepository _instance = AdsRepository._privateConstructor();
-
-  factory AdsRepository() => _instance;
-
   final CollectionReference<Ads> _adsRef =
       FirebaseFirestore.instance.collection('ads').withConverter(
             fromFirestore: (snapshot, _) => Ads.fromJson(snapshot.data()!),

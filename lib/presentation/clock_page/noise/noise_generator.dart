@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:silgam/model/subject.dart';
-
 import '../../../model/exam.dart';
 import '../../../model/relative_time.dart';
+import '../../../model/subject.dart';
 import '../../../repository/noise_repository.dart';
 import '../breakpoint.dart';
 import 'noise_player.dart';

@@ -11,3 +11,10 @@ final String interstitialAdId = Platform.isAndroid
     ? "ca-app-pub-5293956621132135/1155168299"
     : "ca-app-pub-5293956621132135/5094413305";
 const bool isAdsEnabled = false;
+
+abstract class PreferenceKey {
+  static const showAddRecordPageAfterExamFinished =
+      'showAddRecordPageAfterExamFinished';
+  static const noisePreset = 'noisePreset';
+  static const useWhiteNoise = 'whiteNoise';
+}

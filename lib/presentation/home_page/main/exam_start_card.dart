@@ -15,16 +15,16 @@ class _ExamStartCard extends StatefulWidget {
 class _ExamStartCardState extends State<_ExamStartCard>
     with TickerProviderStateMixin {
   late final TabController _subjectController;
-  Exam _selectedExam = ExamRepository.defaultExams[0];
+  Exam _selectedExam = defaultExams[0];
 
   @override
   void initState() {
     super.initState();
     _subjectController =
-        TabController(length: ExamRepository.defaultExams.length, vsync: this);
+        TabController(length: defaultExams.length, vsync: this);
     _subjectController.addListener(() {
       final index = _subjectController.index;
-      Exam exam = ExamRepository.defaultExams[index];
+      Exam exam = defaultExams[index];
       if (_selectedExam != exam) {
         _selectedExam = exam;
         setState(() {});
@@ -58,8 +58,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                   unselectedLabelStyle:
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
-                    for (Exam exam in ExamRepository.defaultExams)
-                      Tab(text: exam.examName),
+                    for (Exam exam in defaultExams) Tab(text: exam.examName),
                   ],
                 ),
               ],

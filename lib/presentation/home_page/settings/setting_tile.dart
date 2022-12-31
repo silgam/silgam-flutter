@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../util/analytics_manager.dart';
-import '../../../util/shared_preferences_holder.dart';
+import '../../../util/injection.dart';
 
 const settingTitleTextStyle = TextStyle(
   fontSize: 14,
@@ -37,14 +38,16 @@ class SettingTile extends StatefulWidget {
 }
 
 class _SettingTileState extends State<SettingTile> {
+  final SharedPreferences _sharedPreferences = getIt.get();
+
   bool _isSwitchEnabled = true;
 
   @override
   Widget build(BuildContext context) {
     final preferenceKey = widget.preferenceKey;
     if (preferenceKey != null) {
-      _isSwitchEnabled = SharedPreferencesHolder.get.getBool(preferenceKey) ??
-          widget.defaultValue;
+      _isSwitchEnabled =
+          _sharedPreferences.getBool(preferenceKey) ?? widget.defaultValue;
     }
     return InkWell(
       onTap: widget.preferenceKey == null
@@ -114,8 +117,7 @@ class _SettingTileState extends State<SettingTile> {
   }
 
   void _onSwitchChanged(bool isEnabled) {
-    SharedPreferencesHolder.get
-        .setBool(widget.preferenceKey.toString(), isEnabled);
+    _sharedPreferences.setBool(widget.preferenceKey.toString(), isEnabled);
     setState(() {
       _isSwitchEnabled = isEnabled;
       widget.onSwitchChanged?.call(isEnabled);

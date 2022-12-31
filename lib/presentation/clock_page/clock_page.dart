@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
@@ -15,7 +16,7 @@ import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
 import '../../util/date_time_extension.dart';
-import '../../util/shared_preferences_holder.dart';
+import '../../util/injection.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'breakpoint.dart';
@@ -42,6 +43,9 @@ class ClockPage extends StatefulWidget {
 }
 
 class _ClockPageState extends State<ClockPage> {
+  final UserRepository _userRepository = getIt.get();
+  final SharedPreferences _sharedPreferences = getIt.get();
+
   late final List<Breakpoint> _breakpoints;
   late int _currentBreakpointIndex = 0;
   Timer? _timer;
@@ -82,7 +86,7 @@ class _ClockPageState extends State<ClockPage> {
     _timelineConnectorKeys =
         List.generate(_breakpoints.length - 1, (index) => GlobalKey());
 
-    final noiseSettings = NoiseSettings()..loadAll();
+    final noiseSettings = NoiseSettings(getIt.get())..loadAll();
     if (noiseSettings.noisePreset != NoisePreset.disabled) {
       final noisePlayer = NoiseAudioPlayer();
       _noiseGenerator = NoiseGenerator(
@@ -586,13 +590,15 @@ class _ClockPageState extends State<ClockPage> {
     );
     Navigator.pop(context);
 
-    final sharedPreferences = SharedPreferencesHolder.get;
     const key = PreferenceKey.showAddRecordPageAfterExamFinished;
     final showAddRecordPageAfterExamFinished =
-        sharedPreferences.getBool(key) ?? true;
-    if (showAddRecordPageAfterExamFinished && UserRepository().isSignedIn()) {
-      Navigator.pushNamed(context, EditRecordPage.routeName,
-          arguments: arguments);
+        _sharedPreferences.getBool(key) ?? true;
+    if (showAddRecordPageAfterExamFinished && _userRepository.isSignedIn()) {
+      Navigator.pushNamed(
+        context,
+        EditRecordPage.routeName,
+        arguments: arguments,
+      );
     }
 
     AnalyticsManager.logEvent(

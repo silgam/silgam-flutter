@@ -10,6 +10,7 @@ import '../../model/subject.dart';
 import '../../repository/exam_record_repository.dart';
 import '../../repository/user_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/injection.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../home_page/home_page.dart';
@@ -32,6 +33,9 @@ class EditRecordPage extends StatefulWidget {
 }
 
 class _EditRecordPageState extends State<EditRecordPage> {
+  final UserRepository _userRepository = getIt.get();
+  final ExamRecordRepository _recordRepository = getIt.get();
+
   final TextEditingController _titleEditingController = TextEditingController();
   final TextEditingController _examDurationEditingController =
       TextEditingController();
@@ -43,16 +47,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
       TextEditingController();
   final TextEditingController _feedbackEditingController =
       TextEditingController();
+
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
+
   Subject _selectedSubject = Subject.language;
   DateTime _examStartedTime = DateTime.now();
   bool _isTitleEmpty = true;
   bool _isEditingMode = false;
   bool _isSaving = false;
-
-  final UserRepository _userRepository = UserRepository();
-  final ExamRecordRepository _recordRepository = ExamRecordRepository();
 
   @override
   void initState() {

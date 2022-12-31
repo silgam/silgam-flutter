@@ -11,16 +11,14 @@ import 'app_env.dart';
 import 'firebase_options.dart';
 import 'util/analytics_manager.dart';
 import 'util/injection.dart';
-import 'util/shared_preferences_holder.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  configureDependencies();
   KakaoSdk.init(nativeAppKey: AppEnv.kakaoNativeAppKey);
 
+  await configureDependencies();
   await Future.wait([
     initializeFirebae(),
-    SharedPreferencesHolder.initializeSharedPreferences(),
     MobileAds.instance.initialize(),
     initializeAudioSession()
   ]);

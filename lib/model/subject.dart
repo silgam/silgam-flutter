@@ -48,7 +48,7 @@ enum Subject {
   final int secondColor;
 
   int get defaultExamDuration {
-    final defaultExam = ExamRepository.defaultExams.firstWhere((exam) {
+    final defaultExam = defaultExams.firstWhere((exam) {
       if (this == Subject.investigation2) {
         return exam.subject == Subject.investigation;
       }

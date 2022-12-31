@@ -1,17 +1,13 @@
 import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 import '../model/auth.dart';
 
 const apiUrl = 'https://asia-northeast3-silgam-app.cloudfunctions.net/api';
 
+@lazySingleton
 class AuthRepository {
-  AuthRepository._privateConstructor();
-
-  static final AuthRepository _instance = AuthRepository._privateConstructor();
-
-  factory AuthRepository() => _instance;
-
   Future<String> getFirebaseToken(OAuthToken kakaoOAuthToken) async {
     final url = Uri.parse('$apiUrl/auth/kakao');
     final response =

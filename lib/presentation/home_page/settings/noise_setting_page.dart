@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:silgam/util/injection.dart';
 
 import '../../../repository/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
-import '../../../util/shared_preferences_holder.dart';
+import '../../../util/const.dart';
 import '../../common/menu_bar.dart';
 import 'setting_tile.dart';
 
@@ -16,7 +17,7 @@ class NoiseSettingPage extends StatefulWidget {
 }
 
 class _NoiseSettingPageState extends State<NoiseSettingPage> {
-  final NoiseSettings _noiseSettings = NoiseSettings();
+  final NoiseSettings _noiseSettings = NoiseSettings(getIt.get());
 
   @override
   void initState() {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../app.dart';
 import '../../repository/user_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/injection.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';
@@ -44,11 +45,12 @@ class HomePage extends StatefulWidget {
 const _defaultPageIndex = 0;
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = _defaultPageIndex;
+  final UserRepository _userRepository = getIt.get();
   final StreamController<SettingsViewEvent> _settingsViewEventStreamController =
       StreamController.broadcast();
 
-  bool get _isNotSignedIn => UserRepository().isNotSignedIn();
+  int _selectedIndex = _defaultPageIndex;
+  bool get _isNotSignedIn => _userRepository.isNotSignedIn();
 
   @override
   void initState() {
