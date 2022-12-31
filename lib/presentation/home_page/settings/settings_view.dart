@@ -16,6 +16,7 @@ import '../../common/ad_tile.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
+import '../../purchase/purchase_page.dart';
 import 'noise_setting_page.dart';
 import 'setting_tile.dart';
 
@@ -71,6 +72,14 @@ class _SettingsViewState extends State<SettingsView> {
           width: MediaQuery.of(context).size.width.truncate() - 32,
           margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
         ),
+      const _Divider(),
+      SettingTile(
+        onTap: () {
+          Navigator.pushNamed(context, PurchasePage.routeName);
+        },
+        title: '실감패스',
+        description: '실감패스',
+      ),
       const _Divider(),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
