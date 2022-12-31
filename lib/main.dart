@@ -10,21 +10,34 @@ import 'app.dart';
 import 'app_env.dart';
 import 'firebase_options.dart';
 import 'util/analytics_manager.dart';
+import 'util/injection.dart';
 import 'util/shared_preferences_holder.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseCrashlytics.instance
-      .setCrashlyticsCollectionEnabled(kReleaseMode);
-  await SharedPreferencesHolder.initializeSharedPreferences();
-  await MobileAds.instance.initialize();
-  await AnalyticsManager.init();
-
+  configureDependencies();
   KakaoSdk.init(nativeAppKey: AppEnv.kakaoNativeAppKey);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
+  await Future.wait([
+    initializeFirebae(),
+    SharedPreferencesHolder.initializeSharedPreferences(),
+    MobileAds.instance.initialize(),
+    initializeAudioSession()
+  ]);
+
+  runApp(const SilgamApp());
+}
+
+Future<void> initializeFirebae() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Future.wait([
+    AnalyticsManager.init(),
+    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode)
+  ]);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+}
+
+Future<void> initializeAudioSession() async {
   final AudioSession audioSession = await AudioSession.instance;
   await audioSession.configure(const AudioSessionConfiguration(
     avAudioSessionCategory: AVAudioSessionCategory.playback,
@@ -35,6 +48,4 @@ void main() async {
     ),
     androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
   ));
-
-  runApp(const SilgamApp());
 }
