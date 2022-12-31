@@ -122,6 +122,7 @@ class _SettingsViewState extends State<SettingsView> {
         SettingTile(
           onTap: () => _onDeleteAccountTap(), // 유저 삭제, 로그아웃
           title: '계정 탈퇴',
+          titleColor: Colors.red,
         ),
       if (_user != null) const _Divider(),
       FutureBuilder(
@@ -277,17 +278,14 @@ class _SettingsViewState extends State<SettingsView> {
           '탈퇴하시겠습니까?',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
-        content: const Text('탈퇴하면 복구할 수 없습니다.'),
+        content: const Text('탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.grey),
-            child: const Text(
-              '취소',
-              style: TextStyle(color: Colors.grey),
-            ),
+            child: const Text('취소'),
           ),
           TextButton(
             onPressed: () async {
@@ -313,7 +311,8 @@ class _SettingsViewState extends State<SettingsView> {
               await AnalyticsManager.logEvent(
                   name: '[HomePage-settings] Delete account');
             },
-            child: const Text('계정 삭제'),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('계정 탈퇴'),
           )
         ],
       ),

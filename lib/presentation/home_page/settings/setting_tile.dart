@@ -21,6 +21,7 @@ class SettingTile extends StatefulWidget {
   final String? preferenceKey;
   final ValueChanged<bool>? onSwitchChanged;
   final bool defaultValue;
+  final Color? titleColor;
 
   const SettingTile({
     Key? key,
@@ -31,6 +32,7 @@ class SettingTile extends StatefulWidget {
     this.preferenceKey,
     this.onSwitchChanged,
     this.defaultValue = true,
+    this.titleColor,
   }) : super(key: key);
 
   @override
@@ -69,7 +71,9 @@ class _SettingTileState extends State<SettingTile> {
                 children: [
                   Text(
                     widget.title,
-                    style: settingTitleTextStyle,
+                    style: settingTitleTextStyle.copyWith(
+                      color: widget.titleColor,
+                    ),
                   ),
                   if (widget.description != null) const SizedBox(height: 4),
                   if (widget.description != null)
