@@ -9,6 +9,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'app.dart';
 import 'app_env.dart';
 import 'firebase_options.dart';
+import 'repository/ads_repository.dart';
 import 'util/analytics_manager.dart';
 import 'util/injection.dart';
 
@@ -20,7 +21,7 @@ void main() async {
   await Future.wait([
     initializeFirebae(),
     MobileAds.instance.initialize(),
-    initializeAudioSession()
+    initializeAudioSession(),
   ]);
 
   runApp(const SilgamApp());
@@ -30,7 +31,8 @@ Future<void> initializeFirebae() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Future.wait([
     AnalyticsManager.init(),
-    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode)
+    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode),
+    getIt.get<AdsRepository>().getAllAds(),
   ]);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 }

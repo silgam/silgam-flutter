@@ -11,12 +11,15 @@ class AdsRepository {
             toFirestore: (ads, _) => ads.toJson(),
           );
 
+  List<Ads>? _ads;
+
   Future<List<Ads>> getAllAds() async {
-    final snapshot = await _adsRef.get();
-    final unsortedAds =
-        snapshot.docs.map((document) => document.data()).toList();
-    unsortedAds.shuffle();
-    unsortedAds.sort((a, b) => a.priority - b.priority);
-    return unsortedAds;
+    if (_ads == null) {
+      final snapshot = await _adsRef.get();
+      _ads = snapshot.docs.map((document) => document.data()).toList();
+    }
+    _ads?.shuffle();
+    _ads?.sort((a, b) => a.priority - b.priority);
+    return _ads ?? [];
   }
 }
