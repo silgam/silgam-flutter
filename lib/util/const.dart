@@ -4,6 +4,8 @@ const String urlInstagram = "https://silgam.app/instagram";
 const String urlFacebook = "https://silgam.app/facebook";
 const String urlKakaotalk = "https://silgam.app/kakaotalk";
 const String urlPrivacy = "https://silgam.app/privacy";
+const String urlSilgamApi = "https://api.silgam.app";
+
 final String bannerAdId = Platform.isAndroid
     ? "ca-app-pub-5293956621132135/7574334463"
     : "ca-app-pub-5293956621132135/7145274842";

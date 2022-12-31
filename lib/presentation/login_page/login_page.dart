@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../repository/auth_repository.dart';
 import '../../repository/user_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../common/menu_bar.dart';
 import '../common/progress_overlay.dart';
@@ -164,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           launchUrl(
-                            Uri.parse('https://silgam.app/privacy'),
+                            Uri.parse(urlPrivacy),
                             mode: LaunchMode.externalApplication,
                           );
                         },
