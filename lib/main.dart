@@ -9,7 +9,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'app.dart';
 import 'app_env.dart';
 import 'firebase_options.dart';
-import 'repository/ads_repository.dart';
+import 'repository/ads/ads_repository.dart';
 import 'util/analytics_manager.dart';
 import 'util/injection.dart';
 
