@@ -13,6 +13,8 @@ import '../common/menu_bar.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record_page/edit_record_page.dart';
+import '../home_page/home_page.dart';
+import '../home_page/record_list/record_list_view.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../save_image_page/save_image_page.dart';
 
@@ -385,6 +387,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       _isDeleting = true;
     });
     await _recordRepository.deleteExamRecord(_record);
+    HomePage.recordListViewEventStreamController
+        .add(RecordListViewEvent.refresh);
     if (mounted) Navigator.pop(context);
 
     await AnalyticsManager.logEvent(

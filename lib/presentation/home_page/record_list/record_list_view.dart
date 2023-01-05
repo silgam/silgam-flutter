@@ -239,7 +239,6 @@ class _RecordListViewState extends State<RecordListView> {
     final args = RecordDetailPageArguments(record: record);
     await Navigator.pushNamed(context, RecordDetailPage.routeName,
         arguments: args);
-    await cubit.refresh();
   }
 
   @override
