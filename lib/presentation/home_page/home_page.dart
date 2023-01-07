@@ -142,7 +142,5 @@ class _HomePageState extends State<HomePage> {
     final args = EditRecordPageArguments();
     await Navigator.pushNamed(context, EditRecordPage.routeName,
         arguments: args);
-    HomePage.recordListViewEventStreamController
-        .add(RecordListViewEvent.refresh);
   }
 }

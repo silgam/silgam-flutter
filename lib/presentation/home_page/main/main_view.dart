@@ -11,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../app.dart';
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
-import '../../../repository/ads_repository.dart';
+import '../../../repository/ads/ads_repository.dart';
 import '../../../repository/dday_repository.dart';
 import '../../../repository/exam_repository.dart';
 import '../../../repository/user_repository.dart';
