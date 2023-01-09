@@ -4,6 +4,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../model/product.dart';
 import '../../util/const.dart';
+import 'dto/verify-purchase.dto.dart';
 
 part 'product_api.g.dart';
 
@@ -15,4 +16,10 @@ abstract class ProductApi {
 
   @POST('$urlSilgamHosting/products.json')
   Future<List<Product>> getAllProducts();
+
+  @POST('/iap/verify')
+  Future<void> verifyPurchase(
+    @Header('Authorization') String bearerToken,
+    @Body() VerifyPurchaseRequestDto request,
+  );
 }
