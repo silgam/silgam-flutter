@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../model/exam_record.dart';
-import '../repository/user_repository.dart';
+import 'user/user_repository.dart';
 
 @lazySingleton
 class ExamRecordRepository {

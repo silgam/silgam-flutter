@@ -11,7 +11,7 @@ import 'package:wakelock/wakelock.dart';
 import '../../model/exam.dart';
 import '../../model/relative_time.dart';
 import '../../repository/noise_repository.dart';
-import '../../repository/user_repository.dart';
+import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';

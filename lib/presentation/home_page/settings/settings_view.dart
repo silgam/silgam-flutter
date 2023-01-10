@@ -8,7 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app.dart';
-import '../../../repository/user_repository.dart';
+import '../../../repository/user/user_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';

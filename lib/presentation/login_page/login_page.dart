@@ -15,7 +15,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repository/auth/auth_repository.dart';
-import '../../repository/user_repository.dart';
+import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';

@@ -14,7 +14,7 @@ import '../../../model/exam.dart';
 import '../../../repository/ads/ads_repository.dart';
 import '../../../repository/dday_repository.dart';
 import '../../../repository/exam_repository.dart';
-import '../../../repository/user_repository.dart';
+import '../../../repository/user/user_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
