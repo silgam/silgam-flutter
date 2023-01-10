@@ -35,7 +35,7 @@ class PurchaseCubit extends Cubit<PurchaseState> {
 
     final products = await _productRepository.getActiveProducts();
     final productDetailsResponse = await _iap.queryProductDetails(
-      products.map((e) => e.productId).toSet(),
+      products.map((e) => e.id).toSet(),
     );
     final productDetails = productDetailsResponse.productDetails;
 

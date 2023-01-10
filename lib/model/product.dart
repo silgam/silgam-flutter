@@ -6,7 +6,7 @@ part 'product.g.dart';
 @freezed
 class Product with _$Product {
   factory Product({
-    required final String productId,
+    required final String id,
     required final String title,
     required final DateTime expiryDate,
     required final DateTime sellingStartDate,
