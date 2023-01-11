@@ -20,7 +20,8 @@ class ProductRepository {
         .where((e) =>
             e.sellingStartDate.isBefore(today) &&
             e.sellingEndDate.isAfter(today) &&
-            e.minVersionNumber <= versionNumber)
+            e.minVersionNumber <= versionNumber &&
+            e.id != 'free')
         .toList();
   }
 
