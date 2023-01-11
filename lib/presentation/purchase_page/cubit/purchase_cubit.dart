@@ -7,18 +7,20 @@ import 'package:injectable/injectable.dart';
 
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
+import '../../app/cubit/app_cubit.dart';
 
 part 'purchase_cubit.freezed.dart';
 part 'purchase_state.dart';
 
 @injectable
 class PurchaseCubit extends Cubit<PurchaseState> {
-  PurchaseCubit(this._productRepository)
+  PurchaseCubit(this._productRepository, this._appCubit)
       : super(const PurchaseState.initial()) {
     _initialize();
   }
 
   final ProductRepository _productRepository;
+  final AppCubit _appCubit;
   final InAppPurchase _iap = InAppPurchase.instance;
 
   void _initialize() async {
@@ -81,5 +83,6 @@ class PurchaseCubit extends Cubit<PurchaseState> {
           purchaseDetails.verificationData.serverVerificationData,
     );
     await _iap.completePurchase(purchaseDetails);
+    await _appCubit.updateMe();
   }
 }

@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase show User;
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -23,8 +22,7 @@ class AppCubit extends Cubit<AppState> {
     emit(state.copyWith(me: me));
   }
 
-  Future<void> _initialize() async {
-    await updateMe();
+  void _initialize() {
     FirebaseAuth.instance.userChanges().listen((user) async {
       await updateMe();
     });
