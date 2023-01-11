@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../app.dart';
+import '../app/app.dart';
 
 class LoginButton extends StatelessWidget {
   final GestureTapCallback onTap;

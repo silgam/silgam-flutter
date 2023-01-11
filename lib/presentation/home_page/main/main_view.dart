@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../app.dart';
+import '../../app/app.dart';
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
 import '../../../repository/ads/ads_repository.dart';

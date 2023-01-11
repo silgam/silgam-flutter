@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../app.dart';
+import '../app/app.dart';
 import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';

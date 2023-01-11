@@ -7,11 +7,11 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../app.dart';
 import '../../../repository/user/user_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
+import '../../app/app.dart';
 import '../../common/ad_tile.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';

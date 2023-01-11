@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
-import 'app.dart';
 import 'app_env.dart';
 import 'firebase_options.dart';
+import 'presentation/app/app.dart';
 import 'repository/ads/ads_repository.dart';
 import 'util/analytics_manager.dart';
 import 'util/injection.dart';
