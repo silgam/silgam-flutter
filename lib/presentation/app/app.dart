@@ -2,9 +2,11 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '../../util/analytics_manager.dart';
+import '../../util/injection.dart';
 import '../clock_page/clock_page.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../home_page/home_page.dart';
@@ -14,6 +16,7 @@ import '../purchase_page/purchase_page.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../save_image_page/save_image_page.dart';
+import 'cubit/app_cubit.dart';
 
 const double cardCornerRadius = 14;
 
@@ -23,82 +26,86 @@ class SilgamApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     initialize();
-    return MaterialApp(
-      title: '실감',
-      initialRoute: HomePage.routeName,
-      routes: {
-        HomePage.routeName: (_) => const HomePage(),
-        LoginPage.routeName: (_) => const LoginPage(),
-        NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
-        PurchasePage.routeName: (_) => PurchasePage(),
-      },
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case ClockPage.routeName:
-            final args = settings.arguments as ClockPageArguments;
-            return MaterialPageRoute(
-              builder: (_) => ClockPage(exam: args.exam),
-              settings: settings,
-            );
-          case EditRecordPage.routeName:
-            final args = settings.arguments as EditRecordPageArguments;
-            return MaterialPageRoute(
-              builder: (_) => EditRecordPage(arguments: args),
-              settings: settings,
-            );
-          case RecordDetailPage.routeName:
-            final args = settings.arguments as RecordDetailPageArguments;
-            return PageRouteBuilder(
-              pageBuilder: (_, __, ___) => RecordDetailPage(arguments: args),
-              transitionsBuilder:
-                  (_, Animation<double> animation, __, Widget child) =>
-                      FadeTransition(opacity: animation, child: child),
-              settings: settings,
-            );
-          case ReviewProblemDetailPage.routeName:
-            final args = settings.arguments as ReviewProblemDetailPageArguments;
-            return MaterialPageRoute(
-              builder: (_) =>
-                  ReviewProblemDetailPage(reviewProblem: args.problem),
-              settings: settings,
-            );
-          case SaveImagePage.routeName:
-            final args = settings.arguments as SaveImagePageArguments;
-            return MaterialPageRoute(
-              builder: (_) => SaveImagePage(examRecord: args.recordToSave),
-              settings: settings,
-            );
-        }
-        return null;
-      },
-      theme: ThemeData(
-        primarySwatch: indigoSwatch,
-        fontFamily: 'NanumSquare',
-        sliderTheme: SliderTheme.of(context).copyWith(
-          trackHeight: 3,
-          trackShape: const RectangularSliderTrackShape(),
-          overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-          overlayColor: Colors.transparent,
-          thumbShape: SliderComponentShape.noThumb,
-          showValueIndicator: ShowValueIndicator.always,
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            textStyle: const TextStyle(
-              fontFamily: 'NanumSquare',
-              fontWeight: FontWeight.w700,
+    return BlocProvider(
+      create: (context) => getIt.get<AppCubit>(),
+      child: MaterialApp(
+        title: '실감',
+        initialRoute: HomePage.routeName,
+        routes: {
+          HomePage.routeName: (_) => const HomePage(),
+          LoginPage.routeName: (_) => const LoginPage(),
+          NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
+          PurchasePage.routeName: (_) => PurchasePage(),
+        },
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case ClockPage.routeName:
+              final args = settings.arguments as ClockPageArguments;
+              return MaterialPageRoute(
+                builder: (_) => ClockPage(exam: args.exam),
+                settings: settings,
+              );
+            case EditRecordPage.routeName:
+              final args = settings.arguments as EditRecordPageArguments;
+              return MaterialPageRoute(
+                builder: (_) => EditRecordPage(arguments: args),
+                settings: settings,
+              );
+            case RecordDetailPage.routeName:
+              final args = settings.arguments as RecordDetailPageArguments;
+              return PageRouteBuilder(
+                pageBuilder: (_, __, ___) => RecordDetailPage(arguments: args),
+                transitionsBuilder:
+                    (_, Animation<double> animation, __, Widget child) =>
+                        FadeTransition(opacity: animation, child: child),
+                settings: settings,
+              );
+            case ReviewProblemDetailPage.routeName:
+              final args =
+                  settings.arguments as ReviewProblemDetailPageArguments;
+              return MaterialPageRoute(
+                builder: (_) =>
+                    ReviewProblemDetailPage(reviewProblem: args.problem),
+                settings: settings,
+              );
+            case SaveImagePage.routeName:
+              final args = settings.arguments as SaveImagePageArguments;
+              return MaterialPageRoute(
+                builder: (_) => SaveImagePage(examRecord: args.recordToSave),
+                settings: settings,
+              );
+          }
+          return null;
+        },
+        theme: ThemeData(
+          primarySwatch: indigoSwatch,
+          fontFamily: 'NanumSquare',
+          sliderTheme: SliderTheme.of(context).copyWith(
+            trackHeight: 3,
+            trackShape: const RectangularSliderTrackShape(),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+            overlayColor: Colors.transparent,
+            thumbShape: SliderComponentShape.noThumb,
+            showValueIndicator: ShowValueIndicator.always,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              textStyle: const TextStyle(
+                fontFamily: 'NanumSquare',
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          physics: const BouncingScrollPhysics(),
+        ),
+        debugShowCheckedModeBanner: false,
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          AnalyticsRouteObserver(),
+        ],
       ),
-      scrollBehavior: const MaterialScrollBehavior().copyWith(
-        physics: const BouncingScrollPhysics(),
-      ),
-      debugShowCheckedModeBanner: false,
-      navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-        AnalyticsRouteObserver(),
-      ],
     );
   }
 

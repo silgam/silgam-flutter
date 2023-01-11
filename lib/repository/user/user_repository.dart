@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:injectable/injectable.dart';
 
@@ -10,10 +12,20 @@ class UserRepository {
 
   final UserApi _userApi;
 
-  Future<User> getMe() async {
+  Future<User?> getMe() async {
     final authToken =
         await firebase.FirebaseAuth.instance.currentUser?.getIdToken();
-    return _userApi.getMe('Bearer $authToken');
+    if (authToken == null) {
+      log('getMe() failed: firebase token is null', name: 'UserRepository');
+      return null;
+    }
+
+    try {
+      return _userApi.getMe('Bearer $authToken');
+    } catch (e) {
+      log('getMe() failed: $e', name: 'UserRepository');
+      return null;
+    }
   }
 
   firebase.User getUser() {
