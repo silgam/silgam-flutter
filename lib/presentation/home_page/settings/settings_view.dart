@@ -16,7 +16,7 @@ import '../../common/ad_tile.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
-import '../../purchase/purchase_page.dart';
+import '../../purchase_page/purchase_page.dart';
 import 'noise_setting_page.dart';
 import 'setting_tile.dart';
 

@@ -9,7 +9,7 @@ import 'presentation/edit_record_page/edit_record_page.dart';
 import 'presentation/home_page/home_page.dart';
 import 'presentation/home_page/settings/noise_setting_page.dart';
 import 'presentation/login_page/login_page.dart';
-import 'presentation/purchase/purchase_page.dart';
+import 'presentation/purchase_page/purchase_page.dart';
 import 'presentation/record_detail_page/record_detail_page.dart';
 import 'presentation/review_problem_detail_page/review_problem_detail_page.dart';
 import 'presentation/save_image_page/save_image_page.dart';
