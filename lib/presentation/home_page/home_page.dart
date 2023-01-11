@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../app/app.dart';
-import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
+import '../app/cubit/app_cubit.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';
@@ -45,23 +44,8 @@ class HomePage extends StatefulWidget {
 const _defaultPageIndex = 0;
 
 class _HomePageState extends State<HomePage> {
-  final UserRepository _userRepository = getIt.get();
-  final StreamController<SettingsViewEvent> _settingsViewEventStreamController =
-      StreamController.broadcast();
-
+  final AppCubit _appCubit = getIt.get();
   int _selectedIndex = _defaultPageIndex;
-  bool get _isNotSignedIn => _userRepository.isNotSignedIn();
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.userChanges().listen((_) {
-      HomePage.recordListViewEventStreamController
-          .add(RecordListViewEvent.refreshUser);
-      _settingsViewEventStreamController.add(SettingsViewEvent.refreshUser);
-      setState(() {});
-    });
-  }
 
   void _onItemTapped(int index) {
     AnalyticsManager.logEvent(
@@ -97,8 +81,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 MainView(navigateToRecordTab: () => _onItemTapped(1)),
                 const RecordListView(),
-                SettingsView(
-                    eventStream: _settingsViewEventStreamController.stream),
+                const SettingsView(),
               ],
             ),
           ),
@@ -112,21 +95,16 @@ class _HomePageState extends State<HomePage> {
             landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
             items: bottomNavBarItems,
           ),
-          floatingActionButton: _selectedIndex == 1 && !_isNotSignedIn
-              ? FloatingActionButton(
-                  onPressed: _onAddExamRecordButtonPressed,
-                  child: const Icon(Icons.add),
-                )
-              : null,
+          floatingActionButton:
+              _selectedIndex == 1 && _appCubit.state.isSignedIn
+                  ? FloatingActionButton(
+                      onPressed: _onAddExamRecordButtonPressed,
+                      child: const Icon(Icons.add),
+                    )
+                  : null,
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _settingsViewEventStreamController.close();
-    super.dispose();
   }
 
   Future<bool> _onBackButtonPressed() async {

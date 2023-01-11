@@ -6,12 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
 import '../../model/relative_time.dart';
 import '../../repository/noise_repository.dart';
-import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
@@ -43,8 +43,8 @@ class ClockPage extends StatefulWidget {
 }
 
 class _ClockPageState extends State<ClockPage> {
-  final UserRepository _userRepository = getIt.get();
   final SharedPreferences _sharedPreferences = getIt.get();
+  final AppCubit _appCubit = getIt.get();
 
   late final List<Breakpoint> _breakpoints;
   late int _currentBreakpointIndex = 0;
@@ -593,7 +593,7 @@ class _ClockPageState extends State<ClockPage> {
     const key = PreferenceKey.showAddRecordPageAfterExamFinished;
     final showAddRecordPageAfterExamFinished =
         _sharedPreferences.getBool(key) ?? true;
-    if (showAddRecordPageAfterExamFinished && _userRepository.isSignedIn()) {
+    if (showAddRecordPageAfterExamFinished && _appCubit.state.isSignedIn) {
       Navigator.pushNamed(
         context,
         EditRecordPage.routeName,

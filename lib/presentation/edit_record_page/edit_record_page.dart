@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 
 import '../../model/exam.dart';
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../model/subject.dart';
 import '../../repository/exam_record_repository.dart';
-import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../common/progress_overlay.dart';
@@ -33,8 +33,8 @@ class EditRecordPage extends StatefulWidget {
 }
 
 class _EditRecordPageState extends State<EditRecordPage> {
-  final UserRepository _userRepository = getIt.get();
   final ExamRecordRepository _recordRepository = getIt.get();
+  final AppCubit _appCubit = getIt.get();
 
   final TextEditingController _titleEditingController = TextEditingController();
   final TextEditingController _examDurationEditingController =
@@ -59,7 +59,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   void initState() {
-    if (_userRepository.isNotSignedIn()) {
+    if (_appCubit.state.isNotSignedIn) {
       Navigator.pop(context);
       return;
     }
@@ -542,7 +542,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
 
     final ExamRecord record = ExamRecord(
-      userId: _userRepository.getUser().uid,
+      userId: _appCubit.state.me!.id,
       title: _titleEditingController.text,
       subject: _selectedSubject,
       examStartedTime: _examStartedTime,
@@ -558,9 +558,16 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
       record.documentId = oldRecord.documentId;
-      await _recordRepository.updateExamRecord(oldRecord, record);
+      await _recordRepository.updateExamRecord(
+        userId: _appCubit.state.me!.id,
+        oldRecord: oldRecord,
+        newRecord: record,
+      );
     } else {
-      await _recordRepository.addExamRecord(record);
+      await _recordRepository.addExamRecord(
+        userId: _appCubit.state.me!.id,
+        record: record,
+      );
     }
 
     setState(() {

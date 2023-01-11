@@ -1,19 +1,14 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../model/exam_record.dart';
-import 'user/user_repository.dart';
 
 @lazySingleton
 class ExamRecordRepository {
-  ExamRecordRepository(this._userRepository);
-
-  final UserRepository _userRepository;
   final CollectionReference<ExamRecord> _recordsRef = FirebaseFirestore.instance
       .collection('exam_records')
       .withConverter(
@@ -23,10 +18,11 @@ class ExamRecordRepository {
   final Reference _problemImagesRef =
       FirebaseStorage.instance.ref('problem_images');
 
-  User get _user => _userRepository.getUser();
-
-  Future<DocumentReference<ExamRecord>> addExamRecord(ExamRecord record) async {
-    await _uploadProblemImages(record);
+  Future<DocumentReference<ExamRecord>> addExamRecord({
+    required String userId,
+    required ExamRecord record,
+  }) async {
+    await _uploadProblemImages(userId, record);
     return await _recordsRef.add(record);
   }
 
@@ -35,9 +31,9 @@ class ExamRecordRepository {
     return snapshot.toExamRecord();
   }
 
-  Future<List<ExamRecord>> getMyExamRecords() async {
+  Future<List<ExamRecord>> getMyExamRecords(String userId) async {
     final querySnapshot = await _recordsRef
-        .where('userId', isEqualTo: _user.uid)
+        .where('userId', isEqualTo: userId)
         .orderBy('examStartedTime', descending: true)
         .get();
     final examRecords =
@@ -45,8 +41,11 @@ class ExamRecordRepository {
     return examRecords;
   }
 
-  Future<void> updateExamRecord(
-      ExamRecord oldRecord, ExamRecord newRecord) async {
+  Future<void> updateExamRecord({
+    required String userId,
+    required ExamRecord oldRecord,
+    required ExamRecord newRecord,
+  }) async {
     List<String> oldImages = oldRecord.reviewProblems
         .expand((element) => element.imagePaths)
         .toList();
@@ -57,7 +56,7 @@ class ExamRecordRepository {
       final isImageRemoved = !newImages.contains(oldImage);
       if (isImageRemoved) await _deleteImage(oldImage);
     }
-    await _uploadProblemImages(newRecord);
+    await _uploadProblemImages(userId, newRecord);
     return await _recordsRef
         .doc(newRecord.documentId)
         .update(newRecord.toJson());
@@ -72,20 +71,20 @@ class ExamRecordRepository {
     return await _recordsRef.doc(examRecord.documentId).delete();
   }
 
-  Future<void> _uploadProblemImages(ExamRecord record) async {
+  Future<void> _uploadProblemImages(String userId, ExamRecord record) async {
     for (final reviewProblem in record.reviewProblems) {
       for (int i = 0; i < reviewProblem.imagePaths.length; i++) {
         if (reviewProblem.imagePaths[i].startsWith('http')) continue;
-        final imageUrl = await _uploadImage(reviewProblem.imagePaths[i]);
+        final imageUrl =
+            await _uploadImage(userId, reviewProblem.imagePaths[i]);
         reviewProblem.imagePaths[i] = imageUrl;
       }
     }
   }
 
-  Future<String> _uploadImage(String imagePath) async {
+  Future<String> _uploadImage(String userId, String imagePath) async {
     final File imageFile = File(imagePath);
-    final reference =
-        _problemImagesRef.child(_user.uid).child(const Uuid().v1());
+    final reference = _problemImagesRef.child(userId).child(const Uuid().v1());
     final TaskSnapshot snapshot = await reference.putFile(imageFile);
     final String url = await snapshot.ref.getDownloadURL();
     await imageFile.delete();

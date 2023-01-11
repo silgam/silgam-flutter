@@ -27,7 +27,7 @@ class RecordListView extends StatefulWidget {
 
 class _RecordListViewState extends State<RecordListView> {
   late final StreamSubscription _eventStreamSubscription;
-  final RecordListCubit cubit = getIt.get();
+  final RecordListCubit _cubit = getIt.get();
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _RecordListViewState extends State<RecordListView> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit..refresh(),
+      create: (context) => _cubit,
       child: BlocBuilder<RecordListCubit, RecordListState>(
         builder: (context, state) {
           return GestureDetector(
@@ -48,10 +48,10 @@ class _RecordListViewState extends State<RecordListView> {
             child: ScaffoldBody(
               title: RecordListView.title,
               isRefreshing: state.isLoading,
-              onRefresh: state.isSignedIn ? cubit.refresh : null,
+              onRefresh: state.isSignedIn ? _cubit.refresh : null,
               slivers: [
                 _buildQuerySection(state),
-                if (!state.isSignedIn) _buildLoginButton(),
+                if (state.isNotSignedIn) _buildLoginButton(),
                 if (state.isSignedIn) _buildListSection(state.records),
                 if (state.isSignedIn && state.records.isEmpty)
                   _buildDescription(),
@@ -85,7 +85,7 @@ class _RecordListViewState extends State<RecordListView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
-              onChanged: (value) => cubit.onSearchTextChanged(value),
+              onChanged: (value) => _cubit.onSearchTextChanged(value),
               cursorWidth: 1,
               cursorColor: Colors.grey.shade700,
               decoration: InputDecoration(
@@ -116,7 +116,7 @@ class _RecordListViewState extends State<RecordListView> {
                   ActionChip(
                     label: Icon(Icons.replay,
                         size: 16, color: Colors.grey.shade700),
-                    onPressed: cubit.onFilterResetButtonTapped,
+                    onPressed: _cubit.onFilterResetButtonTapped,
                     tooltip: '초기화',
                     pressElevation: 0,
                     backgroundColor: Colors.grey.shade700.withAlpha(10),
@@ -130,7 +130,7 @@ class _RecordListViewState extends State<RecordListView> {
                       state.sortType.name,
                       style: TextStyle(color: Colors.grey.shade700),
                     ),
-                    onPressed: cubit.onSortDateButtonTapped,
+                    onPressed: _cubit.onSortDateButtonTapped,
                     pressElevation: 0,
                     backgroundColor: Colors.grey.shade700.withAlpha(10),
                     side: BorderSide(color: Colors.grey.shade700, width: 0.4),
@@ -148,14 +148,13 @@ class _RecordListViewState extends State<RecordListView> {
             ),
           ),
           const SizedBox(height: 16),
-          if (state.isSignedIn)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                '${state.records.length}개 / ${state.originalRecords.length}개',
-                style: const TextStyle(color: Colors.grey),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              '${state.records.length}개 / ${state.originalRecords.length}개',
+              style: const TextStyle(color: Colors.grey),
             ),
+          ),
           const SizedBox(height: 4),
         ],
       ),
@@ -176,7 +175,7 @@ class _RecordListViewState extends State<RecordListView> {
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
             ),
           ),
-          onSelected: (value) => cubit.onSubjectFilterButtonTapped(subject),
+          onSelected: (value) => _cubit.onSubjectFilterButtonTapped(subject),
           selected: false,
           side: BorderSide(
             color: Color(subject.secondColor),
@@ -222,17 +221,17 @@ class _RecordListViewState extends State<RecordListView> {
   void _onEventReceived(RecordListViewEvent event) {
     switch (event) {
       case RecordListViewEvent.refresh:
-        cubit.refresh();
+        _cubit.refresh();
         break;
       case RecordListViewEvent.refreshUser:
-        cubit.refresh();
+        _cubit.refresh();
         break;
     }
   }
 
   void _onLoginTap() async {
     await Navigator.pushNamed(context, LoginPage.routeName);
-    await cubit.refresh();
+    await _cubit.refresh();
   }
 
   void _onTileTap(ExamRecord record) async {

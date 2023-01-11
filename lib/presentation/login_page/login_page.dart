@@ -12,10 +12,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repository/auth/auth_repository.dart';
-import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
@@ -32,8 +32,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final UserRepository _userRepository = getIt.get();
   final AuthRepository _authRepository = getIt.get();
+  final AppCubit _appCubit = getIt.get();
 
   bool _isProgressing = false;
 
@@ -186,16 +186,17 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {});
     try {
       await loginFunction();
-      if (_userRepository.isNotSignedIn()) throw Exception('Not signed in');
+      final me = _appCubit.state.me;
+      if (me == null) throw Exception('Not signed in');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('${_userRepository.getUser().displayName}님 반갑습니다!'),
+          content: Text('${me.displayName}님 반갑습니다!'),
         ));
         Navigator.pop(context);
       }
       await AnalyticsManager.logEvent(
         name: '[LoginPage] Login',
-        properties: {'user_id': _userRepository.getUser().uid},
+        properties: {'user_id': me.id},
       );
     } catch (e) {
       log(e.toString());

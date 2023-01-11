@@ -1,17 +1,16 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../repository/user/user_repository.dart';
+import '../../../model/user.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
-import '../../../util/injection.dart';
 import '../../app/app.dart';
+import '../../app/cubit/app_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
@@ -22,51 +21,39 @@ import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {
   static const title = '설정';
-  final Stream<SettingsViewEvent> eventStream;
-
-  const SettingsView({
-    Key? key,
-    required this.eventStream,
-  }) : super(key: key);
+  const SettingsView({Key? key}) : super(key: key);
 
   @override
   State<SettingsView> createState() => _SettingsViewState();
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  final UserRepository _userRepository = getIt.get();
-  late final StreamSubscription _eventStreamSubscription;
-  User? _user;
-
-  @override
-  void initState() {
-    super.initState();
-    _refreshUser();
-    _eventStreamSubscription = widget.eventStream.listen(_onEventReceived);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ScaffoldBody(
-      title: SettingsView.title,
-      slivers: [
-        SliverList(
-          delegate: SliverChildListDelegate(
-            _buildSettingTiles(),
-          ),
-        ),
-      ],
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, state) {
+        return ScaffoldBody(
+          title: SettingsView.title,
+          slivers: [
+            SliverList(
+              delegate: SliverChildListDelegate(
+                _buildSettingTiles(state),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  List<Widget> _buildSettingTiles() {
+  List<Widget> _buildSettingTiles(AppState appState) {
     return [
-      _user == null
-          ? Padding(
+      appState.isSignedIn
+          ? _buildLoginInfo(appState.me!)
+          : Padding(
               padding: const EdgeInsets.all(12),
               child: LoginButton(onTap: _onLoginTap),
-            )
-          : _buildLoginInfo(),
+            ),
       if (isAdsEnabled)
         AdTile(
           width: MediaQuery.of(context).size.width.truncate() - 32,
@@ -121,19 +108,19 @@ class _SettingsViewState extends State<SettingsView> {
         description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
       ),
       const _Divider(),
-      if (_user != null)
+      if (appState.isSignedIn)
         SettingTile(
           onTap: _onLogoutTap,
           title: '로그아웃',
         ),
-      if (_user != null) const _Divider(),
-      if (_user != null)
+      if (appState.isSignedIn) const _Divider(),
+      if (appState.isSignedIn)
         SettingTile(
           onTap: () => _onDeleteAccountTap(), // 유저 삭제, 로그아웃
           title: '계정 탈퇴',
           titleColor: Colors.red,
         ),
-      if (_user != null) const _Divider(),
+      if (appState.isSignedIn) const _Divider(),
       FutureBuilder(
         future: PackageInfo.fromPlatform(),
         builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
@@ -153,9 +140,7 @@ class _SettingsViewState extends State<SettingsView> {
     ];
   }
 
-  Widget _buildLoginInfo() {
-    final User? user = _user;
-    if (user == null) throw Exception('User is null.');
+  Widget _buildLoginInfo(User user) {
     final String providerIconPath = getProviderIconPath(user);
 
     return GestureDetector(
@@ -172,7 +157,7 @@ class _SettingsViewState extends State<SettingsView> {
             children: [
               CircleAvatar(
                 backgroundImage: NetworkImage(
-                    user.photoURL ?? 'https://via.placeholder.com/150?text=ㅇ'),
+                    user.photoUrl ?? 'https://via.placeholder.com/150?text=ㅇ'),
                 backgroundColor: Colors.grey,
                 onBackgroundImageError: (exception, stackTrace) {},
               ),
@@ -214,23 +199,8 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
-  void _refreshUser() {
-    setState(() {
-      _user = _userRepository.getUserOrNull();
-    });
-  }
-
-  void _onEventReceived(SettingsViewEvent event) {
-    switch (event) {
-      case SettingsViewEvent.refreshUser:
-        _refreshUser();
-        break;
-    }
-  }
-
   void _onLoginTap() async {
     await Navigator.pushNamed(context, LoginPage.routeName);
-    _refreshUser();
   }
 
   void _onLoginLongPress(User user) {
@@ -238,7 +208,7 @@ class _SettingsViewState extends State<SettingsView> {
       context: context,
       routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
       builder: (_) => AlertDialog(
-        content: SelectableText(user.uid),
+        content: SelectableText(user.id),
       ),
     );
   }
@@ -266,7 +236,6 @@ class _SettingsViewState extends State<SettingsView> {
           TextButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              _refreshUser();
               if (mounted) Navigator.pop(context);
               await AnalyticsManager.logEvent(
                   name: '[HomePage-settings] Logout');
@@ -315,7 +284,6 @@ class _SettingsViewState extends State<SettingsView> {
                   }
                 }
               }
-              _refreshUser();
               if (mounted) Navigator.pop(context);
               await AnalyticsManager.logEvent(
                   name: '[HomePage-settings] Delete account');
@@ -341,17 +309,11 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
-  @override
-  void dispose() {
-    _eventStreamSubscription.cancel();
-    super.dispose();
-  }
-
   String getProviderIconPath(User user) {
     String providerId = '';
-    if (user.providerData.isNotEmpty) {
-      providerId = user.providerData.first.providerId;
-    } else if (user.uid.startsWith('kakao')) {
+    if (user.providerDatas.isNotEmpty) {
+      providerId = user.providerDatas.first.providerId;
+    } else if (user.id.startsWith('kakao')) {
       providerId = 'kakao.com';
     }
     String providerIconPath = '';
@@ -392,8 +354,4 @@ class _Divider extends StatelessWidget {
       endIndent: indent,
     );
   }
-}
-
-enum SettingsViewEvent {
-  refreshUser,
 }

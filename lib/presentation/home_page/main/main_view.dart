@@ -3,21 +3,22 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../app/app.dart';
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
 import '../../../repository/ads/ads_repository.dart';
 import '../../../repository/dday_repository.dart';
 import '../../../repository/exam_repository.dart';
-import '../../../repository/user/user_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
+import '../../app/app.dart';
 import '../../clock_page/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../edit_record_page/edit_record_page.dart';
@@ -49,7 +50,6 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   final DDayRepository _dDayRepository = getIt.get();
   final AdsRepository _adsRepository = getIt.get();
-  final UserRepository _userRepository = getIt.get();
   final DateTime today = DateTime.now();
   late final List<DDayItem> dDayItems = _dDayRepository.getItemsToShow(today);
 
@@ -92,13 +92,20 @@ class _MainViewState extends State<MainView> {
               ),
               if (dDayItems.isNotEmpty) _DDaysCard(dDayItems: dDayItems),
               _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
-              if (_userRepository.isNotSignedIn())
-                _ButtonCard(
-                  onTap: _onLoginButtonTap,
-                  iconData: Icons.login,
-                  title: '간편로그인하고 더 많은 기능 이용하기',
-                  primary: true,
-                ),
+              BlocBuilder<AppCubit, AppState>(
+                builder: (context, state) {
+                  if (state.isNotSignedIn) {
+                    return _ButtonCard(
+                      onTap: _onLoginButtonTap,
+                      iconData: Icons.login,
+                      title: '간편로그인하고 더 많은 기능 이용하기',
+                      primary: true,
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
               _ButtonCard(
                 onTap: _onNoiseSettingButtonTap,
                 iconData: Icons.graphic_eq,
@@ -219,7 +226,8 @@ class _MainViewState extends State<MainView> {
   }
 
   void _onRecordButtonTap() async {
-    if (_userRepository.isSignedIn()) {
+    final isSignedIn = context.read<AppCubit>().state.isSignedIn;
+    if (isSignedIn) {
       await Navigator.pushNamed(
         context,
         EditRecordPage.routeName,
