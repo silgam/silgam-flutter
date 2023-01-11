@@ -56,6 +56,7 @@ class PurchaseCubit extends Cubit<PurchaseState> {
     for (final purchaseDetails in purchaseDetailsList) {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
+          _onPurchased(purchaseDetails);
           log('[PurchaseCubit] status.pending: ${purchaseDetails.verificationData.serverVerificationData}');
           break;
         case PurchaseStatus.purchased:
@@ -69,6 +70,7 @@ class PurchaseCubit extends Cubit<PurchaseState> {
           log('[PurchaseCubit] status.canceled');
           break;
         case PurchaseStatus.restored:
+          _onPurchased(purchaseDetails);
           log('[PurchaseCubit] status.restored: ${purchaseDetails.verificationData.serverVerificationData}');
           break;
       }
