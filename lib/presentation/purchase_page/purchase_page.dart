@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../util/injection.dart';
 import '../common/menu_bar.dart';
@@ -11,7 +10,6 @@ class PurchasePage extends StatelessWidget {
 
   static const routeName = '/purchase';
   final PurchaseCubit _cubit = getIt.get();
-  final InAppPurchase _iap = InAppPurchase.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +29,7 @@ class PurchasePage extends StatelessWidget {
                   children: [
                     const MenuBar(title: 'Purchase Page'),
                     TextButton(
-                      onPressed: () => _onPurchaseButtonPressed(productDetails),
+                      onPressed: () => _cubit.purchaseProduct(productDetails),
                       child: const Text('test'),
                     )
                   ],
@@ -44,12 +42,6 @@ class PurchasePage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Future<void> _onPurchaseButtonPressed(ProductDetails productDetails) async {
-    await _iap.buyConsumable(
-      purchaseParam: PurchaseParam(productDetails: productDetails),
     );
   }
 

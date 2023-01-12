@@ -23,6 +23,15 @@ class PurchaseCubit extends Cubit<PurchaseState> {
   final AppCubit _appCubit;
   final InAppPurchase _iap = InAppPurchase.instance;
 
+  Future<void> purchaseProduct(ProductDetails productDetails) async {
+    await _iap.buyConsumable(
+      purchaseParam: PurchaseParam(
+        productDetails: productDetails,
+        applicationUserName: _appCubit.state.me!.id,
+      ),
+    );
+  }
+
   void _initialize() async {
     final isStoreAvailable = await _iap.isAvailable();
     if (!isStoreAvailable) {
