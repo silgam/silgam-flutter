@@ -7,7 +7,7 @@ part 'product.g.dart';
 class Product with _$Product {
   factory Product({
     required final String id,
-    required final String title,
+    required final String name,
     required final DateTime expiryDate,
     required final DateTime sellingStartDate,
     required final DateTime sellingEndDate,
