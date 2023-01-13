@@ -17,7 +17,7 @@ abstract class ProductApi {
   @POST('$urlSilgamHosting/products.json')
   Future<List<Product>> getAllProducts();
 
-  @POST('/iap/verify')
+  @POST('/iap/on-purchase')
   Future<void> verifyPurchase(
     @Header('Authorization') String bearerToken,
     @Body() VerifyPurchaseRequestDto request,
