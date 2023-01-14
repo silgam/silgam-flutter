@@ -27,9 +27,8 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       await loginFunction();
     } catch (e) {
-      log(e.toString(), name: 'LoginCubit');
-    } finally {
       emit(state.copyWith(isProgressing: false));
+      log(e.toString(), name: 'LoginCubit');
     }
   }
 
@@ -48,7 +47,10 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> loginGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return;
+    if (googleUser == null) {
+      emit(state.copyWith(isProgressing: false));
+      return;
+    }
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     final OAuthCredential credential = GoogleAuthProvider.credential(
@@ -61,7 +63,11 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> loginFacebook() async {
     final LoginResult loginResult = await FacebookAuth.instance.login();
     final AccessToken? accessToken = loginResult.accessToken;
-    if (accessToken == null) return;
+    if (loginResult.status != LoginStatus.success || accessToken == null) {
+      emit(state.copyWith(isProgressing: false));
+      return;
+    }
+
     final OAuthCredential facebookAuthCredential =
         FacebookAuthProvider.credential(accessToken.token);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
