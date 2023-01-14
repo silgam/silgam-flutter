@@ -29,9 +29,13 @@ class PurchasePage extends StatelessWidget {
                   children: [
                     const MenuBar(title: 'Purchase Page'),
                     TextButton(
+                      onPressed: () => _cubit.startFreeTrial(product),
+                      child: Text('${product.name} 체험하기'),
+                    ),
+                    TextButton(
                       onPressed: () => _cubit.purchaseProduct(productDetails),
-                      child: const Text('test'),
-                    )
+                      child: Text('${product.name} 구매하기'),
+                    ),
                   ],
                 );
               },

@@ -23,6 +23,11 @@ class PurchaseCubit extends Cubit<PurchaseState> {
   final AppCubit _appCubit;
   final InAppPurchase _iap = InAppPurchase.instance;
 
+  Future<void> startFreeTrial(Product product) async {
+    await _productRepository.startTrial(productId: product.id);
+    _appCubit.updateMe();
+  }
+
   Future<void> purchaseProduct(ProductDetails productDetails) async {
     await _iap.buyConsumable(
       purchaseParam: PurchaseParam(

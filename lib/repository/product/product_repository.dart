@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../model/product.dart';
 import 'dto/on_purchase_request.dto.dart';
+import 'dto/start-trial-request.dto.dart';
 import 'product_api.dart';
 
 @lazySingleton
@@ -37,6 +38,16 @@ class ProductRepository {
       verificationToken: verificationToken,
     );
     await _productApi.onPurchase('Bearer $authToken', request);
+  }
+
+  Future<void> startTrial({
+    required String productId,
+  }) async {
+    final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+    final request = StartTrialRequestDto(
+      productId: productId,
+    );
+    await _productApi.startTrial('Bearer $authToken', request);
   }
 
   Future<int> _getVersionNumber() async {

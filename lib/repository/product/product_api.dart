@@ -5,6 +5,7 @@ import 'package:retrofit/retrofit.dart';
 import '../../model/product.dart';
 import '../../util/const.dart';
 import 'dto/on_purchase_request.dto.dart';
+import 'dto/start-trial-request.dto.dart';
 
 part 'product_api.g.dart';
 
@@ -21,5 +22,11 @@ abstract class ProductApi {
   Future<void> onPurchase(
     @Header('Authorization') String bearerToken,
     @Body() OnPurchaseRequestDto request,
+  );
+
+  @POST('/iap/start-trial')
+  Future<void> startTrial(
+    @Header('Authorization') String bearerToken,
+    @Body() StartTrialRequestDto request,
   );
 }
