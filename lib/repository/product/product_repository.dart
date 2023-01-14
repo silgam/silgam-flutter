@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../model/product.dart';
-import 'dto/verify-purchase.dto.dart';
+import 'dto/on_purchase_request.dto.dart';
 import 'product_api.dart';
 
 @lazySingleton
@@ -31,7 +31,7 @@ class ProductRepository {
     required String verificationToken,
   }) async {
     final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-    final request = VerifyPurchaseRequestDto(
+    final request = OnPurchaseRequestDto(
       productId: productId,
       store: store,
       verificationToken: verificationToken,

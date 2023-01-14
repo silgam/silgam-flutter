@@ -4,7 +4,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../model/product.dart';
 import '../../util/const.dart';
-import 'dto/verify-purchase.dto.dart';
+import 'dto/on_purchase_request.dto.dart';
 
 part 'product_api.g.dart';
 
@@ -20,6 +20,6 @@ abstract class ProductApi {
   @POST('/iap/on-purchase')
   Future<void> onPurchase(
     @Header('Authorization') String bearerToken,
-    @Body() VerifyPurchaseRequestDto request,
+    @Body() OnPurchaseRequestDto request,
   );
 }
