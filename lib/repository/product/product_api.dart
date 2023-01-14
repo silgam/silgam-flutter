@@ -18,7 +18,7 @@ abstract class ProductApi {
   Future<List<Product>> getAllProducts();
 
   @POST('/iap/on-purchase')
-  Future<void> verifyPurchase(
+  Future<void> onPurchase(
     @Header('Authorization') String bearerToken,
     @Body() VerifyPurchaseRequestDto request,
   );

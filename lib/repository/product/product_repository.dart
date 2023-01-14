@@ -25,7 +25,7 @@ class ProductRepository {
         .toList();
   }
 
-  Future<void> verifyPurchase({
+  Future<void> onPurchase({
     required String productId,
     required String store,
     required String verificationToken,
@@ -36,7 +36,7 @@ class ProductRepository {
       store: store,
       verificationToken: verificationToken,
     );
-    await _productApi.verifyPurchase('Bearer $authToken', request);
+    await _productApi.onPurchase('Bearer $authToken', request);
   }
 
   Future<int> _getVersionNumber() async {

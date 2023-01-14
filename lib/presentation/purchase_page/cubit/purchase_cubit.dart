@@ -87,7 +87,7 @@ class PurchaseCubit extends Cubit<PurchaseState> {
   }
 
   Future<void> _onPurchased(PurchaseDetails purchaseDetails) async {
-    await _productRepository.verifyPurchase(
+    await _productRepository.onPurchase(
       productId: purchaseDetails.productID,
       store: purchaseDetails.verificationData.source,
       verificationToken:
