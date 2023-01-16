@@ -10,7 +10,7 @@ import 'app_env.dart';
 import 'firebase_options.dart';
 import 'presentation/app/app.dart';
 import 'presentation/app/cubit/app_cubit.dart';
-import 'presentation/purchase_page/cubit/purchase_cubit.dart';
+import 'presentation/app/cubit/iap_cubit.dart';
 import 'repository/ads/ads_repository.dart';
 import 'util/analytics_manager.dart';
 import 'util/injection.dart';
@@ -31,7 +31,7 @@ void main() async {
 
 Future<void> initializeFirebae() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  getIt.get<PurchaseCubit>().initialize();
+  getIt.get<IapCubit>().initialize();
 
   await Future.wait([
     AnalyticsManager.init(),

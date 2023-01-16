@@ -11,6 +11,7 @@ import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../../app/cubit/iap_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
@@ -60,14 +61,29 @@ class _SettingsViewState extends State<SettingsView> {
           margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
         ),
       const _Divider(),
-      SettingTile(
-        onTap: () {
-          Navigator.pushNamed(context, PurchasePage.routeName);
-        },
-        title: '실감패스',
-        description: '실감패스',
+      BlocBuilder<IapCubit, IapState>(
+        builder: (context, state) => state.maybeWhen(
+          loaded: ((products, productDetails) {
+            final children = <Widget>[];
+            for (final productDetail in productDetails) {
+              final product = products
+                  .firstWhere((product) => product.id == productDetail.id);
+              children.add(SettingTile(
+                onTap: () {
+                  Navigator.pushNamed(context, PurchasePage.routeName,
+                      arguments: PurchasePageArguments(
+                          product: product, productDetail: productDetail));
+                },
+                title: productDetail.title,
+                description: productDetail.description,
+              ));
+              children.add(const _Divider());
+            }
+            return Column(children: children);
+          }),
+          orElse: () => const SizedBox.shrink(),
+        ),
       ),
-      const _Divider(),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',

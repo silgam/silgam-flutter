@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../../model/product.dart';
+import '../../util/injection.dart';
+import '../app/cubit/iap_cubit.dart';
 import '../common/menu_bar.dart';
 import 'cubit/purchase_cubit.dart';
 
 class PurchasePage extends StatefulWidget {
-  const PurchasePage({super.key});
+  const PurchasePage({
+    super.key,
+    required this.product,
+    required this.productDetail,
+  });
 
   static const routeName = '/purchase';
+  final Product product;
+  final ProductDetails productDetail;
 
   @override
   State<PurchasePage> createState() => _PurchasePageState();
 }
 
 class _PurchasePageState extends State<PurchasePage> {
-  late final PurchaseCubit _cubit;
+  late final IapCubit _iapCubit;
 
   @override
   void initState() {
     super.initState();
-    _cubit = context.read<PurchaseCubit>();
+    _iapCubit = context.read<IapCubit>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.state.whenOrNull(
+      _iapCubit.state.whenOrNull(
         storeUnavailable: () => _onStoreUnavailable(context),
       );
     });
@@ -31,30 +41,24 @@ class _PurchasePageState extends State<PurchasePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocConsumer<PurchaseCubit, PurchaseState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              storeUnavailable: () => _onStoreUnavailable(context),
-            );
-          },
-          builder: (context, state) => state.maybeWhen(
-            loaded: (product, productDetails) {
+        child: BlocProvider(
+          create: (context) => getIt.get<PurchaseCubit>(),
+          child: BlocBuilder<PurchaseCubit, PurchaseState>(
+            builder: (context, state) {
               return Column(
                 children: [
                   const MenuBar(title: 'Purchase Page'),
                   TextButton(
-                    onPressed: () => _cubit.startFreeTrial(product),
-                    child: Text('${product.name} 체험하기'),
+                    onPressed: () => _iapCubit.startFreeTrial(widget.product),
+                    child: Text('${widget.product.name} 체험하기'),
                   ),
                   TextButton(
-                    onPressed: () => _cubit.purchaseProduct(productDetails),
-                    child: Text('${product.name} 구매하기'),
+                    onPressed: () =>
+                        _iapCubit.purchaseProduct(widget.productDetail),
+                    child: Text('${widget.product.name} 구매하기'),
                   ),
                 ],
               );
-            },
-            orElse: () {
-              return const SizedBox.shrink();
             },
           ),
         ),
@@ -72,4 +76,14 @@ class _PurchasePageState extends State<PurchasePage> {
     );
     Navigator.of(context).pop();
   }
+}
+
+class PurchasePageArguments {
+  const PurchasePageArguments({
+    required this.product,
+    required this.productDetail,
+  });
+
+  final Product product;
+  final ProductDetails productDetail;
 }
