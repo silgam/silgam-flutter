@@ -14,6 +14,7 @@ class User with _$User {
     String? email,
     String? photoUrl,
     @Default([]) List<ProviderData> providerDatas,
+    @Default([]) List<String> fcmTokens,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

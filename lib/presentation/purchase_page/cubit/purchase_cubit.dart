@@ -63,7 +63,7 @@ class PurchaseCubit extends Cubit<PurchaseState> {
 
   Future<void> startFreeTrial(Product product) async {
     await _productRepository.startTrial(productId: product.id);
-    _appCubit.updateMe();
+    _appCubit.onUserChange();
   }
 
   Future<void> purchaseProduct(ProductDetails productDetails) async {
@@ -120,7 +120,7 @@ class PurchaseCubit extends Cubit<PurchaseState> {
           purchaseDetails.verificationData.serverVerificationData,
     );
     await _iap.completePurchase(purchaseDetails);
-    await _appCubit.updateMe();
+    await _appCubit.onUserChange();
   }
 
   @override
