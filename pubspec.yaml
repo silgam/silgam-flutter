@@ -59,6 +59,7 @@ dependencies:
   get_it: ^7.2.0
   retrofit: ^3.3.1
   pretty_dio_logger: ^1.2.0-beta-1
+  in_app_purchase_storekit: ^0.3.4+1
 
 dev_dependencies:
   flutter_test:
