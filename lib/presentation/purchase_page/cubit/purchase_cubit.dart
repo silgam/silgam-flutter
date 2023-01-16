@@ -18,30 +18,14 @@ part 'purchase_state.dart';
 @lazySingleton
 class PurchaseCubit extends Cubit<PurchaseState> {
   PurchaseCubit(this._productRepository, this._appCubit)
-      : super(const PurchaseState.initial()) {
-    _initialize();
-  }
+      : super(const PurchaseState.initial());
 
   final ProductRepository _productRepository;
   final AppCubit _appCubit;
   final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription? _purchaseStream;
 
-  Future<void> startFreeTrial(Product product) async {
-    await _productRepository.startTrial(productId: product.id);
-    _appCubit.updateMe();
-  }
-
-  Future<void> purchaseProduct(ProductDetails productDetails) async {
-    await _iap.buyConsumable(
-      purchaseParam: PurchaseParam(
-        productDetails: productDetails,
-        applicationUserName: _appCubit.state.me!.id,
-      ),
-    );
-  }
-
-  void _initialize() async {
+  Future<void> initialize() async {
     final isStoreAvailable = await _iap.isAvailable();
     if (!isStoreAvailable) {
       emit(const PurchaseState.storeUnavailable());
@@ -75,6 +59,20 @@ class PurchaseCubit extends Cubit<PurchaseState> {
       product: products[0],
       productDetails: productDetails[0],
     ));
+  }
+
+  Future<void> startFreeTrial(Product product) async {
+    await _productRepository.startTrial(productId: product.id);
+    _appCubit.updateMe();
+  }
+
+  Future<void> purchaseProduct(ProductDetails productDetails) async {
+    await _iap.buyConsumable(
+      purchaseParam: PurchaseParam(
+        productDetails: productDetails,
+        applicationUserName: _appCubit.state.me!.id,
+      ),
+    );
   }
 
   void _onPurchaseStreamData(List<PurchaseDetails> purchaseDetailsList) {

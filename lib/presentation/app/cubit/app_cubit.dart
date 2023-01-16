@@ -11,20 +11,19 @@ part 'app_state.dart';
 
 @lazySingleton
 class AppCubit extends Cubit<AppState> {
-  AppCubit(this._userRepository) : super(const AppState()) {
-    _initialize();
-  }
+  AppCubit(this._userRepository) : super(const AppState());
 
   final UserRepository _userRepository;
+
+  Future<void> initialize() async {
+    await updateMe();
+    FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
+      await updateMe();
+    });
+  }
 
   Future<void> updateMe() async {
     final me = await _userRepository.getMe();
     emit(state.copyWith(me: me));
-  }
-
-  void _initialize() {
-    FirebaseAuth.instance.userChanges().listen((user) async {
-      await updateMe();
-    });
   }
 }
