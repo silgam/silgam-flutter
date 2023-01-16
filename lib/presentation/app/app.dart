@@ -12,6 +12,7 @@ import '../edit_record_page/edit_record_page.dart';
 import '../home_page/home_page.dart';
 import '../home_page/settings/noise_setting_page.dart';
 import '../login_page/login_page.dart';
+import '../purchase_page/cubit/purchase_cubit.dart';
 import '../purchase_page/purchase_page.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
@@ -26,8 +27,15 @@ class SilgamApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     initialize();
-    return BlocProvider(
-      create: (context) => getIt.get<AppCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt.get<AppCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => getIt.get<PurchaseCubit>(),
+        ),
+      ],
       child: MaterialApp(
         title: '실감',
         initialRoute: HomePage.routeName,
@@ -35,7 +43,7 @@ class SilgamApp extends StatelessWidget {
           HomePage.routeName: (_) => const HomePage(),
           LoginPage.routeName: (_) => const LoginPage(),
           NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
-          PurchasePage.routeName: (_) => PurchasePage(),
+          PurchasePage.routeName: (_) => const PurchasePage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
