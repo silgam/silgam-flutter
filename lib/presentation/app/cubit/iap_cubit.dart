@@ -26,15 +26,22 @@ class IapCubit extends Cubit<IapState> {
   StreamSubscription? _purchaseStream;
 
   Future<void> initialize() async {
+    emit(state.copyWith(isLoading: true));
     final isStoreAvailable = await _iap.isAvailable();
     if (!isStoreAvailable) {
-      emit(const IapState.storeUnavailable());
+      emit(const IapState.storeUnavailable(isLoading: false));
       return;
     }
     _purchaseStream = _iap.purchaseStream.listen(
       _onPurchaseStreamData,
-      onError: (error) => log('[PurchaseCubit] onError: $error'),
-      onDone: () => log('[PurchaseCubit] onDone'),
+      onError: (error) {
+        log('[PurchaseCubit] onError: $error');
+        emit(state.copyWith(isLoading: false));
+      },
+      onDone: () {
+        log('[PurchaseCubit] onDone');
+        emit(state.copyWith(isLoading: false));
+      },
     );
 
     final products = await _productRepository.getActiveProducts();
@@ -44,7 +51,7 @@ class IapCubit extends Cubit<IapState> {
     final productDetails = productDetailsResponse.productDetails;
 
     if (productDetails.isEmpty) {
-      emit(const IapState.storeUnavailable());
+      emit(const IapState.storeUnavailable(isLoading: false));
       return;
     }
 
@@ -58,15 +65,19 @@ class IapCubit extends Cubit<IapState> {
     emit(IapState.loaded(
       products: products,
       productDetails: productDetails,
+      isLoading: false,
     ));
   }
 
   Future<void> startFreeTrial(Product product) async {
+    emit(state.copyWith(isLoading: true));
     await _productRepository.startTrial(productId: product.id);
-    _appCubit.onUserChange();
+    await _appCubit.onUserChange();
+    emit(state.copyWith(isLoading: false));
   }
 
   Future<void> purchaseProduct(ProductDetails productDetails) async {
+    emit(state.copyWith(isLoading: true));
     await _iap.buyConsumable(
       purchaseParam: PurchaseParam(
         productDetails: productDetails,
@@ -75,41 +86,43 @@ class IapCubit extends Cubit<IapState> {
     );
   }
 
-  void _onPurchaseStreamData(List<PurchaseDetails> purchaseDetailsList) {
+  Future<void> _onPurchaseStreamData(
+      List<PurchaseDetails> purchaseDetailsList) async {
     for (final purchaseDetails in purchaseDetailsList) {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
-          if (purchaseDetails.pendingCompletePurchase) {
-            _onPurchased(purchaseDetails);
-          }
           log('[PurchaseCubit] status.pending: ${purchaseDetails.verificationData.serverVerificationData}');
+          if (purchaseDetails.pendingCompletePurchase) {
+            await _onPurchased(purchaseDetails);
+          }
           break;
         case PurchaseStatus.purchased:
           log('[PurchaseCubit] status.purchased: ${purchaseDetails.verificationData.serverVerificationData}');
           if (purchaseDetails.pendingCompletePurchase) {
-            _onPurchased(purchaseDetails);
+            await _onPurchased(purchaseDetails);
           }
           break;
         case PurchaseStatus.error:
-          if (Platform.isIOS) {
-            _iap.completePurchase(purchaseDetails);
-          }
           log('[PurchaseCubit] status.error: ${purchaseDetails.error}');
+          if (Platform.isIOS) {
+            await _iap.completePurchase(purchaseDetails);
+          }
           break;
         case PurchaseStatus.canceled:
-          if (Platform.isIOS) {
-            _iap.completePurchase(purchaseDetails);
-          }
           log('[PurchaseCubit] status.canceled');
+          if (Platform.isIOS) {
+            await _iap.completePurchase(purchaseDetails);
+          }
           break;
         case PurchaseStatus.restored:
-          if (purchaseDetails.pendingCompletePurchase) {
-            _onPurchased(purchaseDetails);
-          }
           log('[PurchaseCubit] status.restored: ${purchaseDetails.verificationData.serverVerificationData}');
+          if (purchaseDetails.pendingCompletePurchase) {
+            await _onPurchased(purchaseDetails);
+          }
           break;
       }
     }
+    emit(state.copyWith(isLoading: false));
   }
 
   Future<void> _onPurchased(PurchaseDetails purchaseDetails) async {

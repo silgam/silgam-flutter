@@ -62,11 +62,11 @@ class _SettingsViewState extends State<SettingsView> {
         ),
       const _Divider(),
       BlocBuilder<IapCubit, IapState>(
-        builder: (context, state) => state.maybeWhen(
-          loaded: ((products, productDetails) {
+        builder: (context, state) => state.maybeMap(
+          loaded: (state) {
             final children = <Widget>[];
-            for (final productDetail in productDetails) {
-              final product = products
+            for (final productDetail in state.productDetails) {
+              final product = state.products
                   .firstWhere((product) => product.id == productDetail.id);
               children.add(SettingTile(
                 onTap: () {
@@ -80,7 +80,7 @@ class _SettingsViewState extends State<SettingsView> {
               children.add(const _Divider());
             }
             return Column(children: children);
-          }),
+          },
           orElse: () => const SizedBox.shrink(),
         ),
       ),

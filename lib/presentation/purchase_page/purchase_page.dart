@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../model/product.dart';
@@ -29,8 +30,8 @@ class _PurchasePageState extends State<PurchasePage> {
     super.initState();
     _iapCubit = context.read<IapCubit>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _iapCubit.state.whenOrNull(
-        storeUnavailable: () => _onStoreUnavailable(context),
+      _iapCubit.state.mapOrNull(
+        storeUnavailable: (_) => _onStoreUnavailable(context),
       );
     });
   }
@@ -39,18 +40,28 @@ class _PurchasePageState extends State<PurchasePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            const MenuBar(title: 'Purchase Page'),
-            TextButton(
-              onPressed: () => _iapCubit.startFreeTrial(widget.product),
-              child: Text('${widget.product.name} 체험하기'),
-            ),
-            TextButton(
-              onPressed: () => _iapCubit.purchaseProduct(widget.productDetail),
-              child: Text('${widget.product.name} 구매하기'),
-            ),
-          ],
+        child: BlocListener<IapCubit, IapState>(
+          listener: (context, state) {
+            if (state.isLoading) {
+              EasyLoading.show();
+            } else {
+              EasyLoading.dismiss();
+            }
+          },
+          child: Column(
+            children: [
+              const MenuBar(title: 'Purchase Page'),
+              TextButton(
+                onPressed: () => _iapCubit.startFreeTrial(widget.product),
+                child: Text('${widget.product.name} 체험하기'),
+              ),
+              TextButton(
+                onPressed: () =>
+                    _iapCubit.purchaseProduct(widget.productDetail),
+                child: Text('${widget.product.name} 구매하기'),
+              ),
+            ],
+          ),
         ),
       ),
     );

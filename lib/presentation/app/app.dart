@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '../../util/analytics_manager.dart';
@@ -121,6 +122,7 @@ class SilgamApp extends StatelessWidget {
           FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
           AnalyticsRouteObserver(),
         ],
+        builder: EasyLoading.init(),
       ),
     );
   }
@@ -128,6 +130,16 @@ class SilgamApp extends StatelessWidget {
   void initialize() {
     FirebaseMessaging.instance.requestPermission();
     initializeDateFormatting('ko_KR');
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.custom
+      ..maskColor = Colors.white.withAlpha(120)
+      ..loadingStyle = EasyLoadingStyle.custom
+      ..indicatorType = EasyLoadingIndicatorType.ring
+      ..indicatorColor = const Color(_indigoPrimaryValue)
+      ..textColor = Colors.black
+      ..backgroundColor = Colors.transparent
+      ..boxShadow = const []
+      ..lineWidth = 3;
   }
 }
 
