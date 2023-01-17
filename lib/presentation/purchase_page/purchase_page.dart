@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../model/product.dart';
-import '../../util/injection.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/menu_bar.dart';
-import 'cubit/purchase_cubit.dart';
 
 class PurchasePage extends StatefulWidget {
   const PurchasePage({
@@ -41,26 +39,18 @@ class _PurchasePageState extends State<PurchasePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocProvider(
-          create: (context) => getIt.get<PurchaseCubit>(),
-          child: BlocBuilder<PurchaseCubit, PurchaseState>(
-            builder: (context, state) {
-              return Column(
-                children: [
-                  const MenuBar(title: 'Purchase Page'),
-                  TextButton(
-                    onPressed: () => _iapCubit.startFreeTrial(widget.product),
-                    child: Text('${widget.product.name} 체험하기'),
-                  ),
-                  TextButton(
-                    onPressed: () =>
-                        _iapCubit.purchaseProduct(widget.productDetail),
-                    child: Text('${widget.product.name} 구매하기'),
-                  ),
-                ],
-              );
-            },
-          ),
+        child: Column(
+          children: [
+            const MenuBar(title: 'Purchase Page'),
+            TextButton(
+              onPressed: () => _iapCubit.startFreeTrial(widget.product),
+              child: Text('${widget.product.name} 체험하기'),
+            ),
+            TextButton(
+              onPressed: () => _iapCubit.purchaseProduct(widget.productDetail),
+              child: Text('${widget.product.name} 구매하기'),
+            ),
+          ],
         ),
       ),
     );
