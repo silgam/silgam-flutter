@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
 import '../../../util/injection.dart';
+import '../../app/cubit/app_cubit.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
@@ -41,24 +42,28 @@ class _RecordListViewState extends State<RecordListView> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _cubit,
-      child: BlocBuilder<RecordListCubit, RecordListState>(
-        builder: (context, state) {
-          return GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: ScaffoldBody(
-              title: RecordListView.title,
-              isRefreshing: state.isLoading,
-              onRefresh: state.isSignedIn ? _cubit.refresh : null,
-              slivers: [
-                _buildQuerySection(state),
-                if (state.isNotSignedIn) _buildLoginButton(),
-                if (state.isSignedIn) _buildListSection(state.records),
-                if (state.isSignedIn && state.records.isEmpty)
-                  _buildDescription(),
-              ],
-            ),
-          );
-        },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: BlocBuilder<AppCubit, AppState>(
+          builder: (_, appState) {
+            return BlocBuilder<RecordListCubit, RecordListState>(
+              builder: (_, state) {
+                return ScaffoldBody(
+                  title: RecordListView.title,
+                  isRefreshing: state.isLoading,
+                  onRefresh: appState.isSignedIn ? _cubit.refresh : null,
+                  slivers: [
+                    _buildQuerySection(state),
+                    if (appState.isNotSignedIn) _buildLoginButton(),
+                    if (appState.isSignedIn) _buildListSection(state.records),
+                    if (appState.isSignedIn && state.records.isEmpty)
+                      _buildDescription(),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

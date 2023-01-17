@@ -6,7 +6,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../model/exam_record.dart';
 import '../../../../model/subject.dart';
-import '../../../../model/user.dart';
 import '../../../../repository/exam_record_repository.dart';
 import '../../../../util/analytics_manager.dart';
 import '../../../app/cubit/app_cubit.dart';
@@ -17,22 +16,24 @@ part 'record_list_state.dart';
 
 @injectable
 class RecordListCubit extends Cubit<RecordListState> {
-  RecordListCubit(this._examRecordRepository, AppCubit appCubit)
+  RecordListCubit(this._examRecordRepository, this._appCubit)
       : super(RecordListState.initial()) {
     refresh();
-    _appCubitStream = appCubit.stream.listen((appState) {
-      emit(state.copyWith(me: appState.me));
-    });
   }
 
   final ExamRecordRepository _examRecordRepository;
-  late final StreamSubscription _appCubitStream;
+  final AppCubit _appCubit;
 
   Future<void> refresh() async {
-    if (state.isLoading || state.isNotSignedIn) return;
+    if (state.isLoading) return;
+    if (_appCubit.state.isNotSignedIn) {
+      emit(RecordListState.initial());
+      return;
+    }
 
     emit(state.copyWith(isLoading: true));
-    final records = await _examRecordRepository.getMyExamRecords(state.me!.id);
+    final records =
+        await _examRecordRepository.getMyExamRecords(_appCubit.state.me!.id);
     final filteredRecords =
         _getFilteredAndSortedRecords(originalRecords: records);
     emit(state.copyWith(
@@ -126,11 +127,5 @@ class RecordListCubit extends Cubit<RecordListState> {
             return b.title.compareTo(a.title);
         }
       });
-  }
-
-  @override
-  Future<void> close() {
-    _appCubitStream.cancel();
-    return super.close();
   }
 }

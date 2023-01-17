@@ -5,7 +5,6 @@ class RecordListState with _$RecordListState {
   const RecordListState._();
 
   const factory RecordListState({
-    required User? me,
     required bool isLoading,
     required List<ExamRecord> originalRecords,
     required List<ExamRecord> records,
@@ -16,7 +15,6 @@ class RecordListState with _$RecordListState {
 
   factory RecordListState.initial() {
     return const RecordListState(
-      me: null,
       isLoading: false,
       originalRecords: [],
       records: [],
@@ -25,7 +23,4 @@ class RecordListState with _$RecordListState {
       selectedSubjects: [],
     );
   }
-
-  bool get isSignedIn => me != null;
-  bool get isNotSignedIn => me == null;
 }
