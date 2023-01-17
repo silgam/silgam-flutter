@@ -25,10 +25,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _isPagePopped = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt.get<LoginCubit>(),
+      create: (_) => getIt.get<LoginCubit>(),
       child: AnnotatedRegion(
         value: SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.light,
@@ -39,12 +41,13 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Scaffold(
           body: BlocListener<AppCubit, AppState>(
-            listener: (context, state) {
-              if (state.isSignedIn) {
+            listener: (_, state) {
+              if (state.isSignedIn && !_isPagePopped) {
+                _isPagePopped = true;
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('${state.me!.displayName}님 반갑습니다!'),
                 ));
-                Navigator.pop(context);
                 AnalyticsManager.logEvent(
                   name: '[LoginPage] Login',
                   properties: {'user_id': state.me!.id},
