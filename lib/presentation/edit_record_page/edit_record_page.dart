@@ -144,7 +144,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
             physics: const AlwaysScrollableScrollPhysics(),
             child: _buildForm(),
           ),
@@ -162,128 +161,176 @@ class _EditRecordPageState extends State<EditRecordPage> {
       children: [
         const SizedBox(height: 28),
         _buildSubTitle('모의고사 기록하기'),
-        TextField(
-          controller: _titleEditingController,
-          onChanged: _onTitleChanged,
-          autofocus: true,
-          style: const TextStyle(
-            fontSize: 24,
-            color: Colors.black,
-            fontWeight: FontWeight.w700,
-          ),
-          decoration: const InputDecoration.collapsed(
-            hintText: '모의고사 이름',
-            border: InputBorder.none,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: TextField(
+            controller: _titleEditingController,
+            onChanged: _onTitleChanged,
+            style: const TextStyle(
+              fontSize: 24,
+              color: Colors.black,
+              fontWeight: FontWeight.w700,
+            ),
+            decoration: const InputDecoration.collapsed(
+              hintText: '모의고사 이름',
+              border: InputBorder.none,
+            ),
           ),
         ),
         const SizedBox(height: 16),
-        _buildSubTitle('과목'),
-        const SizedBox(height: 2),
-        DropdownButtonHideUnderline(
-          child: DropdownButton(
-            value: _selectedSubject,
-            onChanged: _onSelectedSubjectChanged,
-            items: Subject.values.map((subject) {
-              return DropdownMenuItem(
-                value: subject,
-                child: Text(subject.subjectName),
-              );
-            }).toList(),
-            isDense: true,
+        _HorizontalFadingRow(
+          children: [
+            const SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSubTitle('과목', hasPadding: false),
+                const SizedBox(height: 6),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    value: _selectedSubject,
+                    onChanged: _onSelectedSubjectChanged,
+                    items: Subject.values.map((subject) {
+                      return DropdownMenuItem(
+                        value: subject,
+                        child: Text(subject.subjectName),
+                      );
+                    }).toList(),
+                    isDense: true,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 20),
+            _buildNumberInputWithTitle(
+              _scoreEditingController,
+              '점수',
+              '점',
+              60,
+              maxLength: 3,
+            ),
+            const SizedBox(width: 16),
+            _buildNumberInputWithTitle(
+              _gradeEditingController,
+              '등급',
+              '등급',
+              52,
+              maxLength: 1,
+            ),
+            const SizedBox(width: 16),
+            _buildNumberInputWithTitle(
+              _percentileEditingController,
+              '백분위',
+              '%',
+              60,
+              maxLength: 3,
+            ),
+            const SizedBox(width: 16),
+            _buildNumberInputWithTitle(
+              _standardScoreEditingController,
+              '표준점수',
+              '점',
+              60,
+              maxLength: 3,
+            ),
+            const SizedBox(width: 20),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _buildDivder(),
+        const SizedBox(height: 8),
+        _HorizontalFadingRow(
+          children: [
+            const SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSubTitle('시험 시작 시각', hasPadding: false),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: _onExamStartedTimeTextTapped,
+                  child: Text(
+                    DateFormat.yMEd('ko_KR').add_Hm().format(_examStartedTime),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 20),
+            _buildNumberInputWithTitle(
+              _examDurationEditingController,
+              '시험 시간',
+              '분',
+              60,
+              maxLength: 3,
+            ),
+            const SizedBox(width: 20),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _buildDivder(),
+        const SizedBox(height: 8),
+        _buildSubTitle('틀린 문제'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: -8,
+            children: [
+              for (final problem in _wrongProblems)
+                Chip(
+                  label: Text('${problem.problemNumber}번'),
+                  onDeleted: () => _onWrongProblemChipDeleted(problem),
+                  labelPadding: const EdgeInsets.only(left: 8, right: 2),
+                  deleteIconColor: Colors.white54,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  labelStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              SizedBox(
+                width: 80,
+                child: ContinuousNumberField(
+                  onSubmit: _onWrongProblemAdded,
+                  onDelete: _onWrongProblemDeleted,
+                ),
+              )
+            ],
           ),
         ),
         const SizedBox(height: 8),
-        const Divider(),
+        _buildDivder(),
         const SizedBox(height: 8),
-        _buildSubTitle('시험 시작 시각'),
-        const SizedBox(height: 2),
-        GestureDetector(
-          onTap: _onExamStartedTimeTextTapped,
-          child: Text(
-            DateFormat.yMEd('ko_KR').add_Hm().format(_examStartedTime),
-            style: const TextStyle(
-              fontSize: 16,
+        _buildSubTitle('피드백'),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: TextField(
+            controller: _feedbackEditingController,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            minLines: 2,
+            style: const TextStyle(height: 1.2),
+            decoration: InputDecoration(
+              hintText: '이번 모의고사는 어땠나요?\n다음 모의고사에서 개선할 점을 적어보세요.',
+              hintStyle: TextStyle(
+                  color: Colors.grey.shade500, fontWeight: FontWeight.w300),
+              isCollapsed: true,
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.all(12),
             ),
           ),
         ),
         const SizedBox(height: 8),
-        const Divider(),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 24,
-          runSpacing: 12,
-          children: [
-            _buildNumberInputWithTitle(_scoreEditingController, '점수', '점', 60,
-                maxLength: 3),
-            _buildNumberInputWithTitle(_gradeEditingController, '등급', '등급', 52,
-                maxLength: 1),
-            _buildNumberInputWithTitle(
-                _percentileEditingController, '백분위', '%', 60,
-                maxLength: 3),
-            _buildNumberInputWithTitle(
-                _standardScoreEditingController, '표준점수', '점', 60,
-                maxLength: 3),
-            _buildNumberInputWithTitle(
-                _examDurationEditingController, '시험 시간', '분', 60,
-                maxLength: 3),
-          ],
-        ),
-        const SizedBox(height: 8),
-        const Divider(),
-        const SizedBox(height: 8),
-        _buildSubTitle('틀린 문제'),
-        Wrap(
-          spacing: 8,
-          runSpacing: -8,
-          children: [
-            for (final problem in _wrongProblems)
-              Chip(
-                label: Text('${problem.problemNumber}번'),
-                onDeleted: () => _onWrongProblemChipDeleted(problem),
-                labelPadding: const EdgeInsets.only(left: 8, right: 2),
-                deleteIconColor: Colors.white54,
-                backgroundColor: Theme.of(context).primaryColor,
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            SizedBox(
-              width: 80,
-              child: ContinuousNumberField(
-                onSubmit: _onWrongProblemAdded,
-                onDelete: _onWrongProblemDeleted,
-              ),
-            )
-          ],
-        ),
-        const SizedBox(height: 8),
-        const Divider(),
-        const SizedBox(height: 8),
-        _buildSubTitle('피드백'),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _feedbackEditingController,
-          keyboardType: TextInputType.multiline,
-          maxLines: null,
-          minLines: 2,
-          style: const TextStyle(height: 1.2),
-          decoration: InputDecoration(
-            hintText: '이번 모의고사는 어땠나요?\n다음 모의고사에서 개선할 점을 적어보세요.',
-            hintMaxLines: 3,
-            hintStyle: TextStyle(
-                color: Colors.grey.shade500, fontWeight: FontWeight.w300),
-            isCollapsed: true,
-            border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.all(12),
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Divider(),
+        _buildDivder(),
         const SizedBox(height: 8),
         _buildSubTitle('복습할 문제'),
         const SizedBox(height: 2),
         GridView.extent(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           maxCrossAxisExtent: 400,
           childAspectRatio: 1.5,
           shrinkWrap: true,
@@ -301,15 +348,20 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildSubTitle(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Colors.grey.shade500,
-        fontWeight: FontWeight.w500,
+  Widget _buildSubTitle(String text, {bool hasPadding = true}) {
+    return Padding(
+      padding: EdgeInsets.only(left: hasPadding ? 20 : 0),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.grey.shade500,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
+
+  Widget _buildDivder() => const Divider(indent: 16, endIndent: 16);
 
   Widget _buildNumberInputWithTitle(
     TextEditingController controller,
@@ -321,7 +373,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSubTitle(title),
+        _buildSubTitle(title, hasPadding: false),
         const SizedBox(height: 6),
         SizedBox(
           width: width,
@@ -377,8 +429,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              foregroundColor: Colors.grey,
             ),
-            child: const Text('취소'),
+            child: Text(
+              '취소',
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
           ),
         ),
         Expanded(
@@ -581,6 +637,78 @@ class _EditRecordPageState extends State<EditRecordPage> {
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.arguments.inputExam != null,
       },
+    );
+  }
+}
+
+class _HorizontalFadingRow extends StatelessWidget {
+  const _HorizontalFadingRow({
+    required this.children,
+  });
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
+        ),
+        Positioned.fill(
+          right: 0,
+          left: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 20,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    stops: const [
+                      0.1,
+                      0.6,
+                      1,
+                    ],
+                    colors: [
+                      Colors.grey.shade50,
+                      Colors.grey.shade50.withAlpha(0),
+                      Colors.grey.shade50.withAlpha(0),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: 20,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerRight,
+                    end: Alignment.centerLeft,
+                    stops: const [
+                      0.1,
+                      0.6,
+                      1,
+                    ],
+                    colors: [
+                      Colors.grey.shade50,
+                      Colors.grey.shade50.withAlpha(0),
+                      Colors.grey.shade50.withAlpha(0),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
