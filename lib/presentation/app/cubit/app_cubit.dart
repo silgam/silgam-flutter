@@ -26,7 +26,8 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> onUserChange() async {
-    final me = await _userRepository.getMe();
+    final getMeResult = await _userRepository.getMe();
+    final me = getMeResult.tryGetSuccess();
     updateFcmToken(updatedMe: me, previousMe: state.me);
     emit(state.copyWith(me: me));
   }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:multiple_result/multiple_result.dart';
 import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -81,8 +82,8 @@ class _MainViewState extends State<MainView> {
               const Divider(indent: 20, endIndent: 20),
               FutureBuilder(
                 future: _adsRepository.getAllAds(),
-                builder: (_, AsyncSnapshot<List<Ads>> snapshot) {
-                  final List<Ads> data = snapshot.data ?? [];
+                builder: (_, AsyncSnapshot<Result> snapshot) {
+                  final List<Ads> data = snapshot.data?.tryGetSuccess() ?? [];
                   if (data.isNotEmpty) {
                     return AdsCard(ads: data);
                   } else {

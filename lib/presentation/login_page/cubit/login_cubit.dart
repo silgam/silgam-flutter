@@ -40,8 +40,14 @@ class LoginCubit extends Cubit<LoginState> {
     } else {
       oAuthToken = await UserApi.instance.loginWithKakaoAccount();
     }
-    final String firebaseToken =
-        await _authRepository.getFirebaseToken(oAuthToken);
+
+    final authKakaoResult = await _authRepository.authKakao(oAuthToken);
+    final firebaseToken = authKakaoResult.tryGetSuccess();
+    if (firebaseToken == null) {
+      emit(state.copyWith(isProgressing: false));
+      return;
+    }
+
     await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
   }
 

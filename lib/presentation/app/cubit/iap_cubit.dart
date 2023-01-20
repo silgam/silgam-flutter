@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -44,7 +45,13 @@ class IapCubit extends Cubit<IapState> {
       },
     );
 
-    final products = await _productRepository.getActiveProducts();
+    final productsResult = await _productRepository.getActiveProducts();
+    final products = productsResult.tryGetSuccess();
+    if (products == null) {
+      emit(const IapState.storeUnavailable(isLoading: false));
+      return;
+    }
+
     final productDetailsResponse = await _iap.queryProductDetails(
       products.map((e) => e.id).toSet(),
     );
@@ -71,7 +78,15 @@ class IapCubit extends Cubit<IapState> {
 
   Future<void> startFreeTrial(Product product) async {
     emit(state.copyWith(isLoading: true));
-    await _productRepository.startTrial(productId: product.id);
+    final startTrialResult =
+        await _productRepository.startTrial(productId: product.id);
+
+    if (startTrialResult.isError()) {
+      emit(state.copyWith(isLoading: false));
+      EasyLoading.showError(startTrialResult.tryGetError()!.message);
+      return;
+    }
+
     await _appCubit.onUserChange();
     emit(state.copyWith(isLoading: false));
   }
@@ -126,12 +141,19 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> _onPurchased(PurchaseDetails purchaseDetails) async {
-    await _productRepository.onPurchase(
+    final onPurchaseResult = await _productRepository.onPurchase(
       productId: purchaseDetails.productID,
       store: purchaseDetails.verificationData.source,
       verificationToken:
           purchaseDetails.verificationData.serverVerificationData,
     );
+
+    if (onPurchaseResult.isError()) {
+      emit(state.copyWith(isLoading: false));
+      EasyLoading.showError(onPurchaseResult.tryGetError()!.message);
+      return;
+    }
+
     await _iap.completePurchase(purchaseDetails);
     await _appCubit.onUserChange();
   }
