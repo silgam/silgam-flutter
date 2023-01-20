@@ -8,6 +8,7 @@ import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'main/main_view.dart';
+import 'record_list/cubit/record_list_cubit.dart';
 import 'record_list/record_list_view.dart';
 import 'settings/settings_view.dart';
 
@@ -30,12 +31,10 @@ const bottomNavBarItems = [
 ];
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   static const routeName = '/';
   static final backgroundColor = Colors.grey[50];
-  static final StreamController<RecordListViewEvent>
-      recordListViewEventStreamController = StreamController.broadcast();
-
-  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -59,8 +58,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
       if (_selectedIndex == 1) {
-        HomePage.recordListViewEventStreamController
-            .add(RecordListViewEvent.refresh);
+        getIt.get<RecordListCubit>().refresh();
       }
     });
   }

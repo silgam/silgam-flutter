@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 
 import '../../model/exam.dart';
 import '../../model/exam_record.dart';
@@ -13,10 +12,10 @@ import '../../model/subject.dart';
 import '../../repository/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
-import '../home_page/home_page.dart';
-import '../home_page/record_list/record_list_view.dart';
+import '../home_page/record_list/cubit/record_list_cubit.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
@@ -671,8 +670,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       return;
     }
     await saveRecord();
-    HomePage.recordListViewEventStreamController
-        .add(RecordListViewEvent.refresh);
+    getIt.get<RecordListCubit>().refresh();
     if (mounted) Navigator.pop(context);
   }
 

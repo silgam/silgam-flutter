@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +9,6 @@ import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
 import '../../record_detail_page/record_detail_page.dart';
-import '../home_page.dart';
 import 'cubit/record_list_cubit.dart';
 import 'record_tile.dart';
 
@@ -27,16 +24,7 @@ class RecordListView extends StatefulWidget {
 }
 
 class _RecordListViewState extends State<RecordListView> {
-  late final StreamSubscription _eventStreamSubscription;
   final RecordListCubit _cubit = getIt.get();
-
-  @override
-  void initState() {
-    super.initState();
-    _eventStreamSubscription = HomePage
-        .recordListViewEventStreamController.stream
-        .listen(_onEventReceived);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,17 +211,6 @@ class _RecordListViewState extends State<RecordListView> {
     );
   }
 
-  void _onEventReceived(RecordListViewEvent event) {
-    switch (event) {
-      case RecordListViewEvent.refresh:
-        _cubit.refresh();
-        break;
-      case RecordListViewEvent.refreshUser:
-        _cubit.refresh();
-        break;
-    }
-  }
-
   void _onLoginTap() async {
     await Navigator.pushNamed(context, LoginPage.routeName);
     await _cubit.refresh();
@@ -244,17 +221,6 @@ class _RecordListViewState extends State<RecordListView> {
     await Navigator.pushNamed(context, RecordDetailPage.routeName,
         arguments: args);
   }
-
-  @override
-  void dispose() {
-    _eventStreamSubscription.cancel();
-    super.dispose();
-  }
-}
-
-enum RecordListViewEvent {
-  refresh,
-  refreshUser,
 }
 
 enum RecordSortType {

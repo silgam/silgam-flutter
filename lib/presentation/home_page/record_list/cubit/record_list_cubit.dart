@@ -14,7 +14,7 @@ import '../record_list_view.dart';
 part 'record_list_cubit.freezed.dart';
 part 'record_list_state.dart';
 
-@injectable
+@lazySingleton
 class RecordListCubit extends Cubit<RecordListState> {
   RecordListCubit(this._examRecordRepository, this._appCubit)
       : super(RecordListState.initial()) {
