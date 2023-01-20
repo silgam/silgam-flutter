@@ -36,15 +36,36 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
         controller: _editingController,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textInputAction: TextInputAction.next,
-        decoration: const InputDecoration(
-          hintText: '번호 입력',
-          border: InputBorder.none,
-        ),
         onEditingComplete: () {
           // Required, prevent hiding keyboard
         },
         onChanged: _onTextFieldChanged,
         onSubmitted: _onSubmitted,
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(
+          hintText: '번호 입력',
+          hintStyle: const TextStyle(fontSize: 14),
+          isCollapsed: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 7,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+            borderRadius: const BorderRadius.all(Radius.circular(100)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+            borderRadius: const BorderRadius.all(Radius.circular(100)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+            borderRadius: const BorderRadius.all(Radius.circular(100)),
+          ),
+        ),
       ),
     );
   }

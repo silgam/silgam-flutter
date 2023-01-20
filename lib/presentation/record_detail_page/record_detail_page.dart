@@ -86,7 +86,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       ),
                     ),
                     Container(
-                      height: 8,
+                      height: 4,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Colors.white, Colors.white.withAlpha(0)],
@@ -176,7 +176,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   _record.feedback,

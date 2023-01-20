@@ -28,10 +28,10 @@ class ReviewProblemCard extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.all(4),
         elevation: 0,
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           side: BorderSide(width: 0.5, color: Colors.grey.shade300),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

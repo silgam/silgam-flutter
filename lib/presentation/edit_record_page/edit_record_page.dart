@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -140,17 +142,34 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   Widget _buildBody() {
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: _buildForm(),
           ),
-        ),
-        const Divider(height: 1),
-        _buildBottomButtons(),
-      ],
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.grey.shade300,
+                      width: 0.5,
+                    ),
+                  ),
+                ),
+                child: _buildBottomButtons(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -161,23 +180,45 @@ class _EditRecordPageState extends State<EditRecordPage> {
       children: [
         const SizedBox(height: 28),
         _buildSubTitle('모의고사 기록하기'),
+        const SizedBox(height: 6),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: TextField(
             controller: _titleEditingController,
             onChanged: _onTitleChanged,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 20,
               color: Colors.black,
               fontWeight: FontWeight.w700,
             ),
-            decoration: const InputDecoration.collapsed(
-              hintText: '모의고사 이름',
-              border: InputBorder.none,
+            decoration: InputDecoration(
+              hintText: '실감 모의고사 시즌1 1회',
+              hintStyle: TextStyle(color: Colors.grey.shade500),
+              filled: true,
+              fillColor: Colors.white,
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.all(12),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Theme.of(context).primaryColor,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
+        _buildDivder(),
+        const SizedBox(height: 12),
         _HorizontalFadingRow(
           children: [
             const SizedBox(width: 20),
@@ -186,59 +227,72 @@ class _EditRecordPageState extends State<EditRecordPage> {
               children: [
                 _buildSubTitle('과목', hasPadding: false),
                 const SizedBox(height: 6),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    value: _selectedSubject,
-                    onChanged: _onSelectedSubjectChanged,
-                    items: Subject.values.map((subject) {
-                      return DropdownMenuItem(
-                        value: subject,
-                        child: Text(subject.subjectName),
-                      );
-                    }).toList(),
-                    isDense: true,
+                Container(
+                  height: 36,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                      width: 0.5,
+                    ),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      borderRadius: BorderRadius.circular(6),
+                      value: _selectedSubject,
+                      onChanged: _onSelectedSubjectChanged,
+                      items: Subject.values.map((subject) {
+                        return DropdownMenuItem(
+                          value: subject,
+                          child: Text(subject.subjectName),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 12),
             _buildNumberInputWithTitle(
               _scoreEditingController,
               '점수',
               '점',
-              60,
+              63,
               maxLength: 3,
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             _buildNumberInputWithTitle(
               _gradeEditingController,
               '등급',
               '등급',
-              52,
+              55,
               maxLength: 1,
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             _buildNumberInputWithTitle(
               _percentileEditingController,
               '백분위',
               '%',
-              60,
+              63,
               maxLength: 3,
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             _buildNumberInputWithTitle(
               _standardScoreEditingController,
               '표준점수',
               '점',
-              60,
+              63,
               maxLength: 3,
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 40),
           ],
         ),
-        const SizedBox(height: 8),
-        _buildDivder(),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
         _HorizontalFadingRow(
           children: [
             const SizedBox(width: 20),
@@ -246,32 +300,46 @@ class _EditRecordPageState extends State<EditRecordPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSubTitle('시험 시작 시각', hasPadding: false),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 GestureDetector(
                   onTap: _onExamStartedTimeTextTapped,
-                  child: Text(
-                    DateFormat.yMEd('ko_KR').add_Hm().format(_examStartedTime),
-                    style: const TextStyle(
-                      fontSize: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: 0.5,
+                      ),
+                    ),
+                    child: Text(
+                      DateFormat.yMEd('ko_KR')
+                          .add_Hm()
+                          .format(_examStartedTime),
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 12),
             _buildNumberInputWithTitle(
               _examDurationEditingController,
               '시험 시간',
               '분',
-              60,
+              63,
               maxLength: 3,
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 40),
           ],
         ),
-        const SizedBox(height: 8),
-        _buildDivder(),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
         _buildSubTitle('틀린 문제'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -291,7 +359,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-              SizedBox(
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 9),
                 width: 80,
                 child: ContinuousNumberField(
                   onSubmit: _onWrongProblemAdded,
@@ -301,9 +370,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             ],
           ),
         ),
-        const SizedBox(height: 8),
-        _buildDivder(),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         _buildSubTitle('피드백'),
         const SizedBox(height: 8),
         Padding(
@@ -315,18 +382,36 @@ class _EditRecordPageState extends State<EditRecordPage> {
             minLines: 2,
             style: const TextStyle(height: 1.2),
             decoration: InputDecoration(
-              hintText: '이번 모의고사는 어땠나요?\n다음 모의고사에서 개선할 점을 적어보세요.',
+              hintText:
+                  '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
+              hintMaxLines: 10,
               hintStyle: TextStyle(
-                  color: Colors.grey.shade500, fontWeight: FontWeight.w300),
+                color: Colors.grey.shade500,
+                fontWeight: FontWeight.w300,
+              ),
               isCollapsed: true,
-              border: const OutlineInputBorder(),
               contentPadding: const EdgeInsets.all(12),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Theme.of(context).primaryColor,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        _buildDivder(),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
         _buildSubTitle('복습할 문제'),
         const SizedBox(height: 2),
         GridView.extent(
@@ -343,7 +428,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
               ),
             _buildReviewProblemAddCard(),
           ],
-        )
+        ),
+        const SizedBox(height: 68),
       ],
     );
   }
@@ -361,7 +447,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildDivder() => const Divider(indent: 16, endIndent: 16);
+  Widget _buildDivder() => const Divider(indent: 12, endIndent: 12);
 
   Widget _buildNumberInputWithTitle(
     TextEditingController controller,
@@ -405,11 +491,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
               width: 36,
               color: Colors.grey.shade800,
             ),
-            const SizedBox(width: 2),
             Text(
               '추가하기',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w100,
                 color: Colors.grey.shade800,
               ),
@@ -662,8 +747,6 @@ class _HorizontalFadingRow extends StatelessWidget {
           ),
         ),
         Positioned.fill(
-          right: 0,
-          left: 0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -687,19 +770,17 @@ class _HorizontalFadingRow extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 20,
+                width: 40,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.centerRight,
                     end: Alignment.centerLeft,
                     stops: const [
                       0.1,
-                      0.6,
                       1,
                     ],
                     colors: [
                       Colors.grey.shade50,
-                      Colors.grey.shade50.withAlpha(0),
                       Colors.grey.shade50.withAlpha(0),
                     ],
                   ),

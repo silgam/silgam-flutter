@@ -21,7 +21,6 @@ class OutlinedTextField extends StatelessWidget {
       keyboardType: TextInputType.number,
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-        border: const OutlineInputBorder(),
         isCollapsed: true,
         suffixIcon: Padding(
           padding: const EdgeInsets.only(right: 8),
@@ -35,7 +34,24 @@ class OutlinedTextField extends StatelessWidget {
           ),
         ),
         suffixIconConstraints: const BoxConstraints(minHeight: 0),
-        contentPadding: const EdgeInsets.only(top: 4, bottom: 4, left: 8),
+        contentPadding: const EdgeInsets.only(top: 9, bottom: 9, left: 10),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            width: 0.5,
+            color: Theme.of(context).primaryColor,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
+        ),
       ),
     );
   }
