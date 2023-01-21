@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:multiple_result/multiple_result.dart';
-import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,10 +19,13 @@ import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/app.dart';
+import '../../app/cubit/app_cubit.dart';
 import '../../clock_page/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../edit_record_page/edit_record_page.dart';
 import '../../login_page/login_page.dart';
+import '../cubit/home_cubit.dart';
+import '../record_list/record_list_view.dart';
 import '../settings/noise_setting_page.dart';
 
 part 'ads_card.dart';
@@ -37,11 +39,9 @@ const double maxWidth = 500;
 
 class MainView extends StatefulWidget {
   static const title = '메인';
-  final Function() navigateToRecordTab;
 
   const MainView({
     Key? key,
-    required this.navigateToRecordTab,
   }) : super(key: key);
 
   @override
@@ -92,7 +92,7 @@ class _MainViewState extends State<MainView> {
                 },
               ),
               if (dDayItems.isNotEmpty) _DDaysCard(dDayItems: dDayItems),
-              _ExamStartCard(navigateToRecordTab: widget.navigateToRecordTab),
+              const _ExamStartCard(),
               BlocBuilder<AppCubit, AppState>(
                 builder: (context, state) {
                   if (state.isNotSignedIn) {
@@ -235,6 +235,8 @@ class _MainViewState extends State<MainView> {
         arguments: EditRecordPageArguments(),
       );
     }
-    widget.navigateToRecordTab();
+    if (mounted) {
+      context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
+    }
   }
 }

@@ -9,6 +9,7 @@ import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
 import '../../record_detail_page/record_detail_page.dart';
+import '../cubit/home_cubit.dart';
 import 'cubit/record_list_cubit.dart';
 import 'record_tile.dart';
 
@@ -30,27 +31,36 @@ class _RecordListViewState extends State<RecordListView> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _cubit,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: BlocBuilder<AppCubit, AppState>(
-          builder: (_, appState) {
-            return BlocBuilder<RecordListCubit, RecordListState>(
-              builder: (_, state) {
-                return ScaffoldBody(
-                  title: RecordListView.title,
-                  isRefreshing: state.isLoading,
-                  onRefresh: appState.isSignedIn ? _cubit.refresh : null,
-                  slivers: [
-                    _buildQuerySection(state),
-                    if (appState.isNotSignedIn) _buildLoginButton(),
-                    if (appState.isSignedIn) _buildListSection(state.records),
-                    if (appState.isSignedIn && state.records.isEmpty)
-                      _buildDescription(),
-                  ],
-                );
-              },
-            );
-          },
+      child: BlocListener<HomeCubit, HomeState>(
+        listenWhen: (previous, current) =>
+            previous.tabIndex != current.tabIndex,
+        listener: (context, state) {
+          if (state.tabIndex == 1) {
+            _cubit.refresh();
+          }
+        },
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: BlocBuilder<AppCubit, AppState>(
+            builder: (_, appState) {
+              return BlocBuilder<RecordListCubit, RecordListState>(
+                builder: (_, state) {
+                  return ScaffoldBody(
+                    title: RecordListView.title,
+                    isRefreshing: state.isLoading,
+                    onRefresh: appState.isSignedIn ? _cubit.refresh : null,
+                    slivers: [
+                      _buildQuerySection(state),
+                      if (appState.isNotSignedIn) _buildLoginButton(),
+                      if (appState.isSignedIn) _buildListSection(state.records),
+                      if (appState.isSignedIn && state.records.isEmpty)
+                        _buildDescription(),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );

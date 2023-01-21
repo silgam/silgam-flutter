@@ -1,11 +1,8 @@
 part of 'main_view.dart';
 
 class _ExamStartCard extends StatefulWidget {
-  final Function() navigateToRecordTab;
-
   const _ExamStartCard({
     Key? key,
-    required this.navigateToRecordTab,
   }) : super(key: key);
 
   @override
@@ -178,7 +175,9 @@ class _ExamStartCardState extends State<_ExamStartCard>
       ClockPage.routeName,
       arguments: ClockPageArguments(_selectedExam),
     );
-    widget.navigateToRecordTab();
+    if (mounted) {
+      context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
+    }
   }
 
   @override
