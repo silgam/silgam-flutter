@@ -78,6 +78,7 @@ class HomePage extends StatelessWidget {
                 bottomNavigationBar: BottomNavigationBar(
                   elevation: 4,
                   backgroundColor: Colors.white,
+                  unselectedItemColor: Colors.grey,
                   showUnselectedLabels: false,
                   showSelectedLabels: false,
                   onTap: cubit.changeTab,
