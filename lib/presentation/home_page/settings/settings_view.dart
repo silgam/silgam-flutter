@@ -32,6 +32,8 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) =>
+          previous.isSignedIn != current.isSignedIn,
       builder: (context, state) {
         return ScaffoldBody(
           title: SettingsView.title,

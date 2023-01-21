@@ -94,6 +94,8 @@ class _MainViewState extends State<MainView> {
               if (dDayItems.isNotEmpty) _DDaysCard(dDayItems: dDayItems),
               const _ExamStartCard(),
               BlocBuilder<AppCubit, AppState>(
+                buildWhen: (previous, current) =>
+                    previous.isSignedIn != current.isSignedIn,
                 builder: (context, state) {
                   if (state.isNotSignedIn) {
                     return _ButtonCard(

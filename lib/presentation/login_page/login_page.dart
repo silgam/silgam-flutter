@@ -41,16 +41,18 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Scaffold(
           body: BlocListener<AppCubit, AppState>(
-            listener: (_, state) {
-              if (state.isSignedIn && !_isPagePopped) {
+            listenWhen: (previous, current) =>
+                previous.isSignedIn != current.isSignedIn,
+            listener: (_, appState) {
+              if (appState.isSignedIn && !_isPagePopped) {
                 _isPagePopped = true;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('${state.me!.displayName}님 반갑습니다!'),
+                  content: Text('${appState.me!.displayName}님 반갑습니다!'),
                 ));
                 AnalyticsManager.logEvent(
                   name: '[LoginPage] Login',
-                  properties: {'user_id': state.me!.id},
+                  properties: {'user_id': appState.me!.id},
                 );
               }
             },
