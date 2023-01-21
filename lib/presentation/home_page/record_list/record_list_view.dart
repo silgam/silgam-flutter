@@ -114,6 +114,7 @@ class _RecordListViewState extends State<RecordListView> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const AlwaysScrollableScrollPhysics(),
+            clipBehavior: Clip.none,
             child: IntrinsicHeight(
               child: Row(
                 children: [
