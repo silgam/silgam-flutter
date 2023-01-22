@@ -65,8 +65,8 @@ class _ExamStartCardState extends State<_ExamStartCard>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(width: 16),
-              Flexible(
+              const SizedBox(width: 32),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -74,6 +74,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                       iconData: Icons.schedule,
                       title: '시험 시간',
                       content: _selectedExam.getExamTimeString(),
+                      badgeText: '${_selectedExam.examDuration}분',
                     ),
                     const SizedBox(height: 16),
                     _buildInfo(
@@ -123,7 +124,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 32),
             ],
           ),
           const SizedBox(height: 32),
@@ -136,6 +137,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
     required IconData iconData,
     required String title,
     required String content,
+    String? badgeText,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -149,12 +151,37 @@ class _ExamStartCardState extends State<_ExamStartCard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 14,
-                ),
+              Row(
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
+                  ),
+                  if (badgeText != null) const SizedBox(width: 6),
+                  if (badgeText != null)
+                    Container(
+                      padding: const EdgeInsets.all(1.5),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withAlpha(20),
+                        borderRadius: BorderRadius.circular(2),
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Text(
+                        badgeText,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).primaryColor,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 4),
               Text(

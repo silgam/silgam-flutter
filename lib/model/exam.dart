@@ -42,6 +42,6 @@ class Exam with _$Exam {
       endMinute = '${examEndTime.minute}분 ';
     }
 
-    return '$startHour$startMinute~ $endHour$endMinute(${examDuration}m)';
+    return '$startHour$startMinute~ $endHour$endMinute';
   }
 }
