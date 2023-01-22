@@ -27,14 +27,14 @@ class LoginButton extends StatelessWidget {
           splashColor: Colors.transparent,
           highlightColor: Colors.white10,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             child: Row(
               children: [
                 const Icon(
                   Icons.login,
                   color: Colors.white,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 18),
                 Flexible(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -48,6 +48,7 @@ class LoginButton extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         description,
                         style: TextStyle(
