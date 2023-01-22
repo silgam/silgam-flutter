@@ -9,6 +9,7 @@ import 'cubit/home_cubit.dart';
 import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';
 import 'settings/settings_view.dart';
+import 'stat/stat_view.dart';
 
 class HomePageView {
   final Widget Function() viewBuilder;
@@ -40,6 +41,14 @@ class HomePage extends StatelessWidget {
         icon: Icon(Icons.view_list_outlined),
         activeIcon: Icon(Icons.view_list),
         label: RecordListView.title,
+      ),
+    ),
+    StatView.title: HomePageView(
+      viewBuilder: () => const StatView(),
+      bottomNavigationBarItem: const BottomNavigationBarItem(
+        icon: Icon(Icons.bar_chart_outlined),
+        activeIcon: Icon(Icons.bar_chart),
+        label: StatView.title,
       ),
     ),
     SettingsView.title: HomePageView(
@@ -81,6 +90,7 @@ class HomePage extends StatelessWidget {
                   unselectedItemColor: Colors.grey,
                   showUnselectedLabels: false,
                   showSelectedLabels: false,
+                  type: BottomNavigationBarType.fixed,
                   onTap: cubit.changeTab,
                   currentIndex: state.tabIndex,
                   landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
