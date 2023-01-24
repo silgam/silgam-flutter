@@ -122,12 +122,14 @@ class IapCubit extends Cubit<IapState> {
           if (Platform.isIOS) {
             await _iap.completePurchase(purchaseDetails);
           }
+          emit(state.copyWith(isLoading: false));
           break;
         case PurchaseStatus.canceled:
           log('[PurchaseCubit] status.canceled');
           if (Platform.isIOS) {
             await _iap.completePurchase(purchaseDetails);
           }
+          emit(state.copyWith(isLoading: false));
           break;
         case PurchaseStatus.restored:
           log('[PurchaseCubit] status.restored: ${purchaseDetails.verificationData.serverVerificationData}');
@@ -137,7 +139,6 @@ class IapCubit extends Cubit<IapState> {
           break;
       }
     }
-    emit(state.copyWith(isLoading: false));
   }
 
   Future<void> _onPurchased(PurchaseDetails purchaseDetails) async {
@@ -156,6 +157,8 @@ class IapCubit extends Cubit<IapState> {
 
     await _iap.completePurchase(purchaseDetails);
     await _appCubit.onUserChange();
+
+    emit(state.copyWith(isLoading: false));
   }
 
   @override
