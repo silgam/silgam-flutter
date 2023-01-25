@@ -62,6 +62,7 @@ dependencies:
   in_app_purchase_storekit: ^0.3.4+1
   flutter_easyloading: ^3.0.5
   multiple_result: ^4.0.0
+  collection: ^1.16.0
 
 dev_dependencies:
   flutter_test:
