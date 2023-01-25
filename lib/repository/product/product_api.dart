@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../model/product.dart';
-import '../../util/const.dart';
 import 'dto/on_purchase_request.dto.dart';
 import 'dto/start-trial-request.dto.dart';
 
@@ -15,7 +14,7 @@ abstract class ProductApi {
   @factoryMethod
   factory ProductApi(Dio dio) = _ProductApi;
 
-  @GET('$urlSilgamHosting/products.json')
+  @GET('/products')
   Future<List<Product>> getAllProducts();
 
   @POST('/iap/on-purchase')

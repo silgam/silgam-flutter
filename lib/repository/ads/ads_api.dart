@@ -3,16 +3,15 @@ import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../model/ads.dart';
-import '../../util/const.dart';
 
 part 'ads_api.g.dart';
 
 @lazySingleton
-@RestApi(baseUrl: urlSilgamHosting)
+@RestApi()
 abstract class AdsApi {
   @factoryMethod
   factory AdsApi(Dio dio) = _AdsApi;
 
-  @GET('/ads.json')
+  @GET('/ads')
   Future<List<Ads>> getAllAds();
 }
