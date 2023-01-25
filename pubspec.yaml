@@ -14,13 +14,13 @@ dependencies:
   cupertino_icons: ^1.0.4
   flutter_svg: ^1.0.3
   just_audio: 0.9.20
-  firebase_core: ^1.13.1
-  firebase_analytics: ^9.1.2
-  firebase_crashlytics: ^2.5.3
-  firebase_messaging: ^13.0.4
-  firebase_auth: ^3.3.10
-  firebase_storage: ^10.2.9
-  cloud_firestore: ^3.1.10
+  firebase_core: ^2.4.1
+  firebase_analytics: ^10.1.0
+  firebase_crashlytics: ^3.0.11
+  firebase_messaging: ^14.2.1
+  firebase_auth: ^4.2.5
+  firebase_storage: ^11.0.10
+  cloud_firestore: ^4.3.1
   google_sign_in: ^5.2.4
   flutter_facebook_auth: ^4.1.1
   sign_in_with_apple: ^4.1.0
@@ -43,7 +43,7 @@ dependencies:
   image_gallery_saver: ^1.7.1
   carousel_slider: ^4.0.0
   smooth_page_indicator: ^1.0.0+2
-  google_mobile_ads: ^2.0.1
+  google_mobile_ads: ^2.3.0
   mixpanel_flutter: ^2.0.0
   flutter_bloc: ^8.1.1
   bloc: ^8.1.0
