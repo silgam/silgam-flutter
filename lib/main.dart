@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'presentation/app/app.dart';
 import 'presentation/app/cubit/app_cubit.dart';
 import 'presentation/app/cubit/iap_cubit.dart';
+import 'presentation/home_page/main/cubit/main_cubit.dart';
 import 'util/analytics_manager.dart';
 import 'util/injection.dart';
 
@@ -30,8 +31,9 @@ void main() async {
 
 Future<void> initializeFirebae() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  getIt.get<IapCubit>().initialize();
   getIt.get<AppCubit>().initialize();
+  getIt.get<IapCubit>().initialize();
+  getIt.get<MainCubit>().initialize();
 
   await Future.wait([
     AnalyticsManager.init(),

@@ -6,13 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:multiple_result/multiple_result.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
-import '../../../repository/ads/ads_repository.dart';
 import '../../../repository/dday_repository.dart';
 import '../../../repository/exam_repository.dart';
 import '../../../util/analytics_manager.dart';
@@ -27,6 +25,7 @@ import '../../login_page/login_page.dart';
 import '../cubit/home_cubit.dart';
 import '../record_list/record_list_view.dart';
 import '../settings/noise_setting_page.dart';
+import 'cubit/main_cubit.dart';
 
 part 'ads_card.dart';
 part 'button_card.dart';
@@ -49,89 +48,93 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  final DDayRepository _dDayRepository = getIt.get();
-  final AdsRepository _adsRepository = getIt.get();
-  final DateTime today = DateTime.now();
-  late final List<DDayItem> dDayItems = _dDayRepository.getItemsToShow(today);
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: double.infinity,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 32),
-              _buildTitle(),
-              const SizedBox(height: 4),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 13,
+    return BlocProvider<MainCubit>(
+      create: (context) => getIt.get(),
+      child: SizedBox(
+        height: double.infinity,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: maxWidth),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 32),
+                _buildTitle(),
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              const Divider(indent: 20, endIndent: 20),
-              FutureBuilder(
-                future: _adsRepository.getAllAds(),
-                builder: (_, AsyncSnapshot<Result> snapshot) {
-                  final List<Ads> data = snapshot.data?.tryGetSuccess() ?? [];
-                  if (data.isNotEmpty) {
-                    return AdsCard(ads: data);
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              ),
-              if (dDayItems.isNotEmpty) _DDaysCard(dDayItems: dDayItems),
-              const _ExamStartCard(),
-              BlocBuilder<AppCubit, AppState>(
-                buildWhen: (previous, current) =>
-                    previous.isSignedIn != current.isSignedIn,
-                builder: (context, state) {
-                  if (state.isNotSignedIn) {
-                    return _ButtonCard(
-                      onTap: _onLoginButtonTap,
-                      iconData: Icons.login,
-                      title: '간편로그인하고 더 많은 기능 이용하기',
-                      primary: true,
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              ),
-              _ButtonCard(
-                onTap: _onNoiseSettingButtonTap,
-                iconData: Icons.graphic_eq,
-                title: '백색 소음, 시험장 소음 설정하기',
-              ),
-              _ButtonCard(
-                onTap: _onRecordButtonTap,
-                iconData: Icons.edit,
-                title: '모의고사 기록하고 피드백하기',
-              ),
-              if (isAdsEnabled)
-                AdTile(
-                  width: MediaQuery.of(context)
-                          .size
-                          .width
-                          .clamp(0, maxWidth)
-                          .truncate() -
-                      40,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                const SizedBox(height: 4),
+                const Divider(indent: 20, endIndent: 20),
+                BlocBuilder<MainCubit, MainState>(
+                  builder: (context, state) {
+                    if (state.ads.isNotEmpty) {
+                      return AdsCard(ads: state.ads);
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
                 ),
-              const SizedBox(height: 20),
-            ],
+                BlocBuilder<MainCubit, MainState>(
+                  builder: (context, state) {
+                    if (state.dDayItems.isNotEmpty) {
+                      return _DDaysCard(dDayItems: state.dDayItems);
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
+                const _ExamStartCard(),
+                BlocBuilder<AppCubit, AppState>(
+                  buildWhen: (previous, current) =>
+                      previous.isSignedIn != current.isSignedIn,
+                  builder: (context, state) {
+                    if (state.isNotSignedIn) {
+                      return _ButtonCard(
+                        onTap: _onLoginButtonTap,
+                        iconData: Icons.login,
+                        title: '간편로그인하고 더 많은 기능 이용하기',
+                        primary: true,
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
+                _ButtonCard(
+                  onTap: _onNoiseSettingButtonTap,
+                  iconData: Icons.graphic_eq,
+                  title: '백색 소음, 시험장 소음 설정하기',
+                ),
+                _ButtonCard(
+                  onTap: _onRecordButtonTap,
+                  iconData: Icons.edit,
+                  title: '모의고사 기록하고 피드백하기',
+                ),
+                if (isAdsEnabled)
+                  AdTile(
+                    width: MediaQuery.of(context)
+                            .size
+                            .width
+                            .clamp(0, maxWidth)
+                            .truncate() -
+                        40,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                  ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -139,6 +142,7 @@ class _MainViewState extends State<MainView> {
   }
 
   Widget _buildTitle() {
+    final DateTime today = DateTime.now();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
