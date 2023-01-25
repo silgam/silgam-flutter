@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuBar;
 import 'package:silgam/util/injection.dart';
 
 import '../../../repository/noise_repository.dart';

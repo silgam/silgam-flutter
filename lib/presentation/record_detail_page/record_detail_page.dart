@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuBar;
 import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
