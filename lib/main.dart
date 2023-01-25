@@ -11,7 +11,6 @@ import 'firebase_options.dart';
 import 'presentation/app/app.dart';
 import 'presentation/app/cubit/app_cubit.dart';
 import 'presentation/app/cubit/iap_cubit.dart';
-import 'repository/ads/ads_repository.dart';
 import 'util/analytics_manager.dart';
 import 'util/injection.dart';
 
@@ -32,12 +31,11 @@ void main() async {
 Future<void> initializeFirebae() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   getIt.get<IapCubit>().initialize();
+  getIt.get<AppCubit>().initialize();
 
   await Future.wait([
     AnalyticsManager.init(),
     FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode),
-    getIt.get<AppCubit>().initialize(),
-    getIt.get<AdsRepository>().getAllAds(),
   ]);
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

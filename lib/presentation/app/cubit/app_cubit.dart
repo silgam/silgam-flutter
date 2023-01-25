@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -5,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
@@ -12,22 +14,40 @@ import '../../../repository/user/user_repository.dart';
 part 'app_cubit.freezed.dart';
 part 'app_state.dart';
 
+const _preferenceKeyMe = 'me';
+
 @lazySingleton
 class AppCubit extends Cubit<AppState> {
-  AppCubit(this._userRepository) : super(const AppState());
+  AppCubit(this._userRepository, this._sharedPreferences)
+      : super(const AppState());
 
   final UserRepository _userRepository;
+  final SharedPreferences _sharedPreferences;
 
-  Future<void> initialize() async {
-    await onUserChange();
+  void initialize() {
+    final cachedMe = _sharedPreferences.getString(_preferenceKeyMe);
+    if (cachedMe != null) {
+      log('Set user from cache: $cachedMe', name: 'AppCubit');
+      emit(state.copyWith(me: User.fromJson(jsonDecode(cachedMe))));
+    }
+
     FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
       await onUserChange();
     });
+
+    onUserChange();
   }
 
   Future<void> onUserChange() async {
     final getMeResult = await _userRepository.getMe();
     final me = getMeResult.tryGetSuccess();
+
+    if (me == null) {
+      await _sharedPreferences.remove(_preferenceKeyMe);
+    } else {
+      await _sharedPreferences.setString(_preferenceKeyMe, jsonEncode(me));
+    }
+
     updateFcmToken(updatedMe: me, previousMe: state.me);
     emit(state.copyWith(me: me));
   }

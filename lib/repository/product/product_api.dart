@@ -15,7 +15,7 @@ abstract class ProductApi {
   @factoryMethod
   factory ProductApi(Dio dio) = _ProductApi;
 
-  @POST('$urlSilgamHosting/products.json')
+  @GET('$urlSilgamHosting/products.json')
   Future<List<Product>> getAllProducts();
 
   @POST('/iap/on-purchase')
