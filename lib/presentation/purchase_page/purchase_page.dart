@@ -28,6 +28,7 @@ class _PurchasePageState extends State<PurchasePage> {
   late final backgroundColor =
       Color(int.parse(widget.product.pageBackgroundColor));
   late final WebViewController _webViewController = WebViewController()
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..enableZoom(false)
     ..setBackgroundColor(backgroundColor)
     ..setNavigationDelegate(NavigationDelegate(
