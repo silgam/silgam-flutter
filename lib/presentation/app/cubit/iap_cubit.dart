@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
@@ -16,64 +19,31 @@ import '../../app/cubit/app_cubit.dart';
 part 'iap_cubit.freezed.dart';
 part 'iap_state.dart';
 
+const _preferenceKeyProducts = 'products';
+
 @lazySingleton
 class IapCubit extends Cubit<IapState> {
-  IapCubit(this._productRepository, this._appCubit)
-      : super(const IapState.initial());
+  IapCubit(
+    this._productRepository,
+    this._appCubit,
+    this._sharedPreferences,
+  ) : super(const IapState());
 
   final ProductRepository _productRepository;
+  final SharedPreferences _sharedPreferences;
   final AppCubit _appCubit;
   final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription? _purchaseStream;
 
-  Future<void> initialize() async {
-    emit(state.copyWith(isLoading: true));
-    final isStoreAvailable = await _iap.isAvailable();
-    if (!isStoreAvailable) {
-      emit(const IapState.storeUnavailable(isLoading: false));
-      return;
-    }
+  void initialize() {
     _purchaseStream = _iap.purchaseStream.listen(
       _onPurchaseStreamData,
-      onError: (error) {
-        log('[PurchaseCubit] onError: $error');
-        emit(state.copyWith(isLoading: false));
-      },
-      onDone: () {
-        log('[PurchaseCubit] onDone');
-        emit(state.copyWith(isLoading: false));
-      },
+      onError: _onPurchaseStreamError,
+      onDone: _onPurchaseStreamDone,
     );
 
-    final productsResult = await _productRepository.getActiveProducts();
-    final products = productsResult.tryGetSuccess();
-    if (products == null) {
-      emit(const IapState.storeUnavailable(isLoading: false));
-      return;
-    }
-
-    final productDetailsResponse = await _iap.queryProductDetails(
-      products.map((e) => e.id).toSet(),
-    );
-    final productDetails = productDetailsResponse.productDetails;
-
-    if (productDetails.isEmpty) {
-      emit(const IapState.storeUnavailable(isLoading: false));
-      return;
-    }
-
-    if (Platform.isIOS) {
-      final transactions = await SKPaymentQueueWrapper().transactions();
-      for (final skPaymentTransactionWrapper in transactions) {
-        SKPaymentQueueWrapper().finishTransaction(skPaymentTransactionWrapper);
-      }
-    }
-
-    emit(IapState.loaded(
-      products: products,
-      productDetails: productDetails,
-      isLoading: false,
-    ));
+    _checkStoreAvailability();
+    _fetchProducts();
   }
 
   Future<void> startFreeTrial(Product product) async {
@@ -97,10 +67,23 @@ class IapCubit extends Cubit<IapState> {
     emit(state.copyWith(isLoading: false));
   }
 
-  Future<void> purchaseProduct(ProductDetails productDetails) async {
+  Future<void> purchaseProduct(Product product) async {
     final me = _appCubit.state.me;
     if (me == null) {
       EasyLoading.showError('먼저 로그인해주세요.');
+      return;
+    }
+
+    if (!state.isStoreAvailable) {
+      EasyLoading.showError('이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.');
+      return;
+    }
+
+    final productDetails = state.productDetails.firstWhereOrNull(
+      (productDetails) => productDetails.id == product.id,
+    );
+    if (productDetails == null) {
+      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
       return;
     }
 
@@ -164,6 +147,16 @@ class IapCubit extends Cubit<IapState> {
     }
   }
 
+  void _onPurchaseStreamError(Object error) {
+    log('[PurchaseCubit] onError: $error');
+    emit(state.copyWith(isLoading: false));
+  }
+
+  void _onPurchaseStreamDone() {
+    log('[PurchaseCubit] onDone');
+    emit(state.copyWith(isLoading: false));
+  }
+
   Future<void> _onPurchased(PurchaseDetails purchaseDetails) async {
     final onPurchaseResult = await _productRepository.onPurchase(
       productId: purchaseDetails.productID,
@@ -182,6 +175,50 @@ class IapCubit extends Cubit<IapState> {
     await _appCubit.onUserChange();
 
     emit(state.copyWith(isLoading: false));
+  }
+
+  Future<void> _checkStoreAvailability() async {
+    final isStoreAvailable = await _iap.isAvailable();
+    emit(state.copyWith(isStoreAvailable: isStoreAvailable));
+
+    if (Platform.isIOS) {
+      final transactions = await SKPaymentQueueWrapper().transactions();
+      for (final skPaymentTransactionWrapper in transactions) {
+        SKPaymentQueueWrapper().finishTransaction(skPaymentTransactionWrapper);
+      }
+    }
+  }
+
+  Future<void> _fetchProducts() async {
+    _updateProducts();
+
+    final cachedProducts = _sharedPreferences.getString(_preferenceKeyProducts);
+    if (cachedProducts != null) {
+      log('Set products from cache: $cachedProducts', name: 'PurchaseCubit');
+      final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
+      final products = productsJson.map((e) => Product.fromJson(e)).toList();
+      emit(state.copyWith(products: products));
+    }
+  }
+
+  Future<void> _updateProducts() async {
+    final productsResult = await _productRepository.getActiveProducts();
+    final products = productsResult.tryGetSuccess();
+    if (products == null) {
+      _sharedPreferences.remove(_preferenceKeyProducts);
+    } else {
+      _sharedPreferences.setString(
+        _preferenceKeyProducts,
+        jsonEncode(products),
+      );
+    }
+    emit(state.copyWith(products: products ?? []));
+
+    final productDetailsResponse = await _iap.queryProductDetails(
+      products?.map((e) => e.id).toSet() ?? {},
+    );
+    final productDetails = productDetailsResponse.productDetails;
+    emit(state.copyWith(productDetails: productDetails));
   }
 
   @override

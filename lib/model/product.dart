@@ -14,6 +14,7 @@ class Product with _$Product {
     required final int originalPrice,
     required final int trialPeriod,
     required final int minVersionNumber,
+    required final String pageTitle,
     required final String pageUrl,
     required final String pageBackgroundColor,
     required final bool isPageBackgroundDark,

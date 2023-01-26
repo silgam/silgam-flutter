@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart' hide MenuBar;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../model/product.dart';
@@ -14,12 +13,10 @@ class PurchasePage extends StatefulWidget {
   const PurchasePage({
     super.key,
     required this.product,
-    required this.productDetail,
   });
 
   static const routeName = '/purchase';
   final Product product;
-  final ProductDetails productDetail;
 
   @override
   State<PurchasePage> createState() => _PurchasePageState();
@@ -27,7 +24,6 @@ class PurchasePage extends StatefulWidget {
 
 class _PurchasePageState extends State<PurchasePage> {
   final PurchaseCubit _cubit = getIt.get();
-  late final IapCubit _iapCubit = context.read<IapCubit>();
 
   late final backgroundColor =
       Color(int.parse(widget.product.pageBackgroundColor));
@@ -40,26 +36,17 @@ class _PurchasePageState extends State<PurchasePage> {
     ..addJavaScriptChannel(
       'FlutterWebView',
       onMessageReceived: (message) {
+        final IapCubit iapCubit = context.read();
         if (message.message == "purchase") {
-          _iapCubit.purchaseProduct(widget.productDetail);
+          iapCubit.purchaseProduct(widget.product);
         } else if (message.message == "trial") {
-          _iapCubit.startFreeTrial(widget.product);
+          iapCubit.startFreeTrial(widget.product);
         }
       },
     )
     ..loadRequest(
       Uri.parse(widget.product.pageUrl),
     );
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _iapCubit.state.mapOrNull(
-        storeUnavailable: (_) => _onStoreUnavailable(context),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,27 +103,14 @@ class _PurchasePageState extends State<PurchasePage> {
       ),
     );
   }
-
-  void _onStoreUnavailable(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          '이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.',
-        ),
-      ),
-    );
-    Navigator.of(context).pop();
-  }
 }
 
 class PurchasePageArguments {
   const PurchasePageArguments({
     required this.product,
-    required this.productDetail,
   });
 
   final Product product;
-  final ProductDetails productDetail;
 }
 
 class _DelayedCurve extends Curve {

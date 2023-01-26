@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,27 +65,18 @@ class _SettingsViewState extends State<SettingsView> {
         ),
       const _Divider(),
       BlocBuilder<IapCubit, IapState>(
-        builder: (context, state) => state.maybeMap(
-          loaded: (state) {
-            final children = <Widget>[];
-            for (final productDetail in state.productDetails) {
-              final product = state.products
-                  .firstWhere((product) => product.id == productDetail.id);
-              children.add(SettingTile(
-                onTap: () {
-                  Navigator.pushNamed(context, PurchasePage.routeName,
-                      arguments: PurchasePageArguments(
-                          product: product, productDetail: productDetail));
-                },
-                title: productDetail.title,
-                description: productDetail.description,
-              ));
-              children.add(const _Divider());
-            }
-            return Column(children: children);
-          },
-          orElse: () => const SizedBox.shrink(),
-        ),
+        builder: (context, state) {
+          final product = state.products.firstOrNull;
+          if (product == null) return const SizedBox.shrink();
+
+          return SettingTile(
+            onTap: () {
+              Navigator.pushNamed(context, PurchasePage.routeName,
+                  arguments: PurchasePageArguments(product: product));
+            },
+            title: product.pageTitle,
+          );
+        },
       ),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,

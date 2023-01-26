@@ -25,6 +25,8 @@ class MainCubit extends Cubit<MainState> {
   final SharedPreferences _sharedPreferences;
 
   void initialize() {
+    _updateAds();
+
     final DateTime today = DateTime.now();
     emit(state.copyWith(
       dDayItems: _dDayRepository.getItemsToShow(today),
@@ -38,7 +40,6 @@ class MainCubit extends Cubit<MainState> {
         ads: adsJson.map((e) => Ads.fromJson(e)).toList(),
       ));
     }
-    _updateAds();
   }
 
   Future<void> _updateAds() async {

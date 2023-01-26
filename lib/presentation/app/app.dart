@@ -87,7 +87,6 @@ class SilgamApp extends StatelessWidget {
               return MaterialPageRoute(
                 builder: (_) => PurchasePage(
                   product: args.product,
-                  productDetail: args.productDetail,
                 ),
                 settings: settings,
               );
