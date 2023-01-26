@@ -77,6 +77,12 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> startFreeTrial(Product product) async {
+    final me = _appCubit.state.me;
+    if (me == null) {
+      EasyLoading.showError('먼저 로그인해주세요.');
+      return;
+    }
+
     emit(state.copyWith(isLoading: true));
     final startTrialResult =
         await _productRepository.startTrial(productId: product.id);
@@ -92,7 +98,24 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> purchaseProduct(ProductDetails productDetails) async {
+    final me = _appCubit.state.me;
+    if (me == null) {
+      EasyLoading.showError('먼저 로그인해주세요.');
+      return;
+    }
+
     emit(state.copyWith(isLoading: true));
+
+    final canPurchaseResult = await _productRepository.canPurchase(
+      productId: productDetails.id,
+      store: Platform.isIOS ? 'app_store' : 'google_play',
+    );
+    if (canPurchaseResult.isError()) {
+      emit(state.copyWith(isLoading: false));
+      EasyLoading.showError(canPurchaseResult.tryGetError()!.message);
+      return;
+    }
+
     await _iap.buyConsumable(
       purchaseParam: PurchaseParam(
         productDetails: productDetails,

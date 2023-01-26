@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'start-trial-request.dto.freezed.dart';
-part 'start-trial-request.dto.g.dart';
+part 'start_trial_request.dto.freezed.dart';
+part 'start_trial_request.dto.g.dart';
 
 @freezed
 class StartTrialRequestDto with _$StartTrialRequestDto {

@@ -8,8 +8,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../model/product.dart';
 import '../../util/api_failure.dart';
+import 'dto/can_purchase_request.dto.dart';
 import 'dto/on_purchase_request.dto.dart';
-import 'dto/start-trial-request.dto.dart';
+import 'dto/start_trial_request.dto.dart';
 import 'product_api.dart';
 
 @lazySingleton
@@ -69,6 +70,24 @@ class ProductRepository {
       return Result.success(unit);
     } on DioError catch (e) {
       log(e.toString(), name: 'ProductRepository.startTrial');
+      return Result.error(e.error as ApiFailure);
+    }
+  }
+
+  Future<Result<Unit, ApiFailure>> canPurchase({
+    required String productId,
+    required String store,
+  }) async {
+    final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+    final request = CanPurchaseRequestDto(
+      productId: productId,
+      store: store,
+    );
+    try {
+      await _productApi.canPurchase('Bearer $authToken', request);
+      return Result.success(unit);
+    } on DioError catch (e) {
+      log(e.toString(), name: 'ProductRepository.canPurchase');
       return Result.error(e.error as ApiFailure);
     }
   }

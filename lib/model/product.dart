@@ -14,6 +14,9 @@ class Product with _$Product {
     required final int originalPrice,
     required final int trialPeriod,
     required final int minVersionNumber,
+    required final String pageUrl,
+    required final String pageBackgroundColor,
+    required final bool isPageBackgroundDark,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) =>

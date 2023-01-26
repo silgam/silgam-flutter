@@ -25,6 +25,8 @@ class AppCubit extends Cubit<AppState> {
   final SharedPreferences _sharedPreferences;
 
   void initialize() {
+    onUserChange();
+
     final cachedMe = _sharedPreferences.getString(_preferenceKeyMe);
     if (cachedMe != null) {
       log('Set user from cache: $cachedMe', name: 'AppCubit');
@@ -34,8 +36,6 @@ class AppCubit extends Cubit<AppState> {
     FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
       await onUserChange();
     });
-
-    onUserChange();
   }
 
   Future<void> onUserChange() async {
