@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class ProgressOverlay extends StatelessWidget {
   final Widget child;
@@ -48,4 +49,23 @@ class ProgressOverlay extends StatelessWidget {
       ],
     );
   }
+}
+
+void initializeEasyLoading() {
+  EasyLoading.instance
+    ..maskType = EasyLoadingMaskType.custom
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..indicatorType = EasyLoadingIndicatorType.ring
+    ..backgroundColor = Colors.transparent
+    ..boxShadow = const []
+    ..maskColor = Colors.black.withAlpha(60)
+    ..backgroundColor = Colors.black.withAlpha(180)
+    ..textStyle = const TextStyle(
+      fontWeight: FontWeight.w700,
+      fontSize: 16,
+      color: Colors.white,
+    )
+    ..textColor = Colors.white
+    ..indicatorColor = Colors.white
+    ..lineWidth = 3;
 }

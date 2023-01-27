@@ -9,6 +9,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../clock_page/clock_page.dart';
+import '../common/progress_overlay.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../home_page/home_page.dart';
 import '../home_page/settings/noise_setting_page.dart';
@@ -129,21 +130,12 @@ class SilgamApp extends StatelessWidget {
   void initialize() {
     FirebaseMessaging.instance.requestPermission();
     initializeDateFormatting('ko_KR');
-    EasyLoading.instance
-      ..maskType = EasyLoadingMaskType.custom
-      ..maskColor = Colors.white.withAlpha(120)
-      ..loadingStyle = EasyLoadingStyle.custom
-      ..indicatorType = EasyLoadingIndicatorType.ring
-      ..indicatorColor = const Color(_indigoPrimaryValue)
-      ..textColor = Colors.black
-      ..backgroundColor = Colors.transparent
-      ..boxShadow = const []
-      ..lineWidth = 3;
+    initializeEasyLoading();
   }
 }
 
 const MaterialColor indigoSwatch = MaterialColor(
-  _indigoPrimaryValue,
+  indigoPrimaryValue,
   <int, Color>{
     50: Color(0xFFE8EAF6),
     100: Color(0xFFC5CAE9),
@@ -153,11 +145,11 @@ const MaterialColor indigoSwatch = MaterialColor(
     500: Color(0xFF3F51B5),
     600: Color(0xFF3949AB),
     700: Color(0xFF303F9F),
-    800: Color(_indigoPrimaryValue),
+    800: Color(indigoPrimaryValue),
     900: Color(0xFF1A237E),
   },
 );
-const int _indigoPrimaryValue = 0xFF283593;
+const int indigoPrimaryValue = 0xFF283593;
 
 const SystemUiOverlayStyle defaultSystemUiOverlayStyle = SystemUiOverlayStyle(
   statusBarIconBrightness: Brightness.dark,

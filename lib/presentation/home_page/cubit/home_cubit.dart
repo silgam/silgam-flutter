@@ -8,7 +8,7 @@ import '../home_page.dart';
 part 'home_cubit.freezed.dart';
 part 'home_state.dart';
 
-@injectable
+@lazySingleton
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(const HomeState());
 
