@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart' hide MenuBar;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,7 +9,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../../model/problem.dart';
-import '../common/menu_bar.dart';
+import '../common/custom_menu_bar.dart';
 
 class ReviewProblemDetailPage extends StatefulWidget {
   static const routeName = '/review_problem_detail';
@@ -88,7 +88,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MenuBar(
+          CustomMenuBar(
             title: problem.title,
             lightText: true,
             actionButtons: [

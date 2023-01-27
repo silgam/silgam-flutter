@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class MenuBar extends StatelessWidget {
+class CustomMenuBar extends StatelessWidget {
   final String title;
   final List<ActionButton> actionButtons;
   final bool lightText;
 
-  const MenuBar({
+  const CustomMenuBar({
     Key? key,
     this.title = '',
     this.actionButtons = const [],

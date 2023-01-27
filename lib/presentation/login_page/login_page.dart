@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart' hide MenuBar;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,7 +11,7 @@ import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/menu_bar.dart';
+import '../common/custom_menu_bar.dart';
 import '../common/progress_overlay.dart';
 import 'cubit/login_cubit.dart';
 
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                       SafeArea(
                         child: Container(
                           alignment: Alignment.topLeft,
-                          child: const MenuBar(lightText: true),
+                          child: const CustomMenuBar(lightText: true),
                         ),
                       ),
                     ],

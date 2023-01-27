@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide MenuBar;
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +8,7 @@ import '../../model/product.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
-import '../common/menu_bar.dart';
+import '../common/custom_menu_bar.dart';
 import '../home_page/cubit/home_cubit.dart';
 import '../home_page/settings/settings_view.dart';
 import 'cubit/purchase_cubit.dart';
@@ -83,7 +83,7 @@ class _PurchasePageState extends State<PurchasePage> {
                 builder: (context, state) {
                   return Column(
                     children: [
-                      MenuBar(
+                      CustomMenuBar(
                         title: widget.product.name,
                       ),
                       Expanded(

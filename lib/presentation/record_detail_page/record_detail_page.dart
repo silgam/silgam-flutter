@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide MenuBar;
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
@@ -8,8 +8,8 @@ import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../common/ad_tile.dart';
+import '../common/custom_menu_bar.dart';
 import '../common/material_hero.dart';
-import '../common/menu_bar.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record_page/edit_record_page.dart';
@@ -53,7 +53,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MenuBar(
+              CustomMenuBar(
                 actionButtons: [
                   ActionButton(
                     icon: const Icon(Icons.image),

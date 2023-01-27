@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart' hide MenuBar;
+import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -11,7 +11,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../model/exam_record.dart';
 import '../../util/analytics_manager.dart';
-import '../common/menu_bar.dart';
+import '../common/custom_menu_bar.dart';
 
 const double _strokeWidth = 0.5;
 
@@ -52,7 +52,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
       body: SafeArea(
         child: Column(
           children: [
-            MenuBar(
+            CustomMenuBar(
               title: '이미지 저장',
               actionButtons: [
                 ActionButton(
