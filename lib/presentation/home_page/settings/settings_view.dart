@@ -135,6 +135,25 @@ class _SettingsViewState extends State<SettingsView> {
           );
         },
       ),
+      GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              settings: const RouteSettings(name: '/licenses'),
+              builder: (_) => const LicensePage(),
+            ),
+          );
+        },
+        child: const Text(
+          '오픈소스 라이선스',
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12,
+            fontWeight: FontWeight.w300,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     ];
   }
 
