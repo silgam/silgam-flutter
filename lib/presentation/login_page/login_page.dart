@@ -41,8 +41,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Scaffold(
           body: BlocListener<AppCubit, AppState>(
-            listenWhen: (previous, current) =>
-                previous.isSignedIn != current.isSignedIn,
+            listenWhen: (previous, current) => previous.me != current.me,
             listener: (_, appState) {
               if (appState.isSignedIn && !_isPagePopped) {
                 _isPagePopped = true;

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +23,7 @@ class SettingTile extends StatefulWidget {
   final ValueChanged<bool>? onSwitchChanged;
   final bool defaultValue;
   final Color? titleColor;
+  final bool showArrow;
 
   const SettingTile({
     Key? key,
@@ -33,6 +35,7 @@ class SettingTile extends StatefulWidget {
     this.onSwitchChanged,
     this.defaultValue = true,
     this.titleColor,
+    this.showArrow = false,
   }) : super(key: key);
 
   @override
@@ -58,7 +61,7 @@ class _SettingTileState extends State<SettingTile> {
       splashColor: Colors.transparent,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: 16,
+          horizontal: 20,
           vertical: widget.description == null && widget.preferenceKey == null
               ? 16
               : 12,
@@ -84,12 +87,20 @@ class _SettingTileState extends State<SettingTile> {
                 ],
               ),
             ),
+            if (widget.preferenceKey != null || widget.showArrow)
+              const SizedBox(width: 16),
             if (widget.preferenceKey != null)
               Switch(
                 value: _isSwitchEnabled,
                 onChanged: _onSwitchChanged,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              )
+              ),
+            if (widget.showArrow)
+              Icon(
+                CupertinoIcons.chevron_right,
+                color: Colors.black.withAlpha(40),
+              ),
+            if (widget.showArrow) const SizedBox(width: 2)
           ],
         ),
       ),

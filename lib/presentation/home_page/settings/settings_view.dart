@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,13 +9,14 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../model/product.dart';
 import '../../../model/user.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
-import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../app/cubit/iap_cubit.dart';
 import '../../common/ad_tile.dart';
+import '../../common/custom_card.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
@@ -33,8 +36,7 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
-      buildWhen: (previous, current) =>
-          previous.isSignedIn != current.isSignedIn,
+      buildWhen: (previous, current) => previous.me != current.me,
       builder: (context, state) {
         return ScaffoldBody(
           title: SettingsView.title,
@@ -52,10 +54,11 @@ class _SettingsViewState extends State<SettingsView> {
 
   List<Widget> _buildSettingTiles(AppState appState) {
     return [
+      const SizedBox(height: 8),
       appState.isSignedIn
           ? _buildLoginInfo(appState.me!)
           : Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: LoginButton(onTap: _onLoginTap),
             ),
       if (isAdsEnabled)
@@ -63,25 +66,23 @@ class _SettingsViewState extends State<SettingsView> {
           width: MediaQuery.of(context).size.width.truncate() - 32,
           margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
         ),
-      const _Divider(),
       BlocBuilder<IapCubit, IapState>(
         builder: (context, state) {
           final product = state.products.firstOrNull;
-          if (product == null) return const SizedBox.shrink();
-
-          return SettingTile(
-            onTap: () {
-              Navigator.pushNamed(context, PurchasePage.routeName,
-                  arguments: PurchasePageArguments(product: product));
-            },
-            title: product.pageTitle,
-          );
+          final isPurchasedUser = appState.me?.isProductTrial == false &&
+              appState.me?.activeProduct.id != 'free';
+          if (product == null || isPurchasedUser) {
+            return const SizedBox(height: 16);
+          }
+          return _buildPurchaseButton(context, product);
         },
       ),
+      _buildSubtitle('기능'),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',
         description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
+        showArrow: true,
       ),
       const _Divider(),
       const SettingTile(
@@ -90,7 +91,7 @@ class _SettingsViewState extends State<SettingsView> {
         disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
         preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
       ),
-      const _Divider(thick: true),
+      _buildSubtitle('기타'),
       SettingTile(
         onTap: _onWriteReviewButtonTap,
         title: '리뷰 쓰기',
@@ -100,24 +101,10 @@ class _SettingsViewState extends State<SettingsView> {
       SettingTile(
         onTap: () => launchUrl(Uri.parse(urlKakaotalk),
             mode: LaunchMode.externalApplication),
-        title: '실감팀과 대화하기 / 실감팀에게 문의하기',
+        title: '문의하기',
         description: '실감 카카오톡 채널로 의견을 보내거나 문의할 수 있습니다.',
       ),
-      const _Divider(),
-      SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlInstagram),
-            mode: LaunchMode.externalApplication),
-        title: '실감 인스타그램 보러 가기',
-        description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
-      ),
-      const _Divider(),
-      SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlFacebook),
-            mode: LaunchMode.externalApplication),
-        title: '실감 페이스북 페이지 보러 가기',
-        description: '팔로우하시면 실감의 새로운 소식을 빠르게 만나볼 수 있습니다.',
-      ),
-      const _Divider(),
+      if (appState.isSignedIn) const _Divider(),
       if (appState.isSignedIn)
         SettingTile(
           onTap: _onLogoutTap,
@@ -130,12 +117,13 @@ class _SettingsViewState extends State<SettingsView> {
           title: '계정 탈퇴',
           titleColor: Colors.red,
         ),
-      if (appState.isSignedIn) const _Divider(),
+      const _Divider(thick: true),
       FutureBuilder(
         future: PackageInfo.fromPlatform(),
         builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            alignment: Alignment.center,
             child: Text(
               '버전 정보 ${snapshot.data?.version}+${snapshot.data?.buildNumber}',
               style: const TextStyle(
@@ -152,40 +140,53 @@ class _SettingsViewState extends State<SettingsView> {
 
   Widget _buildLoginInfo(User user) {
     final String providerIconPath = getProviderIconPath(user);
-
     return GestureDetector(
       onLongPress: () => _onLoginLongPress(user),
-      child: Container(
-        margin: const EdgeInsets.all(12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(cardCornerRadius),
-          color: Colors.grey.shade200,
-        ),
+      child: CustomCard(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
         child: IntrinsicHeight(
           child: Row(
             children: [
+              const SizedBox(width: 10),
               CircleAvatar(
                 backgroundImage: NetworkImage(
                     user.photoUrl ?? 'https://via.placeholder.com/150?text=ㅇ'),
                 backgroundColor: Colors.grey,
+                radius: 24,
                 onBackgroundImageError: (exception, stackTrace) {},
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      user.displayName ?? '',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            user.displayName ?? '이름 없음',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          providerIconPath,
+                          height: 18,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
                       user.email ?? '이메일 없음',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade700,
@@ -194,16 +195,75 @@ class _SettingsViewState extends State<SettingsView> {
                   ],
                 ),
               ),
-              Container(
-                height: double.infinity,
-                alignment: Alignment.bottomCenter,
-                child: SvgPicture.asset(
-                  providerIconPath,
-                  height: 28,
-                ),
+              const SizedBox(width: 12),
+              const VerticalDivider(
+                indent: 8,
+                endIndent: 8,
+                width: 1,
+              ),
+              const SizedBox(width: 4),
+              CachedNetworkImage(
+                imageUrl: user.isProductTrial
+                    ? user.activeProduct.trialStampImageUrl
+                    : user.activeProduct.stampImageUrl,
+                height: 74,
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPurchaseButton(BuildContext context, Product product) {
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      backgroundColor: Theme.of(context).primaryColor,
+      isThin: true,
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            PurchasePage.routeName,
+            arguments: PurchasePageArguments(product: product),
+          );
+        },
+        splashColor: Colors.transparent,
+        highlightColor: Colors.grey.withAlpha(60),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${product.name} 구매하기',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Icon(
+                CupertinoIcons.chevron_right,
+                color: Colors.white.withAlpha(150),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubtitle(String text) {
+    return Container(
+      color: Colors.grey.shade200,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w300,
         ),
       ),
     );
@@ -353,11 +413,11 @@ class _Divider extends StatelessWidget {
     double thickness = 0.5;
     double indent = 12;
     if (thick) {
-      thickness = 1;
+      thickness = 0.8;
       indent = 0;
     }
     return Divider(
-      color: Colors.grey.shade200,
+      color: Colors.black.withOpacity(0.08),
       height: thickness,
       thickness: thickness,
       indent: indent,
