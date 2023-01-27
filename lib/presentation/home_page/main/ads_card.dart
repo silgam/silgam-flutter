@@ -17,7 +17,8 @@ class _AdsCardState extends State<AdsCard> {
 
   @override
   Widget build(BuildContext context) {
-    return _Card(
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [

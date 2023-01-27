@@ -10,15 +10,14 @@ class _DDaysCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            for (DDayItem item in dDayItems)
-              _buildDDayWidget(item, Theme.of(context).primaryColor),
-          ],
-        ),
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          for (DDayItem item in dDayItems)
+            _buildDDayWidget(item, Theme.of(context).primaryColor),
+        ],
       ),
     );
   }

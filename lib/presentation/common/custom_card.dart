@@ -1,13 +1,21 @@
-part of 'main_view.dart';
+import 'package:flutter/material.dart';
 
-class _Card extends StatelessWidget {
+import '../app/app.dart';
+
+class CustomCard extends StatelessWidget {
   final Widget child;
   final Color backgroundColor;
+  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
+  final bool isThin;
 
-  const _Card({
+  const CustomCard({
     Key? key,
     required this.child,
     this.backgroundColor = Colors.white,
+    this.margin,
+    this.padding,
+    this.isThin = false,
   }) : super(key: key);
 
   @override
@@ -15,9 +23,9 @@ class _Card extends StatelessWidget {
     return Container(
       width: double.infinity,
       clipBehavior: Clip.hardEdge,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+      margin: margin,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(cardCornerRadius),
+        borderRadius: BorderRadius.circular(isThin ? 100 : cardCornerRadius),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(20),
@@ -28,7 +36,10 @@ class _Card extends StatelessWidget {
       ),
       child: Material(
         color: backgroundColor,
-        child: child,
+        child: Padding(
+          padding: padding ?? EdgeInsets.zero,
+          child: child,
+        ),
       ),
     );
   }

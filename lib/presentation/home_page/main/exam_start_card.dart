@@ -33,7 +33,8 @@ class _ExamStartCardState extends State<_ExamStartCard>
   Widget build(BuildContext context) {
     Color disabledColor = Theme.of(context).primaryColor.withAlpha(80);
     TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
-    return _Card(
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Column(
         children: [
           IntrinsicWidth(
