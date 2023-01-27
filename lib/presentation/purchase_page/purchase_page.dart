@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide MenuBar;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:intl/intl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../model/product.dart';
@@ -39,14 +40,7 @@ class _PurchasePageState extends State<PurchasePage> {
     ))
     ..addJavaScriptChannel(
       'FlutterWebView',
-      onMessageReceived: (message) {
-        final IapCubit iapCubit = context.read();
-        if (message.message == "purchase") {
-          iapCubit.purchaseProduct(widget.product);
-        } else if (message.message == "trial") {
-          iapCubit.startFreeTrial(widget.product);
-        }
-      },
+      onMessageReceived: _onWebviewMessageReceived,
     )
     ..loadRequest(
       Uri.parse(widget.product.pageUrl),
@@ -62,9 +56,19 @@ class _PurchasePageState extends State<PurchasePage> {
           child: BlocListener<AppCubit, AppState>(
             listenWhen: (previous, current) => previous.me != current.me,
             listener: (context, state) {
-              if (state.me?.activeProduct.id == widget.product.id) {
+              final me = state.me;
+              if (me != null && me.activeProduct.id == widget.product.id) {
                 Navigator.of(context).pop();
                 getIt.get<HomeCubit>().changeTabByTitle(SettingsView.title);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      me.isProductTrial
+                          ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
+                          : '${widget.product.name}가 시작되었어요! 열공하세요 🔥',
+                    ),
+                  ),
+                );
               }
             },
             child: BlocListener<IapCubit, IapState>(
@@ -115,6 +119,67 @@ class _PurchasePageState extends State<PurchasePage> {
         ),
       ),
     );
+  }
+
+  void _onWebviewMessageReceived(JavaScriptMessage message) {
+    final IapCubit iapCubit = context.read();
+    if (message.message == "purchase") {
+      iapCubit.purchaseProduct(widget.product);
+    } else if (message.message == "trial") {
+      final now = DateFormat.yMd('ko_KR').add_Hm().format(DateTime.now());
+      final trialEndTime = DateFormat.yMd('ko_KR').add_Hm().format(
+            DateTime.now()
+                .add(Duration(days: widget.product.trialPeriod))
+                .subtract(const Duration(seconds: 1)),
+          );
+      showDialog(
+        context: context,
+        routeSettings:
+            const RouteSettings(name: '/purchase/trial_confirm_dialog'),
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+                color: Colors.black,
+              ),
+            ),
+            content: Text(
+              '- 이용 가능 기간 : $now ~ $trialEndTime\n- 실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다',
+              style: const TextStyle(fontSize: 14, height: 1.5),
+            ),
+            contentPadding: const EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 16,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                child: const Text(
+                  '취소',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  iapCubit.startFreeTrial(widget.product);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  '시작',
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
 
