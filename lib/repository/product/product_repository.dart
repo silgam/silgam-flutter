@@ -18,10 +18,18 @@ class ProductRepository {
 
   final ProductApi _productApi;
 
-  Future<Result<List<Product>, ApiFailure>> getActiveProducts() async {
+  Future<Result<List<Product>, ApiFailure>> getAllProducts() async {
     try {
       final products = await _productApi.getAllProducts();
-      return Result.success(products);
+      final productsLocal = <Product>[];
+      for (final product in products) {
+        productsLocal.add(product.copyWith(
+          expiryDate: product.expiryDate.toLocal(),
+          sellingStartDate: product.sellingStartDate.toLocal(),
+          sellingEndDate: product.sellingEndDate.toLocal(),
+        ));
+      }
+      return Result.success(productsLocal);
     } on DioError catch (e) {
       log(e.toString(), name: 'ProductRepository.getActiveProducts');
       return Result.error(e.error as ApiFailure);

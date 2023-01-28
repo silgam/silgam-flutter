@@ -203,7 +203,7 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> _updateProducts() async {
-    final productsResult = await _productRepository.getActiveProducts();
+    final productsResult = await _productRepository.getAllProducts();
     final products = productsResult.tryGetSuccess();
     if (products == null) {
       _sharedPreferences.remove(_preferenceKeyProducts);
