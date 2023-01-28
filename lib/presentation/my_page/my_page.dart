@@ -1,15 +1,21 @@
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/product.dart';
 import '../../model/user.dart';
 import '../app/cubit/app_cubit.dart';
+import '../app/cubit/iap_cubit.dart';
+import '../common/custom_card.dart';
 import '../common/custom_menu_bar.dart';
+import '../common/purchase_button.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
 
   static const routeName = '/my_page';
+  static const _cardMaxWidth = 400.0;
 
   @override
   Widget build(BuildContext context) {
@@ -64,34 +70,101 @@ class MyPage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 2),
-                            if (me.activeProduct.id == 'free')
-                              const SizedBox(height: 8),
-                            Text(
-                              me.activeProduct.id == 'free'
-                                  ? '현재 사용 중인 패스가 없어요.'
-                                  : '현재 사용 중인 패스를 확인할 수 있어요.',
-                              style: const TextStyle(
+                            const Text(
+                              '현재 사용 중인 패스를 확인할 수 있어요.',
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
                               ),
                             ),
-                            if (me.activeProduct.id != 'free')
-                              const SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             if (me.activeProduct.id != 'free')
                               ConstrainedBox(
                                 constraints: const BoxConstraints(
-                                  maxWidth: 400,
+                                  maxWidth: _cardMaxWidth,
                                 ),
                                 child: _buildPass(context, me),
                               ),
+                            if (me.activeProduct.id == 'free')
+                              Container(
+                                width: double.infinity,
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
+                                constraints: const BoxConstraints(
+                                  maxWidth: _cardMaxWidth,
+                                  minHeight: 120,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: const Text(
+                                  '앗! 사용 중인 패스가 없어요 :(',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              )
                           ],
                         ),
+                      ),
+                      const SizedBox(height: 24),
+                      BlocBuilder<IapCubit, IapState>(
+                        buildWhen: (previous, current) =>
+                            previous.products != current.products ||
+                            previous.activeProducts != current.activeProducts,
+                        builder: (context, iapState) {
+                          return Column(
+                            children: [
+                              if ((me.activeProduct.id == 'free' ||
+                                      me.isProductTrial) &&
+                                  iapState.activeProducts.isNotEmpty)
+                                PurchaseButton(
+                                  product: iapState.activeProducts.first,
+                                  margin: const EdgeInsets.only(
+                                    left: 24,
+                                    right: 24,
+                                    bottom: 40,
+                                  ),
+                                ),
+                              if (me.receipts.isNotEmpty)
+                                const Text(
+                                  '사용 내역',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              const SizedBox(height: 8),
+                              ...me.receipts.reversed.map((receipt) {
+                                final product = iapState.products.firstWhere(
+                                    (product) =>
+                                        product.id == receipt.productId);
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 32,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: _cardMaxWidth,
+                                  ),
+                                  child: _buildReceipt(receipt, product),
+                                );
+                              }).toList(),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 20),
                       _buildInfo('상세한 결제 내역은 앱스토어 또는 플레이스토어 내에서 확인이 가능합니다.'),
                       _buildInfo('결제 및 구매 취소 관련 문의는 실감 카카오톡 채널을 이용해주세요.'),
                       _buildInfo(
-                          '구독기간 이후에는 자동으로 서비스 권한이 만료되며, 추가 결제가 발생하지 않습니다.')
+                          '구독기간 이후에는 자동으로 서비스 권한이 만료되며, 추가 결제가 발생하지 않습니다.'),
+                      const SizedBox(height: 60),
                     ],
                   );
                 },
@@ -205,52 +278,12 @@ class MyPage extends StatelessWidget {
                       const SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            Text(
-                              '구매 일자',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                purchaseDateString,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: _buildReceiptInfo('시작 일시', purchaseDateString),
                       ),
                       const SizedBox(height: 4),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            Text(
-                              '이용 가능 기간',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                '~ $expiryDateString',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black,
-                                  height: 1,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: _buildReceiptInfo('만료 일시', expiryDateString),
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -261,6 +294,114 @@ class MyPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildReceipt(Receipt receipt, Product product) {
+    final isTrial = receipt.store == 'trial';
+    final purchaseDateString =
+        DateFormat.yMd('ko_KR').add_Hm().format(receipt.createdAt);
+    final expiryDate =
+        isTrial ? DateTime.parse(receipt.token).toLocal() : product.expiryDate;
+    final expiryDateString =
+        DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
+
+    var store = '';
+    switch (receipt.store) {
+      case 'trial':
+        store = '무료 체험';
+        break;
+      case 'google_play':
+        store = 'Google Play';
+        break;
+      case 'app_store':
+        store = 'App Store';
+        break;
+    }
+
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              product.name,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey.shade700,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          DottedLine(
+            dashLength: 8,
+            dashGapLength: 8,
+            dashColor: Colors.grey.shade700,
+          ),
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: _buildReceiptInfo(
+              '구매 방법',
+              store,
+              textColor: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: _buildReceiptInfo(
+              '구매 일시',
+              purchaseDateString,
+              textColor: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: _buildReceiptInfo(
+              '만료 일시',
+              expiryDateString,
+              textColor: Colors.grey.shade700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReceiptInfo(
+    String title,
+    String text, {
+    Color? textColor,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 11,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              height: 1.1,
+              color: textColor ?? Colors.black,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
