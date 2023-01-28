@@ -64,6 +64,7 @@ dependencies:
   multiple_result: ^4.0.0
   collection: ^1.16.0
   webview_flutter: ^4.0.2
+  dotted_line: ^3.1.0
 
 dev_dependencies:
   flutter_test:
