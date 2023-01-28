@@ -61,7 +61,7 @@ class _SettingTileState extends State<SettingTile> {
       splashColor: Colors.transparent,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: 20,
+          horizontal: 28,
           vertical: widget.description == null && widget.preferenceKey == null
               ? 16
               : 12,

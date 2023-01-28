@@ -245,13 +245,21 @@ class _SettingsViewState extends State<SettingsView> {
 
   Widget _buildSubtitle(String text) {
     return Container(
-      color: Colors.grey.shade200,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey.shade300,
+            width: 1,
+          ),
+        ),
+      ),
       child: Text(
         text,
         style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w300,
+          fontSize: 16,
+          fontWeight: FontWeight.w900,
         ),
       ),
     );
@@ -414,13 +422,13 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double thickness = 0.5;
-    double indent = 12;
+    double indent = 20;
     if (thick) {
       thickness = 0.8;
       indent = 0;
     }
     return Divider(
-      color: Colors.black.withOpacity(0.08),
+      color: Colors.black.withOpacity(0.06),
       height: thickness,
       thickness: thickness,
       indent: indent,
