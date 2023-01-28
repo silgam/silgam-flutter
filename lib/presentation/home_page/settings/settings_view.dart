@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -20,6 +21,7 @@ import '../../common/custom_card.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
+import '../../my_page/my_page.dart';
 import '../../purchase_page/purchase_page.dart';
 import 'noise_setting_page.dart';
 import 'setting_tile.dart';
@@ -159,75 +161,81 @@ class _SettingsViewState extends State<SettingsView> {
 
   Widget _buildLoginInfo(User user) {
     final String providerIconPath = getProviderIconPath(user);
-    return GestureDetector(
-      onLongPress: () => _onLoginLongPress(user),
-      child: CustomCard(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              const SizedBox(width: 10),
-              CircleAvatar(
-                backgroundImage: NetworkImage(
-                    user.photoUrl ?? 'https://via.placeholder.com/150?text=ㅇ'),
-                backgroundColor: Colors.grey,
-                radius: 24,
-                onBackgroundImageError: (exception, stackTrace) {},
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            user.displayName ?? '이름 없음',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: InkWell(
+        onTap: () => _onLoginInfoTap(),
+        onLongPress: () => _onLoginInfoLongPress(user),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.grey.withAlpha(60),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                const SizedBox(width: 10),
+                CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    user.photoUrl ?? 'https://via.placeholder.com/150?text=ㅇ',
+                  ),
+                  backgroundColor: Colors.grey,
+                  radius: 24,
+                  onBackgroundImageError: (exception, stackTrace) {},
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              user.displayName ?? '이름 없음',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        SvgPicture.asset(
-                          providerIconPath,
-                          height: 18,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      user.email ?? '이메일 없음',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade700,
+                          const SizedBox(width: 8),
+                          SvgPicture.asset(
+                            providerIconPath,
+                            height: 18,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 6),
+                      Text(
+                        user.email ?? '이메일 없음',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              const VerticalDivider(
-                indent: 8,
-                endIndent: 8,
-                width: 1,
-              ),
-              const SizedBox(width: 4),
-              CachedNetworkImage(
-                imageUrl: user.isProductTrial
-                    ? user.activeProduct.trialStampImageUrl
-                    : user.activeProduct.stampImageUrl,
-                height: 74,
-              ),
-            ],
+                const SizedBox(width: 12),
+                const VerticalDivider(
+                  indent: 8,
+                  endIndent: 8,
+                  width: 1,
+                ),
+                const SizedBox(width: 4),
+                CachedNetworkImage(
+                  imageUrl: user.isProductTrial
+                      ? user.activeProduct.trialStampImageUrl
+                      : user.activeProduct.stampImageUrl,
+                  height: 74,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -292,12 +300,27 @@ class _SettingsViewState extends State<SettingsView> {
     await Navigator.pushNamed(context, LoginPage.routeName);
   }
 
-  void _onLoginLongPress(User user) {
+  void _onLoginInfoTap() {
+    Navigator.pushNamed(context, MyPage.routeName);
+  }
+
+  void _onLoginInfoLongPress(User user) {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
       builder: (_) => AlertDialog(
-        content: SelectableText(user.id),
+        content: SelectableText(
+          user.id,
+          onTap: () {
+            Clipboard.setData(ClipboardData(text: user.id));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('복사되었습니다.'),
+              ),
+            );
+            Navigator.pop(context);
+          },
+        ),
       ),
     );
   }

@@ -146,9 +146,12 @@ class _PurchasePageState extends State<PurchasePage> {
                 color: Colors.black,
               ),
             ),
-            content: Text(
-              '- 이용 가능 기간 : $now ~ $trialEndTime\n- 실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다',
-              style: const TextStyle(fontSize: 14, height: 1.5),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildInfo('이용 가능 기간 : $now ~ $trialEndTime'),
+                _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
+              ],
             ),
             contentPadding: const EdgeInsets.only(
               left: 24,
@@ -180,6 +183,35 @@ class _PurchasePageState extends State<PurchasePage> {
         },
       );
     }
+  }
+
+  Widget _buildInfo(String text) {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• ',
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w300,
+              color: Colors.grey.shade600,
+              height: 1.2,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                height: 1.2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

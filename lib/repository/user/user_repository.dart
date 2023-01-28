@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:injectable/injectable.dart';
@@ -29,7 +30,24 @@ class UserRepository {
     }
 
     try {
-      final me = await _userApi.getMe('Bearer $authToken');
+      var me = await _userApi.getMe('Bearer $authToken');
+      me = me.copyWith(
+        receipts: me.receipts.sortedBy((element) => element.createdAt),
+      );
+      final receipts = <Receipt>[];
+      for (final receipt in me.receipts) {
+        receipts.add(receipt.copyWith(
+          createdAt: receipt.createdAt.toLocal(),
+        ));
+      }
+      me = me.copyWith(
+        receipts: receipts,
+        activeProduct: me.activeProduct.copyWith(
+          expiryDate: me.activeProduct.expiryDate.toLocal(),
+          sellingStartDate: me.activeProduct.sellingStartDate.toLocal(),
+          sellingEndDate: me.activeProduct.sellingEndDate.toLocal(),
+        ),
+      );
       return Result.success(me);
     } on DioError catch (e) {
       log('getMe() failed: $e', name: 'UserRepository');

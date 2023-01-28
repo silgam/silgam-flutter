@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'product.dart';
@@ -24,8 +23,7 @@ class User with _$User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   bool get isProductTrial =>
-      activeProduct.id != 'free' &&
-      receipts.sortedBy((element) => element.createdAt).last.store == 'trial';
+      activeProduct.id != 'free' && receipts.last.store == 'trial';
 }
 
 @freezed
@@ -33,6 +31,7 @@ class Receipt with _$Receipt {
   factory Receipt({
     required final String store,
     required final String productId,
+    required final String token,
     required final DateTime createdAt,
   }) = _Receipt;
 
