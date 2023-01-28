@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,6 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../model/product.dart';
 import '../../../model/user.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
@@ -19,10 +17,10 @@ import '../../app/cubit/iap_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import '../../common/login_button.dart';
+import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
 import '../../my_page/my_page.dart';
-import '../../purchase_page/purchase_page.dart';
 import 'noise_setting_page.dart';
 import 'setting_tile.dart';
 
@@ -76,7 +74,10 @@ class _SettingsViewState extends State<SettingsView> {
           if (product == null || isPurchasedUser) {
             return const SizedBox(height: 16);
           }
-          return _buildPurchaseButton(context, product);
+          return PurchaseButton(
+            product: product,
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          );
         },
       ),
       _buildSubtitle('기능'),
@@ -236,46 +237,6 @@ class _SettingsViewState extends State<SettingsView> {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPurchaseButton(BuildContext context, Product product) {
-    return CustomCard(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      backgroundColor: Theme.of(context).primaryColor,
-      isThin: true,
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            PurchasePage.routeName,
-            arguments: PurchasePageArguments(product: product),
-          );
-        },
-        splashColor: Colors.transparent,
-        highlightColor: Colors.grey.withAlpha(60),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: Row(
-            children: [
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  '${product.name} 구매하기',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Icon(
-                CupertinoIcons.chevron_right,
-                color: Colors.white.withAlpha(150),
-              ),
-            ],
           ),
         ),
       ),
