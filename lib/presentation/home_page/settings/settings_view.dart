@@ -70,7 +70,7 @@ class _SettingsViewState extends State<SettingsView> {
         ),
       BlocBuilder<IapCubit, IapState>(
         builder: (context, state) {
-          final product = state.products.firstOrNull;
+          final product = state.activeProducts.firstOrNull;
           final isPurchasedUser = appState.me?.isProductTrial == false &&
               appState.me?.activeProduct.id != 'free';
           if (product == null || isPurchasedUser) {

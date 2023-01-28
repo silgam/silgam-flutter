@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../model/product.dart';
 import '../../util/api_failure.dart';
@@ -22,16 +21,7 @@ class ProductRepository {
   Future<Result<List<Product>, ApiFailure>> getActiveProducts() async {
     try {
       final products = await _productApi.getAllProducts();
-      final today = DateTime.now();
-      final versionNumber = await _getVersionNumber();
-      final activeProducts = products
-          .where((e) =>
-              e.sellingStartDate.isBefore(today) &&
-              e.sellingEndDate.isAfter(today) &&
-              e.minVersionNumber <= versionNumber &&
-              e.id != 'free')
-          .toList();
-      return Result.success(activeProducts);
+      return Result.success(products);
     } on DioError catch (e) {
       log(e.toString(), name: 'ProductRepository.getActiveProducts');
       return Result.error(e.error as ApiFailure);
@@ -90,10 +80,5 @@ class ProductRepository {
       log(e.toString(), name: 'ProductRepository.canPurchase');
       return Result.error(e.error as ApiFailure);
     }
-  }
-
-  Future<int> _getVersionNumber() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    return int.parse(packageInfo.buildNumber);
   }
 }

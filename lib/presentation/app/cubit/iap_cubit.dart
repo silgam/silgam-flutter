@@ -10,6 +10,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:injectable/injectable.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/product.dart';
@@ -197,7 +198,7 @@ class IapCubit extends Cubit<IapState> {
       log('Set products from cache: $cachedProducts', name: 'PurchaseCubit');
       final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
       final products = productsJson.map((e) => Product.fromJson(e)).toList();
-      emit(state.copyWith(products: products));
+      emit(state.copyWith(activeProducts: products));
     }
   }
 
@@ -212,13 +213,31 @@ class IapCubit extends Cubit<IapState> {
         jsonEncode(products),
       );
     }
-    emit(state.copyWith(products: products ?? []));
+
+    final today = DateTime.now();
+    final versionNumber = await _getVersionNumber();
+    final activeProducts = products
+        ?.where((e) =>
+            e.sellingStartDate.isBefore(today) &&
+            e.sellingEndDate.isAfter(today) &&
+            e.minVersionNumber <= versionNumber &&
+            e.id != 'free')
+        .toList();
+    emit(state.copyWith(
+      activeProducts: activeProducts ?? [],
+      products: products ?? [],
+    ));
 
     final productDetailsResponse = await _iap.queryProductDetails(
-      products?.map((e) => e.id).toSet() ?? {},
+      activeProducts?.map((e) => e.id).toSet() ?? {},
     );
     final productDetails = productDetailsResponse.productDetails;
     emit(state.copyWith(productDetails: productDetails));
+  }
+
+  Future<int> _getVersionNumber() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    return int.parse(packageInfo.buildNumber);
   }
 
   @override
