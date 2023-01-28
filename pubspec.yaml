@@ -92,6 +92,9 @@ flutter:
         - asset: fonts/NanumSquareR.otf
         - asset: fonts/NanumSquareB.otf
         - asset: fonts/NanumSquareEB.otf
+    - family: EstablishRetrosans
+      fonts:
+        - asset: fonts/EstablishRetrosans.otf
 
 flutter_icons:
   android: "launcher_icon"
