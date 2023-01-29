@@ -18,8 +18,29 @@ class Product with _$Product {
     required final String pageUrl,
     required final String pageBackgroundColor,
     required final bool isPageBackgroundDark,
+    required final ProductBenefit benefit,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) =>
       _$ProductFromJson(json);
+}
+
+@freezed
+class ProductBenefit with _$ProductBenefit {
+  const factory ProductBenefit({
+    required final bool isAdsRemoved,
+    required final bool isStatisticAvailable,
+    required final int examRecordLimit,
+    required final List<int> availableNoiseIds,
+  }) = _ProductBenefit;
+
+  factory ProductBenefit.fromJson(Map<String, dynamic> json) =>
+      _$ProductBenefitFromJson(json);
+
+  static const ProductBenefit initial = ProductBenefit(
+    isAdsRemoved: false,
+    isStatisticAvailable: false,
+    examRecordLimit: 30,
+    availableNoiseIds: [0, 2, 3, 10, 12],
+  );
 }

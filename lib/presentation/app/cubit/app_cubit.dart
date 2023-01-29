@@ -2,14 +2,18 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../model/product.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
+import '../../../util/injection.dart';
+import 'iap_cubit.dart';
 
 part 'app_cubit.freezed.dart';
 part 'app_state.dart';
@@ -23,6 +27,25 @@ class AppCubit extends Cubit<AppState> {
 
   final UserRepository _userRepository;
   final SharedPreferences _sharedPreferences;
+  late final IapCubit _iapCubit = getIt.get();
+
+  @override
+  void onChange(Change<AppState> change) {
+    super.onChange(change);
+    if (change.nextState.me != change.currentState.me) {
+      updateProductBenefit();
+    }
+  }
+
+  void updateProductBenefit() {
+    final products = _iapCubit.state.products;
+    final freeProduct = products.firstWhereOrNull((p) => p.id == 'free');
+    emit(state.copyWith(
+      productBenefit: state.me?.activeProduct.benefit ??
+          freeProduct?.benefit ??
+          ProductBenefit.initial,
+    ));
+  }
 
   void initialize() {
     onUserChange();
@@ -32,6 +55,8 @@ class AppCubit extends Cubit<AppState> {
       log('Set user from cache: $cachedMe', name: 'AppCubit');
       emit(state.copyWith(me: User.fromJson(jsonDecode(cachedMe))));
     }
+
+    updateProductBenefit();
 
     FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
       await onUserChange();

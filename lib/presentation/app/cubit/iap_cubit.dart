@@ -36,6 +36,14 @@ class IapCubit extends Cubit<IapState> {
   final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription? _purchaseStream;
 
+  @override
+  void onChange(Change<IapState> change) {
+    super.onChange(change);
+    if (change.nextState.products != change.currentState.products) {
+      _appCubit.updateProductBenefit();
+    }
+  }
+
   void initialize() {
     _purchaseStream = _iap.purchaseStream.listen(
       _onPurchaseStreamData,
@@ -45,6 +53,7 @@ class IapCubit extends Cubit<IapState> {
 
     _checkStoreAvailability();
     _fetchProducts();
+    _appCubit.updateProductBenefit();
   }
 
   Future<void> startFreeTrial(Product product) async {
