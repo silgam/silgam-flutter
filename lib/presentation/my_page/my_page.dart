@@ -185,7 +185,15 @@ class MyPage extends StatelessWidget {
         : user.activeProduct.expiryDate;
     final expiryDateString =
         DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
-    final expiryDDay = expiryDate.difference(DateTime.now()).inDays;
+
+    final now = DateTime.now();
+    final expiryDay =
+        DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
+    final expiryDDay = expiryDay
+        .difference(
+          DateTime(now.year, now.month, now.day),
+        )
+        .inDays;
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
