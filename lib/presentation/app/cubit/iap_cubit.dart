@@ -36,14 +36,6 @@ class IapCubit extends Cubit<IapState> {
   final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription? _purchaseStream;
 
-  @override
-  void onChange(Change<IapState> change) {
-    super.onChange(change);
-    if (change.nextState.products != change.currentState.products) {
-      _appCubit.updateProductBenefit();
-    }
-  }
-
   void initialize() {
     _purchaseStream = _iap.purchaseStream.listen(
       _onPurchaseStreamData,
@@ -207,7 +199,8 @@ class IapCubit extends Cubit<IapState> {
       log('Set products from cache: $cachedProducts', name: 'PurchaseCubit');
       final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
       final products = productsJson.map((e) => Product.fromJson(e)).toList();
-      emit(state.copyWith(activeProducts: products));
+      emit(state.copyWith(activeProducts: products, products: products));
+      _appCubit.updateProductBenefit();
     }
   }
 
@@ -236,6 +229,7 @@ class IapCubit extends Cubit<IapState> {
       activeProducts: activeProducts ?? [],
       products: products ?? [],
     ));
+    _appCubit.updateProductBenefit();
 
     final productDetailsResponse = await _iap.queryProductDetails(
       activeProducts?.map((e) => e.id).toSet() ?? {},

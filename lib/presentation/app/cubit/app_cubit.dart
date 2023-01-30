@@ -29,24 +29,6 @@ class AppCubit extends Cubit<AppState> {
   final SharedPreferences _sharedPreferences;
   late final IapCubit _iapCubit = getIt.get();
 
-  @override
-  void onChange(Change<AppState> change) {
-    super.onChange(change);
-    if (change.nextState.me != change.currentState.me) {
-      updateProductBenefit();
-    }
-  }
-
-  void updateProductBenefit() {
-    final products = _iapCubit.state.products;
-    final freeProduct = products.firstWhereOrNull((p) => p.id == 'free');
-    emit(state.copyWith(
-      productBenefit: state.me?.activeProduct.benefit ??
-          freeProduct?.benefit ??
-          ProductBenefit.initial,
-    ));
-  }
-
   void initialize() {
     onUserChange();
 
@@ -54,9 +36,9 @@ class AppCubit extends Cubit<AppState> {
     if (cachedMe != null) {
       log('Set user from cache: $cachedMe', name: 'AppCubit');
       emit(state.copyWith(me: User.fromJson(jsonDecode(cachedMe))));
-    }
 
-    updateProductBenefit();
+      updateProductBenefit();
+    }
 
     FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
       await onUserChange();
@@ -75,6 +57,8 @@ class AppCubit extends Cubit<AppState> {
 
     updateFcmToken(updatedMe: me, previousMe: state.me);
     emit(state.copyWith(me: me));
+
+    updateProductBenefit();
   }
 
   Future<void> updateFcmToken({
@@ -109,5 +93,16 @@ class AppCubit extends Cubit<AppState> {
       ));
       log('fcmToken added', name: 'AppCubit');
     }
+  }
+
+  void updateProductBenefit() {
+    final products = _iapCubit.state.products;
+    final freeProduct = products.firstWhereOrNull((p) => p.id == 'free');
+    final productBenefit = state.me?.activeProduct.benefit ??
+        freeProduct?.benefit ??
+        ProductBenefit.initial;
+
+    emit(state.copyWith(productBenefit: productBenefit));
+    log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
   }
 }
