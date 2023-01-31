@@ -5,6 +5,7 @@ import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../../common/dialog.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
@@ -54,7 +55,8 @@ class _RecordListViewState extends State<RecordListView> {
                     slivers: [
                       _buildQuerySection(state),
                       if (appState.isNotSignedIn) _buildLoginButton(),
-                      if (appState.isSignedIn) _buildListSection(state.records),
+                      if (appState.isSignedIn)
+                        _buildListSection(state.records, state.lockedRecordIds),
                       if (appState.isSignedIn && state.records.isEmpty)
                         _buildDescription(),
                     ],
@@ -153,15 +155,33 @@ class _RecordListViewState extends State<RecordListView> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              '${state.records.length}개 / ${state.originalRecords.length}개',
-              style: const TextStyle(color: Colors.grey),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '${state.records.length}개 / ${state.originalRecords.length}개',
+                  style: const TextStyle(color: Colors.grey, height: 1.2),
+                ),
+                const SizedBox(width: 2),
+                InkWell(
+                  onTap: () => showExamRecordLimitInfoDialog(context),
+                  borderRadius: BorderRadius.circular(100),
+                  splashColor: Colors.transparent,
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.help_outline,
+                      size: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
         ],
       ),
     );
@@ -196,7 +216,10 @@ class _RecordListViewState extends State<RecordListView> {
     );
   }
 
-  Widget _buildListSection(List<ExamRecord> records) {
+  Widget _buildListSection(
+    List<ExamRecord> records,
+    List<String> lockedRecordIds,
+  ) {
     return SliverPadding(
       padding: const EdgeInsets.only(bottom: 12),
       sliver: SliverList(
@@ -205,6 +228,7 @@ class _RecordListViewState extends State<RecordListView> {
             return RecordTile(
               record: records[index],
               onTileTap: () => _onTileTap(records[index]),
+              isLocked: lockedRecordIds.contains(records[index].documentId),
             );
           },
           childCount: records.length,

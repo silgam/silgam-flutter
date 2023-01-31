@@ -32,12 +32,25 @@ class RecordListCubit extends Cubit<RecordListState> {
     }
 
     emit(state.copyWith(isLoading: true));
+
     final records =
         await _examRecordRepository.getMyExamRecords(_appCubit.state.me!.id);
     final filteredRecords =
         _getFilteredAndSortedRecords(originalRecords: records);
+    final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
+    final lockedRecordIds = examRecordLimit == -1
+        ? <String>[]
+        : records
+            .skip(examRecordLimit)
+            .map((record) => record.documentId)
+            .toList(growable: false);
+
     emit(state.copyWith(
-        isLoading: false, originalRecords: records, records: filteredRecords));
+      isLoading: false,
+      originalRecords: records,
+      records: filteredRecords,
+      lockedRecordIds: lockedRecordIds,
+    ));
 
     AnalyticsManager.setPeopleProperty(
         'Number of Exam Records', records.length);

@@ -13,6 +13,7 @@ import '../../repository/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
+import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../home_page/record_list/cubit/record_list_cubit.dart';
@@ -36,6 +37,7 @@ class EditRecordPage extends StatefulWidget {
 class _EditRecordPageState extends State<EditRecordPage> {
   final ExamRecordRepository _recordRepository = getIt.get();
   final AppCubit _appCubit = getIt.get();
+  final RecordListCubit _recordListCubit = getIt.get();
 
   final TextEditingController _titleEditingController = TextEditingController();
   final TextEditingController _examDurationEditingController =
@@ -64,6 +66,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
       Navigator.pop(context);
       return;
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkIfRecordLimitExceeded();
+    });
 
     _onSelectedSubjectChanged(null);
     final recordToEdit = widget.arguments.recordToEdit;
@@ -542,6 +548,16 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
+  void _checkIfRecordLimitExceeded() {
+    if (_isEditingMode) return;
+    final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
+    final examRecordCount = _recordListCubit.state.originalRecords.length;
+    if (examRecordLimit != -1 && examRecordCount >= examRecordLimit) {
+      Navigator.pop(context);
+      showExamRecordLimitInfoDialog(context);
+    }
+  }
+
   void _onTitleChanged(String title) {
     if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
       setState(() {
@@ -659,6 +675,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _onSavePressed() async {
+    _checkIfRecordLimitExceeded();
+
     if (_isTitleEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
