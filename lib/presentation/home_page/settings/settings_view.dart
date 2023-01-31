@@ -21,7 +21,7 @@ import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../login_page/login_page.dart';
 import '../../my_page/my_page.dart';
-import 'noise_setting_page.dart';
+import '../../noise_setting/noise_setting_page.dart';
 import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {

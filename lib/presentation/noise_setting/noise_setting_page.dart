@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../repository/noise_repository.dart';
-import '../../../util/analytics_manager.dart';
-import '../../../util/const.dart';
-import '../../../util/injection.dart';
-import '../../app/cubit/app_cubit.dart';
-import '../../app/cubit/iap_cubit.dart';
-import '../../common/custom_menu_bar.dart';
-import '../../purchase_page/purchase_page.dart';
-import 'setting_tile.dart';
+import '../../repository/noise_repository.dart';
+import '../../util/analytics_manager.dart';
+import '../../util/const.dart';
+import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
+import '../app/cubit/iap_cubit.dart';
+import '../common/custom_menu_bar.dart';
+import '../home_page/settings/setting_tile.dart';
+import '../purchase_page/purchase_page.dart';
 
 class NoiseSettingPage extends StatefulWidget {
   static const routeName = '/noise_setting';
