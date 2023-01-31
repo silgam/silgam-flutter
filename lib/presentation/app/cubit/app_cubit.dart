@@ -12,13 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../model/product.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
+import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import 'iap_cubit.dart';
 
 part 'app_cubit.freezed.dart';
 part 'app_state.dart';
-
-const _preferenceKeyMe = 'me';
 
 @lazySingleton
 class AppCubit extends Cubit<AppState> {
@@ -32,7 +31,7 @@ class AppCubit extends Cubit<AppState> {
   void initialize() {
     onUserChange();
 
-    final cachedMe = _sharedPreferences.getString(_preferenceKeyMe);
+    final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
     if (cachedMe != null) {
       log('Set user from cache: $cachedMe', name: 'AppCubit');
       emit(state.copyWith(me: User.fromJson(jsonDecode(cachedMe))));
@@ -50,9 +49,9 @@ class AppCubit extends Cubit<AppState> {
     final me = getMeResult.tryGetSuccess();
 
     if (me == null) {
-      await _sharedPreferences.remove(_preferenceKeyMe);
+      await _sharedPreferences.remove(PreferenceKey.cacheMe);
     } else {
-      await _sharedPreferences.setString(_preferenceKeyMe, jsonEncode(me));
+      await _sharedPreferences.setString(PreferenceKey.cacheMe, jsonEncode(me));
     }
 
     updateFcmToken(updatedMe: me, previousMe: state.me);

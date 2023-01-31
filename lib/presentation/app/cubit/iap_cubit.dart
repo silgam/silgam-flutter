@@ -15,12 +15,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
+import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
 
 part 'iap_cubit.freezed.dart';
 part 'iap_state.dart';
-
-const _preferenceKeyProducts = 'products';
 
 @lazySingleton
 class IapCubit extends Cubit<IapState> {
@@ -194,7 +193,8 @@ class IapCubit extends Cubit<IapState> {
   Future<void> _fetchProducts() async {
     _updateProducts();
 
-    final cachedProducts = _sharedPreferences.getString(_preferenceKeyProducts);
+    final cachedProducts =
+        _sharedPreferences.getString(PreferenceKey.cacheProducts);
     if (cachedProducts != null) {
       log('Set products from cache: $cachedProducts', name: 'PurchaseCubit');
       final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
@@ -208,10 +208,10 @@ class IapCubit extends Cubit<IapState> {
     final productsResult = await _productRepository.getAllProducts();
     final products = productsResult.tryGetSuccess();
     if (products == null) {
-      _sharedPreferences.remove(_preferenceKeyProducts);
+      _sharedPreferences.remove(PreferenceKey.cacheProducts);
     } else {
       _sharedPreferences.setString(
-        _preferenceKeyProducts,
+        PreferenceKey.cacheProducts,
         jsonEncode(products),
       );
     }

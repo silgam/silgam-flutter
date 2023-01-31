@@ -19,4 +19,7 @@ abstract class PreferenceKey {
       'showAddRecordPageAfterExamFinished';
   static const noisePreset = 'noisePreset';
   static const useWhiteNoise = 'whiteNoise';
+  static const cacheMe = 'me';
+  static const cacheProducts = 'products';
+  static const cacheAds = 'ads';
 }

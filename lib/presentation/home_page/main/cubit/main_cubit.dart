@@ -9,11 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../model/ads.dart';
 import '../../../../repository/ads/ads_repository.dart';
 import '../../../../repository/dday_repository.dart';
+import '../../../../util/const.dart';
 
 part 'main_cubit.freezed.dart';
 part 'main_state.dart';
-
-const _preferenceKeyAds = 'ads';
 
 @lazySingleton
 class MainCubit extends Cubit<MainState> {
@@ -32,7 +31,7 @@ class MainCubit extends Cubit<MainState> {
       dDayItems: _dDayRepository.getItemsToShow(today),
     ));
 
-    final cachedAds = _sharedPreferences.getString(_preferenceKeyAds);
+    final cachedAds = _sharedPreferences.getString(PreferenceKey.cacheAds);
     if (cachedAds != null) {
       log('Set ads from cache: $cachedAds', name: 'MainCubit');
       final adsJson = jsonDecode(cachedAds) as List<dynamic>;
@@ -47,10 +46,10 @@ class MainCubit extends Cubit<MainState> {
     final ads = getAdsResult.tryGetSuccess();
 
     if (ads == null) {
-      await _sharedPreferences.remove(_preferenceKeyAds);
+      await _sharedPreferences.remove(PreferenceKey.cacheAds);
     } else {
       await _sharedPreferences.setString(
-        _preferenceKeyAds,
+        PreferenceKey.cacheAds,
         jsonEncode(ads),
       );
     }
