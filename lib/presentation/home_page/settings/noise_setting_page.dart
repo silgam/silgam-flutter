@@ -6,7 +6,9 @@ import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../../app/cubit/iap_cubit.dart';
 import '../../common/custom_menu_bar.dart';
+import '../../purchase_page/purchase_page.dart';
 import 'setting_tile.dart';
 
 class NoiseSettingPage extends StatefulWidget {
@@ -198,25 +200,29 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         ),
         if (isLocked)
           Positioned.fill(
-            child: Container(
-              color: Colors.black.withAlpha(100),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(
-                    Icons.lock,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '유료 기능',
-                    style: TextStyle(
+            child: InkWell(
+              onTap: _onLockedNoiseTapped,
+              splashColor: Colors.transparent,
+              child: Container(
+                color: Colors.black.withAlpha(100),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.lock,
                       color: Colors.white,
-                      fontWeight: FontWeight.w700,
+                      size: 20,
                     ),
-                  )
-                ],
+                    SizedBox(width: 8),
+                    Text(
+                      '유료 기능',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -273,5 +279,52 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
     );
     AnalyticsManager.setPeopleProperty(
         '[Noise] Levels', _noiseSettings.noiseLevels.toString());
+  }
+
+  void _onLockedNoiseTapped() {
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${NoiseSettingPage.routeName}/locked_noise_info_dialog',
+      ),
+      builder: (context) {
+        return BlocBuilder<IapCubit, IapState>(
+          builder: (context, iapState) {
+            return AlertDialog(
+              content: const Text('실감패스 사용자만 이용 가능한 소음이에요.'),
+              contentPadding: const EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: 0,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey,
+                  ),
+                  child: const Text('확인'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(
+                      PurchasePage.routeName,
+                      arguments: PurchasePageArguments(
+                        product: iapState.activeProducts.first,
+                      ),
+                    );
+                  },
+                  child: const Text('실감패스 확인하러 가기'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }
