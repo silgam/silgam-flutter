@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,7 +89,10 @@ class _ClockPageState extends State<ClockPage> {
 
     final noiseSettings = NoiseSettings(getIt.get())..loadAll();
     if (noiseSettings.noisePreset != NoisePreset.disabled) {
-      final noisePlayer = NoiseAudioPlayer();
+      final noisePlayer = NoiseAudioPlayer(
+        availableNoiseIds:
+            context.read<AppCubit>().state.productBenefit.availableNoiseIds,
+      );
       _noiseGenerator = NoiseGenerator(
         noiseSettings: noiseSettings,
         noisePlayer: noisePlayer,

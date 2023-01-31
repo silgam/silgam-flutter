@@ -15,11 +15,15 @@ abstract class NoisePlayer {
 }
 
 class NoiseAudioPlayer implements NoisePlayer {
+  NoiseAudioPlayer({required this.availableNoiseIds});
+
+  final List<int> availableNoiseIds;
   final AudioPlayer _whiteNoisePlayer = AudioPlayer();
   final Map<int, AudioPlayer> _noisePlayers = {};
 
   @override
   void playNoise({required int noiseId, int delayMillis = 0}) async {
+    if (!availableNoiseIds.contains(noiseId)) return;
     Noise noise = Noise.byId(noiseId);
     String? noisePath = noise.getRandomNoisePath();
     if (noisePath == null) return;

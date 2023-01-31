@@ -1,10 +1,12 @@
-import 'package:flutter/material.dart' hide MenuBar;
-import 'package:silgam/util/injection.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../repository/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
-import '../../common/menu_bar.dart';
+import '../../../util/injection.dart';
+import '../../app/cubit/app_cubit.dart';
+import '../../common/custom_menu_bar.dart';
 import 'setting_tile.dart';
 
 class NoiseSettingPage extends StatefulWidget {
@@ -31,7 +33,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const MenuBar(title: '백색 소음, 시험장 소음 설정'),
+            const CustomMenuBar(title: '백색 소음, 시험장 소음 설정'),
             Expanded(
               child: SingleChildScrollView(
                 child: _buildSettingBody(),
@@ -47,9 +49,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(height: 36),
-        Image.asset('assets/phone_ringing_illustration.png'),
-        const SizedBox(height: 36),
+        const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Text(
@@ -124,7 +124,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
             style: settingTitleTextStyle,
           ),
         ),
-        const Divider(),
+        const Divider(height: 1),
         SettingTile(
           title: '백색 소음',
           description: '백색 소음으로 집중력을 높이고 현장감을 살릴 수 있습니다.',
@@ -132,39 +132,94 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           onSwitchChanged: _onWhiteNoiseChanged,
           defaultValue: false,
         ),
-        const Divider(),
-        const SizedBox(height: 4),
-        for (Noise noise in defaultNoises)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        const Divider(height: 1),
+        const SizedBox(height: 6),
+        BlocBuilder<AppCubit, AppState>(
+          buildWhen: (previous, current) =>
+              previous.productBenefit != current.productBenefit,
+          builder: (context, appState) {
+            final availableNoiseIds = appState.productBenefit.availableNoiseIds;
+            return Column(
               children: [
-                Text(
-                  (noise.existingFiles == 0 ? '(지원 예정) ' : '') + noise.name,
-                  style: TextStyle(
-                    color: noise.existingFiles == 0 ? Colors.grey : null,
-                  ),
-                ),
-                Slider(
-                  value: _noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0,
-                  onChanged: (value) => _onSliderChanged(noise, value.toInt()),
-                  label: (_noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0)
-                      .toStringAsFixed(0),
-                  max: Noise.maxLevel.toDouble(),
-                  divisions: Noise.maxLevel,
-                  activeColor: Theme.of(context)
-                      .primaryColor
-                      .withAlpha(noise.existingFiles == 0 ? 80 : 255),
-                  inactiveColor: noise.existingFiles == 0
-                      ? Theme.of(context).primaryColor.withAlpha(20)
-                      : null,
-                ),
-                const SizedBox(height: 8),
+                ...defaultNoises
+                    .where((element) => availableNoiseIds.contains(element.id))
+                    .map((noise) => _buildNoiseSettingTile(
+                          noise,
+                          isLocked: false,
+                        ))
+                    .toList(),
+                ...defaultNoises
+                    .where((element) => !availableNoiseIds.contains(element.id))
+                    .map((noise) =>
+                        _buildNoiseSettingTile(noise, isLocked: true))
+                    .toList(),
               ],
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _buildNoiseSettingTile(Noise noise, {required bool isLocked}) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 8,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                (noise.existingFiles == 0 ? '(지원 예정) ' : '') + noise.name,
+                style: TextStyle(
+                  color: noise.existingFiles == 0 ? Colors.grey : null,
+                ),
+              ),
+              Slider(
+                value: _noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0,
+                onChanged: (value) => _onSliderChanged(noise, value.toInt()),
+                label: (_noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0)
+                    .toStringAsFixed(0),
+                max: Noise.maxLevel.toDouble(),
+                activeColor: Theme.of(context)
+                    .primaryColor
+                    .withAlpha(noise.existingFiles == 0 ? 80 : 255),
+                inactiveColor: noise.existingFiles == 0
+                    ? Theme.of(context).primaryColor.withAlpha(20)
+                    : null,
+              ),
+            ],
+          ),
+        ),
+        if (isLocked)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withAlpha(100),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.lock,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    '유료 기능',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        const SizedBox(height: 12),
       ],
     );
   }
