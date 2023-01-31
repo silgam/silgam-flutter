@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:silgam/presentation/app/cubit/app_cubit.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
@@ -18,8 +17,10 @@ import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
+import '../noise_setting/cubit/noise_setting_cubit.dart';
 import 'breakpoint.dart';
 import 'listening_audio/listening_audio_player.dart';
 import 'noise/noise_generator.dart';
@@ -87,14 +88,14 @@ class _ClockPageState extends State<ClockPage> {
     _timelineConnectorKeys =
         List.generate(_breakpoints.length - 1, (index) => GlobalKey());
 
-    final noiseSettings = NoiseSettings(getIt.get())..loadAll();
-    if (noiseSettings.noisePreset != NoisePreset.disabled) {
+    final nosieSettingState = getIt.get<NoiseSettingCubit>().state;
+    if (nosieSettingState.selectedNoisePreset != NoisePreset.disabled) {
       final noisePlayer = NoiseAudioPlayer(
         availableNoiseIds:
             context.read<AppCubit>().state.productBenefit.availableNoiseIds,
       );
       _noiseGenerator = NoiseGenerator(
-        noiseSettings: noiseSettings,
+        noiseSettingState: nosieSettingState,
         noisePlayer: noisePlayer,
         fetchClockStatus: () => ClockStatus(
           exam: widget.exam,

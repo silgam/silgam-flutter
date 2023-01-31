@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repository/noise_repository.dart';
-import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
@@ -10,6 +9,7 @@ import '../app/cubit/iap_cubit.dart';
 import '../common/custom_menu_bar.dart';
 import '../home_page/settings/setting_tile.dart';
 import '../purchase_page/purchase_page.dart';
+import 'cubit/noise_setting_cubit.dart';
 
 class NoiseSettingPage extends StatefulWidget {
   static const routeName = '/noise_setting';
@@ -21,33 +21,34 @@ class NoiseSettingPage extends StatefulWidget {
 }
 
 class _NoiseSettingPageState extends State<NoiseSettingPage> {
-  final NoiseSettings _noiseSettings = NoiseSettings(getIt.get());
-
-  @override
-  void initState() {
-    super.initState();
-    _noiseSettings.loadAll();
-  }
+  final NoiseSettingCubit _cubit = getIt.get();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const CustomMenuBar(title: '백색 소음, 시험장 소음 설정'),
-            Expanded(
-              child: SingleChildScrollView(
-                child: _buildSettingBody(),
+    return BlocProvider.value(
+      value: _cubit,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              const CustomMenuBar(title: '백색 소음, 시험장 소음 설정'),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: BlocBuilder<NoiseSettingCubit, NoiseSettingState>(
+                    builder: (context, state) {
+                      return _buildSettingBody(state);
+                    },
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSettingBody() {
+  Widget _buildSettingBody(NoiseSettingState state) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -70,18 +71,18 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         const SizedBox(height: 18),
         const Divider(height: 0.1),
         RadioListTile(
-          onChanged: _onPresetChanged,
+          onChanged: _cubit.onPresetChanged,
           value: NoisePreset.disabled,
-          groupValue: _noiseSettings.noisePreset,
+          groupValue: state.selectedNoisePreset,
           title: const Text(
             '사용 안함',
             style: settingTitleTextStyle,
           ),
         ),
         RadioListTile(
-          onChanged: _onPresetChanged,
+          onChanged: _cubit.onPresetChanged,
           value: NoisePreset.easy,
-          groupValue: _noiseSettings.noisePreset,
+          groupValue: state.selectedNoisePreset,
           title: const Text(
             '조용한 분위기',
             style: settingTitleTextStyle,
@@ -92,9 +93,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           ),
         ),
         RadioListTile(
-          onChanged: _onPresetChanged,
+          onChanged: _cubit.onPresetChanged,
           value: NoisePreset.normal,
-          groupValue: _noiseSettings.noisePreset,
+          groupValue: state.selectedNoisePreset,
           title: const Text(
             '시험장 분위기',
             style: settingTitleTextStyle,
@@ -105,9 +106,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           ),
         ),
         RadioListTile(
-          onChanged: _onPresetChanged,
+          onChanged: _cubit.onPresetChanged,
           value: NoisePreset.hard,
-          groupValue: _noiseSettings.noisePreset,
+          groupValue: state.selectedNoisePreset,
           title: const Text(
             '시끄러운 분위기',
             style: settingTitleTextStyle,
@@ -118,9 +119,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           ),
         ),
         RadioListTile(
-          onChanged: _onPresetChanged,
+          onChanged: _cubit.onPresetChanged,
           value: NoisePreset.custom,
-          groupValue: _noiseSettings.noisePreset,
+          groupValue: state.selectedNoisePreset,
           title: const Text(
             '직접 설정',
             style: settingTitleTextStyle,
@@ -131,7 +132,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           title: '백색 소음',
           description: '백색 소음으로 집중력을 높이고 현장감을 살릴 수 있습니다.',
           preferenceKey: PreferenceKey.useWhiteNoise,
-          onSwitchChanged: _onWhiteNoiseChanged,
+          onSwitchChanged: _cubit.onWhiteNoiseChanged,
           defaultValue: false,
         ),
         const Divider(height: 1),
@@ -183,9 +184,10 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 ),
               ),
               Slider(
-                value: _noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0,
-                onChanged: (value) => _onSliderChanged(noise, value.toInt()),
-                label: (_noiseSettings.noiseLevels[noise.id]?.toDouble() ?? 0)
+                value: _cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0,
+                onChanged: (value) =>
+                    _cubit.onSliderChanged(noise, value.toInt()),
+                label: (_cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0)
                     .toStringAsFixed(0),
                 max: Noise.maxLevel.toDouble(),
                 activeColor: Theme.of(context)
@@ -228,57 +230,6 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           ),
       ],
     );
-  }
-
-  void _onPresetChanged(NoisePreset? preset) {
-    setState(() {
-      _noiseSettings.noisePreset = preset ?? NoisePreset.disabled;
-      if (preset == NoisePreset.custom) return;
-      for (Noise defaultNoise in defaultNoises) {
-        _noiseSettings.noiseLevels[defaultNoise.id] =
-            defaultNoise.getDefaultLevel(_noiseSettings.noisePreset);
-      }
-      _noiseSettings.useWhiteNoise = preset != NoisePreset.disabled;
-    });
-    _noiseSettings.saveAll();
-
-    AnalyticsManager.logEvent(
-      name: '[NoiseSettingPage] Noise preset changed',
-      properties: {'preset': _noiseSettings.noisePreset.name},
-    );
-    AnalyticsManager.setPeopleProperty(
-        '[Noise] Preset', _noiseSettings.noisePreset.name);
-  }
-
-  void _onWhiteNoiseChanged(bool isEnabled) {
-    setState(() {
-      _noiseSettings.noisePreset = NoisePreset.custom;
-      _noiseSettings.useWhiteNoise = isEnabled;
-    });
-    _noiseSettings.saveAll();
-
-    AnalyticsManager.logEvent(
-      name: '[NoiseSettingPage] White noise changed',
-      properties: {'enabled': _noiseSettings.useWhiteNoise},
-    );
-    AnalyticsManager.setPeopleProperty(
-        '[Noise] Use White Noise', _noiseSettings.useWhiteNoise);
-  }
-
-  void _onSliderChanged(Noise noise, int value) {
-    setState(() {
-      if (_noiseSettings.noiseLevels[noise.id] == value) return;
-      _noiseSettings.noiseLevels[noise.id] = value;
-      _noiseSettings.noisePreset = NoisePreset.custom;
-    });
-    _noiseSettings.saveAll();
-
-    AnalyticsManager.logEvent(
-      name: '[NoiseSettingPage] Noise level changed',
-      properties: {'noise': noise.name, 'level': value},
-    );
-    AnalyticsManager.setPeopleProperty(
-        '[Noise] Levels', _noiseSettings.noiseLevels.toString());
   }
 
   void _onLockedNoiseTapped() {

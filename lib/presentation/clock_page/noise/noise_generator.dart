@@ -4,20 +4,20 @@ import 'dart:math';
 import '../../../model/exam.dart';
 import '../../../model/relative_time.dart';
 import '../../../model/subject.dart';
-import '../../../repository/noise_repository.dart';
+import '../../noise_setting/cubit/noise_setting_cubit.dart';
 import '../breakpoint.dart';
 import 'noise_player.dart';
 
 class NoiseGenerator {
   static const double _probabilityMultiple = 0.001;
-  final NoiseSettings noiseSettings;
+  final NoiseSettingState noiseSettingState;
   final NoisePlayer noisePlayer;
   final ClockStatus Function() fetchClockStatus;
   final _random = Random();
   Timer? _timer;
 
   NoiseGenerator({
-    required this.noiseSettings,
+    required this.noiseSettingState,
     required this.noisePlayer,
     required this.fetchClockStatus,
   });
@@ -29,7 +29,7 @@ class NoiseGenerator {
       if (!clockStatus.isRunning) return;
       RelativeTimeType currentRelativeTime =
           clockStatus.currentBreakpoint.announcement.time.type;
-      noiseSettings.noiseLevels.forEach((id, level) {
+      noiseSettingState.noiseLevels.forEach((id, level) {
         double levelMultiple = 1;
         int delay = 0;
         // 시험지 넘기는 소리 예외 사항
@@ -72,7 +72,7 @@ class NoiseGenerator {
   }
 
   void playWhiteNoiseIfEnabled() {
-    if (noiseSettings.useWhiteNoise) {
+    if (noiseSettingState.useWhiteNoise) {
       noisePlayer.playWhiteNoise();
     }
   }
