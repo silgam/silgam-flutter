@@ -69,7 +69,11 @@ class RecordTileState extends State<RecordTile> {
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.3),
                       ),
-                      child: const Text('못보지롱~ 😜'),
+                      child: Icon(
+                        Icons.lock_outline,
+                        size: 20,
+                        color: Colors.grey.shade400,
+                      ),
                     ),
                   ),
                 ),

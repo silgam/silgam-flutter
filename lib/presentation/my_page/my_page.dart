@@ -28,9 +28,11 @@ class MyPage extends StatelessWidget {
             ),
             Expanded(
               child: BlocBuilder<AppCubit, AppState>(
-                buildWhen: (previous, current) => previous.me != current.me,
-                builder: (context, state) {
-                  final me = state.me;
+                buildWhen: (previous, current) =>
+                    previous.me != current.me ||
+                    previous.productBenefit != current.productBenefit,
+                builder: (context, appState) {
+                  final me = appState.me;
                   if (me == null) {
                     return const Center(
                       child: CircularProgressIndicator(strokeWidth: 3),
@@ -163,7 +165,12 @@ class MyPage extends StatelessWidget {
                       _buildInfo('상세한 결제 내역은 앱스토어 또는 플레이스토어 내에서 확인이 가능합니다.'),
                       _buildInfo('결제 및 구매 취소 관련 문의는 실감 카카오톡 채널을 이용해주세요.'),
                       _buildInfo(
-                          '구독기간 이후에는 자동으로 서비스 권한이 만료되며, 추가 결제가 발생하지 않습니다.'),
+                        '구독기간 이후에는 자동으로 서비스 권한이 만료되며, 추가 결제가 발생하지 않습니다.',
+                      ),
+                      _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
+                      _buildInfo(
+                        '무료 체험 기간이 끝난 후, 체험 기간 중 작성한 실모 기록은 ${appState.productBenefit.examRecordLimit}개까지만 열람하실 수 있습니다.',
+                      ),
                       const SizedBox(height: 60),
                     ],
                   );

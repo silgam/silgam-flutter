@@ -122,6 +122,7 @@ class _PurchasePageState extends State<PurchasePage> {
   }
 
   void _onWebviewMessageReceived(JavaScriptMessage message) {
+    final AppCubit appCubit = context.read();
     final IapCubit iapCubit = context.read();
     if (message.message == "purchase") {
       iapCubit.purchaseProduct(widget.product);
@@ -151,6 +152,9 @@ class _PurchasePageState extends State<PurchasePage> {
               children: [
                 _buildInfo('이용 가능 기간 : $now ~ $trialEndTime'),
                 _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
+                _buildInfo(
+                  '무료 체험 기간이 끝난 후, 체험 기간 중 작성한 실모 기록은 ${appCubit.state.productBenefit.examRecordLimit}개까지만 열람하실 수 있습니다.',
+                ),
               ],
             ),
             contentPadding: const EdgeInsets.only(
