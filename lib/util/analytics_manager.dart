@@ -41,9 +41,10 @@ class AnalyticsManager {
     });
   }
 
-  static Future<void> logEvent(
-      {required String name,
-      Map<String, dynamic> properties = const {}}) async {
+  static Future<void> logEvent({
+    required String name,
+    Map<String, dynamic> properties = const {},
+  }) async {
     log('Event Logged: $name, $properties');
     _mixpanel.track(name, properties: properties);
 
@@ -53,10 +54,16 @@ class AnalyticsManager {
         .replaceAll(']', '')
         .replaceAll('-', '_')
         .replaceAll('/', '_');
-    Map<String, dynamic> firebaseProperties = properties
-        .map((key, value) => MapEntry(key.replaceAll(' ', '_'), value));
+    Map<String, dynamic> firebaseProperties = properties.map(
+      (key, value) => MapEntry(
+        key.replaceAll(' ', '_'),
+        value is String || value is num ? value : value.toString(),
+      ),
+    );
     await _firebaseAnalytics.logEvent(
-        name: firebaaseEventName, parameters: firebaseProperties);
+      name: firebaaseEventName,
+      parameters: firebaseProperties,
+    );
   }
 
   static void eventStartTime({required String name}) {
