@@ -78,7 +78,6 @@ class HomePage extends StatelessWidget {
                   child: IndexedStack(
                     alignment: Alignment.center,
                     index: state.tabIndex,
-                    sizing: StackFit.expand,
                     children: views.values
                         .map((view) => view.viewBuilder())
                         .toList(growable: false),

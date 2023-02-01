@@ -7,7 +7,6 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/custom_menu_bar.dart';
-import '../common/is_tablet.dart';
 import '../common/subtitle.dart';
 import '../home_page/settings/setting_tile.dart';
 import '../home_page/settings/settings_view.dart';
@@ -227,7 +226,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
               .map((noise) => _buildNoiseSettingTile(noise, isLocked: true))
               .toList(),
         ];
-        if (isTablet(context)) {
+        if (MediaQuery.of(context).size.width > 600) {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

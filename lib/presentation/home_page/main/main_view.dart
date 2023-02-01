@@ -33,7 +33,9 @@ part 'd_days_card.dart';
 part 'exam_start_card.dart';
 part 'welcome_messages.dart';
 
-const double maxWidth = 500;
+const double _tabletScreenWidth = 840;
+const double _maxWidth = 500;
+const double _maxWidthForTablet = 1000;
 
 class MainView extends StatefulWidget {
   static const title = '메인';
@@ -49,98 +51,115 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider<MainCubit>(
       create: (context) => getIt.get(),
-      child: SizedBox(
-        height: double.infinity,
+      child: Align(
+        alignment: Alignment.topCenter,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: maxWidth),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 32),
-                _buildTitle(),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Divider(indent: 20, endIndent: 20),
-                BlocBuilder<MainCubit, MainState>(
-                  builder: (context, state) {
-                    if (state.ads.isNotEmpty) {
-                      return AdsCard(ads: state.ads);
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-                BlocBuilder<MainCubit, MainState>(
-                  builder: (context, state) {
-                    if (state.dDayItems.isNotEmpty) {
-                      return _DDaysCard(dDayItems: state.dDayItems);
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-                const _ExamStartCard(),
-                BlocBuilder<AppCubit, AppState>(
-                  buildWhen: (previous, current) =>
-                      previous.isSignedIn != current.isSignedIn,
-                  builder: (context, state) {
-                    if (state.isNotSignedIn) {
-                      return _ButtonCard(
-                        onTap: _onLoginButtonTap,
-                        iconData: Icons.login,
-                        title: '간편로그인하고 더 많은 기능 이용하기',
-                        primary: true,
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-                _ButtonCard(
-                  onTap: _onNoiseSettingButtonTap,
-                  iconData: Icons.graphic_eq,
-                  title: '백색 소음, 시험장 소음 설정하기',
-                ),
-                _ButtonCard(
-                  onTap: _onRecordButtonTap,
-                  iconData: Icons.edit,
-                  title: '모의고사 기록하고 피드백하기',
-                ),
-                if (isAdsEnabled)
-                  AdTile(
-                    width: MediaQuery.of(context)
-                            .size
-                            .width
-                            .clamp(0, maxWidth)
-                            .truncate() -
-                        40,
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                  ),
-                const SizedBox(height: 20),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              screenWidth > _tabletScreenWidth
+                  ? _buildTabletLayout()
+                  : _buildMobileLayout(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTabletLayout() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final originalHorizontalPadding = screenWidth > 1000 ? 60.0 : 30.0;
+    final horizontalPadding = max(
+      (screenWidth - _maxWidthForTablet) / 2,
+      originalHorizontalPadding,
+    );
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: screenWidth > 1000 ? 80 : 40),
+          _buildTitle(isTablet: true),
+          const SizedBox(height: 16),
+          _buildWelcomMessage(isTablet: true),
+          const SizedBox(height: 8),
+          const Divider(indent: 20, endIndent: 20),
+          const SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildAdsCard(),
+                    _buildLoginCard(),
+                    _buildNoiseSettingCard(),
+                    _buildRecordCard(),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    _buildDDaysCard(),
+                    const _ExamStartCard(),
+                  ],
+                ),
+              )
+            ],
+          ),
+          if (isAdsEnabled)
+            AdTile(
+              width:
+                  screenWidth.truncate() - horizontalPadding.toInt() * 2 - 40,
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+            ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileLayout() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = max((screenWidth - _maxWidth) / 2, 0.0);
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 32),
+          _buildTitle(),
+          const SizedBox(height: 4),
+          _buildWelcomMessage(),
+          const SizedBox(height: 4),
+          const Divider(indent: 20, endIndent: 20),
+          _buildAdsCard(),
+          _buildDDaysCard(),
+          const _ExamStartCard(),
+          _buildLoginCard(),
+          _buildNoiseSettingCard(),
+          _buildRecordCard(),
+          if (isAdsEnabled)
+            AdTile(
+              width: screenWidth.clamp(0, _maxWidth).truncate() - 40,
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+            ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitle({bool isTablet = false}) {
     final DateTime today = DateTime.now();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,9 +168,9 @@ class _MainViewState extends State<MainView> {
           padding: const EdgeInsets.only(left: 20),
           child: Text(
             DateFormat.MMMMEEEEd('ko_KR').format(today),
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w900,
-              fontSize: 24,
+              fontSize: isTablet ? 28 : 24,
             ),
           ),
         ),
@@ -220,6 +239,78 @@ class _MainViewState extends State<MainView> {
         color: Colors.grey,
         width: 20,
       ),
+    );
+  }
+
+  Widget _buildWelcomMessage({bool isTablet = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
+        style: TextStyle(
+          fontWeight: FontWeight.w300,
+          fontSize: isTablet ? 16 : 13,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdsCard() {
+    return BlocBuilder<MainCubit, MainState>(
+      builder: (context, state) {
+        if (state.ads.isNotEmpty) {
+          return AdsCard(ads: state.ads);
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  Widget _buildDDaysCard() {
+    return BlocBuilder<MainCubit, MainState>(
+      builder: (context, state) {
+        if (state.dDayItems.isNotEmpty) {
+          return _DDaysCard(dDayItems: state.dDayItems);
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  Widget _buildLoginCard() {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) =>
+          previous.isSignedIn != current.isSignedIn,
+      builder: (context, state) {
+        if (state.isNotSignedIn) {
+          return _ButtonCard(
+            onTap: _onLoginButtonTap,
+            iconData: Icons.login,
+            title: '간편로그인하고 더 많은 기능 이용하기',
+            primary: true,
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  Widget _buildNoiseSettingCard() {
+    return _ButtonCard(
+      onTap: _onNoiseSettingButtonTap,
+      iconData: Icons.graphic_eq,
+      title: '백색 소음, 시험장 소음 설정하기',
+    );
+  }
+
+  Widget _buildRecordCard() {
+    return _ButtonCard(
+      onTap: _onRecordButtonTap,
+      iconData: Icons.edit,
+      title: '모의고사 기록하고 피드백하기',
     );
   }
 
