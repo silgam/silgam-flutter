@@ -33,6 +33,7 @@
 
 # Web related
 lib/generated_plugin_registrant.dart
+web/firebase-messaging-sw.js
 
 # Symbolication related
 app.*.symbols

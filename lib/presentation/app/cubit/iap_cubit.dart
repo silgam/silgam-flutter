@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -32,17 +33,19 @@ class IapCubit extends Cubit<IapState> {
   final ProductRepository _productRepository;
   final SharedPreferences _sharedPreferences;
   final AppCubit _appCubit;
-  final InAppPurchase _iap = InAppPurchase.instance;
+  late final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription? _purchaseStream;
 
   void initialize() {
-    _purchaseStream = _iap.purchaseStream.listen(
-      _onPurchaseStreamData,
-      onError: _onPurchaseStreamError,
-      onDone: _onPurchaseStreamDone,
-    );
+    if (!kIsWeb) {
+      _purchaseStream = _iap.purchaseStream.listen(
+        _onPurchaseStreamData,
+        onError: _onPurchaseStreamError,
+        onDone: _onPurchaseStreamDone,
+      );
+      _checkStoreAvailability();
+    }
 
-    _checkStoreAvailability();
     _fetchProducts();
     _appCubit.updateProductBenefit();
   }
@@ -231,11 +234,13 @@ class IapCubit extends Cubit<IapState> {
     ));
     _appCubit.updateProductBenefit();
 
-    final productDetailsResponse = await _iap.queryProductDetails(
-      activeProducts?.map((e) => e.id).toSet() ?? {},
-    );
-    final productDetails = productDetailsResponse.productDetails;
-    emit(state.copyWith(productDetails: productDetails));
+    if (!kIsWeb) {
+      final productDetailsResponse = await _iap.queryProductDetails(
+        activeProducts?.map((e) => e.id).toSet() ?? {},
+      );
+      final productDetails = productDetailsResponse.productDetails;
+      emit(state.copyWith(productDetails: productDetails));
+    }
   }
 
   Future<int> _getVersionNumber() async {

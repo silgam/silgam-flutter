@@ -22,7 +22,7 @@ void main() async {
   await configureDependencies();
   await Future.wait([
     initializeFirebae(),
-    MobileAds.instance.initialize(),
+    if (!kIsWeb) MobileAds.instance.initialize(),
     initializeAudioSession(),
   ]);
 
@@ -31,13 +31,16 @@ void main() async {
 
 Future<void> initializeFirebae() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   getIt.get<AppCubit>().initialize();
   getIt.get<IapCubit>().initialize();
   getIt.get<MainCubit>().initialize();
 
   await Future.wait([
     AnalyticsManager.init(),
-    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode),
+    if (!kIsWeb)
+      FirebaseCrashlytics.instance
+          .setCrashlyticsCollectionEnabled(kReleaseMode),
   ]);
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

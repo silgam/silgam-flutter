@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -76,7 +77,8 @@ class ScaffoldBody extends StatelessWidget {
           foregroundColor: Colors.black,
           backgroundColor: HomePage.backgroundColor,
           // Because of this https://github.com/flutter/flutter/issues/24893
-          systemOverlayStyle: Platform.isIOS ? null : systemOverlayStyle,
+          systemOverlayStyle:
+              kIsWeb || Platform.isIOS ? null : systemOverlayStyle,
         ),
         ...slivers,
       ],

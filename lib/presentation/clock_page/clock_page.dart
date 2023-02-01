@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -79,7 +80,7 @@ class _ClockPageState extends State<ClockPage> {
     Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     AndroidAudioManager.controlMediaVolume();
-    if (Platform.isAndroid) _announcementPlayer.setVolume(0.4);
+    if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
 
     _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
     _currentTime = _breakpoints[_currentBreakpointIndex].time;

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -153,8 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                 color: const Color(0xFF4267b2),
                 lightText: true,
               ),
-              if (Platform.isIOS) const SizedBox(height: 12),
-              if (Platform.isIOS)
+              if (!kIsWeb && Platform.isIOS) const SizedBox(height: 12),
+              if (!kIsWeb && Platform.isIOS)
                 _LoginButton(
                   onTap: () => cubit.onLoginButtonTap(cubit.loginApple),
                   assetName: 'assets/apple_icon.svg',

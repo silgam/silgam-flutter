@@ -16,6 +16,8 @@ class AnalyticsManager {
   static late final Mixpanel _mixpanel;
 
   static Future<void> init() async {
+    if (kIsWeb) return;
+
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final superProperties = {
       'Platform': Platform.isAndroid ? 'android' : 'ios',
@@ -45,6 +47,8 @@ class AnalyticsManager {
     required String name,
     Map<String, dynamic> properties = const {},
   }) async {
+    if (kIsWeb) return;
+
     log('Event Logged: $name, $properties');
     _mixpanel.track(name, properties: properties);
 
@@ -67,21 +71,29 @@ class AnalyticsManager {
   }
 
   static void eventStartTime({required String name}) {
+    if (kIsWeb) return;
+
     _mixpanel.timeEvent(name);
   }
 
   static Future<void> registerUserProperties(
       Map<String, dynamic> properties) async {
+    if (kIsWeb) return;
+
     _mixpanel.registerSuperProperties(properties);
     await _firebaseAnalytics.setDefaultEventParameters(properties);
   }
 
   static Future<void> setUserId({required String? userId}) async {
+    if (kIsWeb) return;
+
     if (userId != null) _mixpanel.identify(userId);
     await _firebaseAnalytics.setUserId(id: userId);
   }
 
   static setPeopleProperty(String prop, dynamic to) {
+    if (kIsWeb) return;
+
     _mixpanel.getPeople().set(prop, to);
   }
 }
