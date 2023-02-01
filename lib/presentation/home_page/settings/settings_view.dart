@@ -19,6 +19,7 @@ import '../../common/custom_card.dart';
 import '../../common/login_button.dart';
 import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
+import '../../common/subtitle.dart';
 import '../../login_page/login_page.dart';
 import '../../my_page/my_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
@@ -80,47 +81,47 @@ class _SettingsViewState extends State<SettingsView> {
           );
         },
       ),
-      _buildSubtitle('기능'),
+      const Subtitle(text: '기본 설정'),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',
         description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
         showArrow: true,
       ),
-      const _Divider(),
+      const SettingDivider(),
       const SettingTile(
         title: '시험 종료 후 바로 기록하기',
         description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어갑니다.',
         disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
         preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
       ),
-      _buildSubtitle('기타'),
+      const Subtitle(text: '기타'),
       SettingTile(
         onTap: _onWriteReviewButtonTap,
         title: '리뷰 쓰기',
         description: '리뷰는 실감 팀에게 큰 도움이 됩니다.',
       ),
-      const _Divider(),
+      const SettingDivider(),
       SettingTile(
         onTap: () => launchUrl(Uri.parse(urlKakaotalk),
             mode: LaunchMode.externalApplication),
         title: '문의하기',
         description: '실감 카카오톡 채널로 의견을 보내거나 문의할 수 있습니다.',
       ),
-      if (appState.isSignedIn) const _Divider(),
+      if (appState.isSignedIn) const SettingDivider(),
       if (appState.isSignedIn)
         SettingTile(
           onTap: _onLogoutTap,
           title: '로그아웃',
         ),
-      if (appState.isSignedIn) const _Divider(),
+      if (appState.isSignedIn) const SettingDivider(),
       if (appState.isSignedIn)
         SettingTile(
           onTap: () => _onDeleteAccountTap(), // 유저 삭제, 로그아웃
           title: '계정 탈퇴',
           titleColor: Colors.red,
         ),
-      const _Divider(thick: true),
+      const Divider(),
       FutureBuilder(
         future: PackageInfo.fromPlatform(),
         builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
@@ -238,28 +239,6 @@ class _SettingsViewState extends State<SettingsView> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSubtitle(String text) {
-    return Container(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 4),
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade300,
-            width: 1,
-          ),
-        ),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w900,
         ),
       ),
     );
@@ -411,28 +390,19 @@ class _SettingsViewState extends State<SettingsView> {
   }
 }
 
-class _Divider extends StatelessWidget {
-  final bool thick;
-
-  const _Divider({
+class SettingDivider extends StatelessWidget {
+  const SettingDivider({
     Key? key,
-    this.thick = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double thickness = 0.5;
-    double indent = 20;
-    if (thick) {
-      thickness = 0.8;
-      indent = 0;
-    }
     return Divider(
       color: Colors.black.withOpacity(0.06),
-      height: thickness,
-      thickness: thickness,
-      indent: indent,
-      endIndent: indent,
+      height: 0.5,
+      thickness: 0.5,
+      indent: 20,
+      endIndent: 20,
     );
   }
 }

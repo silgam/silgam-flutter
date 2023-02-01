@@ -1,6 +1,45 @@
 import 'dart:math';
 
-enum NoisePreset { disabled, easy, normal, hard, custom }
+enum NoisePreset {
+  disabled(
+    title: '사용 안함',
+    difficulty: 0,
+  ),
+  easy(
+    title: '조용한 분위기',
+    difficulty: 1,
+    description: '실제 시험장보다 조용한 분위기로 편하게 연습할 수 있어요.',
+    backgroundImage: 'assets/noise_easy.png',
+  ),
+  normal(
+    title: '시험장 분위기',
+    difficulty: 2,
+    description: '실제 시험장과 가장 유사한 분위기로 시험장에 와 있는 듯한 긴장감을 느낄 수 있어요.',
+    backgroundImage: 'assets/noise_normal.png',
+  ),
+  hard(
+    title: '시끄러운 분위기',
+    difficulty: 4,
+    description: '실제 시험장보다 시끄러운 분위기로 모래주머니 효과를 원하는 분들에게 추천해요.',
+    backgroundImage: 'assets/noise_hard.png',
+  ),
+  custom(
+    title: '직접 설정',
+    difficulty: 0,
+  );
+
+  const NoisePreset({
+    required this.title,
+    required this.difficulty,
+    this.description,
+    this.backgroundImage,
+  });
+
+  final String title;
+  final int difficulty;
+  final String? description;
+  final String? backgroundImage;
+}
 
 class Noise {
   static const int maxLevel = 20;

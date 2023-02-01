@@ -7,7 +7,10 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/custom_menu_bar.dart';
+import '../common/is_tablet.dart';
+import '../common/subtitle.dart';
 import '../home_page/settings/setting_tile.dart';
+import '../home_page/settings/settings_view.dart';
 import '../purchase_page/purchase_page.dart';
 import 'cubit/noise_setting_cubit.dart';
 
@@ -51,117 +54,206 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
   Widget _buildSettingBody(NoiseSettingState state) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 8),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Text(
-            '실제 시험장에서 나는 소음들을 백색 소음과 함께 랜덤하게 재생하여 더욱 실감나는 실전 연습을 돕습니다.',
+            '실제 시험장에서 나는 소음들을 백색 소음과 함께 랜덤하게 재생하여 더욱 실감나는 실전 연습을 도와요.',
             style: TextStyle(height: 1.35, color: Colors.grey.shade800),
           ),
         ),
         const SizedBox(height: 4),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Text(
-            '아래의 추천 설정값을 사용하거나 소음들의 재생 빈도를 직접 설정할 수도 있습니다.',
+            '아래의 테마를 사용하거나 소음들의 재생 빈도를 직접 설정할 수도 있어요.',
             style: TextStyle(height: 1.35, color: Colors.grey.shade800),
           ),
         ),
         const SizedBox(height: 18),
-        const Divider(height: 0.1),
-        RadioListTile(
-          onChanged: _cubit.onPresetChanged,
-          value: NoisePreset.disabled,
-          groupValue: state.selectedNoisePreset,
-          title: const Text(
-            '사용 안함',
-            style: settingTitleTextStyle,
-          ),
-        ),
-        RadioListTile(
-          onChanged: _cubit.onPresetChanged,
-          value: NoisePreset.easy,
-          groupValue: state.selectedNoisePreset,
-          title: const Text(
-            '조용한 분위기',
-            style: settingTitleTextStyle,
-          ),
-          subtitle: const Text(
-            '실제 시험장보다 조용한 분위기로 편하게 연습할 수 있습니다.',
-            style: settingDescriptionTextStyle,
-          ),
-        ),
-        RadioListTile(
-          onChanged: _cubit.onPresetChanged,
-          value: NoisePreset.normal,
-          groupValue: state.selectedNoisePreset,
-          title: const Text(
-            '시험장 분위기',
-            style: settingTitleTextStyle,
-          ),
-          subtitle: const Text(
-            '실제 시험장과 가장 유사한 분위기로 시험장에 와 있는 듯한 긴장감을 느낄 수 있습니다.',
-            style: settingDescriptionTextStyle,
-          ),
-        ),
-        RadioListTile(
-          onChanged: _cubit.onPresetChanged,
-          value: NoisePreset.hard,
-          groupValue: state.selectedNoisePreset,
-          title: const Text(
-            '시끄러운 분위기',
-            style: settingTitleTextStyle,
-          ),
-          subtitle: const Text(
-            '실제 시험장보다 시끄러운 분위기로 모래주머니 효과를 원하는 분들에게 추천합니다.',
-            style: settingDescriptionTextStyle,
-          ),
-        ),
-        RadioListTile(
-          onChanged: _cubit.onPresetChanged,
-          value: NoisePreset.custom,
-          groupValue: state.selectedNoisePreset,
-          title: const Text(
-            '직접 설정',
-            style: settingTitleTextStyle,
-          ),
-        ),
-        const Divider(height: 1),
+        const Subtitle(text: '테마 모드'),
+        const SizedBox(height: 6),
+        _buildPresetButton(NoisePreset.disabled),
+        _buildPresetButton(NoisePreset.easy),
+        _buildPresetButton(NoisePreset.normal),
+        _buildPresetButton(NoisePreset.hard),
+        const SizedBox(height: 12),
+        const Subtitle(text: '커스텀 모드'),
+        const SizedBox(height: 6),
         SettingTile(
           title: '백색 소음',
-          description: '백색 소음으로 집중력을 높이고 현장감을 살릴 수 있습니다.',
+          description: '백색 소음으로 집중력을 높이고 현장감을 살릴 수 있어요.',
           preferenceKey: PreferenceKey.useWhiteNoise,
           onSwitchChanged: _cubit.onWhiteNoiseChanged,
           defaultValue: false,
         ),
-        const Divider(height: 1),
-        const SizedBox(height: 6),
-        BlocBuilder<AppCubit, AppState>(
-          buildWhen: (previous, current) =>
-              previous.productBenefit != current.productBenefit,
-          builder: (context, appState) {
-            final availableNoiseIds = appState.productBenefit.availableNoiseIds;
-            return Column(
-              children: [
-                ...defaultNoises
-                    .where((element) => availableNoiseIds.contains(element.id))
-                    .map((noise) => _buildNoiseSettingTile(
-                          noise,
-                          isLocked: false,
-                        ))
-                    .toList(),
-                ...defaultNoises
-                    .where((element) => !availableNoiseIds.contains(element.id))
-                    .map((noise) =>
-                        _buildNoiseSettingTile(noise, isLocked: true))
-                    .toList(),
-              ],
-            );
-          },
+        const SettingDivider(),
+        const SizedBox(height: 16),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28),
+          child: Text(
+            '여러가지 소음의 빈도를 조절할 수 있어요',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
         ),
+        const SizedBox(height: 16),
+        _buildNoiseSettings(),
         const SizedBox(height: 12),
       ],
+    );
+  }
+
+  Widget _buildPresetButton(NoisePreset preset) {
+    final isSelected = _cubit.state.selectedNoisePreset == preset;
+    return GestureDetector(
+      onTap: () => _cubit.onPresetChanged(preset),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade700,
+          image: preset.backgroundImage != null
+              ? DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(preset.backgroundImage ?? ''),
+                )
+              : null,
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isSelected
+                  ? [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColor.withOpacity(0),
+                    ]
+                  : [
+                      const Color(0xFF303030),
+                      const Color(0xFF303030).withOpacity(0),
+                    ],
+            ),
+          ),
+          child: Row(
+            children: [
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 150),
+                opacity: isSelected ? 1 : 0,
+                child: const Text(
+                  '✓',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          preset.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        for (int i = 0; i < preset.difficulty; i++)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 1),
+                            child: Image.asset(
+                              'assets/star.png',
+                              width: 13,
+                              color: const Color(0xFFFFC700),
+                            ),
+                          ),
+                        for (int i = 0; i < 5 - preset.difficulty; i++)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 1),
+                            child: Image.asset(
+                              'assets/star.png',
+                              width: 13,
+                              color: const Color(0xFF767676),
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (preset.description != null) const SizedBox(height: 4),
+                    if (preset.description != null)
+                      Text(
+                        preset.description ?? '',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoiseSettings() {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) =>
+          previous.productBenefit != current.productBenefit,
+      builder: (context, appState) {
+        final availableNoiseIds = appState.productBenefit.availableNoiseIds;
+        final noiseSettingWidgets = [
+          ...defaultNoises
+              .where((element) => availableNoiseIds.contains(element.id))
+              .map((noise) => _buildNoiseSettingTile(
+                    noise,
+                    isLocked: false,
+                  ))
+              .toList(),
+          ...defaultNoises
+              .where((element) => !availableNoiseIds.contains(element.id))
+              .map((noise) => _buildNoiseSettingTile(noise, isLocked: true))
+              .toList(),
+        ];
+        if (isTablet(context)) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  children: noiseSettingWidgets.sublist(
+                    0,
+                    (noiseSettingWidgets.length / 2).ceil(),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: noiseSettingWidgets.sublist(
+                    (noiseSettingWidgets.length / 2).ceil(),
+                    noiseSettingWidgets.length,
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+        return Column(
+          children: noiseSettingWidgets,
+        );
+      },
     );
   }
 
@@ -169,44 +261,55 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 8,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                (noise.existingFiles == 0 ? '(지원 예정) ' : '') + noise.name,
-                style: TextStyle(
-                  color: noise.existingFiles == 0 ? Colors.grey : null,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  (noise.existingFiles == 0 ? '(지원 예정) ' : '') + noise.name,
+                  style: TextStyle(
+                    color: noise.existingFiles == 0 ? Colors.grey : null,
+                  ),
                 ),
               ),
-              Slider(
-                value: _cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0,
-                onChanged: (value) =>
-                    _cubit.onSliderChanged(noise, value.toInt()),
-                label: (_cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0)
-                    .toStringAsFixed(0),
-                max: Noise.maxLevel.toDouble(),
-                activeColor: Theme.of(context)
-                    .primaryColor
-                    .withAlpha(noise.existingFiles == 0 ? 80 : 255),
-                inactiveColor: noise.existingFiles == 0
-                    ? Theme.of(context).primaryColor.withAlpha(20)
-                    : null,
+              const SizedBox(height: 4),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 6,
+                  trackShape: const RoundedRectSliderTrackShape(),
+                  overlayShape: SliderComponentShape.noOverlay,
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 8,
+                  ),
+                ),
+                child: Slider(
+                  value: _cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0,
+                  onChanged: (value) =>
+                      _cubit.onSliderChanged(noise, value.toInt()),
+                  label: (_cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0)
+                      .toStringAsFixed(0),
+                  max: Noise.maxLevel.toDouble(),
+                  activeColor: Theme.of(context)
+                      .primaryColor
+                      .withAlpha(noise.existingFiles == 0 ? 80 : 255),
+                  inactiveColor: noise.existingFiles == 0
+                      ? Theme.of(context).primaryColor.withAlpha(20)
+                      : null,
+                ),
               ),
             ],
           ),
         ),
         if (isLocked)
           Positioned.fill(
-            child: InkWell(
+            child: GestureDetector(
               onTap: _onLockedNoiseTapped,
-              splashColor: Colors.transparent,
               child: Container(
-                color: Colors.black.withAlpha(100),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(100),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
