@@ -210,7 +210,9 @@ class _StatViewState extends State<StatView> {
             .take(index)
             .where((element) => element.examStartedTime.toDateOnly() == date)
             .length;
-        final key = '${date.year}.${date.month}.${date.day}.$sameDateLength';
+        final monthString = date.month.toString().padLeft(2, '0');
+        final dayString = date.day.toString().padLeft(2, '0');
+        final key = '${date.year}.$monthString.$dayString.$sameDateLength';
         dateToRecordsMap[key] ??= [];
         dateToRecordsMap[key]!.add(record);
       });
@@ -388,13 +390,13 @@ class _StatViewState extends State<StatView> {
               return (previousKey.split('.')..removeLast()).join() ==
                   keySplitted.join();
             });
-            if (isAlreadyShown) {
+            if (isAlreadyShown && meta.appliedInterval < 2) {
               return const SizedBox.shrink();
             }
             return Container(
               alignment: Alignment.bottomCenter,
               child: Text(
-                keySplitted.getRange(1, 3).join('/'),
+                keySplitted.getRange(1, 3).map((e) => int.parse(e)).join('/'),
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 10,
