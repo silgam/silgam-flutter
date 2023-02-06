@@ -8,6 +8,7 @@ import '../../app/cubit/app_cubit.dart';
 import '../../common/dialog.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
+import '../../common/subject_filter_chip.dart';
 import '../../login_page/login_page.dart';
 import '../../record_detail_page/record_detail_page.dart';
 import '../cubit/home_cubit.dart';
@@ -149,7 +150,12 @@ class _RecordListViewState extends State<RecordListView> {
                     endIndent: 6,
                   ),
                   for (Subject subject in Subject.values)
-                    _buildSubjectFilterChip(state, subject),
+                    SubjectFilterChip(
+                      subject: subject,
+                      isSelected: state.selectedSubjects.contains(subject),
+                      onSelected: () =>
+                          _cubit.onSubjectFilterButtonTapped(subject),
+                    ),
                   const SizedBox(width: 13),
                 ],
               ),
@@ -183,35 +189,6 @@ class _RecordListViewState extends State<RecordListView> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSubjectFilterChip(RecordListState state, Subject subject) {
-    final bool selected = state.selectedSubjects.contains(subject);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      child: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
-        child: FilterChip(
-          label: Text(
-            subject.subjectName,
-            style: TextStyle(
-              color: selected ? Colors.white : Color(subject.secondColor),
-              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-            ),
-          ),
-          onSelected: (value) => _cubit.onSubjectFilterButtonTapped(subject),
-          selected: false,
-          side: BorderSide(
-            color: Color(subject.secondColor),
-            width: 0.4,
-          ),
-          backgroundColor:
-              Color(subject.firstColor).withAlpha(selected ? 255 : 10),
-          pressElevation: 0,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
       ),
     );
   }

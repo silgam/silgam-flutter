@@ -8,6 +8,7 @@ class CustomCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final bool isThin;
+  final Clip clipBehavior;
 
   const CustomCard({
     Key? key,
@@ -16,13 +17,14 @@ class CustomCard extends StatelessWidget {
     this.margin,
     this.padding,
     this.isThin = false,
+    this.clipBehavior = Clip.hardEdge,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      clipBehavior: Clip.hardEdge,
+      clipBehavior: clipBehavior,
       margin: margin,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(isThin ? 100 : cardCornerRadius),
@@ -36,6 +38,7 @@ class CustomCard extends StatelessWidget {
       ),
       child: Material(
         color: backgroundColor,
+        borderRadius: BorderRadius.circular(isThin ? 100 : cardCornerRadius),
         child: Padding(
           padding: padding ?? EdgeInsets.zero,
           child: child,
