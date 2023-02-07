@@ -140,6 +140,7 @@ class _StatViewState extends State<StatView> {
             children: [
               Expanded(
                 child: CustomCard(
+                  clipBehavior: Clip.none,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   margin: _cardMargin.subtract(
@@ -499,54 +500,81 @@ class _StatViewState extends State<StatView> {
     final totalValue = filteredRecords.values.flattened.length;
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - _cardMargin.horizontal - 12) / 2;
+
+    int touchedIndex = -1;
     return MediaQuery(
       data: const MediaQueryData(textScaleFactor: 1.0),
-      child: PieChart(
-        swapAnimationDuration: Duration.zero,
-        PieChartData(
-          sectionsSpace: 0,
-          centerSpaceRadius: 0,
-          sections: filteredRecords.entries.map((entry) {
-            final subject = entry.key;
-            final records = entry.value;
-            final value = records.length;
-            final ratio = value / totalValue;
-            return PieChartSectionData(
-              color: Color(subject.firstColor),
-              value: value.toDouble(),
-              showTitle: false,
-              radius: cardWidth / 2 - 16,
-              badgePositionPercentageOffset: ratio == 1
-                  ? 0
-                  : ratio > 0.3
-                      ? 0.5
-                      : 0.85 - ratio,
-              badgeWidget: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (ratio >= 0.1)
-                    Text(
-                      subject.subjectName,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: (_titleTextStyle.fontSize ?? 14) - 2,
-                      ),
-                    ),
-                  if (ratio >= 0.1) const SizedBox(height: 4),
-                  if (ratio >= 0.025)
-                    Text(
-                      '$value개',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: (_titleTextStyle.fontSize ?? 14) - 3,
-                      ),
-                    ),
-                ],
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return PieChart(
+            swapAnimationCurve: Curves.easeOut,
+            swapAnimationDuration: const Duration(milliseconds: 100),
+            PieChartData(
+              sectionsSpace: 0,
+              centerSpaceRadius: 0,
+              sections: filteredRecords.entries.mapIndexed((index, entry) {
+                final subject = entry.key;
+                final records = entry.value;
+                final value = records.length;
+                final ratio = value / totalValue;
+                final isTouched = touchedIndex == index;
+                return PieChartSectionData(
+                  color: Color(subject.firstColor),
+                  value: value.toDouble() * (isTouched ? 3 : 1),
+                  showTitle: false,
+                  radius: (cardWidth / 2 - 16) * (isTouched ? 1.05 : 1),
+                  badgePositionPercentageOffset: ratio == 1
+                      ? 0
+                      : ratio > 0.3
+                          ? 0.5
+                          : 0.85 - ratio,
+                  badgeWidget: isTouched || touchedIndex == -1
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (isTouched || ratio >= 0.1)
+                              Text(
+                                subject.subjectName,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      (_titleTextStyle.fontSize ?? 14) - 2,
+                                ),
+                              ),
+                            if (isTouched || ratio >= 0.1)
+                              const SizedBox(height: 4),
+                            if (isTouched || ratio >= 0.025)
+                              Text(
+                                '$value개',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      (_titleTextStyle.fontSize ?? 14) - 3,
+                                ),
+                              ),
+                          ],
+                        )
+                      : null,
+                );
+              }).toList(),
+              pieTouchData: PieTouchData(
+                touchCallback: (event, pieTouchResponse) {
+                  setState(() {
+                    if (!event.isInterestedForInteractions ||
+                        pieTouchResponse == null ||
+                        pieTouchResponse.touchedSection == null) {
+                      touchedIndex = -1;
+                      return;
+                    }
+                    touchedIndex =
+                        pieTouchResponse.touchedSection!.touchedSectionIndex;
+                  });
+                },
               ),
-            );
-          }).toList(),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
