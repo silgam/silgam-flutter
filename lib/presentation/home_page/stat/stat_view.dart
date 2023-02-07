@@ -58,6 +58,14 @@ class StatView extends StatefulWidget {
 }
 
 class _StatViewState extends State<StatView> {
+  static const EdgeInsets _cardMargin =
+      EdgeInsets.symmetric(vertical: 8, horizontal: 20);
+  static final TextStyle _titleTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    color: Colors.grey.shade800,
+  );
+
   final StatCubit _cubit = getIt.get();
 
   @override
@@ -94,6 +102,14 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildBody(StatState state) {
+    final Map<Subject, List<ExamRecord>> filteredRecords =
+        state.originalRecords.groupListsBy((record) => record.subject)
+          ..removeWhere(
+            (subject, records) =>
+                records.isEmpty ||
+                (state.selectedSubjects.isNotEmpty &&
+                    !state.selectedSubjects.contains(subject)),
+          );
     return SliverList(
       delegate: SliverChildListDelegate([
         const SizedBox(height: 8),
@@ -113,15 +129,36 @@ class _StatViewState extends State<StatView> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
-        _buildValueGraphsCard(state),
+        const SizedBox(height: 12),
+        _buildValueGraphsCard(
+          filteredRecords: filteredRecords,
+          examValueType: state.selectedExamValueType,
+          selectedSubjects: state.selectedSubjects,
+        ),
+        _buildInfoCard(
+          title: '지금까지 모의고사를 푼 시간',
+          text: Duration(
+            minutes: filteredRecords.values.flattened
+                .map((e) => e.examDurationMinutes)
+                .whereNotNull()
+                .sum,
+          ).toStringFormat(),
+        ),
+        _buildInfoCard(
+          title: '지금까지 푼 모의고사 개수',
+          text: '${filteredRecords.values.flattened.length}개',
+        )
       ]),
     );
   }
 
-  Widget _buildValueGraphsCard(StatState state) {
+  Widget _buildValueGraphsCard({
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required ExamValueType examValueType,
+    required List<Subject> selectedSubjects,
+  }) {
     return CustomCard(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: _cardMargin,
       padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
       clipBehavior: Clip.none,
       child: Column(
@@ -130,17 +167,14 @@ class _StatViewState extends State<StatView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 '과목별',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: _titleTextStyle,
               ),
               const SizedBox(width: 4),
               ButtonTheme(
                 child: DropdownButton(
-                  value: state.selectedExamValueType,
+                  value: examValueType,
                   onChanged: _cubit.onExamValueTypeChanged,
                   alignment: Alignment.center,
                   items: StatView.examValueTypes
@@ -149,22 +183,16 @@ class _StatViewState extends State<StatView> {
                             alignment: Alignment.center,
                             child: Text(
                               valueType.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18,
-                              ),
+                              style: _titleTextStyle,
                             ),
                           ))
                       .toList(),
                 ),
               ),
               const SizedBox(width: 4),
-              const Text(
+              Text(
                 '그래프',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: _titleTextStyle,
               ),
             ],
           ),
@@ -172,23 +200,15 @@ class _StatViewState extends State<StatView> {
           AspectRatio(
             aspectRatio: 3 / 2,
             child: _buildValueGraphs(
-              examValueType: state.selectedExamValueType,
-              recordsMap: state.originalRecords
-                  .groupListsBy((record) => record.subject)
-                  .map((subject, records) => MapEntry(
-                        subject,
-                        records
-                            .where((record) =>
-                                state.selectedExamValueType.getValue(record) !=
-                                null)
-                            .sortedBy((record) => record.examStartedTime),
-                      ))
-                ..removeWhere(
-                  (subject, records) =>
-                      records.isEmpty ||
-                      (state.selectedSubjects.isNotEmpty &&
-                          !state.selectedSubjects.contains(subject)),
+              examValueType: examValueType,
+              recordsMap: filteredRecords.map(
+                (subject, records) => MapEntry(
+                  subject,
+                  records
+                      .where((record) => examValueType.getValue(record) != null)
+                      .sortedBy((record) => record.examStartedTime),
                 ),
+              ),
             ),
           ),
         ],
@@ -432,6 +452,29 @@ class _StatViewState extends State<StatView> {
     );
   }
 
+  Widget _buildInfoCard({required String title, required String text}) {
+    return CustomCard(
+      margin: _cardMargin,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      isThin: true,
+      child: Column(
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: _titleTextStyle,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: _titleTextStyle.color),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildLoginButton() {
     return SliverFillRemaining(
       hasScrollBody: false,
@@ -474,5 +517,13 @@ class ExamValueType {
 extension on DateTime {
   DateTime toDateOnly() {
     return DateTime(year, month, day);
+  }
+}
+
+extension on Duration {
+  String toStringFormat() {
+    final hours = inHours;
+    final minutes = inMinutes - hours * 60;
+    return '$hours시간 $minutes분';
   }
 }

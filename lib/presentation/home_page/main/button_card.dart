@@ -19,6 +19,7 @@ class _ButtonCard extends StatelessWidget {
     return CustomCard(
       backgroundColor: primary ? Theme.of(context).primaryColor : Colors.white,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+      isThin: true,
       child: InkWell(
         onTap: _onTap,
         splashColor: Colors.transparent,
