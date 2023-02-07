@@ -65,7 +65,8 @@ dependencies:
   collection: ^1.16.0
   webview_flutter: ^4.0.2
   dotted_line: ^3.1.0
-
+  flutter_heatmap_calendar:
+    path: ../flutter_heatmap_calendar
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
@@ -65,6 +69,8 @@ class _StatViewState extends State<StatView> {
     fontWeight: FontWeight.bold,
     color: Colors.grey.shade800,
   );
+  static const _cardBetweenMarginHorizontal = 12.0;
+  static const _cardPaddingHorizontal = 16.0;
 
   final StatCubit _cubit = getIt.get();
 
@@ -137,12 +143,15 @@ class _StatViewState extends State<StatView> {
         ),
         IntrinsicHeight(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
                 child: CustomCard(
                   clipBehavior: Clip.none,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: _cardPaddingHorizontal,
+                    vertical: 16,
+                  ),
                   margin: _cardMargin.subtract(
                     EdgeInsets.only(right: _cardMargin.right),
                   ),
@@ -162,13 +171,32 @@ class _StatViewState extends State<StatView> {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: _cardBetweenMarginHorizontal),
               Expanded(
                 child: CustomCard(
+                  padding: const EdgeInsets.only(top: 16),
                   margin: _cardMargin.subtract(
                     EdgeInsets.only(left: _cardMargin.left),
                   ),
-                  child: Container(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: _cardPaddingHorizontal,
+                        ),
+                        child: Text(
+                          '푼 모의고사 수 히트맵',
+                          textAlign: TextAlign.center,
+                          style: _titleTextStyle,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildHeatmapChart(
+                        filteredRecords: filteredRecords,
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],
@@ -199,7 +227,11 @@ class _StatViewState extends State<StatView> {
   }) {
     return CustomCard(
       margin: _cardMargin,
-      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+      padding: const EdgeInsets.only(
+        left: _cardBetweenMarginHorizontal - 4,
+        right: _cardBetweenMarginHorizontal - 4,
+        bottom: 12,
+      ),
       clipBehavior: Clip.none,
       child: Column(
         children: [
@@ -499,90 +531,158 @@ class _StatViewState extends State<StatView> {
   }) {
     final totalValue = filteredRecords.values.flattened.length;
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth - _cardMargin.horizontal - 12) / 2;
+    final cardWidth =
+        (screenWidth - _cardMargin.horizontal - _cardBetweenMarginHorizontal) /
+            2;
 
     int touchedIndex = -1;
     return MediaQuery(
       data: const MediaQueryData(textScaleFactor: 1.0),
-      child: StatefulBuilder(
-        builder: (context, setState) {
-          return PieChart(
-            swapAnimationCurve: Curves.easeOut,
-            swapAnimationDuration: const Duration(milliseconds: 100),
-            PieChartData(
-              sectionsSpace: 0,
-              centerSpaceRadius: 0,
-              sections: filteredRecords.entries.mapIndexed((index, entry) {
-                final subject = entry.key;
-                final records = entry.value;
-                final value = records.length;
-                final ratio = value / totalValue;
-                final isTouched = touchedIndex == index;
-                return PieChartSectionData(
-                  color: Color(subject.firstColor),
-                  value: value.toDouble() * (isTouched ? 3 : 1),
-                  showTitle: false,
-                  radius: (cardWidth / 2 - 16) * (isTouched ? 1.05 : 1),
-                  badgePositionPercentageOffset: ratio == 1
-                      ? 0
-                      : ratio > 0.3
-                          ? 0.5
-                          : 0.85 - ratio,
-                  badgeWidget: isTouched || touchedIndex == -1
-                      ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (isTouched || ratio >= 0.1)
-                              Text(
-                                subject.subjectName,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      (_titleTextStyle.fontSize ?? 14) - 2,
-                                ),
+      child: StatefulBuilder(builder: (context, setState) {
+        return PieChart(
+          swapAnimationCurve: Curves.easeOut,
+          swapAnimationDuration: const Duration(milliseconds: 100),
+          PieChartData(
+            sectionsSpace: 0,
+            centerSpaceRadius: 0,
+            sections: filteredRecords.entries.mapIndexed((index, entry) {
+              final subject = entry.key;
+              final records = entry.value;
+              final value = records.length;
+              final ratio = value / totalValue;
+              final isTouched = touchedIndex == index;
+              return PieChartSectionData(
+                color: Color(subject.firstColor),
+                value: value.toDouble() * (isTouched ? 3 : 1),
+                showTitle: false,
+                radius: (cardWidth / 2 - _cardPaddingHorizontal) *
+                    (isTouched ? 1.05 : 1),
+                badgePositionPercentageOffset: ratio == 1
+                    ? 0
+                    : ratio > 0.3
+                        ? 0.5
+                        : 0.85 - ratio,
+                badgeWidget: isTouched || touchedIndex == -1
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (isTouched || ratio >= 0.1)
+                            Text(
+                              subject.subjectName,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: (_titleTextStyle.fontSize ?? 14) - 2,
                               ),
-                            if (isTouched || ratio >= 0.1)
-                              const SizedBox(height: 4),
-                            if (isTouched || ratio >= 0.025)
-                              Text(
-                                '$value개',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize:
-                                      (_titleTextStyle.fontSize ?? 14) - 3,
-                                ),
+                            ),
+                          if (isTouched || ratio >= 0.1)
+                            const SizedBox(height: 4),
+                          if (isTouched || ratio >= 0.025)
+                            Text(
+                              '$value개',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: (_titleTextStyle.fontSize ?? 14) - 3,
                               ),
-                          ],
-                        )
-                      : null,
-                );
-              }).toList(),
-              pieTouchData: PieTouchData(
-                touchCallback: (event, pieTouchResponse) {
-                  setState(() {
-                    if (!event.isInterestedForInteractions ||
-                        pieTouchResponse == null ||
-                        pieTouchResponse.touchedSection == null) {
-                      touchedIndex = -1;
-                      return;
-                    }
-                    touchedIndex =
-                        pieTouchResponse.touchedSection!.touchedSectionIndex;
-                  });
-                },
-              ),
+                            ),
+                        ],
+                      )
+                    : null,
+              );
+            }).toList(),
+            pieTouchData: PieTouchData(
+              touchCallback: (event, pieTouchResponse) {
+                setState(() {
+                  if (!event.isInterestedForInteractions ||
+                      pieTouchResponse == null ||
+                      pieTouchResponse.touchedSection == null) {
+                    touchedIndex = -1;
+                    return;
+                  }
+                  touchedIndex =
+                      pieTouchResponse.touchedSection!.touchedSectionIndex;
+                });
+              },
             ),
-          );
-        },
-      ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildHeatmapChart({
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth =
+        (screenWidth - _cardMargin.horizontal - _cardBetweenMarginHorizontal) /
+            2;
+    final chartWidth = cardWidth - _cardPaddingHorizontal * 2;
+    const cellMargin = 2.0;
+    final cellSize = (chartWidth - cellMargin * 2 * 7) / 8;
+
+    final datasets = filteredRecords.values.flattened
+        .groupListsBy((record) => record.examStartedTime.toDateOnly())
+        .map((date, records) => MapEntry(date, records.length));
+    final minDate = datasets.keys.minOrNull ?? DateTime.now();
+
+    MapEntry<DateTime, int>? touchedData;
+    Timer? dismissTimer;
+    return MediaQuery(
+      data: const MediaQueryData(textScaleFactor: 1.0),
+      child: StatefulBuilder(builder: (context, setState) {
+        return Column(
+          children: [
+            HeatMap(
+              showColorTip: false,
+              scrollable: true,
+              borderRadius: 2,
+              size: cellSize,
+              paddingHorizontal: _cardPaddingHorizontal,
+              fontSize: min(cellSize - 4, 20),
+              defaultColor: Colors.black.withOpacity(0.04),
+              margin: const EdgeInsets.all(cellMargin),
+              datasets: datasets,
+              startDate: minDate.subtract(const Duration(days: 60)),
+              colorsets: {
+                0: Theme.of(context).primaryColor,
+              },
+              onClick: (date) {
+                final value = datasets[date] ?? 0;
+                setState(() {
+                  touchedData = MapEntry(date, value);
+                  dismissTimer?.cancel();
+                  dismissTimer = Timer(const Duration(milliseconds: 2000), () {
+                    setState(() {
+                      touchedData = null;
+                    });
+                  });
+                });
+              },
+            ),
+            const SizedBox(height: 1),
+            if (touchedData != null)
+              Text(
+                '${DateFormat.yMd('ko_KR').format(touchedData!.key)} (${touchedData!.value}개)',
+                style: TextStyle(
+                  height: 1,
+                  fontSize: 11,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+          ],
+        );
+      }),
     );
   }
 
   Widget _buildInfoCard({required String title, required String text}) {
     return CustomCard(
       margin: _cardMargin,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(
+        horizontal: _cardPaddingHorizontal,
+        vertical: 12,
+      ),
       isThin: true,
       child: Column(
         children: [
@@ -609,7 +709,7 @@ class _StatViewState extends State<StatView> {
     return SliverFillRemaining(
       hasScrollBody: false,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(_cardPaddingHorizontal),
         alignment: Alignment.center,
         child: LoginButton(
           onTap: _onLoginTap,
