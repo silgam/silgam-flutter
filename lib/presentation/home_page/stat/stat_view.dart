@@ -223,7 +223,7 @@ class _StatViewState extends State<StatView> {
         examValueType.reverseMultiple;
     var maxValue = (values.maxOrNull ?? examValueType.maxValue) *
         examValueType.reverseMultiple;
-    if (examValueType.reverse) {
+    if (examValueType.reverse && values.isNotEmpty) {
       final temp = minValue;
       minValue = maxValue;
       maxValue = temp;
