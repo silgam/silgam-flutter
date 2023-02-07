@@ -114,6 +114,7 @@ class RecordTileState extends State<RecordTile> {
                       child: Text(
                         widget.record.title,
                         overflow: TextOverflow.ellipsis,
+                        textWidthBasis: TextWidthBasis.longestLine,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 18,

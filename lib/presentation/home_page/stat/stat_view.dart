@@ -61,7 +61,7 @@ class _StatViewState extends State<StatView> {
   static const EdgeInsets _cardMargin =
       EdgeInsets.symmetric(vertical: 8, horizontal: 20);
   static final TextStyle _titleTextStyle = TextStyle(
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: FontWeight.bold,
     color: Colors.grey.shade800,
   );
@@ -135,6 +135,44 @@ class _StatViewState extends State<StatView> {
           examValueType: state.selectedExamValueType,
           selectedSubjects: state.selectedSubjects,
         ),
+        IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomCard(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  margin: _cardMargin.subtract(
+                    EdgeInsets.only(right: _cardMargin.right),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '과목별 푼 모의고사 수',
+                        textAlign: TextAlign.center,
+                        style: _titleTextStyle,
+                      ),
+                      const SizedBox(height: 16),
+                      AspectRatio(
+                        aspectRatio: 1,
+                        child: _buildPieChart(filteredRecords: filteredRecords),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CustomCard(
+                  margin: _cardMargin.subtract(
+                    EdgeInsets.only(left: _cardMargin.left),
+                  ),
+                  child: Container(),
+                ),
+              )
+            ],
+          ),
+        ),
         _buildInfoCard(
           title: '지금까지 모의고사를 푼 시간',
           text: Duration(
@@ -147,7 +185,8 @@ class _StatViewState extends State<StatView> {
         _buildInfoCard(
           title: '지금까지 푼 모의고사 개수',
           text: '${filteredRecords.values.flattened.length}개',
-        )
+        ),
+        const SizedBox(height: 20),
       ]),
     );
   }
@@ -220,8 +259,9 @@ class _StatViewState extends State<StatView> {
     required Map<Subject, List<ExamRecord>> recordsMap,
     required ExamValueType examValueType,
   }) {
-    final allRecords = recordsMap.values.flattened;
+    final screenWidth = MediaQuery.of(context).size.width;
 
+    final allRecords = recordsMap.values.flattened;
     final dateToRecordsMap = SplayTreeMap<String, List<ExamRecord>>();
     recordsMap.forEach((subject, records) {
       records.forEachIndexed((index, record) {
@@ -322,6 +362,7 @@ class _StatViewState extends State<StatView> {
       },
       touchTooltipData: LineTouchTooltipData(
         fitInsideHorizontally: true,
+        maxContentWidth: screenWidth * 0.8,
         tooltipBgColor: Colors.white,
         tooltipBorder: const BorderSide(color: Colors.grey),
         tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -452,6 +493,64 @@ class _StatViewState extends State<StatView> {
     );
   }
 
+  Widget _buildPieChart({
+    required final Map<Subject, List<ExamRecord>> filteredRecords,
+  }) {
+    final totalValue = filteredRecords.values.flattened.length;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth - _cardMargin.horizontal - 12) / 2;
+    return MediaQuery(
+      data: const MediaQueryData(textScaleFactor: 1.0),
+      child: PieChart(
+        swapAnimationDuration: Duration.zero,
+        PieChartData(
+          sectionsSpace: 0,
+          centerSpaceRadius: 0,
+          sections: filteredRecords.entries.map((entry) {
+            final subject = entry.key;
+            final records = entry.value;
+            final value = records.length;
+            final ratio = value / totalValue;
+            return PieChartSectionData(
+              color: Color(subject.firstColor),
+              value: value.toDouble(),
+              showTitle: false,
+              radius: cardWidth / 2 - 16,
+              badgePositionPercentageOffset: ratio == 1
+                  ? 0
+                  : ratio > 0.3
+                      ? 0.5
+                      : 0.85 - ratio,
+              badgeWidget: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (ratio >= 0.1)
+                    Text(
+                      subject.subjectName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: (_titleTextStyle.fontSize ?? 14) - 2,
+                      ),
+                    ),
+                  if (ratio >= 0.1) const SizedBox(height: 4),
+                  if (ratio >= 0.025)
+                    Text(
+                      '$value개',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: (_titleTextStyle.fontSize ?? 14) - 3,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
   Widget _buildInfoCard({required String title, required String text}) {
     return CustomCard(
       margin: _cardMargin,
@@ -468,7 +567,10 @@ class _StatViewState extends State<StatView> {
           Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(color: _titleTextStyle.color),
+            style: TextStyle(
+              color: _titleTextStyle.color,
+              fontSize: (_titleTextStyle.fontSize ?? 14) - 1,
+            ),
           ),
         ],
       ),
