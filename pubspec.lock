@@ -577,9 +577,11 @@ packages:
   flutter_heatmap_calendar:
     dependency: "direct main"
     description:
-      path: "../flutter_heatmap_calendar"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: edd33332e2b4b60b9fc58698894803449c896a09
+      url: "https://github.com/silgam/flutter_heatmap_calendar"
+    source: git
     version: "1.0.5"
   flutter_launcher_icons:
     dependency: "direct dev"

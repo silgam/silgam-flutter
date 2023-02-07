@@ -66,7 +66,8 @@ dependencies:
   webview_flutter: ^4.0.2
   dotted_line: ^3.1.0
   flutter_heatmap_calendar:
-    path: ../flutter_heatmap_calendar
+    git:
+      url: https://github.com/silgam/flutter_heatmap_calendar.git
 dev_dependencies:
   flutter_test:
     sdk: flutter
