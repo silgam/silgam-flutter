@@ -137,10 +137,46 @@ class _StatViewState extends State<StatView> {
     required List<Subject> selectedSubjects,
     required ExamValueType selectedExamValueType,
   }) {
-    return _buildMobileLayout(
-      filteredRecords: filteredRecords,
-      selectedSubjects: selectedSubjects,
-      selectedExamValueType: selectedExamValueType,
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: [
+                  _buildValueGraphsCard(
+                    filteredRecords: filteredRecords,
+                    examValueType: selectedExamValueType,
+                    selectedSubjects: selectedSubjects,
+                  ),
+                  _buildTotalExamDurationInfoCard(
+                    filteredRecords: filteredRecords,
+                  ),
+                  _buildTotalExamCountInfoCard(
+                    filteredRecords: filteredRecords,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                children: [
+                  _buildPieChartCard(filteredRecords: filteredRecords),
+                  _buildHeatmapChartCard(
+                    filteredRecords: filteredRecords,
+                    expandHeight: false,
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+      ]),
     );
   }
 
@@ -166,7 +202,10 @@ class _StatViewState extends State<StatView> {
               ),
               const SizedBox(width: _cardBetweenMarginHorizontal),
               Expanded(
-                child: _buildHeatmapChartCard(filteredRecords: filteredRecords),
+                child: _buildHeatmapChartCard(
+                  filteredRecords: filteredRecords,
+                  expandHeight: true,
+                ),
               )
             ],
           ),
@@ -624,6 +663,7 @@ class _StatViewState extends State<StatView> {
 
   Widget _buildHeatmapChartCard({
     required Map<Subject, List<ExamRecord>> filteredRecords,
+    required bool expandHeight,
   }) {
     return CustomCard(
       padding: const EdgeInsets.only(
@@ -642,11 +682,12 @@ class _StatViewState extends State<StatView> {
             textAlign: TextAlign.center,
             style: _titleTextStyle,
           ),
-          const Spacer(),
+          if (!expandHeight) const SizedBox(height: 12),
+          if (expandHeight) const Spacer(),
           _buildHeatmapChart(
             filteredRecords: filteredRecords,
           ),
-          const Spacer(),
+          if (expandHeight) const Spacer(),
         ],
       ),
     );
