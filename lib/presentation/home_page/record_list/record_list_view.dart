@@ -43,7 +43,12 @@ class _RecordListViewState extends State<RecordListView> {
         },
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: BlocBuilder<AppCubit, AppState>(
+          child: BlocConsumer<AppCubit, AppState>(
+            listenWhen: (previous, current) =>
+                previous.isSignedIn != current.isSignedIn,
+            listener: (context, state) {
+              _cubit.refresh();
+            },
             buildWhen: (previous, current) =>
                 previous.isSignedIn != current.isSignedIn,
             builder: (_, appState) {
