@@ -34,7 +34,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
     Color disabledColor = Theme.of(context).primaryColor.withAlpha(80);
     TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
     return CustomCard(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         children: [
           IntrinsicWidth(
@@ -154,11 +154,13 @@ class _ExamStartCardState extends State<_ExamStartCard>
             children: [
               Row(
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                   if (badgeText != null) const SizedBox(width: 6),

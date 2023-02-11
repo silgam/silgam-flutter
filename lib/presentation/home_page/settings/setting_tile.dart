@@ -24,6 +24,7 @@ class SettingTile extends StatefulWidget {
   final bool defaultValue;
   final Color? titleColor;
   final bool showArrow;
+  final double paddingHorizontal;
 
   const SettingTile({
     Key? key,
@@ -36,6 +37,7 @@ class SettingTile extends StatefulWidget {
     this.defaultValue = true,
     this.titleColor,
     this.showArrow = false,
+    this.paddingHorizontal = 12,
   }) : super(key: key);
 
   @override
@@ -61,7 +63,7 @@ class _SettingTileState extends State<SettingTile> {
       splashColor: Colors.transparent,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: 28,
+          horizontal: widget.paddingHorizontal,
           vertical: widget.description == null && widget.preferenceKey == null
               ? 16
               : 12,

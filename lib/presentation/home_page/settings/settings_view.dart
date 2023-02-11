@@ -58,14 +58,11 @@ class _SettingsViewState extends State<SettingsView> {
       const SizedBox(height: 8),
       appState.isSignedIn
           ? _buildLoginInfo(appState.me!)
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: LoginButton(onTap: _onLoginTap),
-            ),
+          : LoginButton(onTap: _onLoginTap),
       if (isAdsEnabled)
         AdTile(
-          width: MediaQuery.of(context).size.width.truncate() - 32,
-          margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
+          width: MediaQuery.of(context).size.width.truncate(),
+          margin: const EdgeInsets.only(bottom: 12),
         ),
       BlocBuilder<IapCubit, IapState>(
         builder: (context, state) {
@@ -77,11 +74,11 @@ class _SettingsViewState extends State<SettingsView> {
           }
           return PurchaseButton(
             product: product,
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            margin: const EdgeInsets.symmetric(vertical: 16),
           );
         },
       ),
-      const Subtitle(text: '기본 설정'),
+      const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',
@@ -95,7 +92,7 @@ class _SettingsViewState extends State<SettingsView> {
         disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
         preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
       ),
-      const Subtitle(text: '기타'),
+      const Subtitle(text: '기타', margin: EdgeInsets.zero),
       SettingTile(
         onTap: _onWriteReviewButtonTap,
         title: '리뷰 쓰기',
@@ -164,7 +161,6 @@ class _SettingsViewState extends State<SettingsView> {
   Widget _buildLoginInfo(User user) {
     final String providerIconPath = getProviderIconPath(user);
     return CustomCard(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
       child: InkWell(
         onTap: () => _onLoginInfoTap(),
         onLongPress: () => _onLoginInfoLongPress(user),

@@ -75,8 +75,7 @@ class _RecordListViewState extends State<RecordListView> {
   Widget _buildLoginButton() {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: Align(
         alignment: Alignment.center,
         child: LoginButton(
           onTap: _onLoginTap,
@@ -87,111 +86,120 @@ class _RecordListViewState extends State<RecordListView> {
   }
 
   Widget _buildQuerySection(RecordListState state, AppState appState) {
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              onChanged: (value) => _cubit.onSearchTextChanged(value),
-              cursorWidth: 1,
-              cursorColor: Colors.grey.shade700,
-              decoration: InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                isCollapsed: true,
-                filled: true,
-                fillColor: Colors.grey.shade200,
-                hintText: '제목, 피드백 검색',
-                hintStyle: const TextStyle(fontWeight: FontWeight.w300),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+    return NonPaddingChildBuilder(
+      builder: (horizontalPadding) {
+        return SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: TextField(
+                  onChanged: (value) => _cubit.onSearchTextChanged(value),
+                  cursorWidth: 1,
+                  cursorColor: Colors.grey.shade700,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 12,
+                    ),
+                    isCollapsed: true,
+                    filled: true,
+                    fillColor: Colors.grey.shade200,
+                    hintText: '제목, 피드백 검색',
+                    hintStyle: const TextStyle(fontWeight: FontWeight.w300),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const AlwaysScrollableScrollPhysics(),
-            clipBehavior: Clip.none,
-            child: IntrinsicHeight(
-              child: Row(
+              const SizedBox(height: 12),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
+                child: IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      SizedBox(width: horizontalPadding),
+                      ActionChip(
+                        label: Icon(Icons.replay,
+                            size: 16, color: Colors.grey.shade700),
+                        onPressed: _cubit.onFilterResetButtonTapped,
+                        tooltip: '초기화',
+                        pressElevation: 0,
+                        backgroundColor: Colors.grey.shade700.withAlpha(10),
+                        padding: EdgeInsets.zero,
+                        side: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.4,
+                        ),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      const SizedBox(width: 6),
+                      ActionChip(
+                        label: Text(
+                          state.sortType.name,
+                          style: TextStyle(color: Colors.grey.shade700),
+                        ),
+                        onPressed: _cubit.onSortDateButtonTapped,
+                        pressElevation: 0,
+                        backgroundColor: Colors.grey.shade700.withAlpha(10),
+                        side: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.4,
+                        ),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      const VerticalDivider(
+                        indent: 6,
+                        endIndent: 6,
+                      ),
+                      for (Subject subject in Subject.values)
+                        SubjectFilterChip(
+                          subject: subject,
+                          isSelected: state.selectedSubjects.contains(subject),
+                          onSelected: () =>
+                              _cubit.onSubjectFilterButtonTapped(subject),
+                        ),
+                      SizedBox(width: horizontalPadding),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(width: 16),
-                  ActionChip(
-                    label: Icon(Icons.replay,
-                        size: 16, color: Colors.grey.shade700),
-                    onPressed: _cubit.onFilterResetButtonTapped,
-                    tooltip: '초기화',
-                    pressElevation: 0,
-                    backgroundColor: Colors.grey.shade700.withAlpha(10),
-                    padding: EdgeInsets.zero,
-                    side: BorderSide(color: Colors.grey.shade700, width: 0.4),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  SizedBox(width: horizontalPadding),
+                  Text(
+                    '${state.records.length}개 / ${state.originalRecords.length}개',
+                    style: const TextStyle(color: Colors.grey, height: 1.2),
                   ),
-                  const SizedBox(width: 6),
-                  ActionChip(
-                    label: Text(
-                      state.sortType.name,
-                      style: TextStyle(color: Colors.grey.shade700),
-                    ),
-                    onPressed: _cubit.onSortDateButtonTapped,
-                    pressElevation: 0,
-                    backgroundColor: Colors.grey.shade700.withAlpha(10),
-                    side: BorderSide(color: Colors.grey.shade700, width: 0.4),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  const VerticalDivider(
-                    indent: 6,
-                    endIndent: 6,
-                  ),
-                  for (Subject subject in Subject.values)
-                    SubjectFilterChip(
-                      subject: subject,
-                      isSelected: state.selectedSubjects.contains(subject),
-                      onSelected: () =>
-                          _cubit.onSubjectFilterButtonTapped(subject),
-                    ),
-                  const SizedBox(width: 13),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '${state.records.length}개 / ${state.originalRecords.length}개',
-                  style: const TextStyle(color: Colors.grey, height: 1.2),
-                ),
-                const SizedBox(width: 2),
-                if (appState.productBenefit.examRecordLimit != -1)
-                  InkWell(
-                    onTap: () => showExamRecordLimitInfoDialog(context),
-                    borderRadius: BorderRadius.circular(100),
-                    splashColor: Colors.transparent,
-                    child: const Padding(
-                      padding: EdgeInsets.all(4),
-                      child: Icon(
-                        Icons.help_outline,
-                        size: 18,
-                        color: Colors.grey,
+                  const SizedBox(width: 2),
+                  if (appState.productBenefit.examRecordLimit != -1)
+                    InkWell(
+                      onTap: () => showExamRecordLimitInfoDialog(context),
+                      borderRadius: BorderRadius.circular(100),
+                      splashColor: Colors.transparent,
+                      child: const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.help_outline,
+                          size: 18,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -217,12 +225,14 @@ class _RecordListViewState extends State<RecordListView> {
   }
 
   Widget _buildDescription() {
-    return SliverFillRemaining(
+    return const SliverFillRemaining(
       hasScrollBody: false,
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: Align(
         alignment: Alignment.center,
-        child: const Text('오른쪽 아래 버튼을 눌러 모의고사를 기록해보세요!'),
+        child: Text(
+          '오른쪽 아래 버튼을 눌러 모의고사를 기록해보세요!',
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

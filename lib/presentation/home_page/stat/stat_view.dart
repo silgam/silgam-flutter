@@ -9,6 +9,7 @@ import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
+import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/custom_card.dart';
@@ -60,8 +61,7 @@ class StatView extends StatefulWidget {
 }
 
 class _StatViewState extends State<StatView> {
-  static const EdgeInsets _cardMargin =
-      EdgeInsets.symmetric(vertical: 8, horizontal: 20);
+  static const EdgeInsets _cardMargin = EdgeInsets.symmetric(vertical: 8);
   static final TextStyle _titleTextStyle = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.bold,
@@ -75,6 +75,7 @@ class _StatViewState extends State<StatView> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => _cubit,
       child: BlocListener<RecordListCubit, RecordListState>(
@@ -89,13 +90,38 @@ class _StatViewState extends State<StatView> {
           builder: (context, appState) {
             return BlocBuilder<StatCubit, StatState>(
               builder: (context, state) {
+                final Map<Subject, List<ExamRecord>> filteredRecords = state
+                    .originalRecords
+                    .groupListsBy((record) => record.subject)
+                  ..removeWhere(
+                    (subject, records) =>
+                        records.isEmpty ||
+                        (state.selectedSubjects.isNotEmpty &&
+                            !state.selectedSubjects.contains(subject)),
+                  );
                 return ScaffoldBody(
                   title: StatView.title,
                   isRefreshing: state.isLoading,
                   onRefresh: appState.isSignedIn ? _cubit.refresh : null,
                   slivers: [
+                    _buildSubjectFilterChips(
+                      selectedSubjects: state.selectedSubjects,
+                    ),
                     if (appState.isNotSignedIn) _buildLoginButton(),
-                    if (appState.isSignedIn) _buildBody(state),
+                    if (appState.isSignedIn)
+                      screenWidth > tabletScreenWidth
+                          ? _buildTabletLayout(
+                              filteredRecords: filteredRecords,
+                              selectedSubjects: state.selectedSubjects,
+                              selectedExamValueType:
+                                  state.selectedExamValueType,
+                            )
+                          : _buildMobileLayout(
+                              filteredRecords: filteredRecords,
+                              selectedSubjects: state.selectedSubjects,
+                              selectedExamValueType:
+                                  state.selectedExamValueType,
+                            ),
                   ],
                 );
               },
@@ -106,116 +132,75 @@ class _StatViewState extends State<StatView> {
     );
   }
 
-  Widget _buildBody(StatState state) {
-    final Map<Subject, List<ExamRecord>> filteredRecords =
-        state.originalRecords.groupListsBy((record) => record.subject)
-          ..removeWhere(
-            (subject, records) =>
-                records.isEmpty ||
-                (state.selectedSubjects.isNotEmpty &&
-                    !state.selectedSubjects.contains(subject)),
-          );
+  Widget _buildTabletLayout({
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required List<Subject> selectedSubjects,
+    required ExamValueType selectedExamValueType,
+  }) {
+    return _buildMobileLayout(
+      filteredRecords: filteredRecords,
+      selectedSubjects: selectedSubjects,
+      selectedExamValueType: selectedExamValueType,
+    );
+  }
+
+  Widget _buildMobileLayout({
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required List<Subject> selectedSubjects,
+    required ExamValueType selectedExamValueType,
+  }) {
     return SliverList(
       delegate: SliverChildListDelegate([
-        const SizedBox(height: 8),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          clipBehavior: Clip.none,
-          child: Row(
-            children: [
-              const SizedBox(width: 20),
-              for (Subject subject in Subject.values)
-                SubjectFilterChip(
-                  subject: subject,
-                  isSelected: state.selectedSubjects.contains(subject),
-                  onSelected: () => _cubit.onSubjectFilterButtonTapped(subject),
-                ),
-              const SizedBox(width: 17),
-            ],
-          ),
-        ),
         const SizedBox(height: 12),
         _buildValueGraphsCard(
           filteredRecords: filteredRecords,
-          examValueType: state.selectedExamValueType,
-          selectedSubjects: state.selectedSubjects,
+          examValueType: selectedExamValueType,
+          selectedSubjects: selectedSubjects,
         ),
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: CustomCard(
-                  clipBehavior: Clip.none,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _cardPaddingHorizontal,
-                    vertical: _cardPaddingVertical,
-                  ),
-                  margin: _cardMargin.subtract(
-                    EdgeInsets.only(right: _cardMargin.right),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '과목별 푼 모의고사 수',
-                        textAlign: TextAlign.center,
-                        style: _titleTextStyle,
-                      ),
-                      const SizedBox(height: 16),
-                      AspectRatio(
-                        aspectRatio: 1,
-                        child: _buildPieChart(filteredRecords: filteredRecords),
-                      ),
-                    ],
-                  ),
-                ),
+                child: _buildPieChartCard(filteredRecords: filteredRecords),
               ),
               const SizedBox(width: _cardBetweenMarginHorizontal),
               Expanded(
-                child: CustomCard(
-                  padding: const EdgeInsets.only(
-                    top: _cardPaddingVertical,
-                    left: _cardPaddingHorizontal,
-                    right: _cardPaddingHorizontal,
-                  ),
-                  margin: _cardMargin.subtract(
-                    EdgeInsets.only(left: _cardMargin.left),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '푼 모의고사 수 히트맵',
-                        textAlign: TextAlign.center,
-                        style: _titleTextStyle,
-                      ),
-                      const Spacer(),
-                      _buildHeatmapChart(
-                        filteredRecords: filteredRecords,
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
-                ),
+                child: _buildHeatmapChartCard(filteredRecords: filteredRecords),
               )
             ],
           ),
         ),
-        _buildInfoCard(
-          title: '지금까지 모의고사를 푼 시간',
-          text: Duration(
-            minutes: filteredRecords.values.flattened
-                .map((e) => e.examDurationMinutes)
-                .whereNotNull()
-                .sum,
-          ).toStringFormat(),
-        ),
-        _buildInfoCard(
-          title: '지금까지 푼 모의고사 개수',
-          text: '${filteredRecords.values.flattened.length}개',
-        ),
+        _buildTotalExamDurationInfoCard(filteredRecords: filteredRecords),
+        _buildTotalExamCountInfoCard(filteredRecords: filteredRecords),
         const SizedBox(height: 20),
       ]),
+    );
+  }
+
+  Widget _buildSubjectFilterChips({required List<Subject> selectedSubjects}) {
+    return NonPaddingChildBuilder(
+      builder: (horizontalPadding) {
+        return SliverToBoxAdapter(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
+            child: Row(
+              children: [
+                SizedBox(width: horizontalPadding),
+                for (Subject subject in Subject.values)
+                  SubjectFilterChip(
+                    subject: subject,
+                    isSelected: selectedSubjects.contains(subject),
+                    onSelected: () =>
+                        _cubit.onSubjectFilterButtonTapped(subject),
+                  ),
+                SizedBox(width: horizontalPadding),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -525,6 +510,35 @@ class _StatViewState extends State<StatView> {
     );
   }
 
+  Widget _buildPieChartCard({
+    required final Map<Subject, List<ExamRecord>> filteredRecords,
+  }) {
+    return CustomCard(
+      clipBehavior: Clip.none,
+      padding: const EdgeInsets.symmetric(
+        horizontal: _cardPaddingHorizontal,
+        vertical: _cardPaddingVertical,
+      ),
+      margin: _cardMargin.subtract(
+        EdgeInsets.only(right: _cardMargin.right),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '과목별 푼 모의고사 수',
+            textAlign: TextAlign.center,
+            style: _titleTextStyle,
+          ),
+          const SizedBox(height: 16),
+          AspectRatio(
+            aspectRatio: 1,
+            child: _buildPieChart(filteredRecords: filteredRecords),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPieChart({
     required final Map<Subject, List<ExamRecord>> filteredRecords,
   }) {
@@ -608,6 +622,36 @@ class _StatViewState extends State<StatView> {
     );
   }
 
+  Widget _buildHeatmapChartCard({
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+  }) {
+    return CustomCard(
+      padding: const EdgeInsets.only(
+        top: _cardPaddingVertical,
+        left: _cardPaddingHorizontal,
+        right: _cardPaddingHorizontal,
+      ),
+      margin: _cardMargin.subtract(
+        EdgeInsets.only(left: _cardMargin.left),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '푼 모의고사 수 히트맵',
+            textAlign: TextAlign.center,
+            style: _titleTextStyle,
+          ),
+          const Spacer(),
+          _buildHeatmapChart(
+            filteredRecords: filteredRecords,
+          ),
+          const Spacer(),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHeatmapChart({
     required Map<Subject, List<ExamRecord>> filteredRecords,
   }) {
@@ -675,6 +719,29 @@ class _StatViewState extends State<StatView> {
     );
   }
 
+  Widget _buildTotalExamDurationInfoCard({
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+  }) {
+    return _buildInfoCard(
+      title: '지금까지 모의고사를 푼 시간',
+      text: Duration(
+        minutes: filteredRecords.values.flattened
+            .map((e) => e.examDurationMinutes)
+            .whereNotNull()
+            .sum,
+      ).toStringFormat(),
+    );
+  }
+
+  Widget _buildTotalExamCountInfoCard({
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+  }) {
+    return _buildInfoCard(
+      title: '지금까지 푼 모의고사 개수',
+      text: '${filteredRecords.values.flattened.length}개',
+    );
+  }
+
   Widget _buildInfoCard({required String title, required String text}) {
     return CustomCard(
       margin: _cardMargin,
@@ -707,8 +774,7 @@ class _StatViewState extends State<StatView> {
   Widget _buildLoginButton() {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: Container(
-        padding: const EdgeInsets.all(_cardPaddingHorizontal),
+      child: Align(
         alignment: Alignment.center,
         child: LoginButton(
           onTap: _onLoginTap,

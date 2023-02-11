@@ -1,5 +1,9 @@
 import 'dart:io';
 
+const double tabletScreenWidth = 840;
+const double maxWidth = 500;
+const double maxWidthForTablet = 1000;
+
 const String urlInstagram = "https://silgam.app/instagram";
 const String urlFacebook = "https://silgam.app/facebook";
 const String urlKakaotalk = "https://silgam.app/kakaotalk";

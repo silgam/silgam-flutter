@@ -33,10 +33,6 @@ part 'd_days_card.dart';
 part 'exam_start_card.dart';
 part 'welcome_messages.dart';
 
-const double _tabletScreenWidth = 840;
-const double _maxWidth = 500;
-const double _maxWidthForTablet = 1000;
-
 class MainView extends StatefulWidget {
   static const title = '메인';
 
@@ -61,7 +57,7 @@ class _MainViewState extends State<MainView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              screenWidth > _tabletScreenWidth
+              screenWidth > tabletScreenWidth
                   ? _buildTabletLayout()
                   : _buildMobileLayout(),
             ],
@@ -73,99 +69,116 @@ class _MainViewState extends State<MainView> {
 
   Widget _buildTabletLayout() {
     final screenWidth = MediaQuery.of(context).size.width;
-    final originalHorizontalPadding = screenWidth > 1000 ? 60.0 : 30.0;
+    final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
     final horizontalPadding = max(
-      (screenWidth - _maxWidthForTablet) / 2,
+      (screenWidth - maxWidthForTablet) / 2,
       originalHorizontalPadding,
     );
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: screenWidth > 1000 ? 80 : 40),
-          _buildTitle(isTablet: true),
-          const SizedBox(height: 16),
-          _buildWelcomMessage(isTablet: true),
-          const SizedBox(height: 8),
-          const Divider(indent: 20, endIndent: 20),
-          const SizedBox(height: 20),
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: screenWidth > 1000 ? 80 : 40),
+        _buildTitle(horizontalPadding: horizontalPadding, isTablet: true),
+        const SizedBox(height: 16),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildAdsCard(),
-                    _buildLoginCard(),
-                    _buildNoiseSettingCard(),
-                    _buildRecordCard(),
-                  ],
-                ),
+              _buildWelcomMessage(isTablet: true),
+              const SizedBox(height: 8),
+              const Divider(indent: 20, endIndent: 20),
+              const SizedBox(height: 20),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildAdsCard(),
+                        _buildLoginCard(),
+                        _buildNoiseSettingCard(),
+                        _buildRecordCard(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 40),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _buildDDaysCard(),
+                        const _ExamStartCard(),
+                      ],
+                    ),
+                  )
+                ],
               ),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildDDaysCard(),
-                    const _ExamStartCard(),
-                  ],
+              if (isAdsEnabled)
+                AdTile(
+                  width: screenWidth.truncate() -
+                      horizontalPadding.toInt() * 2 -
+                      40,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                 ),
-              )
+              const SizedBox(height: 20),
             ],
           ),
-          if (isAdsEnabled)
-            AdTile(
-              width:
-                  screenWidth.truncate() - horizontalPadding.toInt() * 2 - 40,
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-            ),
-          const SizedBox(height: 20),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildMobileLayout() {
     final screenWidth = MediaQuery.of(context).size.width;
-    final horizontalPadding = max((screenWidth - _maxWidth) / 2, 0.0);
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 32),
-          _buildTitle(),
-          const SizedBox(height: 4),
-          _buildWelcomMessage(),
-          const SizedBox(height: 4),
-          const Divider(indent: 20, endIndent: 20),
-          _buildAdsCard(),
-          _buildDDaysCard(),
-          const _ExamStartCard(),
-          _buildLoginCard(),
-          _buildNoiseSettingCard(),
-          _buildRecordCard(),
-          if (isAdsEnabled)
-            AdTile(
-              width: screenWidth.clamp(0, _maxWidth).truncate() - 40,
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-            ),
-          const SizedBox(height: 20),
-        ],
-      ),
+    final horizontalPadding = max((screenWidth - maxWidth) / 2, 20.0);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 32),
+        _buildTitle(horizontalPadding: horizontalPadding),
+        const SizedBox(height: 4),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildWelcomMessage(),
+              const SizedBox(height: 4),
+              const Divider(indent: 20, endIndent: 20),
+              _buildAdsCard(),
+              _buildDDaysCard(),
+              const _ExamStartCard(),
+              _buildLoginCard(),
+              _buildNoiseSettingCard(),
+              _buildRecordCard(),
+              if (isAdsEnabled)
+                AdTile(
+                  width: screenWidth.clamp(0, maxWidth).truncate() - 40,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildTitle({bool isTablet = false}) {
+  Widget _buildTitle({
+    required double horizontalPadding,
+    bool isTablet = false,
+  }) {
     final DateTime today = DateTime.now();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: horizontalPadding),
           child: Text(
             DateFormat.MMMMEEEEd('ko_KR').format(today),
             style: TextStyle(
@@ -174,7 +187,7 @@ class _MainViewState extends State<MainView> {
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 4),
         Flexible(
           child: IntrinsicHeight(
             child: Stack(
@@ -184,18 +197,21 @@ class _MainViewState extends State<MainView> {
                   child: Row(
                     children: [
                       _buildSnsButton(
-                          snsName: "kakaotalk",
-                          tooltip: '카카오톡으로 문의하기',
-                          url: urlKakaotalk),
+                        snsName: "kakaotalk",
+                        tooltip: '카카오톡으로 문의하기',
+                        url: urlKakaotalk,
+                      ),
                       _buildSnsButton(
-                          snsName: "instagram",
-                          tooltip: '실감 인스타그램',
-                          url: urlInstagram),
+                        snsName: "instagram",
+                        tooltip: '실감 인스타그램',
+                        url: urlInstagram,
+                      ),
                       _buildSnsButton(
-                          snsName: "facebook",
-                          tooltip: '실감 페이스북',
-                          url: urlFacebook),
-                      const SizedBox(width: 12),
+                        snsName: "facebook",
+                        tooltip: '실감 페이스북',
+                        url: urlFacebook,
+                      ),
+                      SizedBox(width: horizontalPadding - 12),
                     ],
                   ),
                 ),
@@ -218,8 +234,11 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildSnsButton(
-      {required String snsName, required String tooltip, required String url}) {
+  Widget _buildSnsButton({
+    required String snsName,
+    required String tooltip,
+    required String url,
+  }) {
     return IconButton(
       onPressed: () {
         launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -243,14 +262,11 @@ class _MainViewState extends State<MainView> {
   }
 
   Widget _buildWelcomMessage({bool isTablet = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Text(
-        _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
-        style: TextStyle(
-          fontWeight: FontWeight.w300,
-          fontSize: isTablet ? 16 : 13,
-        ),
+    return Text(
+      _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
+      style: TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: isTablet ? 16 : 13,
       ),
     );
   }

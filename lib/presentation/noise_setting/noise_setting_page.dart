@@ -87,6 +87,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           preferenceKey: PreferenceKey.useWhiteNoise,
           onSwitchChanged: _cubit.onWhiteNoiseChanged,
           defaultValue: false,
+          paddingHorizontal: 28,
         ),
         const SettingDivider(),
         const SizedBox(height: 16),

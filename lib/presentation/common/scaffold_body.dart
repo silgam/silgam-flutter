@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../util/analytics_manager.dart';
+import '../../util/const.dart';
 import '../home_page/home_page.dart';
 
 class ScaffoldBody extends StatelessWidget {
@@ -23,6 +25,17 @@ class ScaffoldBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final double horizontalPadding;
+    if (screenWidth > tabletScreenWidth) {
+      final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
+      horizontalPadding = max(
+        (screenWidth - maxWidthForTablet) / 2,
+        originalHorizontalPadding,
+      );
+    } else {
+      horizontalPadding = max((screenWidth - maxWidth) / 2, 20.0);
+    }
     const systemOverlayStyle = SystemUiOverlayStyle(
       statusBarIconBrightness: Brightness.dark,
       statusBarColor: Colors.transparent,
@@ -34,7 +47,7 @@ class ScaffoldBody extends StatelessWidget {
         SliverAppBar(
           toolbarHeight: 80,
           flexibleSpace: FlexibleSpaceBar(
-            titlePadding: const EdgeInsets.only(bottom: 16, left: 20),
+            titlePadding: EdgeInsets.only(bottom: 16, left: horizontalPadding),
             centerTitle: false,
             title: Text(
               title,
@@ -48,7 +61,7 @@ class ScaffoldBody extends StatelessWidget {
           actions: [
             if (onRefresh != null)
               Container(
-                margin: const EdgeInsets.only(right: 8, top: 12),
+                margin: EdgeInsets.only(top: 12, right: horizontalPadding),
                 alignment: Alignment.center,
                 child: Builder(builder: (context) {
                   if (isRefreshing) {
@@ -80,7 +93,15 @@ class ScaffoldBody extends StatelessWidget {
           systemOverlayStyle:
               kIsWeb || Platform.isIOS ? null : systemOverlayStyle,
         ),
-        ...slivers,
+        ...slivers.map((sliver) {
+          if (sliver is NonPaddingChildBuilder) {
+            return (sliver).builder(horizontalPadding);
+          }
+          return SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            sliver: sliver,
+          );
+        }).toList(),
       ],
     );
   }
@@ -91,5 +112,19 @@ class ScaffoldBody extends StatelessWidget {
       name: '[ScaffoldBody] Refresh',
       properties: {'page': title},
     );
+  }
+}
+
+class NonPaddingChildBuilder extends StatelessWidget {
+  final Widget Function(double horizontalPadding) builder;
+
+  const NonPaddingChildBuilder({
+    Key? key,
+    required this.builder,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink();
   }
 }
