@@ -44,13 +44,9 @@ class _RecordListViewState extends State<RecordListView> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: BlocConsumer<AppCubit, AppState>(
-            listenWhen: (previous, current) =>
-                previous.isSignedIn != current.isSignedIn,
             listener: (context, state) {
               _cubit.refresh();
             },
-            buildWhen: (previous, current) =>
-                previous.isSignedIn != current.isSignedIn,
             builder: (_, appState) {
               return BlocBuilder<RecordListCubit, RecordListState>(
                 builder: (_, state) {
@@ -59,7 +55,7 @@ class _RecordListViewState extends State<RecordListView> {
                     isRefreshing: state.isLoading,
                     onRefresh: appState.isSignedIn ? _cubit.refresh : null,
                     slivers: [
-                      _buildQuerySection(state),
+                      _buildQuerySection(state, appState),
                       if (appState.isNotSignedIn) _buildLoginButton(),
                       if (appState.isSignedIn)
                         _buildListSection(state.records, state.lockedRecordIds),
@@ -90,7 +86,7 @@ class _RecordListViewState extends State<RecordListView> {
     );
   }
 
-  Widget _buildQuerySection(RecordListState state) {
+  Widget _buildQuerySection(RecordListState state, AppState appState) {
     return SliverToBoxAdapter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -177,19 +173,20 @@ class _RecordListViewState extends State<RecordListView> {
                   style: const TextStyle(color: Colors.grey, height: 1.2),
                 ),
                 const SizedBox(width: 2),
-                InkWell(
-                  onTap: () => showExamRecordLimitInfoDialog(context),
-                  borderRadius: BorderRadius.circular(100),
-                  splashColor: Colors.transparent,
-                  child: const Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Icon(
-                      Icons.help_outline,
-                      size: 18,
-                      color: Colors.grey,
+                if (appState.productBenefit.examRecordLimit != -1)
+                  InkWell(
+                    onTap: () => showExamRecordLimitInfoDialog(context),
+                    borderRadius: BorderRadius.circular(100),
+                    splashColor: Colors.transparent,
+                    child: const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.help_outline,
+                        size: 18,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
