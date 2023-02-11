@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
@@ -142,63 +140,66 @@ class _StatViewState extends State<StatView> {
           examValueType: state.selectedExamValueType,
           selectedSubjects: state.selectedSubjects,
         ),
-        Row(
-          children: [
-            Expanded(
-              child: CustomCard(
-                clipBehavior: Clip.none,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: _cardPaddingHorizontal,
-                  vertical: _cardPaddingVertical,
-                ),
-                margin: _cardMargin.subtract(
-                  EdgeInsets.only(right: _cardMargin.right),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      '과목별 푼 모의고사 수',
-                      textAlign: TextAlign.center,
-                      style: _titleTextStyle,
-                    ),
-                    const SizedBox(height: 16),
-                    AspectRatio(
-                      aspectRatio: 1,
-                      child: _buildPieChart(filteredRecords: filteredRecords),
-                    ),
-                  ],
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: CustomCard(
+                  clipBehavior: Clip.none,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: _cardPaddingHorizontal,
+                    vertical: _cardPaddingVertical,
+                  ),
+                  margin: _cardMargin.subtract(
+                    EdgeInsets.only(right: _cardMargin.right),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '과목별 푼 모의고사 수',
+                        textAlign: TextAlign.center,
+                        style: _titleTextStyle,
+                      ),
+                      const SizedBox(height: 16),
+                      AspectRatio(
+                        aspectRatio: 1,
+                        child: _buildPieChart(filteredRecords: filteredRecords),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: _cardBetweenMarginHorizontal),
-            Expanded(
-              child: CustomCard(
-                padding: const EdgeInsets.only(top: _cardPaddingVertical),
-                margin: _cardMargin.subtract(
-                  EdgeInsets.only(left: _cardMargin.left),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: _cardPaddingHorizontal,
-                      ),
-                      child: Text(
+              const SizedBox(width: _cardBetweenMarginHorizontal),
+              Expanded(
+                child: CustomCard(
+                  padding: const EdgeInsets.only(
+                    top: _cardPaddingVertical,
+                    left: _cardPaddingHorizontal,
+                    right: _cardPaddingHorizontal,
+                  ),
+                  margin: _cardMargin.subtract(
+                    EdgeInsets.only(left: _cardMargin.left),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
                         '푼 모의고사 수 히트맵',
                         textAlign: TextAlign.center,
                         style: _titleTextStyle,
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildHeatmapChart(
-                      filteredRecords: filteredRecords,
-                    ),
-                  ],
+                      const Spacer(),
+                      _buildHeatmapChart(
+                        filteredRecords: filteredRecords,
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
         _buildInfoCard(
           title: '지금까지 모의고사를 푼 시간',
@@ -613,68 +614,63 @@ class _StatViewState extends State<StatView> {
     final datasets = filteredRecords.values.flattened
         .groupListsBy((record) => record.examStartedTime.toDateOnly())
         .map((date, records) => MapEntry(date, records.length));
-    final minDate = datasets.keys.minOrNull ?? DateTime.now();
 
     MapEntry<DateTime, int>? touchedData;
     Timer? dismissTimer;
     return MediaQuery(
       data: const MediaQueryData(textScaleFactor: 1.0),
-      child: LayoutBuilder(builder: (context, constraints) {
-        final chartWidth = constraints.maxWidth - _cardPaddingHorizontal * 2;
-        const cellMargin = 2.0;
-        final cellSize = (chartWidth - cellMargin * 2 * 7) / 8;
-        return StatefulBuilder(builder: (context, setState) {
-          return Column(
-            children: [
-              HeatMap(
-                showColorTip: false,
-                scrollable: true,
-                borderRadius: 2,
-                size: cellSize,
-                paddingHorizontal: _cardPaddingHorizontal,
-                fontSize: min(cellSize - 4, 20),
-                defaultColor: Colors.black.withOpacity(0.04),
-                margin: const EdgeInsets.all(cellMargin),
-                datasets: datasets,
-                startDate: minDate.subtract(const Duration(days: 60)),
-                colorsets: {
-                  0: Theme.of(context).primaryColor,
-                },
-                onClick: (date) {
-                  final value = datasets[date] ?? 0;
-                  setState(() {
-                    touchedData = MapEntry(date, value);
-                    dismissTimer?.cancel();
-                    dismissTimer = Timer(
-                      const Duration(milliseconds: 2000),
-                      () {
-                        setState(() {
-                          touchedData = null;
-                        });
-                      },
-                    );
-                  });
-                },
-              ),
-              Container(
-                height: _cardPaddingVertical,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Text(
-                  touchedData != null
-                      ? '${DateFormat.yMd('ko_KR').format(touchedData!.key)} (${touchedData!.value}개)'
-                      : '',
-                  maxLines: 1,
-                  style: TextStyle(
-                    height: 1,
-                    fontSize: 11,
-                    color: Colors.grey.shade600,
-                  ),
+      child: StatefulBuilder(builder: (context, setState) {
+        return Column(
+          children: [
+            HeatMapCalendar(
+              showColorTip: false,
+              flexible: true,
+              borderRadius: 2,
+              monthFontSize: 10,
+              weekFontSize: 10,
+              fontSize: 10,
+              defaultColor: Colors.black.withOpacity(0.04),
+              textColor: Colors.grey,
+              secondaryTextColor: Colors.white,
+              weekTextColor: Colors.grey,
+              monthTextColor: Colors.grey.shade700,
+              initDate: DateTime.now(),
+              datasets: datasets,
+              colorsets: const {
+                0: Color.fromARGB(255, 57, 83, 211),
+              },
+              onClick: (date) {
+                final value = datasets[date] ?? 0;
+                setState(() {
+                  touchedData = MapEntry(date, value);
+                  dismissTimer?.cancel();
+                  dismissTimer = Timer(
+                    const Duration(milliseconds: 2000),
+                    () {
+                      setState(() {
+                        touchedData = null;
+                      });
+                    },
+                  );
+                });
+              },
+            ),
+            Container(
+              height: _cardPaddingVertical,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.only(left: 4, right: 4, top: 2),
+              child: Text(
+                touchedData != null ? '${touchedData!.value}개' : '',
+                maxLines: 1,
+                style: TextStyle(
+                  height: 1,
+                  fontSize: 10,
+                  color: Colors.grey.shade600,
                 ),
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
       }),
     );
   }
