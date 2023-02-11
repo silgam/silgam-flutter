@@ -579,7 +579,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "03bcc021a08c316f920ddd32717fb7042bb46b53"
+      resolved-ref: "1850cf774402907ef01dc2c0ca6276107f29ca7a"
       url: "https://github.com/silgam/flutter_heatmap_calendar.git"
     source: git
     version: "1.0.5"
