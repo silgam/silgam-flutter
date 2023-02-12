@@ -7,6 +7,7 @@ class AppState with _$AppState {
   const factory AppState({
     User? me,
     @Default(ProductBenefit.initial) ProductBenefit productBenefit,
+    @Default(ProductBenefit.initial) ProductBenefit freeProductBenefit,
   }) = _AppState;
 
   bool get isSignedIn => me != null;

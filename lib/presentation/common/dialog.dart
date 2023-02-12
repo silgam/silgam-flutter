@@ -22,7 +22,7 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 content: Text(
-                    '실감패스를 이용하시기 전까지는 실모 기록을 ${appState.productBenefit.examRecordLimit}개까지만 저장하실 수 있어요 😭'),
+                    '실감패스를 이용하시기 전까지는 실모 기록을 ${appState.freeProductBenefit.examRecordLimit}개까지만 저장하실 수 있어요 😭'),
                 actions: [
                   TextButton(
                     onPressed: () {

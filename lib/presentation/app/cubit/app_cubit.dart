@@ -101,7 +101,10 @@ class AppCubit extends Cubit<AppState> {
         freeProduct?.benefit ??
         ProductBenefit.initial;
 
-    emit(state.copyWith(productBenefit: productBenefit));
+    emit(state.copyWith(
+      productBenefit: productBenefit,
+      freeProductBenefit: freeProduct?.benefit ?? ProductBenefit.initial,
+    ));
     log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
   }
 }
