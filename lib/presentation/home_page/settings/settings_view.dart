@@ -326,6 +326,7 @@ class _SettingsViewState extends State<SettingsView> {
           ),
           TextButton(
             onPressed: () async {
+              Navigator.pop(context);
               try {
                 await FirebaseAuth.instance.currentUser?.delete();
               } on FirebaseAuthException catch (e) {
@@ -343,7 +344,6 @@ class _SettingsViewState extends State<SettingsView> {
                   }
                 }
               }
-              if (mounted) Navigator.pop(context);
               await AnalyticsManager.logEvent(
                   name: '[HomePage-settings] Delete account');
             },
