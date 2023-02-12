@@ -303,7 +303,7 @@ class _StatViewState extends State<StatView> {
                       .where((record) => examValueType.getValue(record) != null)
                       .sortedBy((record) => record.examStartedTime),
                 ),
-              ),
+              )..removeWhere((subject, records) => records.isEmpty),
             ),
           ),
         ],
