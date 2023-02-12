@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -14,6 +15,7 @@ import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
+import '../../home_page/main/cubit/main_cubit.dart';
 import 'iap_cubit.dart';
 
 part 'app_cubit.freezed.dart';
@@ -29,6 +31,9 @@ class AppCubit extends Cubit<AppState> {
   late final IapCubit _iapCubit = getIt.get();
 
   Future<void> initialize() async {
+    final connectivity = await Connectivity().checkConnectivity();
+    onConnectivityChanged(connectivity);
+
     final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
     if (cachedMe != null) {
       onUserChange();
@@ -43,6 +48,10 @@ class AppCubit extends Cubit<AppState> {
 
     FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
       await onUserChange();
+    });
+
+    Connectivity().onConnectivityChanged.listen((connectivityResult) async {
+      onConnectivityChanged(connectivityResult);
     });
   }
 
@@ -108,5 +117,20 @@ class AppCubit extends Cubit<AppState> {
       freeProductBenefit: freeProduct?.benefit ?? ProductBenefit.initial,
     ));
     log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
+  }
+
+  void onConnectivityChanged(ConnectivityResult connectivityResult) {
+    log('Connectivity changed: $connectivityResult', name: 'AppCubit');
+    if (state.connectivityResult == ConnectivityResult.none &&
+        connectivityResult != ConnectivityResult.none) {
+      onUserChange();
+      getIt.get<IapCubit>().initialize();
+      getIt.get<MainCubit>().initialize();
+    }
+
+    emit(state.copyWith(
+      connectivityResult: connectivityResult,
+      me: connectivityResult == ConnectivityResult.none ? null : state.me,
+    ));
   }
 }

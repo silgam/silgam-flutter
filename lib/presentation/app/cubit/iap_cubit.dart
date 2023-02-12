@@ -38,6 +38,7 @@ class IapCubit extends Cubit<IapState> {
 
   void initialize() {
     if (!kIsWeb) {
+      _purchaseStream?.cancel();
       _purchaseStream = _iap.purchaseStream.listen(
         _onPurchaseStreamData,
         onError: _onPurchaseStreamError,
