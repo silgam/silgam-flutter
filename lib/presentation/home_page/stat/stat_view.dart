@@ -12,13 +12,14 @@ import '../../../model/subject.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../../app/cubit/iap_cubit.dart';
 import '../../common/custom_card.dart';
-import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/subject_filter_chip.dart';
-import '../../login_page/login_page.dart';
+import '../../purchase_page/purchase_page.dart';
 import '../record_list/cubit/record_list_cubit.dart';
 import 'cubit/stat_cubit.dart';
+import 'example_records.dart';
 
 class StatView extends StatefulWidget {
   const StatView({super.key});
@@ -85,43 +86,79 @@ class _StatViewState extends State<StatView> {
         listener: (_, recordListState) =>
             _cubit.onOriginalRecordsUpdated(recordListState.originalRecords),
         child: BlocBuilder<AppCubit, AppState>(
-          buildWhen: (previous, current) =>
-              previous.isSignedIn != current.isSignedIn,
           builder: (context, appState) {
             return BlocBuilder<StatCubit, StatState>(
               builder: (context, state) {
-                final Map<Subject, List<ExamRecord>> filteredRecords = state
-                    .originalRecords
-                    .groupListsBy((record) => record.subject)
-                  ..removeWhere(
-                    (subject, records) =>
-                        records.isEmpty ||
-                        (state.selectedSubjects.isNotEmpty &&
-                            !state.selectedSubjects.contains(subject)),
-                  );
-                return ScaffoldBody(
-                  title: StatView.title,
-                  isRefreshing: state.isLoading,
-                  onRefresh: appState.isSignedIn ? _cubit.refresh : null,
-                  slivers: [
-                    _buildSubjectFilterChips(
-                      selectedSubjects: state.selectedSubjects,
+                final records = appState.productBenefit.isStatisticAvailable
+                    ? state.originalRecords
+                    : exampleRecords;
+                final Map<Subject, List<ExamRecord>> filteredRecords =
+                    records.groupListsBy((record) => record.subject)
+                      ..removeWhere(
+                        (subject, records) =>
+                            records.isEmpty ||
+                            (state.selectedSubjects.isNotEmpty &&
+                                !state.selectedSubjects.contains(subject)),
+                      );
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ScaffoldBody(
+                      title: StatView.title,
+                      isRefreshing: state.isLoading,
+                      onRefresh: appState.isSignedIn ? _cubit.refresh : null,
+                      slivers: [
+                        _buildSubjectFilterChips(
+                          selectedSubjects: state.selectedSubjects,
+                        ),
+                        screenWidth > tabletScreenWidth
+                            ? _buildTabletLayout(
+                                filteredRecords: filteredRecords,
+                                selectedSubjects: state.selectedSubjects,
+                                selectedExamValueType:
+                                    state.selectedExamValueType,
+                              )
+                            : _buildMobileLayout(
+                                filteredRecords: filteredRecords,
+                                selectedSubjects: state.selectedSubjects,
+                                selectedExamValueType:
+                                    state.selectedExamValueType,
+                              ),
+                      ],
                     ),
-                    if (appState.isNotSignedIn) _buildLoginButton(),
-                    if (appState.isSignedIn)
-                      screenWidth > tabletScreenWidth
-                          ? _buildTabletLayout(
-                              filteredRecords: filteredRecords,
-                              selectedSubjects: state.selectedSubjects,
-                              selectedExamValueType:
-                                  state.selectedExamValueType,
-                            )
-                          : _buildMobileLayout(
-                              filteredRecords: filteredRecords,
-                              selectedSubjects: state.selectedSubjects,
-                              selectedExamValueType:
-                                  state.selectedExamValueType,
+                    if (!appState.productBenefit.isStatisticAvailable)
+                      Container(
+                        color: Colors.white54,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                            BlocBuilder<IapCubit, IapState>(
+                              builder: (context, iapState) {
+                                return TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pushNamed(
+                                      PurchasePage.routeName,
+                                      arguments: PurchasePageArguments(
+                                        product: iapState.activeProducts.first,
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('실감패스 확인하러 가기'),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      )
                   ],
                 );
               },
@@ -810,23 +847,6 @@ class _StatViewState extends State<StatView> {
         ],
       ),
     );
-  }
-
-  Widget _buildLoginButton() {
-    return SliverFillRemaining(
-      hasScrollBody: false,
-      child: Align(
-        alignment: Alignment.center,
-        child: LoginButton(
-          onTap: _onLoginTap,
-          description: '통계 기능을 사용하려면 로그인해주세요!',
-        ),
-      ),
-    );
-  }
-
-  void _onLoginTap() {
-    Navigator.pushNamed(context, LoginPage.routeName);
   }
 }
 
