@@ -37,7 +37,6 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
-      buildWhen: (previous, current) => previous.me != current.me,
       builder: (context, state) {
         return ScaffoldBody(
           title: SettingsView.title,
@@ -59,11 +58,6 @@ class _SettingsViewState extends State<SettingsView> {
       appState.isSignedIn
           ? _buildLoginInfo(appState.me!)
           : LoginButton(onTap: _onLoginTap),
-      if (isAdsEnabled)
-        AdTile(
-          width: MediaQuery.of(context).size.width.truncate(),
-          margin: const EdgeInsets.only(bottom: 12),
-        ),
       BlocBuilder<IapCubit, IapState>(
         builder: (context, state) {
           final product = state.activeProducts.firstOrNull;
@@ -78,6 +72,15 @@ class _SettingsViewState extends State<SettingsView> {
           );
         },
       ),
+      if (!appState.productBenefit.isAdsRemoved)
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return AdTile(
+              width: constraints.maxWidth.toInt(),
+              margin: const EdgeInsets.only(bottom: 16),
+            );
+          },
+        ),
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,

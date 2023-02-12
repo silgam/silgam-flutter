@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../repository/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
-import '../../util/const.dart';
 import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/material_hero.dart';
@@ -207,11 +208,24 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             ],
           ),
         const SizedBox(height: 16),
-        if (isAdsEnabled)
-          AdTile(
-            width: MediaQuery.of(context).size.width.truncate() - 40,
-            margin: const EdgeInsets.only(bottom: 20),
-          ),
+        BlocBuilder<AppCubit, AppState>(
+          buildWhen: (previous, current) =>
+              previous.productBenefit.isAdsRemoved !=
+              current.productBenefit.isAdsRemoved,
+          builder: (context, appState) {
+            if (appState.productBenefit.isAdsRemoved) {
+              return const SizedBox.shrink();
+            }
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                return AdTile(
+                  width: constraints.maxWidth.toInt(),
+                  margin: const EdgeInsets.only(bottom: 20),
+                );
+              },
+            );
+          },
+        ),
       ],
     );
   }

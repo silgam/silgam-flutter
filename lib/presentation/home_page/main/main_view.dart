@@ -116,14 +116,21 @@ class _MainViewState extends State<MainView> {
                   )
                 ],
               ),
-              if (isAdsEnabled)
-                AdTile(
-                  width: screenWidth.truncate() -
-                      horizontalPadding.toInt() * 2 -
-                      40,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                ),
+              BlocBuilder<AppCubit, AppState>(
+                builder: (context, appState) {
+                  if (appState.productBenefit.isAdsRemoved) {
+                    return const SizedBox.shrink();
+                  }
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      return AdTile(
+                        width: constraints.maxWidth.toInt(),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                      );
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 20),
             ],
           ),
@@ -155,12 +162,24 @@ class _MainViewState extends State<MainView> {
               _buildLoginCard(),
               _buildNoiseSettingCard(),
               _buildRecordCard(),
-              if (isAdsEnabled)
-                AdTile(
-                  width: screenWidth.clamp(0, maxWidth).truncate() - 40,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                ),
+              BlocBuilder<AppCubit, AppState>(
+                buildWhen: (previous, current) =>
+                    previous.productBenefit.isAdsRemoved !=
+                    current.productBenefit.isAdsRemoved,
+                builder: (context, appState) {
+                  if (appState.productBenefit.isAdsRemoved) {
+                    return const SizedBox.shrink();
+                  }
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      return AdTile(
+                        width: constraints.maxWidth.toInt(),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                      );
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 20),
             ],
           ),
