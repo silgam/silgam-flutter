@@ -32,12 +32,12 @@ void main() async {
 Future<void> initializeFirebae() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  getIt.get<AppCubit>().initialize();
   getIt.get<IapCubit>().initialize();
   getIt.get<MainCubit>().initialize();
 
   await Future.wait([
     AnalyticsManager.init(),
+    getIt.get<AppCubit>().initialize(),
     if (!kIsWeb)
       FirebaseCrashlytics.instance
           .setCrashlyticsCollectionEnabled(kReleaseMode),

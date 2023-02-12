@@ -28,15 +28,17 @@ class AppCubit extends Cubit<AppState> {
   final SharedPreferences _sharedPreferences;
   late final IapCubit _iapCubit = getIt.get();
 
-  void initialize() {
-    onUserChange();
-
+  Future<void> initialize() async {
     final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
     if (cachedMe != null) {
+      onUserChange();
+
       log('Set user from cache: $cachedMe', name: 'AppCubit');
       emit(state.copyWith(me: User.fromJson(jsonDecode(cachedMe))));
 
       updateProductBenefit();
+    } else {
+      await onUserChange();
     }
 
     FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
