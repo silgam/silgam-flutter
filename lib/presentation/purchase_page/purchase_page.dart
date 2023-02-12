@@ -74,7 +74,7 @@ class _PurchasePageState extends State<PurchasePage> {
             child: BlocListener<IapCubit, IapState>(
               listener: (context, state) {
                 if (state.isLoading) {
-                  EasyLoading.show();
+                  EasyLoading.show(status: '처리 중입니다. 앱을 닫지 마세요.');
                 } else {
                   EasyLoading.dismiss();
                 }

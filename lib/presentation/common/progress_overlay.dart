@@ -62,10 +62,11 @@ void initializeEasyLoading() {
     ..backgroundColor = Colors.black.withAlpha(180)
     ..textStyle = const TextStyle(
       fontWeight: FontWeight.w700,
-      fontSize: 16,
+      fontSize: 15,
       color: Colors.white,
     )
     ..textColor = Colors.white
     ..indicatorColor = Colors.white
+    ..indicatorSize = 32
     ..lineWidth = 3;
 }
