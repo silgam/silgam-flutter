@@ -70,6 +70,25 @@ class _AdsCardState extends State<AdsCard> {
     if (url != null) {
       launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
+
+    String? intent = ads.intent;
+    if (intent != null) {
+      if (intent.contains('openPurchasePage')) {
+        final productId = intent.split('&')[1];
+        final product = getIt
+            .get<IapCubit>()
+            .state
+            .products
+            .firstWhereOrNull((p) => p.id == productId);
+        if (product != null) {
+          Navigator.of(context).pushNamed(
+            PurchasePage.routeName,
+            arguments: PurchasePageArguments(product: product),
+          );
+        }
+      }
+    }
+
     AnalyticsManager.logEvent(
       name: '[HomePage-main] Silgam ads tapped',
       properties: {

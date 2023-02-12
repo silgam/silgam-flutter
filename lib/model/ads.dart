@@ -9,6 +9,9 @@ class Ads with _$Ads {
     required String title,
     required String imagePath,
     required int priority,
+    required DateTime expiryDate,
+    required int minVersionNumber,
+    String? intent,
     String? url,
   }) = _Ads;
 
