@@ -12,6 +12,9 @@ PODS:
     - firebase_core
     - Flutter
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - ReachabilitySwift
   - FBAEMKit (14.1.0):
     - FBSDKCoreKit_Basics (= 14.1.0)
   - FBSDKCoreKit (14.1.0):
@@ -233,6 +236,7 @@ PODS:
     - Flutter
     - FlutterMacOS
   - PromisesObjC (2.1.1)
+  - ReachabilitySwift (5.0.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -253,6 +257,7 @@ PODS:
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -313,12 +318,15 @@ SPEC REPOS:
     - Mixpanel-swift
     - nanopb
     - PromisesObjC
+    - ReachabilitySwift
 
 EXTERNAL SOURCES:
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_auth:
@@ -386,6 +394,7 @@ SPEC CHECKSUMS:
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   cloud_firestore: 5e5bb98722f66e820bf1aa7b3c98ffc9b2450ffb
+  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   FBAEMKit: a899515e45476027f73aef377b5cffadcd56ca3a
   FBSDKCoreKit: 24f8bc8d3b5b2a8c5c656a1329492a12e8efa792
   FBSDKCoreKit_Basics: 6e578c9bdc7aa1365dbbbde633c9ebb536bcaa98
@@ -435,6 +444,7 @@ SPEC CHECKSUMS:
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
   shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
   sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
