@@ -248,10 +248,14 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void _onLoginInfoTap() {
+    AnalyticsManager.logEvent(name: '[HomePage-settings] Login info tapped');
     Navigator.pushNamed(context, MyPage.routeName);
   }
 
   void _onLoginInfoLongPress(User user) {
+    AnalyticsManager.logEvent(
+      name: '[HomePage-settings] Login info long pressed',
+    );
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
@@ -259,6 +263,8 @@ class _SettingsViewState extends State<SettingsView> {
         content: SelectableText(
           user.id,
           onTap: () {
+            AnalyticsManager.logEvent(
+                name: '[HomePage-settings] User ID copied');
             Clipboard.setData(ClipboardData(text: user.id));
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(

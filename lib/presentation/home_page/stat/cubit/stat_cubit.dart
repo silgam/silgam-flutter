@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../model/exam_record.dart';
 import '../../../../model/subject.dart';
+import '../../../../util/analytics_manager.dart';
 import '../../../../util/injection.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../record_list/cubit/record_list_cubit.dart';
@@ -30,6 +31,8 @@ class StatCubit extends Cubit<StatState> {
       return;
     }
 
+    AnalyticsManager.logEvent(name: '[HomePage-stat] Refresh');
+
     emit(state.copyWith(isLoading: true));
     await _recordListCubit.refresh();
     emit(state.copyWith(isLoading: false));
@@ -43,10 +46,25 @@ class StatCubit extends Cubit<StatState> {
       selectedSubjects.add(subject);
     }
     emit(state.copyWith(selectedSubjects: selectedSubjects));
+
+    AnalyticsManager.logEvent(
+      name: '[HomePage-stat] Subject filter button tapped',
+      properties: {
+        'subject': subject.subjectName,
+        'selected': state.selectedSubjects.contains(subject),
+      },
+    );
   }
 
   void onExamValueTypeChanged(ExamValueType? examValueType) {
     if (examValueType == null) return;
     emit(state.copyWith(selectedExamValueType: examValueType));
+
+    AnalyticsManager.logEvent(
+      name: '[HomePage-stat] Exam value type changed',
+      properties: {
+        'exam_value_type': examValueType.name,
+      },
+    );
   }
 }

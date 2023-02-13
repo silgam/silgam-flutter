@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../model/product.dart';
+import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
@@ -122,6 +123,14 @@ class _PurchasePageState extends State<PurchasePage> {
   }
 
   void _onWebviewMessageReceived(JavaScriptMessage message) {
+    AnalyticsManager.logEvent(
+      name: '[PurchasePage] Webview message received',
+      properties: {
+        'message': message.message,
+        'product_id': widget.product.id,
+        'product_name': widget.product.name,
+      },
+    );
     final AppCubit appCubit = context.read();
     final IapCubit iapCubit = context.read();
     if (message.message == "purchase") {
@@ -175,6 +184,13 @@ class _PurchasePageState extends State<PurchasePage> {
               ),
               TextButton(
                 onPressed: () {
+                  AnalyticsManager.logEvent(
+                    name: '[PurchasePage] Start free trial button tapped',
+                    properties: {
+                      'product_id': widget.product.id,
+                      'product_name': widget.product.name,
+                    },
+                  );
                   iapCubit.startFreeTrial(widget.product);
                   Navigator.pop(context);
                 },

@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
+import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
 
@@ -52,9 +53,25 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> startFreeTrial(Product product) async {
+    AnalyticsManager.logEvent(
+      name: '[PurchasePage] Start free trial process start',
+      properties: {
+        'product_id': product.id,
+        'product_name': product.name,
+      },
+    );
+
     final me = _appCubit.state.me;
     if (me == null) {
       EasyLoading.showError('먼저 로그인해주세요.');
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Start free trial process failed',
+        properties: {
+          'reason': 'Not logged in',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
       return;
     }
 
@@ -64,23 +81,65 @@ class IapCubit extends Cubit<IapState> {
 
     if (startTrialResult.isError()) {
       emit(state.copyWith(isLoading: false));
-      EasyLoading.showError(startTrialResult.tryGetError()!.message);
+      final message = startTrialResult.tryGetError()!.message;
+      EasyLoading.showError(message);
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Start free trial process failed',
+        properties: {
+          'reason': 'startTrialRequest failed: $message',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
       return;
     }
 
     await _appCubit.onUserChange();
+
+    AnalyticsManager.logEvent(
+      name: '[PurchasePage] Start free trial process success',
+      properties: {
+        'product_id': product.id,
+        'product_name': product.name,
+      },
+    );
+
     emit(state.copyWith(isLoading: false));
   }
 
   Future<void> purchaseProduct(Product product) async {
+    AnalyticsManager.logEvent(
+      name: '[PurchasePage] Purchase process start',
+      properties: {
+        'product_id': product.id,
+        'product_name': product.name,
+      },
+    );
+
     final me = _appCubit.state.me;
     if (me == null) {
       EasyLoading.showError('먼저 로그인해주세요.');
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Purchase process failed',
+        properties: {
+          'reason': 'Not logged in',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
       return;
     }
 
     if (!state.isStoreAvailable) {
       EasyLoading.showError('이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.');
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Purchase process failed',
+        properties: {
+          'reason': 'Store not available',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
       return;
     }
 
@@ -89,6 +148,14 @@ class IapCubit extends Cubit<IapState> {
     );
     if (productDetails == null) {
       EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Purchase process failed',
+        properties: {
+          'reason': 'Product details not found',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
       return;
     }
 
@@ -100,7 +167,16 @@ class IapCubit extends Cubit<IapState> {
     );
     if (canPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
+      final message = canPurchaseResult.tryGetError()!.message;
       EasyLoading.showError(canPurchaseResult.tryGetError()!.message);
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Purchase process failed',
+        properties: {
+          'reason': 'canPurchaseRequest failed: $message',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
       return;
     }
 
@@ -113,7 +189,8 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> _onPurchaseStreamData(
-      List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
     for (final purchaseDetails in purchaseDetailsList) {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
@@ -130,6 +207,12 @@ class IapCubit extends Cubit<IapState> {
           break;
         case PurchaseStatus.error:
           log('[PurchaseCubit] status.error: ${purchaseDetails.error}');
+          AnalyticsManager.logEvent(
+            name: '[PurchasePage] Purchase process failed',
+            properties: {
+              'reason': 'Purchase stream error: ${purchaseDetails.error}',
+            },
+          );
           if (Platform.isIOS) {
             await _iap.completePurchase(purchaseDetails);
           }
@@ -137,6 +220,12 @@ class IapCubit extends Cubit<IapState> {
           break;
         case PurchaseStatus.canceled:
           log('[PurchaseCubit] status.canceled');
+          AnalyticsManager.logEvent(
+            name: '[PurchasePage] Purchase process failed',
+            properties: {
+              'reason': 'Purchase canceled',
+            },
+          );
           if (Platform.isIOS) {
             await _iap.completePurchase(purchaseDetails);
           }
@@ -163,6 +252,15 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> _onPurchased(PurchaseDetails purchaseDetails) async {
+    AnalyticsManager.logEvent(
+      name: '[PurchasePage] onPurchase start',
+      properties: {
+        'product_id': purchaseDetails.productID,
+        'store': purchaseDetails.verificationData.source,
+        'verification_token':
+            purchaseDetails.verificationData.serverVerificationData,
+      },
+    );
     final onPurchaseResult = await _productRepository.onPurchase(
       productId: purchaseDetails.productID,
       store: purchaseDetails.verificationData.source,
@@ -172,12 +270,33 @@ class IapCubit extends Cubit<IapState> {
 
     if (onPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
-      EasyLoading.showError(onPurchaseResult.tryGetError()!.message);
+      final message = onPurchaseResult.tryGetError()!.message;
+      EasyLoading.showError(message);
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] onPurchase failed',
+        properties: {
+          'reason': 'onPurchaseRequest failed: $message',
+          'product_id': purchaseDetails.productID,
+          'store': purchaseDetails.verificationData.source,
+          'verification_token':
+              purchaseDetails.verificationData.serverVerificationData,
+        },
+      );
       return;
     }
 
     await _iap.completePurchase(purchaseDetails);
     await _appCubit.onUserChange();
+
+    AnalyticsManager.logEvent(
+      name: '[PurchasePage] onPurchase success',
+      properties: {
+        'product_id': purchaseDetails.productID,
+        'store': purchaseDetails.verificationData.source,
+        'verification_token':
+            purchaseDetails.verificationData.serverVerificationData,
+      },
+    );
 
     emit(state.copyWith(isLoading: false));
   }

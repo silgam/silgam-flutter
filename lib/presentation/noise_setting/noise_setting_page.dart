@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repository/noise_repository.dart';
+import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
@@ -364,6 +365,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 ),
                 TextButton(
                   onPressed: () {
+                    AnalyticsManager.logEvent(
+                      name: '[NoiseSettingPage] Check pass button tapped',
+                    );
                     Navigator.of(context).pop();
                     Navigator.of(context).pushNamed(
                       PurchasePage.routeName,

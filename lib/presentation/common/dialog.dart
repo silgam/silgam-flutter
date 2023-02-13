@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../util/analytics_manager.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../purchase_page/purchase_page.dart';
@@ -35,6 +36,9 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
                   ),
                   TextButton(
                     onPressed: () {
+                      AnalyticsManager.logEvent(
+                        name: '[HomePage-list] Check pass button tapped',
+                      );
                       Navigator.of(context).pop();
                       Navigator.of(context).pushNamed(
                         PurchasePage.routeName,

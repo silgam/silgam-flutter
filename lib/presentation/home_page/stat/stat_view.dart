@@ -9,6 +9,7 @@ import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
+import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -145,6 +146,10 @@ class _StatViewState extends State<StatView> {
                               builder: (context, iapState) {
                                 return TextButton(
                                   onPressed: () {
+                                    AnalyticsManager.logEvent(
+                                      name:
+                                          '[HomePage-stat] Check pass button tapped',
+                                    );
                                     Navigator.of(context).pushNamed(
                                       PurchasePage.routeName,
                                       arguments: PurchasePageArguments(
