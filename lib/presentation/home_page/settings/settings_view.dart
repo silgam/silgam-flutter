@@ -105,7 +105,7 @@ class _SettingsViewState extends State<SettingsView> {
       SettingTile(
         onTap: () => launchUrl(Uri.parse(urlKakaotalk),
             mode: LaunchMode.externalApplication),
-        title: '문의하기',
+        title: '카카오톡 채널로 문의하기',
         description: '실감 카카오톡 채널로 의견을 보내거나 문의할 수 있습니다.',
       ),
       if (appState.isSignedIn) const SettingDivider(),
