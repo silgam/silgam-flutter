@@ -255,7 +255,7 @@ class _PurchasePageState extends State<PurchasePage> {
                         'product_name': widget.product.name,
                       },
                     );
-                    iapCubit.startFreeTrial(widget.product);
+                    iapCubit.startFreeTrialProcess(widget.product);
                     Navigator.pop(context);
                   },
                   child: const Text(

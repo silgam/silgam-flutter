@@ -52,7 +52,7 @@ class IapCubit extends Cubit<IapState> {
     _appCubit.updateProductBenefit();
   }
 
-  Future<void> startFreeTrial(Product product) async {
+  Future<void> startFreeTrialProcess(Product product) async {
     AnalyticsManager.logEvent(
       name: '[PurchasePage] Start free trial process start',
       properties: {
@@ -76,35 +76,11 @@ class IapCubit extends Cubit<IapState> {
     }
 
     emit(state.copyWith(isLoading: true));
-    final startTrialResult =
-        await _productRepository.startTrial(productId: product.id);
-
-    if (startTrialResult.isError()) {
-      emit(state.copyWith(isLoading: false));
-      final message = startTrialResult.tryGetError()!.message;
-      EasyLoading.showError(message);
-      AnalyticsManager.logEvent(
-        name: '[PurchasePage] Start free trial process failed',
-        properties: {
-          'reason': 'startTrialRequest failed: $message',
-          'product_id': product.id,
-          'product_name': product.name,
-        },
-      );
-      return;
+    if (Platform.isIOS) {
+      await _startFreeTrialIos(product);
+    } else {
+      await _startFreeTrial(product);
     }
-
-    await _appCubit.onUserChange();
-
-    AnalyticsManager.logEvent(
-      name: '[PurchasePage] Start free trial process success',
-      properties: {
-        'product_id': product.id,
-        'product_name': product.name,
-      },
-    );
-
-    emit(state.copyWith(isLoading: false));
   }
 
   Future<void> purchaseProduct(Product product) async {
@@ -188,6 +164,65 @@ class IapCubit extends Cubit<IapState> {
     );
   }
 
+  Future<void> _startFreeTrialIos(Product product) async {
+    final trialProductDetailResponse =
+        await _iap.queryProductDetails({'${product.id}_trial'});
+
+    if (trialProductDetailResponse.error != null ||
+        trialProductDetailResponse.productDetails.isEmpty) {
+      emit(state.copyWith(isLoading: false));
+      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Start free trial process failed',
+        properties: {
+          'reason':
+              'productDetailsList is empty or queryProductDetails failed: ${trialProductDetailResponse.error!.message}',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
+      return;
+    }
+
+    await _iap.buyNonConsumable(
+      purchaseParam: PurchaseParam(
+        productDetails: trialProductDetailResponse.productDetails.first,
+      ),
+    );
+  }
+
+  Future<void> _startFreeTrial(Product product) async {
+    final startTrialResult =
+        await _productRepository.startTrial(productId: product.id);
+
+    if (startTrialResult.isError()) {
+      emit(state.copyWith(isLoading: false));
+      final message = startTrialResult.tryGetError()!.message;
+      EasyLoading.showError(message);
+      AnalyticsManager.logEvent(
+        name: '[PurchasePage] Start free trial process failed',
+        properties: {
+          'reason': 'startTrialRequest failed: $message',
+          'product_id': product.id,
+          'product_name': product.name,
+        },
+      );
+      return;
+    }
+
+    await _appCubit.onUserChange();
+
+    AnalyticsManager.logEvent(
+      name: '[PurchasePage] Start free trial process success',
+      properties: {
+        'product_id': product.id,
+        'product_name': product.name,
+      },
+    );
+
+    emit(state.copyWith(isLoading: false));
+  }
+
   Future<void> _onPurchaseStreamData(
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
@@ -261,6 +296,14 @@ class IapCubit extends Cubit<IapState> {
             purchaseDetails.verificationData.serverVerificationData,
       },
     );
+
+    if (purchaseDetails.productID.contains('_trial')) {
+      await _startFreeTrial(state.products.firstWhere(
+        (product) => product.id == purchaseDetails.productID.split('_').first,
+      ));
+      return;
+    }
+
     final onPurchaseResult = await _productRepository.onPurchase(
       productId: purchaseDetails.productID,
       store: purchaseDetails.verificationData.source,
