@@ -335,6 +335,9 @@ class MyPage extends StatelessWidget {
       case 'app_store':
         store = 'App Store';
         break;
+      case 'promotion':
+        store = '프로모션';
+        break;
     }
 
     return CustomCard(
