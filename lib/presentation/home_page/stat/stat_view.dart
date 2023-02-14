@@ -9,15 +9,14 @@ import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
-import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../app/cubit/iap_cubit.dart';
 import '../../common/custom_card.dart';
+import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/subject_filter_chip.dart';
-import '../../purchase_page/purchase_page.dart';
 import '../record_list/cubit/record_list_cubit.dart';
 import 'cubit/stat_cubit.dart';
 import 'example_records.dart';
@@ -129,7 +128,7 @@ class _StatViewState extends State<StatView> {
                     ),
                     if (!appState.productBenefit.isStatisticAvailable)
                       Container(
-                        color: Colors.white54,
+                        color: Colors.white.withOpacity(0.65),
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(20),
                         child: Column(
@@ -140,24 +139,15 @@ class _StatViewState extends State<StatView> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
+                            const SizedBox(height: 20),
                             BlocBuilder<IapCubit, IapState>(
                               builder: (context, iapState) {
-                                return TextButton(
-                                  onPressed: () {
-                                    AnalyticsManager.logEvent(
-                                      name:
-                                          '[HomePage-stat] Check pass button tapped',
-                                    );
-                                    Navigator.of(context).pushNamed(
-                                      PurchasePage.routeName,
-                                      arguments: PurchasePageArguments(
-                                        product: iapState.activeProducts.first,
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('실감패스 확인하러 가기'),
+                                return PurchaseButton(
+                                  product: iapState.activeProducts.first,
+                                  expand: false,
                                 );
                               },
                             ),

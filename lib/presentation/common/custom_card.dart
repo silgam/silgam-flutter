@@ -9,6 +9,7 @@ class CustomCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final bool isThin;
   final Clip clipBehavior;
+  final double? width;
 
   const CustomCard({
     Key? key,
@@ -18,12 +19,13 @@ class CustomCard extends StatelessWidget {
     this.padding,
     this.isThin = false,
     this.clipBehavior = Clip.hardEdge,
+    this.width = double.infinity,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: width,
       clipBehavior: clipBehavior,
       margin: margin,
       decoration: BoxDecoration(
