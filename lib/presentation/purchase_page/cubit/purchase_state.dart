@@ -4,5 +4,6 @@ part of 'purchase_cubit.dart';
 class PurchaseState with _$PurchaseState {
   const factory PurchaseState({
     @Default(true) bool isWebviewLoading,
+    @Default(false) bool isPurchaseSectionShown,
   }) = _PurchaseState;
 }

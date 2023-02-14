@@ -108,6 +108,53 @@ class _PurchasePageState extends State<PurchasePage> {
                               child:
                                   WebViewWidget(controller: _webViewController),
                             ),
+                            AnimatedOpacity(
+                              opacity: state.isWebviewLoading ||
+                                      state.isPurchaseSectionShown
+                                  ? 0
+                                  : 1,
+                              curve: const _DelayedCurve(0.3, Curves.easeInOut),
+                              duration: const Duration(milliseconds: 300),
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  color: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: Material(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: InkWell(
+                                      onTap: () {
+                                        _webViewController.runJavaScript(
+                                            'scrollToPurchaseSection()');
+                                      },
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.grey.withAlpha(60),
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 14,
+                                        ),
+                                        child: const Text(
+                                          '구매하기 / 체험하기',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -123,85 +170,103 @@ class _PurchasePageState extends State<PurchasePage> {
   }
 
   void _onWebviewMessageReceived(JavaScriptMessage message) {
-    AnalyticsManager.logEvent(
-      name: '[PurchasePage] Webview message received',
-      properties: {
-        'message': message.message,
-        'product_id': widget.product.id,
-        'product_name': widget.product.name,
-      },
-    );
     final AppCubit appCubit = context.read();
     final IapCubit iapCubit = context.read();
-    if (message.message == "purchase") {
-      iapCubit.purchaseProduct(widget.product);
-    } else if (message.message == "trial") {
-      final now = DateFormat.yMd('ko_KR').add_Hm().format(DateTime.now());
-      final trialEndTime = DateFormat.yMd('ko_KR').add_Hm().format(
-            DateTime.now()
-                .add(Duration(days: widget.product.trialPeriod))
-                .subtract(const Duration(seconds: 1)),
-          );
-      showDialog(
-        context: context,
-        routeSettings:
-            const RouteSettings(name: '/purchase/trial_confirm_dialog'),
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-                color: Colors.black,
+    switch (message.message) {
+      case 'purchaseSectionShown':
+        _cubit.purchaseSectionShown();
+        break;
+      case 'purchaseSectionHidden':
+        _cubit.purchaseSectionHidden();
+        break;
+
+      case 'purchase':
+        AnalyticsManager.logEvent(
+          name: '[PurchasePage] Webview message received',
+          properties: {
+            'message': message.message,
+            'product_id': widget.product.id,
+            'product_name': widget.product.name,
+          },
+        );
+        iapCubit.purchaseProduct(widget.product);
+        break;
+      case 'trial':
+        AnalyticsManager.logEvent(
+          name: '[PurchasePage] Webview message received',
+          properties: {
+            'message': message.message,
+            'product_id': widget.product.id,
+            'product_name': widget.product.name,
+          },
+        );
+        final now = DateFormat.yMd('ko_KR').add_Hm().format(DateTime.now());
+        final trialEndTime = DateFormat.yMd('ko_KR').add_Hm().format(
+              DateTime.now()
+                  .add(Duration(days: widget.product.trialPeriod))
+                  .subtract(const Duration(seconds: 1)),
+            );
+        showDialog(
+          context: context,
+          routeSettings:
+              const RouteSettings(name: '/purchase/trial_confirm_dialog'),
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildInfo('이용 가능 기간 : $now ~ $trialEndTime'),
-                _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
-                _buildInfo(
-                  '무료 체험 기간이 끝난 후, 체험 기간 중 작성한 실모 기록은 ${appCubit.state.freeProductBenefit.examRecordLimit}개까지만 열람하실 수 있습니다.',
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildInfo('이용 가능 기간 : $now ~ $trialEndTime'),
+                  _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
+                  _buildInfo(
+                    '무료 체험 기간이 끝난 후, 체험 기간 중 작성한 실모 기록은 ${appCubit.state.freeProductBenefit.examRecordLimit}개까지만 열람하실 수 있습니다.',
+                  ),
+                ],
+              ),
+              contentPadding: const EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 16,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                  child: const Text(
+                    '취소',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    AnalyticsManager.logEvent(
+                      name: '[PurchasePage] Start free trial button tapped',
+                      properties: {
+                        'product_id': widget.product.id,
+                        'product_name': widget.product.name,
+                      },
+                    );
+                    iapCubit.startFreeTrial(widget.product);
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    '시작',
+                  ),
                 ),
               ],
-            ),
-            contentPadding: const EdgeInsets.only(
-              left: 24,
-              right: 24,
-              top: 16,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                child: const Text(
-                  '취소',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  AnalyticsManager.logEvent(
-                    name: '[PurchasePage] Start free trial button tapped',
-                    properties: {
-                      'product_id': widget.product.id,
-                      'product_name': widget.product.name,
-                    },
-                  );
-                  iapCubit.startFreeTrial(widget.product);
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  '시작',
-                ),
-              ),
-            ],
-          );
-        },
-      );
+            );
+          },
+        );
+        break;
     }
   }
 

@@ -12,4 +12,12 @@ class PurchaseCubit extends Cubit<PurchaseState> {
   void onWebviewProgressChanged(int progress) {
     emit(state.copyWith(isWebviewLoading: progress < 100));
   }
+
+  void purchaseSectionShown() {
+    emit(state.copyWith(isPurchaseSectionShown: true));
+  }
+
+  void purchaseSectionHidden() {
+    emit(state.copyWith(isPurchaseSectionShown: false));
+  }
 }
