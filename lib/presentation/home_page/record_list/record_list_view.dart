@@ -86,6 +86,7 @@ class _RecordListViewState extends State<RecordListView> {
   }
 
   Widget _buildQuerySection(RecordListState state, AppState appState) {
+    final examRecordLimit = appState.productBenefit.examRecordLimit;
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
         return SliverToBoxAdapter(
@@ -176,11 +177,11 @@ class _RecordListViewState extends State<RecordListView> {
                 children: [
                   SizedBox(width: horizontalPadding),
                   Text(
-                    '${state.records.length}개 / ${state.originalRecords.length}개',
+                    '${state.records.length}개${examRecordLimit == -1 ? '' : ' (최대 $examRecordLimit개)'}',
                     style: const TextStyle(color: Colors.grey, height: 1.2),
                   ),
                   const SizedBox(width: 2),
-                  if (appState.productBenefit.examRecordLimit != -1)
+                  if (examRecordLimit != -1)
                     InkWell(
                       onTap: () => showExamRecordLimitInfoDialog(context),
                       borderRadius: BorderRadius.circular(100),
