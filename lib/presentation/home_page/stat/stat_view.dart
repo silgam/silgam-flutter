@@ -142,12 +142,19 @@ class _StatViewState extends State<StatView> {
                                 fontSize: 16,
                               ),
                             ),
-                            const SizedBox(height: 20),
                             BlocBuilder<IapCubit, IapState>(
                               builder: (context, iapState) {
-                                return PurchaseButton(
-                                  product: iapState.activeProducts.first,
-                                  expand: false,
+                                final product =
+                                    iapState.activeProducts.firstOrNull;
+                                if (product == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: PurchaseButton(
+                                    product: iapState.activeProducts.first,
+                                    expand: false,
+                                  ),
                                 );
                               },
                             ),
