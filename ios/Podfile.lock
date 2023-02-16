@@ -7,7 +7,7 @@ PODS:
     - AppAuth/Core
   - audio_session (0.0.1):
     - Flutter
-  - cloud_firestore (4.3.1):
+  - cloud_firestore (4.4.1):
     - Firebase/Firestore (= 10.3.0)
     - firebase_core
     - Flutter
@@ -45,26 +45,26 @@ PODS:
   - Firebase/Storage (10.3.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 10.3.0)
-  - firebase_analytics (10.1.0):
+  - firebase_analytics (10.1.2):
     - Firebase/Analytics (= 10.3.0)
     - firebase_core
     - Flutter
-  - firebase_auth (4.2.5):
+  - firebase_auth (4.2.7):
     - Firebase/Auth (= 10.3.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.4.1):
+  - firebase_core (2.6.0):
     - Firebase/CoreOnly (= 10.3.0)
     - Flutter
-  - firebase_crashlytics (3.0.11):
+  - firebase_crashlytics (3.0.13):
     - Firebase/Crashlytics (= 10.3.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (14.2.1):
+  - firebase_messaging (14.2.3):
     - Firebase/Messaging (= 10.3.0)
     - firebase_core
     - Flutter
-  - firebase_storage (11.0.10):
+  - firebase_storage (11.0.12):
     - Firebase/Storage (= 10.3.0)
     - firebase_core
     - Flutter
@@ -393,19 +393,19 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
-  cloud_firestore: 5e5bb98722f66e820bf1aa7b3c98ffc9b2450ffb
+  cloud_firestore: 2464c599d5eec8ca57afa0d2f77a0ee54e693864
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   FBAEMKit: a899515e45476027f73aef377b5cffadcd56ca3a
   FBSDKCoreKit: 24f8bc8d3b5b2a8c5c656a1329492a12e8efa792
   FBSDKCoreKit_Basics: 6e578c9bdc7aa1365dbbbde633c9ebb536bcaa98
   FBSDKLoginKit: 787de205d524c3a4b17d527916f1d066e4361660
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9
-  firebase_analytics: 9f3a4cb560a59976b2c48707abae2d4cb94bcb3a
-  firebase_auth: 3bab991fe1df91c2f948156e9dee976e01a19ab9
-  firebase_core: bf59c32d2e53814f558efa20840c1902fa2fe461
-  firebase_crashlytics: b19405931669c882e0d08542e69ae9e86633c636
-  firebase_messaging: ee597229fc260f8fa491fa8f2d4a32dfbfa406fa
-  firebase_storage: 8b85bf19de50a1886f9387924fbddf066a718965
+  firebase_analytics: 84bc03b774b373cf03d9acfddf8df62bbf8d3a4c
+  firebase_auth: 1683261c732cd83b8b69223252a6f7a1446779b5
+  firebase_core: a98dd43f175cca0b2d509c7703700d5e9b5833e3
+  firebase_crashlytics: 43e3fb1e9a370a93b4d7730b9839ad7e31e6a6ff
+  firebase_messaging: 330dab37891313a27cbc9eb8f8f528ad28f87a4f
+  firebase_storage: 6897e832f5d1df90aadce8d61d3e28ef3eb7a7eb
   FirebaseAnalytics: 036232b6a1e2918e5f67572417be1173576245f3
   FirebaseAppCheckInterop: 95bc238f8755d597cad95815b3c448f8617f720f
   FirebaseAuth: 0e415d29d846c1dce2fb641e46f35e9888d9bec6
