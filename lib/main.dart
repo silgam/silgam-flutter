@@ -21,7 +21,7 @@ void main() async {
 
   await configureDependencies();
   await Future.wait([
-    initializeFirebae(),
+    initializeFirebase(),
     if (!kIsWeb) MobileAds.instance.initialize(),
     initializeAudioSession(),
   ]);
@@ -29,7 +29,7 @@ void main() async {
   runApp(const SilgamApp());
 }
 
-Future<void> initializeFirebae() async {
+Future<void> initializeFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   getIt.get<IapCubit>().initialize();
