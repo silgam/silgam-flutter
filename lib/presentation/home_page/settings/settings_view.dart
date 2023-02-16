@@ -122,11 +122,12 @@ class _SettingsViewState extends State<SettingsView> {
           titleColor: Colors.red,
         ),
       const Divider(),
+      const SizedBox(height: 8),
       FutureBuilder(
         future: PackageInfo.fromPlatform(),
         builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.center,
             child: Text(
               '버전 정보 ${snapshot.data?.version}+${snapshot.data?.buildNumber}',
@@ -139,6 +140,43 @@ class _SettingsViewState extends State<SettingsView> {
           );
         },
       ),
+      const SizedBox(height: 4),
+      GestureDetector(
+        onTap: () {
+          launchUrl(
+            Uri.parse(urlPrivacy),
+            mode: LaunchMode.externalApplication,
+          );
+        },
+        child: const Text(
+          '개인정보처리방침',
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12,
+            fontWeight: FontWeight.w300,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      const SizedBox(height: 4),
+      GestureDetector(
+        onTap: () {
+          launchUrl(
+            Uri.parse(urlTerms),
+            mode: LaunchMode.externalApplication,
+          );
+        },
+        child: const Text(
+          '서비스이용약관',
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12,
+            fontWeight: FontWeight.w300,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      const SizedBox(height: 4),
       GestureDetector(
         onTap: () {
           Navigator.of(context).push(
@@ -158,6 +196,7 @@ class _SettingsViewState extends State<SettingsView> {
           textAlign: TextAlign.center,
         ),
       ),
+      const SizedBox(height: 40),
     ];
   }
 

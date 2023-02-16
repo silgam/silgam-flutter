@@ -185,6 +185,18 @@ class _LoginPageState extends State<LoginPage> {
                           );
                         },
                     ),
+                    const TextSpan(text: ' 및 '),
+                    TextSpan(
+                      text: '서비스이용약관',
+                      style: const TextStyle(color: Colors.blueAccent),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(
+                            Uri.parse(urlTerms),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                    ),
                     const TextSpan(text: '에 동의하는 것으로 간주됩니다.'),
                   ],
                 ),
