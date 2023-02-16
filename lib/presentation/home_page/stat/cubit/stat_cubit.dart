@@ -56,6 +56,15 @@ class StatCubit extends Cubit<StatState> {
     );
   }
 
+  void onFilterResetButtonTapped() {
+    emit(state.copyWith(
+      selectedSubjects: [],
+    ));
+
+    AnalyticsManager.logEvent(
+        name: '[HomePage-stat] Filter reset button tapped');
+  }
+
   void onExamValueTypeChanged(ExamValueType? examValueType) {
     if (examValueType == null) return;
     emit(state.copyWith(selectedExamValueType: examValueType));

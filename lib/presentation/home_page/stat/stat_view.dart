@@ -259,6 +259,24 @@ class _StatViewState extends State<StatView> {
             child: Row(
               children: [
                 SizedBox(width: horizontalPadding),
+                ActionChip(
+                  label: Icon(
+                    Icons.replay,
+                    size: 16,
+                    color: Colors.grey.shade700,
+                  ),
+                  onPressed: _cubit.onFilterResetButtonTapped,
+                  tooltip: '초기화',
+                  pressElevation: 0,
+                  backgroundColor: Colors.grey.shade700.withAlpha(10),
+                  padding: EdgeInsets.zero,
+                  side: BorderSide(
+                    color: Colors.grey.shade700,
+                    width: 0.4,
+                  ),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                const SizedBox(width: 6),
                 for (Subject subject in Subject.values)
                   SubjectFilterChip(
                     subject: subject,
