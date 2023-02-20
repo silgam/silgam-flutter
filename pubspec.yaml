@@ -45,8 +45,8 @@ dependencies:
   smooth_page_indicator: ^1.0.0+2
   google_mobile_ads: ^2.3.0
   mixpanel_flutter: ^2.0.0
-  flutter_bloc: ^8.1.1
-  bloc: ^8.1.0
+  flutter_bloc: ^8.1.2
+  bloc: ^8.1.1
   freezed_annotation: ^2.1.0
   fl_chart: ^0.55.2
   flutter_datetime_picker: ^1.5.1
