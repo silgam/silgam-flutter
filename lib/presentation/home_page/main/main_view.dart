@@ -51,8 +51,8 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return BlocProvider<MainCubit>(
-      create: (context) => getIt.get(),
+    return BlocProvider.value(
+      value: getIt.get<MainCubit>(),
       child: Align(
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(

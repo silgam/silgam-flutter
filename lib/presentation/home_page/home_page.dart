@@ -64,8 +64,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt.get<HomeCubit>(),
+    return BlocProvider.value(
+      value: getIt.get<HomeCubit>(),
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
         child: BlocBuilder<HomeCubit, HomeState>(

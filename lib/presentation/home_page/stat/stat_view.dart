@@ -79,8 +79,8 @@ class _StatViewState extends State<StatView> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return BlocProvider(
-      create: (context) => _cubit,
+    return BlocProvider.value(
+      value: _cubit,
       child: MultiBlocListener(
         listeners: [
           BlocListener<HomeCubit, HomeState>(

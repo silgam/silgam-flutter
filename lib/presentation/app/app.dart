@@ -32,11 +32,11 @@ class SilgamApp extends StatelessWidget {
     initialize();
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => getIt.get<AppCubit>(),
+        BlocProvider.value(
+          value: getIt.get<AppCubit>(),
         ),
-        BlocProvider(
-          create: (context) => getIt.get<IapCubit>(),
+        BlocProvider.value(
+          value: getIt.get<IapCubit>(),
         ),
       ],
       child: MaterialApp(

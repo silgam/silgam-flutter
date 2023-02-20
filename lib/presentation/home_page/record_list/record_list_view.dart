@@ -32,8 +32,8 @@ class _RecordListViewState extends State<RecordListView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _cubit,
+    return BlocProvider.value(
+      value: _cubit,
       child: MultiBlocListener(
         listeners: [
           BlocListener<HomeCubit, HomeState>(
