@@ -12,6 +12,7 @@ import '../../common/subject_filter_chip.dart';
 import '../../login_page/login_page.dart';
 import '../../record_detail_page/record_detail_page.dart';
 import '../cubit/home_cubit.dart';
+import '../home_page.dart';
 import 'cubit/record_list_cubit.dart';
 import 'record_tile.dart';
 
@@ -37,7 +38,9 @@ class _RecordListViewState extends State<RecordListView> {
         listenWhen: (previous, current) =>
             previous.tabIndex != current.tabIndex,
         listener: (context, state) {
-          if (state.tabIndex == 1) {
+          final recordListTabIndex =
+              HomePage.views.keys.toList().indexOf(RecordListView.title);
+          if (state.tabIndex == recordListTabIndex) {
             _cubit.refresh();
           }
         },
