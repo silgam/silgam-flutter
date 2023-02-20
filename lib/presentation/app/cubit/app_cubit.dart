@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../model/product.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
+import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../home_page/main/cubit/main_cubit.dart';
@@ -60,8 +61,15 @@ class AppCubit extends Cubit<AppState> {
     final me = getMeResult.tryGetSuccess();
 
     if (me == null) {
+      AnalyticsManager.setPeopleProperty('[Product] Id', null);
+      AnalyticsManager.setPeopleProperty('[Product] Purchased Store', null);
       await _sharedPreferences.remove(PreferenceKey.cacheMe);
     } else {
+      AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
+      AnalyticsManager.setPeopleProperty(
+        '[Product] Purchased Store',
+        me.activeProduct.id != 'free' ? me.receipts.last.store : null,
+      );
       await _sharedPreferences.setString(PreferenceKey.cacheMe, jsonEncode(me));
     }
 

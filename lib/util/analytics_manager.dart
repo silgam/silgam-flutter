@@ -94,6 +94,7 @@ class AnalyticsManager {
   static setPeopleProperty(String prop, dynamic to) {
     if (kIsWeb) return;
 
+    log('People Property Set: $prop, $to');
     _mixpanel.getPeople().set(prop, to);
   }
 }
