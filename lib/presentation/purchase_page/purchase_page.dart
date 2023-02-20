@@ -51,10 +51,9 @@ class _PurchasePageState extends State<PurchasePage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _cubit,
-      child: Scaffold(
-        body: SafeArea(
-          bottom: false,
-          child: BlocListener<AppCubit, AppState>(
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<AppCubit, AppState>(
             listenWhen: (previous, current) => previous.me != current.me,
             listener: (context, state) {
               final me = state.me;
@@ -72,82 +71,87 @@ class _PurchasePageState extends State<PurchasePage> {
                 );
               }
             },
-            child: BlocListener<IapCubit, IapState>(
-              listener: (context, state) {
-                if (state.isLoading) {
-                  EasyLoading.show(status: '처리 중입니다. 앱을 닫지 마세요.');
-                } else {
-                  EasyLoading.dismiss();
-                }
-              },
-              child: BlocBuilder<PurchaseCubit, PurchaseState>(
-                builder: (context, state) {
-                  return Column(
-                    children: [
-                      CustomMenuBar(
-                        title: widget.product.name,
-                      ),
-                      Expanded(
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Container(
-                              color: backgroundColor,
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                color: widget.product.isPageBackgroundDark
-                                    ? Colors.white
-                                    : Theme.of(context).primaryColor,
-                              ),
+          ),
+          BlocListener<IapCubit, IapState>(
+            listener: (context, state) {
+              if (state.isLoading) {
+                EasyLoading.show(status: '처리 중입니다. 앱을 닫지 마세요.');
+              } else {
+                EasyLoading.dismiss();
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          body: SafeArea(
+            bottom: false,
+            child: BlocBuilder<PurchaseCubit, PurchaseState>(
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    CustomMenuBar(
+                      title: widget.product.name,
+                    ),
+                    Expanded(
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Container(
+                            color: backgroundColor,
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              color: widget.product.isPageBackgroundDark
+                                  ? Colors.white
+                                  : Theme.of(context).primaryColor,
                             ),
-                            AnimatedOpacity(
-                              opacity: state.isWebviewLoading ? 0 : 1,
-                              curve: const _DelayedCurve(0.3, Curves.easeInOut),
-                              duration: const Duration(milliseconds: 500),
-                              child:
-                                  WebViewWidget(controller: _webViewController),
-                            ),
-                            AnimatedOpacity(
-                              opacity: state.isWebviewLoading ||
-                                      state.isPurchaseSectionShown
-                                  ? 0
-                                  : 1,
-                              curve: const _DelayedCurve(0.3, Curves.easeInOut),
-                              duration: const Duration(milliseconds: 300),
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  color: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  child: Material(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: InkWell(
-                                      onTap: () {
-                                        _webViewController.runJavaScript(
-                                            'scrollToPurchaseSection()');
-                                      },
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.grey.withAlpha(60),
-                                      child: Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 14,
-                                        ),
-                                        child: const Text(
-                                          '구매하기 / 체험하기',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
+                          ),
+                          AnimatedOpacity(
+                            opacity: state.isWebviewLoading ? 0 : 1,
+                            curve: const _DelayedCurve(0.3, Curves.easeInOut),
+                            duration: const Duration(milliseconds: 500),
+                            child:
+                                WebViewWidget(controller: _webViewController),
+                          ),
+                          AnimatedOpacity(
+                            opacity: state.isWebviewLoading ||
+                                    state.isPurchaseSectionShown
+                                ? 0
+                                : 1,
+                            curve: const _DelayedCurve(0.3, Curves.easeInOut),
+                            duration: const Duration(milliseconds: 300),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                color: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                child: Material(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: InkWell(
+                                    onTap: () {
+                                      _webViewController.runJavaScript(
+                                          'scrollToPurchaseSection()');
+                                    },
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.grey.withAlpha(60),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 14,
+                                      ),
+                                      child: const Text(
+                                        '구매하기 / 체험하기',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
@@ -155,13 +159,13 @@ class _PurchasePageState extends State<PurchasePage> {
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  );
-                },
-              ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),

@@ -34,22 +34,28 @@ class _RecordListViewState extends State<RecordListView> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _cubit,
-      child: BlocListener<HomeCubit, HomeState>(
-        listenWhen: (previous, current) =>
-            previous.tabIndex != current.tabIndex,
-        listener: (context, state) {
-          final recordListTabIndex =
-              HomePage.views.keys.toList().indexOf(RecordListView.title);
-          if (state.tabIndex == recordListTabIndex) {
-            _cubit.refresh();
-          }
-        },
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: BlocConsumer<AppCubit, AppState>(
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<HomeCubit, HomeState>(
+            listenWhen: (previous, current) =>
+                previous.tabIndex != current.tabIndex,
+            listener: (context, state) {
+              final recordListTabIndex =
+                  HomePage.views.keys.toList().indexOf(RecordListView.title);
+              if (state.tabIndex == recordListTabIndex) {
+                _cubit.refresh();
+              }
+            },
+          ),
+          BlocListener<AppCubit, AppState>(
             listener: (context, state) {
               _cubit.refresh();
             },
+          ),
+        ],
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: BlocBuilder<AppCubit, AppState>(
             builder: (_, appState) {
               return BlocBuilder<RecordListCubit, RecordListState>(
                 builder: (_, state) {

@@ -81,104 +81,108 @@ class _StatViewState extends State<StatView> {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => _cubit,
-      child: BlocListener<HomeCubit, HomeState>(
-        listenWhen: (previous, current) =>
-            previous.tabIndex != current.tabIndex,
-        listener: (context, state) {
-          final statViewTabIndex =
-              HomePage.views.keys.toList().indexOf(StatView.title);
-          if (state.tabIndex == statViewTabIndex) {
-            _cubit.refresh();
-          }
-        },
-        child: BlocListener<RecordListCubit, RecordListState>(
-          bloc: getIt.get(),
-          listenWhen: (previous, current) =>
-              previous.originalRecords != current.originalRecords,
-          listener: (_, recordListState) =>
-              _cubit.onOriginalRecordsUpdated(recordListState.originalRecords),
-          child: BlocBuilder<AppCubit, AppState>(
-            builder: (context, appState) {
-              return BlocBuilder<StatCubit, StatState>(
-                builder: (context, state) {
-                  final records = appState.productBenefit.isStatisticAvailable
-                      ? state.originalRecords
-                      : exampleRecords;
-                  final Map<Subject, List<ExamRecord>> filteredRecords =
-                      records.groupListsBy((record) => record.subject)
-                        ..removeWhere(
-                          (subject, records) =>
-                              records.isEmpty ||
-                              (state.selectedSubjects.isNotEmpty &&
-                                  !state.selectedSubjects.contains(subject)),
-                        );
-                  return Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ScaffoldBody(
-                        title: StatView.title,
-                        isRefreshing: state.isLoading,
-                        onRefresh: appState.isSignedIn ? _cubit.refresh : null,
-                        slivers: [
-                          _buildSubjectFilterChips(
-                            selectedSubjects: state.selectedSubjects,
-                          ),
-                          screenWidth > tabletScreenWidth
-                              ? _buildTabletLayout(
-                                  filteredRecords: filteredRecords,
-                                  selectedSubjects: state.selectedSubjects,
-                                  selectedExamValueType:
-                                      state.selectedExamValueType,
-                                )
-                              : _buildMobileLayout(
-                                  filteredRecords: filteredRecords,
-                                  selectedSubjects: state.selectedSubjects,
-                                  selectedExamValueType:
-                                      state.selectedExamValueType,
-                                ),
-                        ],
-                      ),
-                      if (!appState.productBenefit.isStatisticAvailable)
-                        Container(
-                          color: Colors.white.withOpacity(0.65),
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text(
-                                '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              BlocBuilder<IapCubit, IapState>(
-                                builder: (context, iapState) {
-                                  final product =
-                                      iapState.activeProducts.firstOrNull;
-                                  if (product == null) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: PurchaseButton(
-                                      product: iapState.activeProducts.first,
-                                      expand: false,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        )
-                    ],
-                  );
-                },
-              );
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<HomeCubit, HomeState>(
+            listenWhen: (previous, current) =>
+                previous.tabIndex != current.tabIndex,
+            listener: (context, state) {
+              final statViewTabIndex =
+                  HomePage.views.keys.toList().indexOf(StatView.title);
+              if (state.tabIndex == statViewTabIndex) {
+                _cubit.refresh();
+              }
             },
           ),
+          BlocListener<RecordListCubit, RecordListState>(
+            bloc: getIt.get(),
+            listenWhen: (previous, current) =>
+                previous.originalRecords != current.originalRecords,
+            listener: (_, recordListState) => _cubit
+                .onOriginalRecordsUpdated(recordListState.originalRecords),
+          ),
+        ],
+        child: BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            return BlocBuilder<StatCubit, StatState>(
+              builder: (context, state) {
+                final records = appState.productBenefit.isStatisticAvailable
+                    ? state.originalRecords
+                    : exampleRecords;
+                final Map<Subject, List<ExamRecord>> filteredRecords =
+                    records.groupListsBy((record) => record.subject)
+                      ..removeWhere(
+                        (subject, records) =>
+                            records.isEmpty ||
+                            (state.selectedSubjects.isNotEmpty &&
+                                !state.selectedSubjects.contains(subject)),
+                      );
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ScaffoldBody(
+                      title: StatView.title,
+                      isRefreshing: state.isLoading,
+                      onRefresh: appState.isSignedIn ? _cubit.refresh : null,
+                      slivers: [
+                        _buildSubjectFilterChips(
+                          selectedSubjects: state.selectedSubjects,
+                        ),
+                        screenWidth > tabletScreenWidth
+                            ? _buildTabletLayout(
+                                filteredRecords: filteredRecords,
+                                selectedSubjects: state.selectedSubjects,
+                                selectedExamValueType:
+                                    state.selectedExamValueType,
+                              )
+                            : _buildMobileLayout(
+                                filteredRecords: filteredRecords,
+                                selectedSubjects: state.selectedSubjects,
+                                selectedExamValueType:
+                                    state.selectedExamValueType,
+                              ),
+                      ],
+                    ),
+                    if (!appState.productBenefit.isStatisticAvailable)
+                      Container(
+                        color: Colors.white.withOpacity(0.65),
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            BlocBuilder<IapCubit, IapState>(
+                              builder: (context, iapState) {
+                                final product =
+                                    iapState.activeProducts.firstOrNull;
+                                if (product == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: PurchaseButton(
+                                    product: iapState.activeProducts.first,
+                                    expand: false,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
     );
