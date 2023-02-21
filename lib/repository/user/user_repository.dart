@@ -84,4 +84,19 @@ class UserRepository {
       return Result.error(ApiFailure.from(FailureBody.unknown()));
     }
   }
+
+  Future<Result<Unit, ApiFailure>> updateMarketingConsent({
+    required String userId,
+    required bool isConsent,
+  }) async {
+    try {
+      await _usersRef.doc(userId).update({
+        'isMarketingInfoReceivingConsented': isConsent,
+      });
+      return Result.success(unit);
+    } catch (e) {
+      log('updateMarketingConsent() failed: $e', name: 'UserRepository');
+      return Result.error(ApiFailure.from(FailureBody.unknown()));
+    }
+  }
 }

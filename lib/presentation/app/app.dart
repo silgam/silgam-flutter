@@ -115,6 +115,14 @@ class SilgamApp extends StatelessWidget {
               ),
             ),
           ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              textStyle: const TextStyle(
+                fontFamily: 'NanumSquare',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
         ),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           physics: const BouncingScrollPhysics(),

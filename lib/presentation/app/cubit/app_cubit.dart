@@ -63,12 +63,20 @@ class AppCubit extends Cubit<AppState> {
     if (me == null) {
       AnalyticsManager.setPeopleProperty('[Product] Id', null);
       AnalyticsManager.setPeopleProperty('[Product] Purchased Store', null);
+      AnalyticsManager.setPeopleProperty(
+        'Marketing Info Receiving Consented',
+        null,
+      );
       await _sharedPreferences.remove(PreferenceKey.cacheMe);
     } else {
       AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
       AnalyticsManager.setPeopleProperty(
         '[Product] Purchased Store',
         me.activeProduct.id != 'free' ? me.receipts.last.store : null,
+      );
+      AnalyticsManager.setPeopleProperty(
+        'Marketing Info Receiving Consented',
+        me.isMarketingInfoReceivingConsented,
       );
       await _sharedPreferences.setString(PreferenceKey.cacheMe, jsonEncode(me));
     }

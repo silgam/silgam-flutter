@@ -18,6 +18,7 @@ class User with _$User {
     @Default([]) List<ProviderData> providerDatas,
     @Default([]) List<String> fcmTokens,
     @Default([]) List<Receipt> receipts,
+    bool? isMarketingInfoReceivingConsented,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
