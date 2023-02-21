@@ -23,6 +23,7 @@ import '../../common/subtitle.dart';
 import '../../login_page/login_page.dart';
 import '../../my_page/my_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
+import '../../notification_setting_page/notification_setting_page.dart';
 import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {
@@ -96,6 +97,11 @@ class _SettingsViewState extends State<SettingsView> {
         preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
       ),
       const Subtitle(text: '기타', margin: EdgeInsets.zero),
+      SettingTile(
+        onTap: _onNotificationSettingButtonTap,
+        title: '알림 설정',
+      ),
+      const SettingDivider(),
       SettingTile(
         onTap: _onWriteReviewButtonTap,
         title: '리뷰 쓰기',
@@ -402,6 +408,10 @@ class _SettingsViewState extends State<SettingsView> {
 
   void _onNoiseSettingButtonTap() {
     Navigator.pushNamed(context, NoiseSettingPage.routeName);
+  }
+
+  void _onNotificationSettingButtonTap() {
+    Navigator.pushNamed(context, NotificationSettingPage.routeName);
   }
 
   void _onWriteReviewButtonTap() async {

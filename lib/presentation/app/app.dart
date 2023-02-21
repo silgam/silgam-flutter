@@ -15,6 +15,7 @@ import '../home_page/home_page.dart';
 import '../login_page/login_page.dart';
 import '../my_page/my_page.dart';
 import '../noise_setting/noise_setting_page.dart';
+import '../notification_setting_page/notification_setting_page.dart';
 import '../purchase_page/purchase_page.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
@@ -47,6 +48,8 @@ class SilgamApp extends StatelessWidget {
           LoginPage.routeName: (_) => const LoginPage(),
           NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
           MyPage.routeName: (_) => const MyPage(),
+          NotificationSettingPage.routeName: (_) =>
+              const NotificationSettingPage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {

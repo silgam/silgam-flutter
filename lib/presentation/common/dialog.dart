@@ -62,13 +62,14 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
   );
 }
 
-Future<void> showMarketingInfoReceivingConsentDialog(
-  BuildContext context,
-) async {
-  await showModalBottomSheet(
+Future<bool?> showMarketingInfoReceivingConsentDialog(
+  BuildContext context, {
+  bool isDismissible = false,
+}) async {
+  return await showModalBottomSheet(
     context: context,
-    isDismissible: false,
-    enableDrag: false,
+    isDismissible: isDismissible,
+    enableDrag: isDismissible,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(16),
@@ -131,10 +132,11 @@ Future<void> showMarketingInfoReceivingConsentDialog(
               Expanded(
                 child: OutlinedButton(
                   onPressed: () async {
-                    Navigator.pop(context);
+                    Navigator.pop(context, false);
                     await _onMarketingConsentDialogClosed(false);
                     final dateString =
                         DateFormat('yyyy년 M월 d일').format(DateTime.now());
+                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
                         '실감의 광고성 정보 수신을 거부하셨습니다. ($dateString)',
@@ -162,10 +164,11 @@ Future<void> showMarketingInfoReceivingConsentDialog(
               Expanded(
                 child: OutlinedButton(
                   onPressed: () async {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                     await _onMarketingConsentDialogClosed(true);
                     final dateString =
                         DateFormat('yyyy년 M월 d일').format(DateTime.now());
+                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
                         '실감의 광고성 정보 수신에 동의하셨습니다 😀 ($dateString)',
