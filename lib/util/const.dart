@@ -5,8 +5,8 @@ const double maxWidth = 500;
 const double maxWidthForTablet = 1000;
 
 const String urlInstagram = "https://silgam.app/instagram";
-const String urlFacebook = "https://silgam.app/facebook";
-const String urlKakaotalk = "https://silgam.app/kakaotalk";
+const String urlSupport = "https://silgam.app/support";
+const String urlOpenchat = "https://silgam.app/openchat";
 const String urlPrivacy = "https://silgam.app/privacy";
 const String urlTerms = "https://silgam.app/terms";
 const String urlSilgamApi = "https://api.silgam.app";

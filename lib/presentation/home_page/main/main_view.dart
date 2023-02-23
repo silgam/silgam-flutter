@@ -219,19 +219,19 @@ class _MainViewState extends State<MainView> {
                   child: Row(
                     children: [
                       _buildSnsButton(
+                        snsName: "support",
+                        tooltip: '카카오톡 채널로 문의하기',
+                        url: urlSupport,
+                      ),
+                      _buildSnsButton(
                         snsName: "kakaotalk",
-                        tooltip: '카카오톡으로 문의하기',
-                        url: urlKakaotalk,
+                        tooltip: '실감 오픈채팅방',
+                        url: urlOpenchat,
                       ),
                       _buildSnsButton(
                         snsName: "instagram",
                         tooltip: '실감 인스타그램',
                         url: urlInstagram,
-                      ),
-                      _buildSnsButton(
-                        snsName: "facebook",
-                        tooltip: '실감 페이스북',
-                        url: urlFacebook,
                       ),
                       SizedBox(width: horizontalPadding - 12),
                     ],
