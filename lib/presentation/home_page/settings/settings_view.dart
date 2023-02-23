@@ -16,6 +16,7 @@ import '../../app/cubit/app_cubit.dart';
 import '../../app/cubit/iap_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
+import '../../common/dialog.dart';
 import '../../common/login_button.dart';
 import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
@@ -86,33 +87,40 @@ class _SettingsViewState extends State<SettingsView> {
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',
-        description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있습니다.',
+        description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있어요.',
         showArrow: true,
       ),
       const SettingDivider(),
       const SettingTile(
         title: '시험 종료 후 바로 기록하기',
-        description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어갑니다.',
-        disabledDescription: '시험이 끝난 후에 모의고사 목록 화면으로 넘어갑니다.',
+        description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어가요.',
+        disabledDescription: '시험이 끝난 후에 기록 목록 화면으로 넘어가요.',
         preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
       ),
       const Subtitle(text: '기타', margin: EdgeInsets.zero),
-      SettingTile(
-        onTap: _onNotificationSettingButtonTap,
-        title: '알림 설정',
-      ),
-      const SettingDivider(),
+      if (appState.isSignedIn)
+        SettingTile(
+          onTap: _onNotificationSettingButtonTap,
+          title: '알림 설정',
+        ),
+      if (appState.isSignedIn) const SettingDivider(),
       SettingTile(
         onTap: _onWriteReviewButtonTap,
         title: '리뷰 쓰기',
-        description: '리뷰는 실감 팀에게 큰 도움이 됩니다.',
+        description: '리뷰는 실감 팀에게 큰 도움이 돼요.',
+      ),
+      const SettingDivider(),
+      SettingTile(
+        onTap: _onSendFeedbackButtonTap,
+        title: '실감팀에게 의견 보내기',
+        description: '실감팀에게 전달하고 싶은 의견을 무엇이든 앱 안에서 바로 보낼 수 있어요.',
       ),
       const SettingDivider(),
       SettingTile(
         onTap: () => launchUrl(Uri.parse(urlSupport),
             mode: LaunchMode.externalApplication),
         title: '카카오톡 채널로 문의하기',
-        description: '실감 카카오톡 채널로 의견을 보내거나 문의할 수 있습니다.',
+        description: '앱 사용 중 발생하는 오류나 의견 등 실감팀의 답변이 필요한 내용을 문의할 수 있어요.',
       ),
       if (appState.isSignedIn) const SettingDivider(),
       if (appState.isSignedIn)
@@ -421,6 +429,10 @@ class _SettingsViewState extends State<SettingsView> {
     } else {
       await inAppReview.openStoreListing(appStoreId: '1598576852');
     }
+  }
+
+  void _onSendFeedbackButtonTap() {
+    showSendFeedbackDialog(context);
   }
 
   String getProviderIconPath(User user) {

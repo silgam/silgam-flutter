@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +23,7 @@ import '../../app/cubit/iap_cubit.dart';
 import '../../clock_page/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
+import '../../common/dialog.dart';
 import '../../edit_record_page/edit_record_page.dart';
 import '../../login_page/login_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
@@ -105,6 +107,7 @@ class _MainViewState extends State<MainView> {
                         _buildLoginCard(),
                         _buildNoiseSettingCard(),
                         _buildRecordCard(),
+                        _buildSendFeedbackCard(),
                       ],
                     ),
                   ),
@@ -165,6 +168,7 @@ class _MainViewState extends State<MainView> {
               _buildLoginCard(),
               _buildNoiseSettingCard(),
               _buildRecordCard(),
+              _buildSendFeedbackCard(),
               BlocBuilder<AppCubit, AppState>(
                 buildWhen: (previous, current) =>
                     previous.productBenefit.isAdsRemoved !=
@@ -352,6 +356,14 @@ class _MainViewState extends State<MainView> {
     );
   }
 
+  Widget _buildSendFeedbackCard() {
+    return _ButtonCard(
+      onTap: _onSendFeedbackButtonTap,
+      iconData: CupertinoIcons.paperplane_fill,
+      title: '실감팀에게 의견 보내기',
+    );
+  }
+
   void _onLoginButtonTap() {
     Navigator.pushNamed(context, LoginPage.routeName);
   }
@@ -372,5 +384,9 @@ class _MainViewState extends State<MainView> {
     if (mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
     }
+  }
+
+  void _onSendFeedbackButtonTap() {
+    showSendFeedbackDialog(context);
   }
 }
