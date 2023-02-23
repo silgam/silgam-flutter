@@ -1,11 +1,11 @@
 name: silgam
 description: Silgam
 
-publish_to: "none"
-version: 1.0.0+50
+publish_to: 'none'
+wersion: 1.0.1+51
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: '>=2.17.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -101,15 +101,15 @@ flutter:
         - asset: fonts/EstablishRetrosans.otf
 
 flutter_icons:
-  android: "launcher_icon"
+  android: 'launcher_icon'
   ios: true
-  image_path: "assets/app_icon/app_icon.png"
-  adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/app_icon/app_icon_responsive.png"
+  image_path: 'assets/app_icon/app_icon.png'
+  adaptive_icon_background: '#ffffff'
+  adaptive_icon_foreground: 'assets/app_icon/app_icon_responsive.png'
 
 flutter_native_splash:
   background_image: assets/splash_background.png
   image: assets/app_icon/app_icon_transparent.png
   android_12:
     image: assets/app_icon/app_icon_transparent_1152.png
-    color: "#283593"
+    color: '#283593'
