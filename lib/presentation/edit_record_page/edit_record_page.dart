@@ -150,26 +150,29 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: Stack(
-        alignment: Alignment.bottomCenter,
+        fit: StackFit.expand,
         children: [
           SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: _buildForm(),
           ),
-          ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  border: Border(
-                    top: BorderSide(
-                      color: Colors.grey.shade300,
-                      width: 0.5,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 0.5,
+                      ),
                     ),
                   ),
+                  child: _buildBottomButtons(),
                 ),
-                child: _buildBottomButtons(),
               ),
             ),
           ),
