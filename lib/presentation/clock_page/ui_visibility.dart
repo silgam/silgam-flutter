@@ -12,13 +12,9 @@ class UiVisibility extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AbsorbPointer(
-      absorbing: !uiVisible,
-      child: AnimatedOpacity(
-        opacity: uiVisible ? 1 : 0,
-        duration: const Duration(milliseconds: 100),
-        child: child,
-      ),
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 100),
+      child: uiVisible ? child : const SizedBox.shrink(),
     );
   }
 }

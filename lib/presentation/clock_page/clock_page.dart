@@ -60,6 +60,8 @@ class _ClockPageState extends State<ClockPage> {
   NoiseGenerator? _noiseGenerator;
   ListeningAudioPlayer? _listeningAudioPlayer;
 
+  final TransformationController _clockTransformController =
+      TransformationController();
   final ScrollController _timelineController = ScrollController();
   late final List<GlobalKey> _timelineTileKeys;
   late final List<GlobalKey> _timelineConnectorKeys;
@@ -119,6 +121,8 @@ class _ClockPageState extends State<ClockPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
@@ -126,9 +130,23 @@ class _ClockPageState extends State<ClockPage> {
         body: SafeArea(
           child: GestureDetector(
             onTap: _onScreenTap,
+            onLongPress: _onScreenLongPress,
             behavior: HitTestBehavior.opaque,
             child: Stack(
               children: [
+                InteractiveViewer(
+                  transformationController: _clockTransformController,
+                  minScale: 0.5,
+                  boundaryMargin: EdgeInsets.symmetric(
+                    horizontal: screenWidth,
+                    vertical: screenHeight,
+                  ),
+                  child: Center(
+                    child: WristWatch(
+                      clockTime: _currentTime,
+                    ),
+                  ),
+                ),
                 UiVisibility(
                   uiVisible: _isUiVisible,
                   child: Container(
@@ -144,12 +162,6 @@ class _ClockPageState extends State<ClockPage> {
                 UiVisibility(
                   uiVisible: _isUiVisible,
                   child: _buildBackgroundUi(),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: WristWatch(
-                    clockTime: _currentTime,
-                  ),
                 ),
                 _buildScreenOverlayIfNotStarted(),
               ],
@@ -627,6 +639,10 @@ class _ClockPageState extends State<ClockPage> {
     setState(() {
       _isUiVisible = !_isUiVisible;
     });
+  }
+
+  void _onScreenLongPress() {
+    _clockTransformController.value = Matrix4.identity();
   }
 
   void _onOverlayTapDown(TapDownDetails tapDownDetails) {
