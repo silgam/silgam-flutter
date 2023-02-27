@@ -23,6 +23,7 @@ import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../noise_setting/cubit/noise_setting_cubit.dart';
 import 'breakpoint.dart';
+import 'cubit/clock_cubit.dart';
 import 'noise/noise_generator.dart';
 import 'noise/noise_player.dart';
 import 'timeline.dart';
@@ -47,11 +48,13 @@ class ClockPage extends StatefulWidget {
 class _ClockPageState extends State<ClockPage> {
   final SharedPreferences _sharedPreferences = getIt.get();
   final AppCubit _appCubit = getIt.get();
+  final ClockCubit _cubit = getIt.get();
 
-  late final List<Breakpoint> _breakpoints;
-  late int _currentBreakpointIndex = 0;
+  late final List<Breakpoint> _breakpoints =
+      Breakpoint.createBreakpointsFromExam(widget.exam);
+  int _currentBreakpointIndex = 0;
   Timer? _timer;
-  DateTime _currentTime = DateTime.now();
+  late DateTime _currentTime = _breakpoints[_currentBreakpointIndex].time;
   DateTime _examStartedTime = DateTime.now();
   final DateTime _pageStartedTime = DateTime.now();
 
@@ -61,14 +64,12 @@ class _ClockPageState extends State<ClockPage> {
   final TransformationController _clockTransformController =
       TransformationController();
   final ScrollController _timelineController = ScrollController();
-  late final List<GlobalKey> _timelineTileKeys;
-  late final List<GlobalKey> _timelineConnectorKeys;
+  late final List<GlobalKey> _timelineTileKeys =
+      List.generate(_breakpoints.length, (index) => GlobalKey());
+  late final List<GlobalKey> _timelineConnectorKeys =
+      List.generate(_breakpoints.length - 1, (index) => GlobalKey());
 
-  static const int _defaultScreenOverlayAlpha = 220;
-  int _screenOverlayAlpha = _defaultScreenOverlayAlpha;
-  bool _isStarted = false;
   bool _isRunning = true;
-  bool _isUiVisible = true;
 
   InterstitialAd? _interstitialAd;
 
@@ -81,13 +82,6 @@ class _ClockPageState extends State<ClockPage> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     AndroidAudioManager.controlMediaVolume();
     if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
-
-    _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
-    _currentTime = _breakpoints[_currentBreakpointIndex].time;
-    _timelineTileKeys =
-        List.generate(_breakpoints.length, (index) => GlobalKey());
-    _timelineConnectorKeys =
-        List.generate(_breakpoints.length - 1, (index) => GlobalKey());
 
     final nosieSettingState = getIt.get<NoiseSettingCubit>().state;
     if (nosieSettingState.selectedNoisePreset != NoisePreset.disabled) {
@@ -112,50 +106,57 @@ class _ClockPageState extends State<ClockPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: SafeArea(
-          child: GestureDetector(
-            onTap: _onScreenTap,
-            onLongPress: _onScreenLongPress,
-            behavior: HitTestBehavior.opaque,
-            child: Stack(
-              children: [
-                InteractiveViewer(
-                  transformationController: _clockTransformController,
-                  minScale: 0.5,
-                  boundaryMargin: EdgeInsets.symmetric(
-                    horizontal: screenWidth,
-                    vertical: screenHeight,
-                  ),
-                  child: Center(
-                    child: WristWatch(
-                      clockTime: _currentTime,
-                    ),
-                  ),
-                ),
-                UiVisibility(
-                  uiVisible: _isUiVisible,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: IconButton(
-                      splashRadius: 20,
-                      icon: const Icon(Icons.close),
-                      onPressed: _onCloseButtonPressed,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                UiVisibility(
-                  uiVisible: _isUiVisible,
-                  child: _buildBackgroundUi(),
-                ),
-                _buildScreenOverlayIfNotStarted(),
-              ],
+    return BlocProvider(
+      create: (context) => _cubit,
+      child: WillPopScope(
+        onWillPop: _onBackPressed,
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: SafeArea(
+            child: GestureDetector(
+              onTap: _cubit.onScreenTap,
+              onLongPress: () {
+                _clockTransformController.value = Matrix4.identity();
+              },
+              behavior: HitTestBehavior.opaque,
+              child: BlocBuilder<ClockCubit, ClockState>(
+                builder: (context, state) {
+                  return Stack(
+                    children: [
+                      InteractiveViewer(
+                        transformationController: _clockTransformController,
+                        minScale: 0.5,
+                        boundaryMargin: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width,
+                          vertical: MediaQuery.of(context).size.height,
+                        ),
+                        child: Center(
+                          child: WristWatch(
+                            clockTime: _currentTime,
+                          ),
+                        ),
+                      ),
+                      UiVisibility(
+                        uiVisible: state.isUiVisible,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          child: IconButton(
+                            splashRadius: 20,
+                            icon: const Icon(Icons.close),
+                            onPressed: _onCloseButtonPressed,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      UiVisibility(
+                        uiVisible: state.isUiVisible,
+                        child: _buildBackgroundUi(),
+                      ),
+                      if (!state.isStarted) _buildScreenOverlay(),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -326,42 +327,60 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildScreenOverlayIfNotStarted() {
-    if (_isStarted == true) return const SizedBox.shrink();
-    return GestureDetector(
-      onTapDown: _onOverlayTapDown,
-      onTapUp: _onOverlayTapUp,
-      onTapCancel: _onOverlayTapCancel,
-      child: AnimatedContainer(
-        width: double.infinity,
-        height: double.infinity,
-        alignment: Alignment.center,
-        color: Colors.black.withAlpha(_screenOverlayAlpha),
-        duration: const Duration(milliseconds: 100),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              '화면을 터치하면 시작합니다',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+  Widget _buildScreenOverlay() {
+    const int defaultScreenOverlayAlpha = 220;
+    int screenOverlayAlpha = defaultScreenOverlayAlpha;
+    return StatefulBuilder(
+      builder: (context, setOverlayState) {
+        return GestureDetector(
+          onTapDown: (_) {
+            setOverlayState(() {
+              screenOverlayAlpha = 160;
+            });
+          },
+          onTapUp: (_) {
+            setOverlayState(() {
+              screenOverlayAlpha = 0;
+            });
+            _startExam();
+          },
+          onTapCancel: () {
+            setOverlayState(() {
+              screenOverlayAlpha = defaultScreenOverlayAlpha;
+            });
+          },
+          child: AnimatedContainer(
+            width: double.infinity,
+            height: double.infinity,
+            alignment: Alignment.center,
+            color: Colors.black.withAlpha(screenOverlayAlpha),
+            duration: const Duration(milliseconds: 100),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '화면을 터치하면 시작합니다',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '소리를 켜면 안내방송을 들을 수 있어요!\n소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withAlpha(200),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                    height: 1.3,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              '소리를 켜면 안내방송을 들을 수 있어요!\n소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withAlpha(200),
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-                height: 1.3,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -565,7 +584,7 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _startExam() {
-    _isStarted = true;
+    _cubit.startExam();
     _timer = Timer.periodic(1.seconds, (_) {
       if (_isRunning) {
         _onEverySecond(_currentTime.add(1.seconds));
@@ -620,35 +639,6 @@ class _ClockPageState extends State<ClockPage> {
   Future<bool> _onBackPressed() {
     _onCloseButtonPressed();
     return Future.value(false);
-  }
-
-  void _onScreenTap() {
-    setState(() {
-      _isUiVisible = !_isUiVisible;
-    });
-  }
-
-  void _onScreenLongPress() {
-    _clockTransformController.value = Matrix4.identity();
-  }
-
-  void _onOverlayTapDown(TapDownDetails tapDownDetails) {
-    setState(() {
-      _screenOverlayAlpha = 160;
-    });
-  }
-
-  void _onOverlayTapUp(TapUpDetails tapUpDetails) {
-    setState(() {
-      _screenOverlayAlpha = 0;
-      _startExam();
-    });
-  }
-
-  void _onOverlayTapCancel() {
-    setState(() {
-      _screenOverlayAlpha = _defaultScreenOverlayAlpha;
-    });
   }
 
   Future<void> _loadAd() async {
