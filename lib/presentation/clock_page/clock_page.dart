@@ -23,7 +23,6 @@ import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../noise_setting/cubit/noise_setting_cubit.dart';
 import 'breakpoint.dart';
-import 'listening_audio/listening_audio_player.dart';
 import 'noise/noise_generator.dart';
 import 'noise/noise_player.dart';
 import 'timeline.dart';
@@ -58,7 +57,6 @@ class _ClockPageState extends State<ClockPage> {
 
   final AudioPlayer _announcementPlayer = AudioPlayer();
   NoiseGenerator? _noiseGenerator;
-  ListeningAudioPlayer? _listeningAudioPlayer;
 
   final TransformationController _clockTransformController =
       TransformationController();
@@ -110,13 +108,6 @@ class _ClockPageState extends State<ClockPage> {
     }
 
     _loadAd();
-    // if (widget.exam.subject == Subject.english) {
-    //   _listeningAudioPlayer = ListeningAudioPlayer(
-    //     breakpoints: _breakpoints,
-    //     audioSource: AudioSource.uri(Uri.parse('asset:///assets/noises/english_listening_test.mp3')),
-    //     examStartPosition: const Duration(minutes: 1),
-    //   );
-    // }
   }
 
   @override
@@ -377,7 +368,6 @@ class _ClockPageState extends State<ClockPage> {
   void _onEverySecond(DateTime newTime) {
     setState(() {
       _currentTime = newTime;
-      _listeningAudioPlayer?.updateState(_currentTime, timeJumped: false);
       if (_isFinished) return;
       final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
       if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
@@ -444,7 +434,6 @@ class _ClockPageState extends State<ClockPage> {
     setState(() {
       _currentTime = newTime;
     });
-    _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
     if (_currentBreakpointIndex > 0) {
       final currentBreakpoint = _breakpoints[_currentBreakpointIndex];
       if (newTime.compareTo(currentBreakpoint.time) < 0) {
@@ -536,7 +525,6 @@ class _ClockPageState extends State<ClockPage> {
       setState(() {});
       _playAnnouncement();
     }
-    _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
     _animateTimeline();
   }
 
@@ -585,7 +573,6 @@ class _ClockPageState extends State<ClockPage> {
     });
     _playAnnouncement();
     _noiseGenerator?.start();
-    _listeningAudioPlayer?.updateState(_currentTime, timeJumped: true);
 
     AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
     AnalyticsManager.logEvent(
@@ -693,7 +680,6 @@ class _ClockPageState extends State<ClockPage> {
 
     _announcementPlayer.dispose();
     _noiseGenerator?.dispose();
-    _listeningAudioPlayer?.dispose();
     _timer?.cancel();
     super.dispose();
   }
