@@ -1,17 +1,13 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
-import '../../repository/noise_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
@@ -20,16 +16,11 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
-import '../noise_setting/cubit/noise_setting_cubit.dart';
 import 'breakpoint.dart';
 import 'cubit/clock_cubit.dart';
-import 'noise/noise_generator.dart';
-import 'noise/noise_player.dart';
 import 'timeline.dart';
 import 'ui_visibility.dart';
 import 'wrist_watch.dart';
-
-const _announcementsAssetPath = 'assets/announcements';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
@@ -45,7 +36,6 @@ class ClockPage extends StatefulWidget {
 }
 
 class _ClockPageState extends State<ClockPage> {
-  final SharedPreferences _sharedPreferences = getIt.get();
   final AppCubit _appCubit = getIt.get();
   late final ClockCubit _cubit = getIt.get(
     param1: widget.exam,
@@ -53,9 +43,6 @@ class _ClockPageState extends State<ClockPage> {
   );
 
   final DateTime _pageStartedTime = DateTime.now();
-
-  final AudioPlayer _announcementPlayer = AudioPlayer();
-  NoiseGenerator? _noiseGenerator;
 
   final TransformationController _clockTransformController =
       TransformationController();
@@ -73,26 +60,6 @@ class _ClockPageState extends State<ClockPage> {
     Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     AndroidAudioManager.controlMediaVolume();
-    if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
-
-    final nosieSettingState = getIt.get<NoiseSettingCubit>().state;
-    if (nosieSettingState.selectedNoisePreset != NoisePreset.disabled) {
-      final noisePlayer = NoiseAudioPlayer(
-        availableNoiseIds:
-            context.read<AppCubit>().state.productBenefit.availableNoiseIds,
-      );
-      _noiseGenerator = NoiseGenerator(
-        noiseSettingState: nosieSettingState,
-        noisePlayer: noisePlayer,
-        fetchClockStatus: () => ClockStatus(
-          exam: widget.exam,
-          currentBreakpoint:
-              _cubit.state.breakpoints[_cubit.state.currentBreakpointIndex],
-          currentTime: _cubit.state.currentTime,
-          isRunning: _cubit.state.isRunning,
-        ),
-      );
-    }
 
     _loadAd();
   }
@@ -112,7 +79,13 @@ class _ClockPageState extends State<ClockPage> {
                 _clockTransformController.value = Matrix4.identity();
               },
               behavior: HitTestBehavior.opaque,
-              child: BlocBuilder<ClockCubit, ClockState>(
+              child: BlocConsumer<ClockCubit, ClockState>(
+                listenWhen: (previous, current) =>
+                    previous.currentBreakpointIndex !=
+                    current.currentBreakpointIndex,
+                listener: (context, state) {
+                  _animateTimeline(state.currentBreakpointIndex);
+                },
                 builder: (context, state) {
                   return Stack(
                     children: [
@@ -419,8 +392,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    final isAdsRemoved =
-        getIt.get<AppCubit>().state.productBenefit.isAdsRemoved;
+    final SharedPreferences sharedPreferences = getIt.get();
+    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     if (!isAdsRemoved &&
         DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
       _interstitialAd?.show();
@@ -434,7 +407,7 @@ class _ClockPageState extends State<ClockPage> {
 
     const key = PreferenceKey.showAddRecordPageAfterExamFinished;
     final showAddRecordPageAfterExamFinished =
-        _sharedPreferences.getBool(key) ?? true;
+        sharedPreferences.getBool(key) ?? true;
     if (showAddRecordPageAfterExamFinished && _appCubit.state.isSignedIn) {
       Navigator.pushNamed(
         context,
@@ -452,17 +425,17 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _animateTimeline() {
+  void _animateTimeline(int currentBreakpointIndex) {
     double progressedSize = 0;
     if (_isSmallHeightScreen()) {
-      for (int i = 0; i < _cubit.state.currentBreakpointIndex; i++) {
+      for (int i = 0; i < currentBreakpointIndex; i++) {
         progressedSize +=
             _timelineTileKeys[i].currentContext?.size?.height ?? 0;
         progressedSize +=
             _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
       }
     } else {
-      for (int i = 0; i < _cubit.state.currentBreakpointIndex; i++) {
+      for (int i = 0; i < currentBreakpointIndex; i++) {
         progressedSize += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
         progressedSize +=
             _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
@@ -476,26 +449,13 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Future<void> _playAnnouncement() async {
-    await _announcementPlayer.pause();
-    final String? currentFileName =
-        _cubit.state.currentBreakpoint.announcement.fileName;
-    if (currentFileName == null) return;
-    await _announcementPlayer
-        .setAsset('$_announcementsAssetPath/$currentFileName');
-    if (_cubit.state.isRunning) {
-      await _announcementPlayer.play();
-    }
-  }
-
   Future<bool> _onBackPressed() async {
     _onCloseButtonPressed();
     return false;
   }
 
   Future<void> _loadAd() async {
-    final isAdsRemoved =
-        getIt.get<AppCubit>().state.productBenefit.isAdsRemoved;
+    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     if (isAdsRemoved) return;
     await InterstitialAd.load(
       adUnitId: interstitialAdId,
@@ -519,9 +479,6 @@ class _ClockPageState extends State<ClockPage> {
     Wakelock.disable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     AndroidAudioManager.controlDefaultVolume();
-
-    _announcementPlayer.dispose();
-    _noiseGenerator?.dispose();
     super.dispose();
   }
 
