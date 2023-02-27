@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
-import '../../model/relative_time.dart';
 import '../../repository/noise_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
@@ -48,14 +47,11 @@ class ClockPage extends StatefulWidget {
 class _ClockPageState extends State<ClockPage> {
   final SharedPreferences _sharedPreferences = getIt.get();
   final AppCubit _appCubit = getIt.get();
-  final ClockCubit _cubit = getIt.get();
+  late final ClockCubit _cubit = getIt.get(
+    param1: widget.exam,
+    param2: Breakpoint.createBreakpointsFromExam(widget.exam),
+  );
 
-  late final List<Breakpoint> _breakpoints =
-      Breakpoint.createBreakpointsFromExam(widget.exam);
-  int _currentBreakpointIndex = 0;
-  Timer? _timer;
-  late DateTime _currentTime = _breakpoints[_currentBreakpointIndex].time;
-  DateTime _examStartedTime = DateTime.now();
   final DateTime _pageStartedTime = DateTime.now();
 
   final AudioPlayer _announcementPlayer = AudioPlayer();
@@ -65,15 +61,11 @@ class _ClockPageState extends State<ClockPage> {
       TransformationController();
   final ScrollController _timelineController = ScrollController();
   late final List<GlobalKey> _timelineTileKeys =
-      List.generate(_breakpoints.length, (index) => GlobalKey());
-  late final List<GlobalKey> _timelineConnectorKeys =
-      List.generate(_breakpoints.length - 1, (index) => GlobalKey());
-
-  bool _isRunning = true;
+      List.generate(_cubit.state.breakpoints.length, (index) => GlobalKey());
+  late final List<GlobalKey> _timelineConnectorKeys = List.generate(
+      _cubit.state.breakpoints.length - 1, (index) => GlobalKey());
 
   InterstitialAd? _interstitialAd;
-
-  bool get _isFinished => _currentBreakpointIndex >= _breakpoints.length - 1;
 
   @override
   void initState() {
@@ -94,9 +86,10 @@ class _ClockPageState extends State<ClockPage> {
         noisePlayer: noisePlayer,
         fetchClockStatus: () => ClockStatus(
           exam: widget.exam,
-          currentBreakpoint: _breakpoints[_currentBreakpointIndex],
-          currentTime: _currentTime,
-          isRunning: _isRunning,
+          currentBreakpoint:
+              _cubit.state.breakpoints[_cubit.state.currentBreakpointIndex],
+          currentTime: _cubit.state.currentTime,
+          isRunning: _cubit.state.isRunning,
         ),
       );
     }
@@ -132,7 +125,7 @@ class _ClockPageState extends State<ClockPage> {
                         ),
                         child: Center(
                           child: WristWatch(
-                            clockTime: _currentTime,
+                            clockTime: state.currentTime,
                           ),
                         ),
                       ),
@@ -254,32 +247,33 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   List<Widget> _buildTimelineTiles(Axis orientation) {
+    final state = _cubit.state;
     final tiles = <Widget>[];
-    _breakpoints.asMap().forEach((index, breakpoint) {
+    state.breakpoints.asMap().forEach((index, breakpoint) {
       bool disabled = false;
-      if (index > _currentBreakpointIndex) disabled = true;
+      if (index > state.currentBreakpointIndex) disabled = true;
 
       // Tile
       final time =
           '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
       tiles.add(TimelineTile(
         key: _timelineTileKeys[index],
-        onTap: () => _onBreakpointTap(index),
+        onTap: () => _cubit.onBreakpointTap(index),
         time: time,
         title: breakpoint.title,
         disabled: disabled,
       ));
 
       // Connector
-      if (index == _breakpoints.length - 1) return;
-      final nextBreakpoint = _breakpoints[index + 1];
+      if (index == state.breakpoints.length - 1) return;
+      final nextBreakpoint = state.breakpoints[index + 1];
       final Duration duration = nextBreakpoint.time.difference(breakpoint.time);
 
       double progress = 1;
       if (disabled) {
         progress = 0;
-      } else if (index == _currentBreakpointIndex) {
-        progress = _currentTime.difference(breakpoint.time).inSeconds /
+      } else if (index == state.currentBreakpointIndex) {
+        progress = state.currentTime.difference(breakpoint.time).inSeconds /
             duration.inSeconds;
       }
 
@@ -304,21 +298,21 @@ class _ClockPageState extends State<ClockPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          onPressed: _subtract30Seconds,
+          onPressed: _cubit.subtract30Seconds,
           icon: const Icon(Icons.replay_30),
           color: Colors.grey.shade700,
           splashRadius: 20,
         ),
         IconButton(
-          onPressed: _onPausePlayButtonPressed,
-          icon: _isRunning
+          onPressed: _cubit.onPausePlayButtonPressed,
+          icon: _cubit.state.isRunning
               ? const Icon(Icons.pause)
               : const Icon(Icons.play_arrow),
           color: Colors.grey.shade700,
           splashRadius: 20,
         ),
         IconButton(
-          onPressed: _add30Seconds,
+          onPressed: _cubit.add30Seconds,
           icon: const Icon(Icons.forward_30),
           color: Colors.grey.shade700,
           splashRadius: 20,
@@ -342,7 +336,7 @@ class _ClockPageState extends State<ClockPage> {
             setOverlayState(() {
               screenOverlayAlpha = 0;
             });
-            _startExam();
+            _cubit.startExam();
           },
           onTapCancel: () {
             setOverlayState(() {
@@ -384,93 +378,8 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _onEverySecond(DateTime newTime) {
-    setState(() {
-      _currentTime = newTime;
-      if (_isFinished) return;
-      final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-      if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
-    });
-  }
-
-  void _subtract30Seconds() {
-    final announcementPosition = _announcementPlayer.position.inMilliseconds;
-    final announcementDuration =
-        _announcementPlayer.duration?.inMilliseconds ?? 0;
-    if ((announcementPosition - announcementDuration).abs() > 100) {
-      _announcementPlayer.seek(_announcementPlayer.position - 30.seconds);
-    }
-
-    final newTime = _currentTime.subtract(30.seconds);
-    _onTimeChanged(newTime);
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Substract 30 seconds',
-      properties: {
-        'exam_name': widget.exam.examName,
-        'current_time': _currentTime.toString(),
-      },
-    );
-  }
-
-  void _add30Seconds() {
-    final newTime = _currentTime.add(30.seconds);
-    _announcementPlayer.seek(_announcementPlayer.position + 30.seconds);
-    _onTimeChanged(newTime);
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Add 30 seconds',
-      properties: {
-        'exam_name': widget.exam.examName,
-        'current_time': _currentTime.toString(),
-      },
-    );
-  }
-
-  void _onPausePlayButtonPressed() {
-    setState(() {
-      _isRunning = !_isRunning;
-    });
-    if (_isRunning) {
-      _announcementPlayer.play();
-      _noiseGenerator?.playWhiteNoiseIfEnabled();
-    } else {
-      _announcementPlayer.pause();
-      _noiseGenerator?.pauseWhiteNoise();
-    }
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Play/Pause Button Pressed',
-      properties: {
-        'exam_name': widget.exam.examName,
-        'current_time': _currentTime.toString(),
-        'running': _isRunning,
-      },
-    );
-  }
-
-  void _onTimeChanged(DateTime newTime) {
-    setState(() {
-      _currentTime = newTime;
-    });
-    if (_currentBreakpointIndex > 0) {
-      final currentBreakpoint = _breakpoints[_currentBreakpointIndex];
-      if (newTime.compareTo(currentBreakpoint.time) < 0) {
-        _moveToPreviousBreakpoint(adjustTime: false);
-        return;
-      }
-    }
-    if (!_isFinished) {
-      final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-      if (newTime.compareTo(nextBreakpoint.time) >= 0) {
-        _moveToNextBreakpoint();
-        return;
-      }
-    }
-  }
-
   void _onCloseButtonPressed() {
-    if (_isFinished) {
+    if (_cubit.state.isFinished) {
       _finishExam();
       return;
     }
@@ -509,99 +418,6 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _moveToPreviousBreakpoint({bool adjustTime = true}) {
-    if (_currentBreakpointIndex <= 0) return;
-    _currentBreakpointIndex--;
-    _trySavingExamStartedTime();
-    _moveBreakpoint(adjustTime: adjustTime);
-  }
-
-  void _moveToNextBreakpoint() {
-    if (_isFinished) return;
-    _currentBreakpointIndex++;
-    _trySavingExamStartedTime();
-    _moveBreakpoint();
-  }
-
-  void _onBreakpointTap(int index) {
-    _currentBreakpointIndex = index;
-    _trySavingExamStartedTime();
-    _moveBreakpoint();
-  }
-
-  void _trySavingExamStartedTime() {
-    final currentAnnouncementTime =
-        _breakpoints[_currentBreakpointIndex].announcement.time;
-    if (currentAnnouncementTime == const RelativeTime.afterStart(minutes: 0)) {
-      _examStartedTime = DateTime.now();
-    }
-  }
-
-  void _moveBreakpoint({bool adjustTime = true}) {
-    _announcementPlayer.pause();
-    if (adjustTime) {
-      _currentTime = _breakpoints[_currentBreakpointIndex].time;
-      setState(() {});
-      _playAnnouncement();
-    }
-    _animateTimeline();
-  }
-
-  void _animateTimeline() {
-    double progressedSize = 0;
-    if (_isSmallHeightScreen()) {
-      for (int i = 0; i < _currentBreakpointIndex; i++) {
-        progressedSize +=
-            _timelineTileKeys[i].currentContext?.size?.height ?? 0;
-        progressedSize +=
-            _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
-      }
-    } else {
-      for (int i = 0; i < _currentBreakpointIndex; i++) {
-        progressedSize += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
-        progressedSize +=
-            _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
-      }
-    }
-
-    _timelineController.animateTo(
-      progressedSize,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.decelerate,
-    );
-  }
-
-  Future<void> _playAnnouncement() async {
-    await _announcementPlayer.pause();
-    final String? currentFileName =
-        _breakpoints[_currentBreakpointIndex].announcement.fileName;
-    if (currentFileName == null) return;
-    await _announcementPlayer
-        .setAsset('$_announcementsAssetPath/$currentFileName');
-    if (_isRunning) {
-      await _announcementPlayer.play();
-    }
-  }
-
-  void _startExam() {
-    _cubit.startExam();
-    _timer = Timer.periodic(1.seconds, (_) {
-      if (_isRunning) {
-        _onEverySecond(_currentTime.add(1.seconds));
-      }
-    });
-    _playAnnouncement();
-    _noiseGenerator?.start();
-
-    AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Start exam',
-      properties: {
-        'exam_name': widget.exam.examName,
-      },
-    );
-  }
-
   void _finishExam() {
     final isAdsRemoved =
         getIt.get<AppCubit>().state.productBenefit.isAdsRemoved;
@@ -612,7 +428,7 @@ class _ClockPageState extends State<ClockPage> {
 
     final arguments = EditRecordPageArguments(
       inputExam: widget.exam,
-      examStartedTime: _examStartedTime,
+      examStartedTime: _cubit.state.examStartedTime,
     );
     Navigator.pop(context);
 
@@ -631,14 +447,50 @@ class _ClockPageState extends State<ClockPage> {
       name: '[ClockPage] Finish exam',
       properties: {
         'exam_name': widget.exam.examName,
-        'is_exam_finished': _isFinished,
+        'is_exam_finished': _cubit.state.isFinished,
       },
     );
   }
 
-  Future<bool> _onBackPressed() {
+  void _animateTimeline() {
+    double progressedSize = 0;
+    if (_isSmallHeightScreen()) {
+      for (int i = 0; i < _cubit.state.currentBreakpointIndex; i++) {
+        progressedSize +=
+            _timelineTileKeys[i].currentContext?.size?.height ?? 0;
+        progressedSize +=
+            _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
+      }
+    } else {
+      for (int i = 0; i < _cubit.state.currentBreakpointIndex; i++) {
+        progressedSize += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
+        progressedSize +=
+            _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
+      }
+    }
+
+    _timelineController.animateTo(
+      progressedSize,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.decelerate,
+    );
+  }
+
+  Future<void> _playAnnouncement() async {
+    await _announcementPlayer.pause();
+    final String? currentFileName =
+        _cubit.state.currentBreakpoint.announcement.fileName;
+    if (currentFileName == null) return;
+    await _announcementPlayer
+        .setAsset('$_announcementsAssetPath/$currentFileName');
+    if (_cubit.state.isRunning) {
+      await _announcementPlayer.play();
+    }
+  }
+
+  Future<bool> _onBackPressed() async {
     _onCloseButtonPressed();
-    return Future.value(false);
+    return false;
   }
 
   Future<void> _loadAd() async {
@@ -670,7 +522,6 @@ class _ClockPageState extends State<ClockPage> {
 
     _announcementPlayer.dispose();
     _noiseGenerator?.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -683,8 +534,4 @@ class ClockPageArguments {
   final Exam exam;
 
   ClockPageArguments(this.exam);
-}
-
-extension on int {
-  Duration get seconds => Duration(seconds: this);
 }
