@@ -70,7 +70,6 @@ Future<bool?> showMarketingInfoReceivingConsentDialog(
 }) async {
   return await showModalBottomSheet(
     context: context,
-    useSafeArea: true,
     isScrollControlled: true,
     isDismissible: isDismissible,
     enableDrag: isDismissible,
@@ -84,7 +83,11 @@ Future<bool?> showMarketingInfoReceivingConsentDialog(
     ),
     builder: (_) => SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          bottom: MediaQuery.of(context).padding.bottom,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -226,7 +229,6 @@ void showSendFeedbackDialog(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    useSafeArea: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(16),
@@ -243,7 +245,7 @@ void showSendFeedbackDialog(BuildContext context) {
             padding: EdgeInsets.only(
               left: 20,
               right: 20,
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+              bottom: MediaQuery.of(context).padding.bottom,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
