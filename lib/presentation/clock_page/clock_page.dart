@@ -1,18 +1,13 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
-import '../../model/relative_time.dart';
-import '../../repository/noise_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
@@ -21,15 +16,11 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
-import '../noise_setting/cubit/noise_setting_cubit.dart';
 import 'breakpoint.dart';
-import 'noise/noise_generator.dart';
-import 'noise/noise_player.dart';
+import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
 import 'ui_visibility.dart';
 import 'wrist_watch.dart';
-
-const _announcementsAssetPath = 'assets/announcements';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
@@ -45,34 +36,23 @@ class ClockPage extends StatefulWidget {
 }
 
 class _ClockPageState extends State<ClockPage> {
-  final SharedPreferences _sharedPreferences = getIt.get();
   final AppCubit _appCubit = getIt.get();
+  late final ClockCubit _cubit = getIt.get(
+    param1: widget.exam,
+    param2: Breakpoint.createBreakpointsFromExam(widget.exam),
+  );
 
-  late final List<Breakpoint> _breakpoints;
-  late int _currentBreakpointIndex = 0;
-  Timer? _timer;
-  DateTime _currentTime = DateTime.now();
-  DateTime _examStartedTime = DateTime.now();
   final DateTime _pageStartedTime = DateTime.now();
-
-  final AudioPlayer _announcementPlayer = AudioPlayer();
-  NoiseGenerator? _noiseGenerator;
 
   final TransformationController _clockTransformController =
       TransformationController();
   final ScrollController _timelineController = ScrollController();
-  late final List<GlobalKey> _timelineTileKeys;
-  late final List<GlobalKey> _timelineConnectorKeys;
-
-  static const int _defaultScreenOverlayAlpha = 220;
-  int _screenOverlayAlpha = _defaultScreenOverlayAlpha;
-  bool _isStarted = false;
-  bool _isRunning = true;
-  bool _isUiVisible = true;
+  late final List<GlobalKey> _timelineTileKeys =
+      List.generate(_cubit.state.breakpoints.length, (index) => GlobalKey());
+  late final List<GlobalKey> _timelineConnectorKeys = List.generate(
+      _cubit.state.breakpoints.length - 1, (index) => GlobalKey());
 
   InterstitialAd? _interstitialAd;
-
-  bool get _isFinished => _currentBreakpointIndex >= _breakpoints.length - 1;
 
   @override
   void initState() {
@@ -80,82 +60,69 @@ class _ClockPageState extends State<ClockPage> {
     Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     AndroidAudioManager.controlMediaVolume();
-    if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
-
-    _breakpoints = Breakpoint.createBreakpointsFromExam(widget.exam);
-    _currentTime = _breakpoints[_currentBreakpointIndex].time;
-    _timelineTileKeys =
-        List.generate(_breakpoints.length, (index) => GlobalKey());
-    _timelineConnectorKeys =
-        List.generate(_breakpoints.length - 1, (index) => GlobalKey());
-
-    final nosieSettingState = getIt.get<NoiseSettingCubit>().state;
-    if (nosieSettingState.selectedNoisePreset != NoisePreset.disabled) {
-      final noisePlayer = NoiseAudioPlayer(
-        availableNoiseIds:
-            context.read<AppCubit>().state.productBenefit.availableNoiseIds,
-      );
-      _noiseGenerator = NoiseGenerator(
-        noiseSettingState: nosieSettingState,
-        noisePlayer: noisePlayer,
-        fetchClockStatus: () => ClockStatus(
-          exam: widget.exam,
-          currentBreakpoint: _breakpoints[_currentBreakpointIndex],
-          currentTime: _currentTime,
-          isRunning: _isRunning,
-        ),
-      );
-    }
 
     _loadAd();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: SafeArea(
-          child: GestureDetector(
-            onTap: _onScreenTap,
-            onLongPress: _onScreenLongPress,
-            behavior: HitTestBehavior.opaque,
-            child: Stack(
-              children: [
-                InteractiveViewer(
-                  transformationController: _clockTransformController,
-                  minScale: 0.5,
-                  boundaryMargin: EdgeInsets.symmetric(
-                    horizontal: screenWidth,
-                    vertical: screenHeight,
-                  ),
-                  child: Center(
-                    child: WristWatch(
-                      clockTime: _currentTime,
-                    ),
-                  ),
-                ),
-                UiVisibility(
-                  uiVisible: _isUiVisible,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: IconButton(
-                      splashRadius: 20,
-                      icon: const Icon(Icons.close),
-                      onPressed: _onCloseButtonPressed,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                UiVisibility(
-                  uiVisible: _isUiVisible,
-                  child: _buildBackgroundUi(),
-                ),
-                _buildScreenOverlayIfNotStarted(),
-              ],
+    return BlocProvider(
+      create: (context) => _cubit,
+      child: WillPopScope(
+        onWillPop: _onBackPressed,
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: SafeArea(
+            child: GestureDetector(
+              onTap: _cubit.onScreenTap,
+              onLongPress: () {
+                _clockTransformController.value = Matrix4.identity();
+              },
+              behavior: HitTestBehavior.opaque,
+              child: BlocConsumer<ClockCubit, ClockState>(
+                listenWhen: (previous, current) =>
+                    previous.currentBreakpointIndex !=
+                    current.currentBreakpointIndex,
+                listener: (context, state) {
+                  _animateTimeline(state.currentBreakpointIndex);
+                },
+                builder: (context, state) {
+                  return Stack(
+                    children: [
+                      InteractiveViewer(
+                        transformationController: _clockTransformController,
+                        minScale: 0.5,
+                        boundaryMargin: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width,
+                          vertical: MediaQuery.of(context).size.height,
+                        ),
+                        child: Center(
+                          child: WristWatch(
+                            clockTime: state.currentTime,
+                          ),
+                        ),
+                      ),
+                      UiVisibility(
+                        uiVisible: state.isUiVisible,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          child: IconButton(
+                            splashRadius: 20,
+                            icon: const Icon(Icons.close),
+                            onPressed: _onCloseButtonPressed,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      UiVisibility(
+                        uiVisible: state.isUiVisible,
+                        child: _buildBackgroundUi(),
+                      ),
+                      if (!state.isStarted) _buildScreenOverlay(),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -253,32 +220,33 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   List<Widget> _buildTimelineTiles(Axis orientation) {
+    final state = _cubit.state;
     final tiles = <Widget>[];
-    _breakpoints.asMap().forEach((index, breakpoint) {
+    state.breakpoints.asMap().forEach((index, breakpoint) {
       bool disabled = false;
-      if (index > _currentBreakpointIndex) disabled = true;
+      if (index > state.currentBreakpointIndex) disabled = true;
 
       // Tile
       final time =
           '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
       tiles.add(TimelineTile(
         key: _timelineTileKeys[index],
-        onTap: () => _onBreakpointTap(index),
+        onTap: () => _cubit.onBreakpointTap(index),
         time: time,
         title: breakpoint.title,
         disabled: disabled,
       ));
 
       // Connector
-      if (index == _breakpoints.length - 1) return;
-      final nextBreakpoint = _breakpoints[index + 1];
+      if (index == state.breakpoints.length - 1) return;
+      final nextBreakpoint = state.breakpoints[index + 1];
       final Duration duration = nextBreakpoint.time.difference(breakpoint.time);
 
       double progress = 1;
       if (disabled) {
         progress = 0;
-      } else if (index == _currentBreakpointIndex) {
-        progress = _currentTime.difference(breakpoint.time).inSeconds /
+      } else if (index == state.currentBreakpointIndex) {
+        progress = state.currentTime.difference(breakpoint.time).inSeconds /
             duration.inSeconds;
       }
 
@@ -303,21 +271,21 @@ class _ClockPageState extends State<ClockPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          onPressed: _subtract30Seconds,
+          onPressed: _cubit.subtract30Seconds,
           icon: const Icon(Icons.replay_30),
           color: Colors.grey.shade700,
           splashRadius: 20,
         ),
         IconButton(
-          onPressed: _onPausePlayButtonPressed,
-          icon: _isRunning
+          onPressed: _cubit.onPausePlayButtonPressed,
+          icon: _cubit.state.isRunning
               ? const Icon(Icons.pause)
               : const Icon(Icons.play_arrow),
           color: Colors.grey.shade700,
           splashRadius: 20,
         ),
         IconButton(
-          onPressed: _add30Seconds,
+          onPressed: _cubit.add30Seconds,
           icon: const Icon(Icons.forward_30),
           color: Colors.grey.shade700,
           splashRadius: 20,
@@ -326,132 +294,65 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildScreenOverlayIfNotStarted() {
-    if (_isStarted == true) return const SizedBox.shrink();
-    return GestureDetector(
-      onTapDown: _onOverlayTapDown,
-      onTapUp: _onOverlayTapUp,
-      onTapCancel: _onOverlayTapCancel,
-      child: AnimatedContainer(
-        width: double.infinity,
-        height: double.infinity,
-        alignment: Alignment.center,
-        color: Colors.black.withAlpha(_screenOverlayAlpha),
-        duration: const Duration(milliseconds: 100),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              '화면을 터치하면 시작합니다',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+  Widget _buildScreenOverlay() {
+    const int defaultScreenOverlayAlpha = 220;
+    int screenOverlayAlpha = defaultScreenOverlayAlpha;
+    return StatefulBuilder(
+      builder: (context, setOverlayState) {
+        return GestureDetector(
+          onTapDown: (_) {
+            setOverlayState(() {
+              screenOverlayAlpha = 160;
+            });
+          },
+          onTapUp: (_) {
+            setOverlayState(() {
+              screenOverlayAlpha = 0;
+            });
+            _cubit.startExam();
+          },
+          onTapCancel: () {
+            setOverlayState(() {
+              screenOverlayAlpha = defaultScreenOverlayAlpha;
+            });
+          },
+          child: AnimatedContainer(
+            width: double.infinity,
+            height: double.infinity,
+            alignment: Alignment.center,
+            color: Colors.black.withAlpha(screenOverlayAlpha),
+            duration: const Duration(milliseconds: 100),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '화면을 터치하면 시작합니다',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '소리를 켜면 안내방송을 들을 수 있어요!\n소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withAlpha(200),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                    height: 1.3,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              '소리를 켜면 안내방송을 들을 수 있어요!\n소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withAlpha(200),
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-                height: 1.3,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _onEverySecond(DateTime newTime) {
-    setState(() {
-      _currentTime = newTime;
-      if (_isFinished) return;
-      final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-      if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
-    });
-  }
-
-  void _subtract30Seconds() {
-    final announcementPosition = _announcementPlayer.position.inMilliseconds;
-    final announcementDuration =
-        _announcementPlayer.duration?.inMilliseconds ?? 0;
-    if ((announcementPosition - announcementDuration).abs() > 100) {
-      _announcementPlayer.seek(_announcementPlayer.position - 30.seconds);
-    }
-
-    final newTime = _currentTime.subtract(30.seconds);
-    _onTimeChanged(newTime);
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Substract 30 seconds',
-      properties: {
-        'exam_name': widget.exam.examName,
-        'current_time': _currentTime.toString(),
+          ),
+        );
       },
     );
-  }
-
-  void _add30Seconds() {
-    final newTime = _currentTime.add(30.seconds);
-    _announcementPlayer.seek(_announcementPlayer.position + 30.seconds);
-    _onTimeChanged(newTime);
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Add 30 seconds',
-      properties: {
-        'exam_name': widget.exam.examName,
-        'current_time': _currentTime.toString(),
-      },
-    );
-  }
-
-  void _onPausePlayButtonPressed() {
-    setState(() {
-      _isRunning = !_isRunning;
-    });
-    if (_isRunning) {
-      _announcementPlayer.play();
-      _noiseGenerator?.playWhiteNoiseIfEnabled();
-    } else {
-      _announcementPlayer.pause();
-      _noiseGenerator?.pauseWhiteNoise();
-    }
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Play/Pause Button Pressed',
-      properties: {
-        'exam_name': widget.exam.examName,
-        'current_time': _currentTime.toString(),
-        'running': _isRunning,
-      },
-    );
-  }
-
-  void _onTimeChanged(DateTime newTime) {
-    setState(() {
-      _currentTime = newTime;
-    });
-    if (_currentBreakpointIndex > 0) {
-      final currentBreakpoint = _breakpoints[_currentBreakpointIndex];
-      if (newTime.compareTo(currentBreakpoint.time) < 0) {
-        _moveToPreviousBreakpoint(adjustTime: false);
-        return;
-      }
-    }
-    if (!_isFinished) {
-      final nextBreakpoint = _breakpoints[_currentBreakpointIndex + 1];
-      if (newTime.compareTo(nextBreakpoint.time) >= 0) {
-        _moveToNextBreakpoint();
-        return;
-      }
-    }
   }
 
   void _onCloseButtonPressed() {
-    if (_isFinished) {
+    if (_cubit.state.isFinished) {
       _finishExam();
       return;
     }
@@ -490,55 +391,51 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _moveToPreviousBreakpoint({bool adjustTime = true}) {
-    if (_currentBreakpointIndex <= 0) return;
-    _currentBreakpointIndex--;
-    _trySavingExamStartedTime();
-    _moveBreakpoint(adjustTime: adjustTime);
-  }
-
-  void _moveToNextBreakpoint() {
-    if (_isFinished) return;
-    _currentBreakpointIndex++;
-    _trySavingExamStartedTime();
-    _moveBreakpoint();
-  }
-
-  void _onBreakpointTap(int index) {
-    _currentBreakpointIndex = index;
-    _trySavingExamStartedTime();
-    _moveBreakpoint();
-  }
-
-  void _trySavingExamStartedTime() {
-    final currentAnnouncementTime =
-        _breakpoints[_currentBreakpointIndex].announcement.time;
-    if (currentAnnouncementTime == const RelativeTime.afterStart(minutes: 0)) {
-      _examStartedTime = DateTime.now();
+  void _finishExam() {
+    final SharedPreferences sharedPreferences = getIt.get();
+    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+    if (!isAdsRemoved &&
+        DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
+      _interstitialAd?.show();
     }
-  }
 
-  void _moveBreakpoint({bool adjustTime = true}) {
-    _announcementPlayer.pause();
-    if (adjustTime) {
-      _currentTime = _breakpoints[_currentBreakpointIndex].time;
-      setState(() {});
-      _playAnnouncement();
+    final arguments = EditRecordPageArguments(
+      inputExam: widget.exam,
+      examStartedTime: _cubit.state.examStartedTime,
+    );
+    Navigator.pop(context);
+
+    const key = PreferenceKey.showAddRecordPageAfterExamFinished;
+    final showAddRecordPageAfterExamFinished =
+        sharedPreferences.getBool(key) ?? true;
+    if (showAddRecordPageAfterExamFinished && _appCubit.state.isSignedIn) {
+      Navigator.pushNamed(
+        context,
+        EditRecordPage.routeName,
+        arguments: arguments,
+      );
     }
-    _animateTimeline();
+
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Finish exam',
+      properties: {
+        'exam_name': widget.exam.examName,
+        'is_exam_finished': _cubit.state.isFinished,
+      },
+    );
   }
 
-  void _animateTimeline() {
+  void _animateTimeline(int currentBreakpointIndex) {
     double progressedSize = 0;
     if (_isSmallHeightScreen()) {
-      for (int i = 0; i < _currentBreakpointIndex; i++) {
+      for (int i = 0; i < currentBreakpointIndex; i++) {
         progressedSize +=
             _timelineTileKeys[i].currentContext?.size?.height ?? 0;
         progressedSize +=
             _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
       }
     } else {
-      for (int i = 0; i < _currentBreakpointIndex; i++) {
+      for (int i = 0; i < currentBreakpointIndex; i++) {
         progressedSize += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
         progressedSize +=
             _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
@@ -552,108 +449,13 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Future<void> _playAnnouncement() async {
-    await _announcementPlayer.pause();
-    final String? currentFileName =
-        _breakpoints[_currentBreakpointIndex].announcement.fileName;
-    if (currentFileName == null) return;
-    await _announcementPlayer
-        .setAsset('$_announcementsAssetPath/$currentFileName');
-    if (_isRunning) {
-      await _announcementPlayer.play();
-    }
-  }
-
-  void _startExam() {
-    _isStarted = true;
-    _timer = Timer.periodic(1.seconds, (_) {
-      if (_isRunning) {
-        _onEverySecond(_currentTime.add(1.seconds));
-      }
-    });
-    _playAnnouncement();
-    _noiseGenerator?.start();
-
-    AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Start exam',
-      properties: {
-        'exam_name': widget.exam.examName,
-      },
-    );
-  }
-
-  void _finishExam() {
-    final isAdsRemoved =
-        getIt.get<AppCubit>().state.productBenefit.isAdsRemoved;
-    if (!isAdsRemoved &&
-        DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
-      _interstitialAd?.show();
-    }
-
-    final arguments = EditRecordPageArguments(
-      inputExam: widget.exam,
-      examStartedTime: _examStartedTime,
-    );
-    Navigator.pop(context);
-
-    const key = PreferenceKey.showAddRecordPageAfterExamFinished;
-    final showAddRecordPageAfterExamFinished =
-        _sharedPreferences.getBool(key) ?? true;
-    if (showAddRecordPageAfterExamFinished && _appCubit.state.isSignedIn) {
-      Navigator.pushNamed(
-        context,
-        EditRecordPage.routeName,
-        arguments: arguments,
-      );
-    }
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Finish exam',
-      properties: {
-        'exam_name': widget.exam.examName,
-        'is_exam_finished': _isFinished,
-      },
-    );
-  }
-
-  Future<bool> _onBackPressed() {
+  Future<bool> _onBackPressed() async {
     _onCloseButtonPressed();
-    return Future.value(false);
-  }
-
-  void _onScreenTap() {
-    setState(() {
-      _isUiVisible = !_isUiVisible;
-    });
-  }
-
-  void _onScreenLongPress() {
-    _clockTransformController.value = Matrix4.identity();
-  }
-
-  void _onOverlayTapDown(TapDownDetails tapDownDetails) {
-    setState(() {
-      _screenOverlayAlpha = 160;
-    });
-  }
-
-  void _onOverlayTapUp(TapUpDetails tapUpDetails) {
-    setState(() {
-      _screenOverlayAlpha = 0;
-      _startExam();
-    });
-  }
-
-  void _onOverlayTapCancel() {
-    setState(() {
-      _screenOverlayAlpha = _defaultScreenOverlayAlpha;
-    });
+    return false;
   }
 
   Future<void> _loadAd() async {
-    final isAdsRemoved =
-        getIt.get<AppCubit>().state.productBenefit.isAdsRemoved;
+    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     if (isAdsRemoved) return;
     await InterstitialAd.load(
       adUnitId: interstitialAdId,
@@ -677,10 +479,6 @@ class _ClockPageState extends State<ClockPage> {
     Wakelock.disable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     AndroidAudioManager.controlDefaultVolume();
-
-    _announcementPlayer.dispose();
-    _noiseGenerator?.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -693,8 +491,4 @@ class ClockPageArguments {
   final Exam exam;
 
   ClockPageArguments(this.exam);
-}
-
-extension on int {
-  Duration get seconds => Duration(seconds: this);
 }
