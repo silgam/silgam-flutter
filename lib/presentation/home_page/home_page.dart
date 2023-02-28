@@ -98,53 +98,56 @@ class _HomePageState extends State<HomePage> {
                           .toList(growable: false),
                     ),
                   ),
-                  bottomNavigationBar: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      BottomNavigationBar(
-                        elevation: 4,
-                        backgroundColor: Colors.white,
-                        unselectedItemColor: Colors.grey,
-                        showUnselectedLabels: false,
-                        showSelectedLabels: false,
-                        type: BottomNavigationBarType.fixed,
-                        onTap: _cubit.changeTab,
-                        currentIndex: state.tabIndex,
-                        landscapeLayout:
-                            BottomNavigationBarLandscapeLayout.centered,
-                        items: HomePage.views.values
-                            .map((view) => view.bottomNavigationBarItem)
-                            .toList(growable: false),
-                      ),
-                      BlocBuilder<AppCubit, AppState>(
-                        buildWhen: (previous, current) =>
-                            previous.connectivityResult !=
-                            current.connectivityResult,
-                        builder: (context, state) {
-                          if (state.connectivityResult !=
-                              ConnectivityResult.none) {
-                            return const SizedBox.shrink();
-                          }
-                          return Container(
-                            color: Theme.of(context).primaryColor,
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
+                  bottomNavigationBar: BlocBuilder<AppCubit, AppState>(
+                    buildWhen: (previous, current) =>
+                        previous.connectivityResult !=
+                        current.connectivityResult,
+                    builder: (context, appState) {
+                      final isOffline = appState.connectivityResult ==
+                          ConnectivityResult.none;
+                      return SafeArea(
+                        bottom: isOffline,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            BottomNavigationBar(
+                              elevation: 4,
+                              backgroundColor: Colors.white,
+                              unselectedItemColor: Colors.grey,
+                              showUnselectedLabels: false,
+                              showSelectedLabels: false,
+                              type: BottomNavigationBarType.fixed,
+                              onTap: _cubit.changeTab,
+                              currentIndex: state.tabIndex,
+                              landscapeLayout:
+                                  BottomNavigationBarLandscapeLayout.centered,
+                              items: HomePage.views.values
+                                  .map((view) => view.bottomNavigationBarItem)
+                                  .toList(growable: false),
                             ),
-                            child: const Text(
-                              '오프라인 상태에선 일부 기능만 사용 가능해요',
-                              style: TextStyle(
-                                fontSize: 12,
-                                height: 1.2,
-                                color: Colors.white,
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
+                            !isOffline
+                                ? const SizedBox.shrink()
+                                : Container(
+                                    color: Theme.of(context).primaryColor,
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    child: const Text(
+                                      '오프라인 상태에선 일부 기능만 사용 가능해요',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        height: 1.2,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   floatingActionButton: BlocBuilder<AppCubit, AppState>(
                     buildWhen: (previous, current) =>
