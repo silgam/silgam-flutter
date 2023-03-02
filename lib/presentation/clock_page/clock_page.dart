@@ -18,7 +18,6 @@ import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
-import 'ui_visibility.dart';
 import 'wrist_watch.dart';
 
 class ClockPage extends StatefulWidget {
@@ -98,8 +97,8 @@ class _ClockPageState extends State<ClockPage> {
                           ),
                         ),
                       ),
-                      UiVisibility(
-                        uiVisible: state.isUiVisible,
+                      Visibility(
+                        visible: state.isUiVisible,
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 8),
                           child: IconButton(
@@ -110,8 +109,9 @@ class _ClockPageState extends State<ClockPage> {
                           ),
                         ),
                       ),
-                      UiVisibility(
-                        uiVisible: state.isUiVisible,
+                      Visibility(
+                        visible: state.isUiVisible,
+                        maintainState: true,
                         child: _buildBackgroundUi(),
                       ),
                       if (!state.isStarted) _buildScreenOverlay(),
