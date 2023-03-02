@@ -1,34 +1,33 @@
 import 'dart:async';
 import 'dart:math';
 
-import '../../../model/exam.dart';
 import '../../../model/relative_time.dart';
 import '../../../model/subject.dart';
 import '../../noise_setting/cubit/noise_setting_cubit.dart';
-import '../breakpoint.dart';
+import '../cubit/clock_cubit.dart';
 import 'noise_player.dart';
 
 class NoiseGenerator {
   static const double _probabilityMultiple = 0.001;
   final NoiseSettingState noiseSettingState;
   final NoisePlayer noisePlayer;
-  final ClockStatus Function() fetchClockStatus;
+  final ClockCubit clockCubit;
   final _random = Random();
   Timer? _timer;
 
   NoiseGenerator({
     required this.noiseSettingState,
     required this.noisePlayer,
-    required this.fetchClockStatus,
+    required this.clockCubit,
   });
 
   void start() {
     playWhiteNoiseIfEnabled();
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      ClockStatus clockStatus = fetchClockStatus();
-      if (!clockStatus.isRunning) return;
+      ClockState clockState = clockCubit.state;
+      if (!clockState.isRunning) return;
       RelativeTimeType currentRelativeTime =
-          clockStatus.currentBreakpoint.announcement.time.type;
+          clockState.currentBreakpoint.announcement.time.type;
       noiseSettingState.noiseLevels.forEach((id, level) {
         double levelMultiple = 1;
         int delay = 0;
@@ -37,8 +36,8 @@ class NoiseGenerator {
           if (currentRelativeTime == RelativeTimeType.beforeStart) {
             levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
           } else if (currentRelativeTime == RelativeTimeType.afterStart) {
-            int afterStart = clockStatus.currentTime
-                .difference(clockStatus.currentBreakpoint.time)
+            int afterStart = clockState.currentTime
+                .difference(clockState.currentBreakpoint.time)
                 .inSeconds;
             if (afterStart <= 2) {
               delay = 1000;
@@ -48,11 +47,11 @@ class NoiseGenerator {
               levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
             }
           } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
-            int beforeFinish = clockStatus.currentTime
-                .difference(clockStatus.currentBreakpoint.time)
+            int beforeFinish = clockState.currentTime
+                .difference(clockState.currentBreakpoint.time)
                 .inMinutes;
-            if (clockStatus.exam.subject == Subject.investigation ||
-                clockStatus.exam.subject == Subject.investigation2) {
+            if (clockState.currentExam.subject == Subject.investigation ||
+                clockState.currentExam.subject == Subject.investigation2) {
               beforeFinish = 5 - beforeFinish;
             } else {
               beforeFinish = 10 - beforeFinish;
@@ -89,18 +88,4 @@ class NoiseGenerator {
   bool _calculateProbability(double level) {
     return level * _probabilityMultiple > _random.nextDouble();
   }
-}
-
-class ClockStatus {
-  final Exam exam;
-  final Breakpoint currentBreakpoint;
-  final DateTime currentTime;
-  final bool isRunning;
-
-  const ClockStatus({
-    required this.exam,
-    required this.currentBreakpoint,
-    required this.currentTime,
-    required this.isRunning,
-  });
 }

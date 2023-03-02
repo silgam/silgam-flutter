@@ -267,7 +267,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
     await Navigator.pushNamed(
       context,
       ClockPage.routeName,
-      arguments: ClockPageArguments(exam),
+      arguments: ClockPageArguments([exam]),
     );
     if (mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
