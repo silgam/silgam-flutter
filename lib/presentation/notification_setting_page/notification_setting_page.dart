@@ -46,16 +46,8 @@ class NotificationSettingPage extends StatelessWidget {
     BuildContext context,
     bool value,
   ) async {
-    final previousValue =
-        context.read<AppCubit>().state.me?.isMarketingInfoReceivingConsented;
-    final result = await showMarketingInfoReceivingConsentDialog(
-      context,
-      isDismissible: true,
-    );
-    final isChanged = result != previousValue;
-    if (result != null && isChanged) {
-      EasyLoading.show();
-    }
+    EasyLoading.show();
+    await changeMarketingInfoReceivingConsentStatus(context, value);
   }
 
   Widget _buildSwitchTile({

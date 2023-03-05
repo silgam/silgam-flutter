@@ -92,6 +92,8 @@ class UserRepository {
     try {
       await _usersRef.doc(userId).update({
         'isMarketingInfoReceivingConsented': isConsent,
+        'marketingInfoReceivingConsentUpdatedAt':
+            DateTime.now().toUtc().toIso8601String(),
       });
       return Result.success(unit);
     } catch (e) {

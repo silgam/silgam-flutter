@@ -64,11 +64,11 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
   );
 }
 
-Future<bool?> showMarketingInfoReceivingConsentDialog(
+Future<void> showMarketingInfoReceivingConsentDialog(
   BuildContext context, {
   bool isDismissible = false,
 }) async {
-  return await showModalBottomSheet(
+  await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     isDismissible: isDismissible,
@@ -140,16 +140,9 @@ Future<bool?> showMarketingInfoReceivingConsentDialog(
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () async {
-                      Navigator.pop(context, false);
-                      await _onMarketingConsentDialogClosed(false);
-                      final dateString =
-                          DateFormat('yyyy년 M월 d일').format(DateTime.now());
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          '실감의 광고성 정보 수신을 거부하셨습니다. ($dateString)',
-                        ),
-                      ));
+                      Navigator.pop(context);
+                      await changeMarketingInfoReceivingConsentStatus(
+                          context, false);
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.grey.shade600,
@@ -172,16 +165,9 @@ Future<bool?> showMarketingInfoReceivingConsentDialog(
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () async {
-                      Navigator.pop(context, true);
-                      await _onMarketingConsentDialogClosed(true);
-                      final dateString =
-                          DateFormat('yyyy년 M월 d일').format(DateTime.now());
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          '실감의 광고성 정보 수신에 동의하셨습니다 😀 ($dateString)',
-                        ),
-                      ));
+                      Navigator.pop(context);
+                      await changeMarketingInfoReceivingConsentStatus(
+                          context, true);
                     },
                     style: OutlinedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
@@ -211,7 +197,10 @@ Future<bool?> showMarketingInfoReceivingConsentDialog(
   );
 }
 
-Future<void> _onMarketingConsentDialogClosed(bool isConsent) async {
+Future<void> changeMarketingInfoReceivingConsentStatus(
+  BuildContext context,
+  bool isConsent,
+) async {
   final appCubit = getIt.get<AppCubit>();
   final userRepository = getIt.get<UserRepository>();
   final me = appCubit.state.me;
@@ -222,6 +211,16 @@ Future<void> _onMarketingConsentDialogClosed(bool isConsent) async {
     isConsent: isConsent,
   );
   await appCubit.onUserChange();
+
+  final dateString = DateFormat('yyyy년 M월 d일').format(DateTime.now());
+  // ignore: use_build_context_synchronously
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      isConsent
+          ? '실감의 광고성 정보 수신에 동의하셨습니다 😀 ($dateString)'
+          : '실감의 광고성 정보 수신을 거부하셨습니다. ($dateString)',
+    ),
+  ));
 }
 
 void showSendFeedbackDialog(BuildContext context) {
