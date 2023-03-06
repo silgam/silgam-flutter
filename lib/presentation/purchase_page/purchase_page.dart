@@ -7,6 +7,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../model/product.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/custom_menu_bar.dart';
@@ -82,76 +83,88 @@ class _PurchasePageState extends State<PurchasePage> {
             },
           ),
         ],
-        child: Scaffold(
-          body: SafeArea(
-            bottom: false,
-            child: BlocBuilder<PurchaseCubit, PurchaseState>(
-              builder: (context, state) {
-                return Column(
-                  children: [
-                    CustomMenuBar(
-                      title: widget.product.name,
-                    ),
-                    Expanded(
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Container(
-                            color: backgroundColor,
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                              color: widget.product.isPageBackgroundDark
-                                  ? Colors.white
-                                  : Theme.of(context).primaryColor,
+        child: AnnotatedRegion(
+          value: defaultSystemUiOverlayStyle.copyWith(
+            statusBarColor: backgroundColor,
+            statusBarBrightness: widget.product.isPageBackgroundDark
+                ? Brightness.light
+                : Brightness.dark,
+            statusBarIconBrightness: widget.product.isPageBackgroundDark
+                ? Brightness.light
+                : Brightness.dark,
+          ),
+          child: Scaffold(
+            backgroundColor: backgroundColor,
+            body: SafeArea(
+              child: BlocBuilder<PurchaseCubit, PurchaseState>(
+                builder: (context, state) {
+                  return Column(
+                    children: [
+                      CustomMenuBar(
+                        title: widget.product.name,
+                        lightText: widget.product.isPageBackgroundDark,
+                      ),
+                      Expanded(
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Container(
+                              color: backgroundColor,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: widget.product.isPageBackgroundDark
+                                    ? Colors.white
+                                    : Theme.of(context).primaryColor,
+                              ),
                             ),
-                          ),
-                          AnimatedOpacity(
-                            opacity: state.isWebviewLoading ? 0 : 1,
-                            curve: const _DelayedCurve(0.3, Curves.easeInOut),
-                            duration: const Duration(milliseconds: 500),
-                            child:
-                                WebViewWidget(controller: _webViewController),
-                          ),
-                          AnimatedOpacity(
-                            opacity: state.isWebviewLoading ||
-                                    state.isPurchaseSectionShown
-                                ? 0
-                                : 1,
-                            curve: const _DelayedCurve(0.3, Curves.easeInOut),
-                            duration: const Duration(milliseconds: 300),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                color: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                child: Material(
-                                  color: Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: InkWell(
-                                    onTap: () {
-                                      _webViewController.runJavaScript(
-                                          'scrollToPurchaseSection()');
-                                    },
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.grey.withAlpha(60),
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 14,
-                                      ),
-                                      child: const Text(
-                                        '구매하기 / 체험하기',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          fontSize: 16,
+                            AnimatedOpacity(
+                              opacity: state.isWebviewLoading ? 0 : 1,
+                              curve: const _DelayedCurve(0.3, Curves.easeInOut),
+                              duration: const Duration(milliseconds: 500),
+                              child:
+                                  WebViewWidget(controller: _webViewController),
+                            ),
+                            AnimatedOpacity(
+                              opacity: state.isWebviewLoading ||
+                                      state.isPurchaseSectionShown
+                                  ? 0
+                                  : 1,
+                              curve: const _DelayedCurve(0.3, Curves.easeInOut),
+                              duration: const Duration(milliseconds: 300),
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  color: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: Material(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: InkWell(
+                                      onTap: () {
+                                        _webViewController.runJavaScript(
+                                            'scrollToPurchaseSection()');
+                                      },
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.grey.withAlpha(60),
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 14,
+                                        ),
+                                        child: const Text(
+                                          '구매하기 / 체험하기',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -159,13 +172,13 @@ class _PurchasePageState extends State<PurchasePage> {
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              },
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
