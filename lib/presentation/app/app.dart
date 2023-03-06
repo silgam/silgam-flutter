@@ -20,6 +20,7 @@ import '../purchase_page/purchase_page.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
 import '../save_image_page/save_image_page.dart';
+import '../timetable/timetable_page.dart';
 import 'cubit/app_cubit.dart';
 import 'cubit/iap_cubit.dart';
 
@@ -50,6 +51,7 @@ class SilgamApp extends StatelessWidget {
           MyPage.routeName: (_) => const MyPage(),
           NotificationSettingPage.routeName: (_) =>
               const NotificationSettingPage(),
+          TimetablePage.routeName: (_) => const TimetablePage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
@@ -170,4 +172,12 @@ const SystemUiOverlayStyle defaultSystemUiOverlayStyle = SystemUiOverlayStyle(
   statusBarBrightness: Brightness.light,
   systemNavigationBarIconBrightness: Brightness.dark,
   systemNavigationBarColor: Colors.white,
+);
+
+const SystemUiOverlayStyle darkSystemUiOverlayStyle = SystemUiOverlayStyle(
+  statusBarIconBrightness: Brightness.light,
+  statusBarBrightness: Brightness.dark,
+  statusBarColor: Colors.transparent,
+  systemNavigationBarIconBrightness: Brightness.light,
+  systemNavigationBarColor: Color(indigoPrimaryValue),
 );

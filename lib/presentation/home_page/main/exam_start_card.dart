@@ -225,7 +225,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
             ],
           ),
           child: InkWell(
-            onTap: () {},
+            onTap: _onAllSubjectExamStartTap,
             splashColor: Colors.transparent,
             highlightColor: Colors.grey.withAlpha(60),
             borderRadius: BorderRadius.circular(100),
@@ -272,6 +272,10 @@ class _ExamStartCardState extends State<_ExamStartCard>
     if (mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
     }
+  }
+
+  void _onAllSubjectExamStartTap() {
+    Navigator.pushNamed(context, TimetablePage.routeName);
   }
 
   @override
