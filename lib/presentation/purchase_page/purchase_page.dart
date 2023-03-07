@@ -87,8 +87,8 @@ class _PurchasePageState extends State<PurchasePage> {
           value: defaultSystemUiOverlayStyle.copyWith(
             statusBarColor: backgroundColor,
             statusBarBrightness: widget.product.isPageBackgroundDark
-                ? Brightness.light
-                : Brightness.dark,
+                ? Brightness.dark
+                : Brightness.light,
             statusBarIconBrightness: widget.product.isPageBackgroundDark
                 ? Brightness.light
                 : Brightness.dark,
@@ -96,6 +96,7 @@ class _PurchasePageState extends State<PurchasePage> {
           child: Scaffold(
             backgroundColor: backgroundColor,
             body: SafeArea(
+              bottom: false,
               child: BlocBuilder<PurchaseCubit, PurchaseState>(
                 builder: (context, state) {
                   return Column(
@@ -136,9 +137,12 @@ class _PurchasePageState extends State<PurchasePage> {
                                 alignment: Alignment.bottomCenter,
                                 child: Container(
                                   color: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
+                                  padding: EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                    top: 12,
+                                    bottom: 12 +
+                                        MediaQuery.of(context).padding.bottom,
                                   ),
                                   child: Material(
                                     color: Theme.of(context).primaryColor,
