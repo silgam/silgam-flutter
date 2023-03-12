@@ -270,6 +270,30 @@ void showSendFeedbackDialog(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    '실감팀의 답변이 필요하신 내용은 설정 > 카카오톡 채널로 문의하기 기능을 이용해주세요.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.5,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: textEditingController,
                   keyboardType: TextInputType.multiline,
