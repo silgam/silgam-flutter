@@ -14,7 +14,7 @@ class DDayRepository {
     _Test(
         testType: TestType.mockTest,
         title: '4월 학력평가',
-        date: DateTime(2023, 4, 12)),
+        date: DateTime(2023, 5, 10)),
     _Test(
         testType: TestType.mockTest,
         title: '6월 모의평가',
