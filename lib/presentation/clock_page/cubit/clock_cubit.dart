@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -25,15 +26,13 @@ const _announcementsAssetPath = 'assets/announcements';
 @injectable
 class ClockCubit extends Cubit<ClockState> {
   ClockCubit(
-    @factoryParam this._exam,
-    @factoryParam List<Breakpoint> breakpoints,
+    @factoryParam List<Exam> exams,
     this._appCubit,
     this._noiseSettingCubit,
   ) : super(ClockState(
-          breakpoints: breakpoints,
-          currentBreakpointIndex: 0,
-          currentTime: breakpoints[0].time,
+          currentTime: DateTime.now(),
           examStartedTime: DateTime.now(),
+          exams: exams,
         )) {
     _initialize();
   }
@@ -41,12 +40,20 @@ class ClockCubit extends Cubit<ClockState> {
   final AppCubit _appCubit;
   final NoiseSettingCubit _noiseSettingCubit;
 
-  final Exam _exam;
   final AudioPlayer _announcementPlayer = AudioPlayer();
   Timer? _timer;
   NoiseGenerator? _noiseGenerator;
 
   void _initialize() {
+    final breakpoints = state.exams
+        .map((e) => Breakpoint.createBreakpointsFromExam(e))
+        .flattened
+        .toList();
+    emit(state.copyWith(
+      breakpoints: breakpoints,
+      currentTime: breakpoints[0].time,
+    ));
+
     if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
 
     final nosieSettingState = _noiseSettingCubit.state;
@@ -57,12 +64,7 @@ class ClockCubit extends Cubit<ClockState> {
       _noiseGenerator = NoiseGenerator(
         noiseSettingState: nosieSettingState,
         noisePlayer: noisePlayer,
-        fetchClockStatus: () => ClockStatus(
-          exam: _exam,
-          currentBreakpoint: state.currentBreakpoint,
-          currentTime: state.currentTime,
-          isRunning: state.isRunning,
-        ),
+        clockCubit: this,
       );
     }
   }
@@ -85,7 +87,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Start exam',
       properties: {
-        'exam_name': _exam.examName,
+        'exam_name': state.exams.toExamNamesString(),
       },
     );
   }
@@ -104,7 +106,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Substract 30 seconds',
       properties: {
-        'exam_name': _exam.examName,
+        'exam_name': state.exams.toExamNamesString(),
         'current_time': state.currentTime.toString(),
       },
     );
@@ -118,16 +120,14 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Add 30 seconds',
       properties: {
-        'exam_name': _exam.examName,
+        'exam_name': state.exams.toExamNamesString(),
         'current_time': state.currentTime.toString(),
       },
     );
   }
 
   void onBreakpointTap(int index) {
-    emit(state.copyWith(currentBreakpointIndex: index));
-    _saveExamStartedTimeIfNeeded();
-    _moveBreakpoint();
+    _moveBreakpoint(index: index);
   }
 
   void onPausePlayButtonPressed() {
@@ -143,7 +143,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Play/Pause Button Pressed',
       properties: {
-        'exam_name': _exam.examName,
+        'exam_name': state.exams.toExamNamesString(),
         'current_time': state.currentTime.toString(),
         'running': state.isRunning,
       },
@@ -161,23 +161,31 @@ class ClockCubit extends Cubit<ClockState> {
 
   void _moveToNextBreakpoint() {
     if (state.isFinished) return;
-    emit(state.copyWith(
-      currentBreakpointIndex: state.currentBreakpointIndex + 1,
-    ));
-    _saveExamStartedTimeIfNeeded();
-    _moveBreakpoint();
+    _moveBreakpoint(index: state.currentBreakpointIndex + 1);
   }
 
   void _moveToPreviousBreakpoint({bool adjustTime = true}) {
     if (state.currentBreakpointIndex <= 0) return;
-    emit(state.copyWith(
-      currentBreakpointIndex: state.currentBreakpointIndex - 1,
-    ));
-    _saveExamStartedTimeIfNeeded();
-    _moveBreakpoint(adjustTime: adjustTime);
+    _moveBreakpoint(
+      index: state.currentBreakpointIndex - 1,
+      adjustTime: adjustTime,
+    );
   }
 
-  void _moveBreakpoint({bool adjustTime = true}) {
+  void _moveBreakpoint({required int index, bool adjustTime = true}) {
+    final nextExamIndex = state.breakpoints
+        .take(index + 1)
+        .where((breakpoint) =>
+            breakpoint.announcement.time ==
+            const RelativeTime.afterFinish(minutes: 0))
+        .length
+        .clamp(0, state.exams.length - 1);
+
+    emit(state.copyWith(
+      currentBreakpointIndex: index,
+      currentExamIndex: nextExamIndex,
+    ));
+    _saveExamStartedTimeIfNeeded();
     _announcementPlayer.pause();
     if (adjustTime) {
       emit(state.copyWith(currentTime: state.currentBreakpoint.time));

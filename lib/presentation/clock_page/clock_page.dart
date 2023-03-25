@@ -16,19 +16,17 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
-import 'breakpoint.dart';
 import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
-import 'ui_visibility.dart';
 import 'wrist_watch.dart';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
-  final Exam exam;
+  final List<Exam> exams;
 
   const ClockPage({
     Key? key,
-    required this.exam,
+    required this.exams,
   }) : super(key: key);
 
   @override
@@ -37,10 +35,7 @@ class ClockPage extends StatefulWidget {
 
 class _ClockPageState extends State<ClockPage> {
   final AppCubit _appCubit = getIt.get();
-  late final ClockCubit _cubit = getIt.get(
-    param1: widget.exam,
-    param2: Breakpoint.createBreakpointsFromExam(widget.exam),
-  );
+  late final ClockCubit _cubit = getIt.get(param1: widget.exams);
 
   final DateTime _pageStartedTime = DateTime.now();
 
@@ -102,8 +97,8 @@ class _ClockPageState extends State<ClockPage> {
                           ),
                         ),
                       ),
-                      UiVisibility(
-                        uiVisible: state.isUiVisible,
+                      Visibility(
+                        visible: state.isUiVisible,
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 8),
                           child: IconButton(
@@ -114,8 +109,9 @@ class _ClockPageState extends State<ClockPage> {
                           ),
                         ),
                       ),
-                      UiVisibility(
-                        uiVisible: state.isUiVisible,
+                      Visibility(
+                        visible: state.isUiVisible,
+                        maintainState: true,
                         child: _buildBackgroundUi(),
                       ),
                       if (!state.isStarted) _buildScreenOverlay(),
@@ -136,7 +132,9 @@ class _ClockPageState extends State<ClockPage> {
     return Flex(
       direction: direction,
       children: [
-        Expanded(child: _buildExamTitle()),
+        Expanded(
+          child: _buildExamTitle(_cubit.state.currentExam),
+        ),
         const WristWatchContainer(),
         Expanded(
           child: Flex(
@@ -152,10 +150,10 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildExamTitle() {
+  Widget _buildExamTitle(Exam exam) {
     final children = <Widget>[];
 
-    if (widget.exam.examNumber != null) {
+    if (exam.examNumber != null) {
       children.add(Container(
         margin: const EdgeInsets.only(bottom: 4),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -164,7 +162,7 @@ class _ClockPageState extends State<ClockPage> {
           border: Border.all(color: Colors.white),
         ),
         child: Text(
-          '${widget.exam.examNumber}교시',
+          '${exam.examNumber}교시',
           style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -176,7 +174,7 @@ class _ClockPageState extends State<ClockPage> {
     }
 
     children.add(Text(
-      widget.exam.examName,
+      exam.examName,
       style: const TextStyle(
         color: Colors.white,
         fontSize: 28,
@@ -400,7 +398,7 @@ class _ClockPageState extends State<ClockPage> {
     }
 
     final arguments = EditRecordPageArguments(
-      inputExam: widget.exam,
+      inputExam: widget.exams[0],
       examStartedTime: _cubit.state.examStartedTime,
     );
     Navigator.pop(context);
@@ -419,7 +417,7 @@ class _ClockPageState extends State<ClockPage> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
       properties: {
-        'exam_name': widget.exam.examName,
+        'exam_name': widget.exams.toExamNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
       },
     );
@@ -488,7 +486,7 @@ class _ClockPageState extends State<ClockPage> {
 }
 
 class ClockPageArguments {
-  final Exam exam;
+  final List<Exam> exams;
 
-  ClockPageArguments(this.exam);
+  ClockPageArguments(this.exams);
 }

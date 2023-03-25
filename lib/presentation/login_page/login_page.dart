@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:silgam/presentation/app/app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/analytics_manager.dart';
@@ -33,13 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocProvider(
       create: (_) => getIt.get<LoginCubit>(),
       child: AnnotatedRegion(
-        value: SystemUiOverlayStyle(
-          statusBarIconBrightness: Brightness.light,
-          statusBarBrightness: Brightness.dark,
-          statusBarColor: Colors.transparent,
-          systemNavigationBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Theme.of(context).primaryColor,
-        ),
+        value: darkSystemUiOverlayStyle,
         child: Scaffold(
           body: BlocListener<AppCubit, AppState>(
             listenWhen: (previous, current) => previous.me != current.me,

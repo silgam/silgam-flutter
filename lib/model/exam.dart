@@ -45,3 +45,9 @@ class Exam with _$Exam {
     return '$startHour$startMinute~ $endHour$endMinute';
   }
 }
+
+extension ExamListExtension on List<Exam> {
+  String toExamNamesString() {
+    return map((e) => e.examName).join(', ');
+  }
+}

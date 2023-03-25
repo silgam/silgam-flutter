@@ -11,23 +11,12 @@ class _ExamStartCard extends StatefulWidget {
 
 class _ExamStartCardState extends State<_ExamStartCard>
     with TickerProviderStateMixin {
-  late final TabController _subjectController;
-  Exam _selectedExam = defaultExams[0];
-
-  @override
-  void initState() {
-    super.initState();
-    _subjectController =
-        TabController(length: defaultExams.length, vsync: this);
-    _subjectController.addListener(() {
-      final index = _subjectController.index;
-      Exam exam = defaultExams[index];
-      if (_selectedExam != exam) {
-        _selectedExam = exam;
-        setState(() {});
-      }
-    });
-  }
+  late final TabController _subjectController = TabController(
+    length: defaultExams.length + 1,
+    initialIndex: 1,
+    vsync: this,
+  )..addListener(_onTapSelected);
+  Exam? _selectedExam = defaultExams[0];
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +45,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                   unselectedLabelStyle:
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
+                    const Tab(text: '전과목'),
                     for (Exam exam in defaultExams) Tab(text: exam.examName),
                   ],
                 ),
@@ -63,74 +53,78 @@ class _ExamStartCardState extends State<_ExamStartCard>
             ),
           ),
           const SizedBox(height: 32),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(width: 32),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInfo(
-                      iconData: Icons.schedule,
-                      title: '시험 시간',
-                      content: _selectedExam.getExamTimeString(),
-                      badgeText: '${_selectedExam.examDuration}분',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInfo(
-                      iconData: Icons.text_snippet_outlined,
-                      title: '문제 수 / 만점',
-                      content:
-                          '${_selectedExam.numberOfQuestions}문제 / ${_selectedExam.perfectScore}점',
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 20),
-              Ink(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF1E2A7C),
-                      Color(0xFF283593),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(16),
-                      offset: const Offset(0, 2),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: InkWell(
-                  onTap: _onExamStartTap,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.grey.withAlpha(60),
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: const Text(
-                      '시험시작',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 32),
-            ],
-          ),
+          if (_selectedExam != null) _buildExamLayout(_selectedExam!),
+          if (_selectedExam == null) _buildAllSubjectExamLayout(),
           const SizedBox(height: 32),
         ],
       ),
+    );
+  }
+
+  Widget _buildExamLayout(Exam exam) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(width: 32),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfo(
+                iconData: Icons.schedule,
+                title: '시험 시간',
+                content: exam.getExamTimeString(),
+                badgeText: '${exam.examDuration}분',
+              ),
+              const SizedBox(height: 16),
+              _buildInfo(
+                iconData: Icons.text_snippet_outlined,
+                title: '문제 수 / 만점',
+                content: '${exam.numberOfQuestions}문제 / ${exam.perfectScore}점',
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Ink(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF1E2A7C),
+                Color(0xFF283593),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(16),
+                offset: const Offset(0, 2),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: InkWell(
+            onTap: () => _onExamStartTap(exam),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.grey.withAlpha(60),
+            borderRadius: BorderRadius.circular(100),
+            child: Container(
+              alignment: Alignment.center,
+              child: const Text(
+                '시험시작',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 32),
+      ],
     );
   }
 
@@ -199,15 +193,89 @@ class _ExamStartCardState extends State<_ExamStartCard>
     );
   }
 
-  void _onExamStartTap() async {
+  Widget _buildAllSubjectExamLayout() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(width: 32),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Ink(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF1E2A7C),
+                Color(0xFF283593),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(16),
+                offset: const Offset(0, 2),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: InkWell(
+            onTap: _onAllSubjectExamStartTap,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.grey.withAlpha(60),
+            borderRadius: BorderRadius.circular(100),
+            child: Container(
+              alignment: Alignment.center,
+              child: const Text(
+                '시험시작',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 32),
+      ],
+    );
+  }
+
+  void _onTapSelected() async {
+    final index = _subjectController.index;
+    if (index == 0) {
+      setState(() {
+        _selectedExam = null;
+      });
+    } else {
+      Exam exam = defaultExams[index - 1];
+      if (_selectedExam != exam) {
+        setState(() {
+          _selectedExam = exam;
+        });
+      }
+    }
+  }
+
+  void _onExamStartTap(Exam exam) async {
     await Navigator.pushNamed(
       context,
       ClockPage.routeName,
-      arguments: ClockPageArguments(_selectedExam),
+      arguments: ClockPageArguments([exam]),
     );
     if (mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
     }
+  }
+
+  void _onAllSubjectExamStartTap() {
+    Navigator.pushNamed(context, TimetablePage.routeName);
   }
 
   @override
