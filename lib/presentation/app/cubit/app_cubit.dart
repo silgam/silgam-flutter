@@ -11,6 +11,7 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/product.dart';
+import '../../../model/subject.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
 import '../../../util/analytics_manager.dart';

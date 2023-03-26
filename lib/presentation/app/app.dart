@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import '../../model/subject.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../clock_page/clock_page.dart';
@@ -41,103 +42,111 @@ class SilgamApp extends StatelessWidget {
           value: getIt.get<IapCubit>(),
         ),
       ],
-      child: MaterialApp(
-        title: '실감',
-        initialRoute: HomePage.routeName,
-        routes: {
-          HomePage.routeName: (_) => const HomePage(),
-          LoginPage.routeName: (_) => const LoginPage(),
-          NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
-          MyPage.routeName: (_) => const MyPage(),
-          NotificationSettingPage.routeName: (_) =>
-              const NotificationSettingPage(),
-          TimetablePage.routeName: (_) => const TimetablePage(),
-        },
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
-            case ClockPage.routeName:
-              final args = settings.arguments as ClockPageArguments;
-              return MaterialPageRoute(
-                builder: (_) => ClockPage(exams: args.exams),
-                settings: settings,
-              );
-            case EditRecordPage.routeName:
-              final args = settings.arguments as EditRecordPageArguments;
-              return MaterialPageRoute(
-                builder: (_) => EditRecordPage(arguments: args),
-                settings: settings,
-              );
-            case RecordDetailPage.routeName:
-              final args = settings.arguments as RecordDetailPageArguments;
-              return PageRouteBuilder(
-                pageBuilder: (_, __, ___) => RecordDetailPage(arguments: args),
-                transitionsBuilder:
-                    (_, Animation<double> animation, __, Widget child) =>
-                        FadeTransition(opacity: animation, child: child),
-                settings: settings,
-              );
-            case ReviewProblemDetailPage.routeName:
-              final args =
-                  settings.arguments as ReviewProblemDetailPageArguments;
-              return MaterialPageRoute(
-                builder: (_) =>
-                    ReviewProblemDetailPage(reviewProblem: args.problem),
-                settings: settings,
-              );
-            case SaveImagePage.routeName:
-              final args = settings.arguments as SaveImagePageArguments;
-              return MaterialPageRoute(
-                builder: (_) => SaveImagePage(examRecord: args.recordToSave),
-                settings: settings,
-              );
-            case PurchasePage.routeName:
-              final args = settings.arguments as PurchasePageArguments;
-              return MaterialPageRoute(
-                builder: (_) => PurchasePage(
-                  product: args.product,
+      child: BlocSelector<AppCubit, AppState, Map<Subject, String>>(
+        selector: (state) => state.customSubjectNameMap,
+        builder: (context, customSubjectNameMap) {
+          Subject.subjectNameMap = customSubjectNameMap;
+          return MaterialApp(
+            title: '실감',
+            initialRoute: HomePage.routeName,
+            routes: {
+              HomePage.routeName: (_) => const HomePage(),
+              LoginPage.routeName: (_) => const LoginPage(),
+              NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
+              MyPage.routeName: (_) => const MyPage(),
+              NotificationSettingPage.routeName: (_) =>
+                  const NotificationSettingPage(),
+              TimetablePage.routeName: (_) => const TimetablePage(),
+            },
+            onGenerateRoute: (settings) {
+              switch (settings.name) {
+                case ClockPage.routeName:
+                  final args = settings.arguments as ClockPageArguments;
+                  return MaterialPageRoute(
+                    builder: (_) => ClockPage(exams: args.exams),
+                    settings: settings,
+                  );
+                case EditRecordPage.routeName:
+                  final args = settings.arguments as EditRecordPageArguments;
+                  return MaterialPageRoute(
+                    builder: (_) => EditRecordPage(arguments: args),
+                    settings: settings,
+                  );
+                case RecordDetailPage.routeName:
+                  final args = settings.arguments as RecordDetailPageArguments;
+                  return PageRouteBuilder(
+                    pageBuilder: (_, __, ___) =>
+                        RecordDetailPage(arguments: args),
+                    transitionsBuilder:
+                        (_, Animation<double> animation, __, Widget child) =>
+                            FadeTransition(opacity: animation, child: child),
+                    settings: settings,
+                  );
+                case ReviewProblemDetailPage.routeName:
+                  final args =
+                      settings.arguments as ReviewProblemDetailPageArguments;
+                  return MaterialPageRoute(
+                    builder: (_) =>
+                        ReviewProblemDetailPage(reviewProblem: args.problem),
+                    settings: settings,
+                  );
+                case SaveImagePage.routeName:
+                  final args = settings.arguments as SaveImagePageArguments;
+                  return MaterialPageRoute(
+                    builder: (_) =>
+                        SaveImagePage(examRecord: args.recordToSave),
+                    settings: settings,
+                  );
+                case PurchasePage.routeName:
+                  final args = settings.arguments as PurchasePageArguments;
+                  return MaterialPageRoute(
+                    builder: (_) => PurchasePage(
+                      product: args.product,
+                    ),
+                    settings: settings,
+                  );
+              }
+              return null;
+            },
+            theme: ThemeData(
+              primarySwatch: indigoSwatch,
+              fontFamily: 'NanumSquare',
+              sliderTheme: SliderTheme.of(context).copyWith(
+                trackHeight: 3,
+                trackShape: const RectangularSliderTrackShape(),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                overlayColor: Colors.transparent,
+                thumbShape: SliderComponentShape.noThumb,
+                showValueIndicator: ShowValueIndicator.always,
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  textStyle: const TextStyle(
+                    fontFamily: 'NanumSquare',
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                settings: settings,
-              );
-          }
-          return null;
+              ),
+              outlinedButtonTheme: OutlinedButtonThemeData(
+                style: OutlinedButton.styleFrom(
+                  textStyle: const TextStyle(
+                    fontFamily: 'NanumSquare',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            scrollBehavior: const MaterialScrollBehavior().copyWith(
+              physics: const BouncingScrollPhysics(),
+            ),
+            debugShowCheckedModeBanner: false,
+            navigatorObservers: [
+              FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+              AnalyticsRouteObserver(),
+            ],
+            builder: EasyLoading.init(),
+          );
         },
-        theme: ThemeData(
-          primarySwatch: indigoSwatch,
-          fontFamily: 'NanumSquare',
-          sliderTheme: SliderTheme.of(context).copyWith(
-            trackHeight: 3,
-            trackShape: const RectangularSliderTrackShape(),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-            overlayColor: Colors.transparent,
-            thumbShape: SliderComponentShape.noThumb,
-            showValueIndicator: ShowValueIndicator.always,
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              textStyle: const TextStyle(
-                fontFamily: 'NanumSquare',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-              textStyle: const TextStyle(
-                fontFamily: 'NanumSquare',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-        scrollBehavior: const MaterialScrollBehavior().copyWith(
-          physics: const BouncingScrollPhysics(),
-        ),
-        debugShowCheckedModeBanner: false,
-        navigatorObservers: [
-          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-          AnalyticsRouteObserver(),
-        ],
-        builder: EasyLoading.init(),
       ),
     );
   }

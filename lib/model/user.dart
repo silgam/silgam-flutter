@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'product.dart';
+import 'subject.dart';
 
 part 'user.freezed.dart';
 part 'user.g.dart';
@@ -19,6 +20,7 @@ class User with _$User {
     @Default([]) List<String> fcmTokens,
     @Default([]) List<Receipt> receipts,
     bool? isMarketingInfoReceivingConsented,
+    Map<Subject, String>? customSubjectNameMap,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
