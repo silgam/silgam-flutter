@@ -11,6 +11,7 @@ import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../clock_page/clock_page.dart';
 import '../common/progress_overlay.dart';
+import '../customize_subject_name_page/customize_subject_name_page.dart';
 import '../edit_record_page/edit_record_page.dart';
 import '../home_page/home_page.dart';
 import '../login_page/login_page.dart';
@@ -57,6 +58,8 @@ class SilgamApp extends StatelessWidget {
               NotificationSettingPage.routeName: (_) =>
                   const NotificationSettingPage(),
               TimetablePage.routeName: (_) => const TimetablePage(),
+              CustomizeSubjectNamePage.routeName: (_) =>
+                  const CustomizeSubjectNamePage(),
             },
             onGenerateRoute: (settings) {
               switch (settings.name) {

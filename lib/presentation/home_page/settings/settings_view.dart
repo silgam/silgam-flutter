@@ -21,6 +21,7 @@ import '../../common/login_button.dart';
 import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/subtitle.dart';
+import '../../customize_subject_name_page/customize_subject_name_page.dart';
 import '../../login_page/login_page.dart';
 import '../../my_page/my_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
@@ -84,6 +85,13 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
+      SettingTile(
+        onTap: _onCustomizeSubjectNameButtonTap,
+        title: '과목 이름 설정',
+        description: '탐구과목 등 과목의 이름을 직접 설정할 수 있어요.',
+        showArrow: true,
+      ),
+      const SettingDivider(),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',
@@ -416,6 +424,10 @@ class _SettingsViewState extends State<SettingsView> {
 
   void _onNoiseSettingButtonTap() {
     Navigator.pushNamed(context, NoiseSettingPage.routeName);
+  }
+
+  void _onCustomizeSubjectNameButtonTap() {
+    Navigator.pushNamed(context, CustomizeSubjectNamePage.routeName);
   }
 
   void _onNotificationSettingButtonTap() {
