@@ -20,6 +20,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
 
   @override
   Widget build(BuildContext context) {
+    _onTapSelected(); // 과목명 변경됐을 때 현재 탭에 적용
     Color disabledColor = Theme.of(context).primaryColor.withAlpha(80);
     TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
     return CustomCard(

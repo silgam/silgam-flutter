@@ -59,7 +59,7 @@ class SilgamApp extends StatelessWidget {
                   const NotificationSettingPage(),
               TimetablePage.routeName: (_) => const TimetablePage(),
               CustomizeSubjectNamePage.routeName: (_) =>
-                  const CustomizeSubjectNamePage(),
+                  CustomizeSubjectNamePage(),
             },
             onGenerateRoute: (settings) {
               switch (settings.name) {

@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../model/subject.dart';
 import '../../model/user.dart';
 import '../../util/api_failure.dart';
 import 'user_api.dart';
@@ -98,6 +99,23 @@ class UserRepository {
       return Result.success(unit);
     } catch (e) {
       log('updateMarketingConsent() failed: $e', name: 'UserRepository');
+      return Result.error(ApiFailure.from(FailureBody.unknown()));
+    }
+  }
+
+  Future<Result<Unit, ApiFailure>> updateCustomSubjectNameMap({
+    required String userId,
+    required Map<Subject, String> subjectNameMap,
+  }) async {
+    try {
+      await _usersRef.doc(userId).update({
+        'customSubjectNameMap': subjectNameMap.map(
+          (key, value) => MapEntry(key.name, value),
+        )
+      });
+      return Result.success(unit);
+    } catch (e) {
+      log('updateCustomSubjectNameMap() failed: $e', name: 'UserRepository');
       return Result.error(ApiFailure.from(FailureBody.unknown()));
     }
   }
