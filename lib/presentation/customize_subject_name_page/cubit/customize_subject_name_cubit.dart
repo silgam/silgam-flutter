@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:silgam/util/analytics_manager.dart';
 
 import '../../../model/subject.dart';
 import '../../../repository/user/user_repository.dart';
@@ -41,6 +42,17 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
     await _appCubit.onUserChange();
     emit(state.copyWith(isSaved: true));
     EasyLoading.dismiss();
+
+    AnalyticsManager.logEvent(
+      name: '[CustomizeSubjectNamePage] Subject Name Saved',
+      properties: {
+        'subjectNameMap': subjectNameMap.toString(),
+      },
+    );
+    AnalyticsManager.setPeopleProperty(
+      'Customized Subject Names',
+      subjectNameMap.toString(),
+    );
   }
 
   void _initialize() {
