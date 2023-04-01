@@ -12,9 +12,8 @@ import '../../../model/subject.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
-import '../../app/cubit/iap_cubit.dart';
 import '../../common/custom_card.dart';
-import '../../common/purchase_button.dart';
+import '../../common/free_user_block_overlay.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/subject_filter_chip.dart';
 import '../cubit/home_cubit.dart';
@@ -144,40 +143,9 @@ class _StatViewState extends State<StatView> {
                       ],
                     ),
                     if (!appState.productBenefit.isStatisticAvailable)
-                      Container(
-                        color: Colors.white.withOpacity(0.65),
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            BlocBuilder<IapCubit, IapState>(
-                              builder: (context, iapState) {
-                                final product =
-                                    iapState.activeProducts.firstOrNull;
-                                if (product == null) {
-                                  return const SizedBox.shrink();
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 20),
-                                  child: PurchaseButton(
-                                    product: iapState.activeProducts.first,
-                                    expand: false,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      )
+                      const FreeUserBlockOverlay(
+                        text: '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.',
+                      ),
                   ],
                 );
               },
