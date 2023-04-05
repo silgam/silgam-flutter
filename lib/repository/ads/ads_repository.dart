@@ -19,10 +19,11 @@ class AdsRepository {
     try {
       final versionNumber = await _getVersionNumber();
       var ads = await _adsApi.getAllAds();
-      ads
+      ads = ads
           .where((ad) =>
               ad.minVersionNumber <= versionNumber &&
-              ad.expiryDate.isAfter(DateTime.now()))
+              ad.expiryDate.isAfter(DateTime.now()) &&
+              ad.startDate.isBefore(DateTime.now()))
           .toList()
         ..shuffle()
         ..sort((a, b) => a.priority - b.priority);
