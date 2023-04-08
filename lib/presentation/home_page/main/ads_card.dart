@@ -73,7 +73,7 @@ class _AdsCardState extends State<AdsCard> {
 
     String? intent = ads.intent;
     if (intent != null) {
-      if (intent.contains('openPurchasePage')) {
+      if (intent.contains(BannerIntent.openPurchasePage)) {
         final productId = intent.split('&')[1];
         final product = getIt
             .get<IapCubit>()

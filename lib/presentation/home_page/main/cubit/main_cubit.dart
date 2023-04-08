@@ -10,18 +10,25 @@ import '../../../../model/ads.dart';
 import '../../../../repository/ads/ads_repository.dart';
 import '../../../../repository/dday_repository.dart';
 import '../../../../util/const.dart';
+import '../../../app/cubit/app_cubit.dart';
 
 part 'main_cubit.freezed.dart';
 part 'main_state.dart';
 
 @lazySingleton
 class MainCubit extends Cubit<MainState> {
-  MainCubit(this._adsRepository, this._dDayRepository, this._sharedPreferences)
-      : super(const MainState());
+  MainCubit(
+    this._adsRepository,
+    this._dDayRepository,
+    this._sharedPreferences,
+    this._appCubit,
+  ) : super(const MainState());
 
   final AdsRepository _adsRepository;
   final DDayRepository _dDayRepository;
   final SharedPreferences _sharedPreferences;
+
+  final AppCubit _appCubit;
 
   void initialize() {
     _updateAds();
@@ -43,7 +50,13 @@ class MainCubit extends Cubit<MainState> {
 
   Future<void> _updateAds() async {
     final getAdsResult = await _adsRepository.getAllAds();
-    final ads = getAdsResult.tryGetSuccess();
+    final ads = getAdsResult.tryGetSuccess()?.where((element) {
+      if (element.intent?.contains(BannerIntent.openPurchasePage) == true &&
+          _appCubit.state.me?.isPurchasedUser == true) {
+        return false;
+      }
+      return true;
+    }).toList();
 
     if (ads == null) {
       await _sharedPreferences.remove(PreferenceKey.cacheAds);

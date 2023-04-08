@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../util/const.dart';
 import 'product.dart';
 import 'subject.dart';
 
@@ -26,7 +27,10 @@ class User with _$User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   bool get isProductTrial =>
-      activeProduct.id != 'free' && receipts.last.store == 'trial';
+      activeProduct.id != ProductId.free && receipts.last.store == 'trial';
+
+  bool get isPurchasedUser =>
+      activeProduct.id != ProductId.free && !isProductTrial;
 }
 
 @freezed
