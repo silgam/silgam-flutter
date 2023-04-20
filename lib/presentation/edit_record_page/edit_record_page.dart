@@ -132,14 +132,17 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        body: SafeArea(
-          child: ProgressOverlay(
-            isProgressing: _isSaving,
-            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-            child: _buildBody(),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          body: SafeArea(
+            child: ProgressOverlay(
+              isProgressing: _isSaving,
+              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+              child: _buildBody(),
+            ),
           ),
         ),
       ),
@@ -742,6 +745,43 @@ class _EditRecordPageState extends State<EditRecordPage> {
         'input_exam_existed': widget.arguments.inputExam != null,
       },
     );
+  }
+
+  Future<bool> _onBackPressed() async {
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(name: 'finish_exam_dialog'),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            '아직 저장하지 않았어요!',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          content: const Text('저장하지 않고 나가시겠어요?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                '취소',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text('저장하지 않고 나가기'),
+            ),
+          ],
+        );
+      },
+    );
+    return false;
   }
 }
 
