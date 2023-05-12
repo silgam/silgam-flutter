@@ -20,8 +20,8 @@ enum Subject {
   ),
   @JsonValue('history')
   history(
-    firstColor: 0xFF7B4DB9,
-    secondColor: 0xFF633C97,
+    firstColor: 0xFF714925,
+    secondColor: 0xFFAE7036,
   ),
   @JsonValue('investigation')
   investigation(
@@ -30,8 +30,8 @@ enum Subject {
   ),
   @JsonValue('investigation2')
   investigation2(
-    firstColor: 0xFF7B4DB9,
-    secondColor: 0xFF633C97,
+    firstColor: 0xFF3331A3,
+    secondColor: 0xFF5552CE,
   ),
   @JsonValue('secondLanguage')
   secondLanguage(
