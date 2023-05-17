@@ -669,7 +669,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _onCancelPressed() {
-    Navigator.pop(context);
+    _onBackPressed();
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Cancel button tapped',
       properties: {
