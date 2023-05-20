@@ -77,3 +77,17 @@ class _DDaysCard extends StatelessWidget {
     );
   }
 }
+
+class DDayItem {
+  final String title;
+  final DateTime date;
+  final int remainingDays;
+  final double progress;
+
+  const DDayItem({
+    required this.title,
+    required this.date,
+    required this.remainingDays,
+    required this.progress,
+  });
+}

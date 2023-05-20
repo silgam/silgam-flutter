@@ -26,6 +26,7 @@ abstract class PreferenceKey {
   static const cacheMe = 'me';
   static const cacheProducts = 'products';
   static const cacheAds = 'ads';
+  static const cacheDDays = 'ddays';
 }
 
 abstract class BannerIntent {

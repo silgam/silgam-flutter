@@ -13,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
-import '../../../repository/dday_repository.dart';
 import '../../../repository/exam_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';

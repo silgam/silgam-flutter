@@ -7,10 +7,13 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../model/ads.dart';
+import '../../../../model/dday.dart';
 import '../../../../repository/ads/ads_repository.dart';
-import '../../../../repository/dday_repository.dart';
+import '../../../../repository/dday/dday_repository.dart';
 import '../../../../util/const.dart';
+import '../../../../util/dday_util.dart';
 import '../../../app/cubit/app_cubit.dart';
+import '../main_view.dart';
 
 part 'main_cubit.freezed.dart';
 part 'main_state.dart';
@@ -32,19 +35,23 @@ class MainCubit extends Cubit<MainState> {
 
   void initialize() {
     _updateAds();
-
-    final DateTime today = DateTime.now();
-    emit(state.copyWith(
-      dDayItems: _dDayRepository.getItemsToShow(today),
-    ));
+    _updateDDays();
 
     final cachedAds = _sharedPreferences.getString(PreferenceKey.cacheAds);
     if (cachedAds != null) {
       log('Set ads from cache: $cachedAds', name: 'MainCubit');
       final adsJson = jsonDecode(cachedAds) as List<dynamic>;
-      emit(state.copyWith(
-        ads: adsJson.map((e) => Ads.fromJson(e)).toList(),
-      ));
+      final ads = adsJson.map((e) => Ads.fromJson(e)).toList();
+      emit(state.copyWith(ads: ads));
+    }
+
+    final cachedDDays = _sharedPreferences.getString(PreferenceKey.cacheDDays);
+    if (cachedDDays != null) {
+      log('Set ddays from cache: $cachedDDays', name: 'MainCubit');
+      final dDaysJson = jsonDecode(cachedDDays) as List<dynamic>;
+      final dDays = dDaysJson.map((e) => DDay.fromJson(e)).toList();
+      final dDayItems = DDayUtil(dDays).getItemsToShow(DateTime.now());
+      emit(state.copyWith(dDayItems: dDayItems));
     }
   }
 
@@ -68,5 +75,23 @@ class MainCubit extends Cubit<MainState> {
     }
 
     emit(state.copyWith(ads: ads ?? []));
+  }
+
+  Future<void> _updateDDays() async {
+    final dDaysResult = await _dDayRepository.getAllDDays();
+    final dDays = dDaysResult.tryGetSuccess();
+
+    if (dDays == null) {
+      await _sharedPreferences.remove(PreferenceKey.cacheDDays);
+    } else {
+      await _sharedPreferences.setString(
+        PreferenceKey.cacheDDays,
+        jsonEncode(dDays),
+      );
+    }
+
+    final dDayItems = DDayUtil(dDays ?? []).getItemsToShow(DateTime.now());
+
+    emit(state.copyWith(dDayItems: dDayItems));
   }
 }
