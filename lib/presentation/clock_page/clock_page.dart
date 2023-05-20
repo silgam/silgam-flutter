@@ -109,11 +109,7 @@ class _ClockPageState extends State<ClockPage> {
                           ),
                         ),
                       ),
-                      Visibility(
-                        visible: state.isUiVisible,
-                        maintainState: true,
-                        child: _buildBackgroundUi(),
-                      ),
+                      _buildBackgroundUi(state.isUiVisible),
                       if (!state.isStarted) _buildScreenOverlay(),
                     ],
                   );
@@ -126,23 +122,65 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildBackgroundUi() {
+  Widget _buildBackgroundUi(bool isUiVisible) {
     Axis direction = Axis.vertical;
     if (_isSmallHeightScreen()) direction = Axis.horizontal;
     return Flex(
       direction: direction,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: _buildExamTitle(_cubit.state.currentExam),
+          child: Visibility(
+            visible: isUiVisible,
+            maintainState: true,
+            child: _buildExamTitle(_cubit.state.currentExam),
+          ),
         ),
         const WristWatchContainer(),
         Expanded(
           child: Flex(
             direction: direction,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildTimeline(),
-              _buildNavigator(),
+              Visibility(
+                visible: isUiVisible,
+                maintainState: true,
+                maintainSize: true,
+                maintainAnimation: true,
+                child: Flex(
+                  direction: direction,
+                  children: [
+                    _buildTimeline(),
+                    _buildNavigator(),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: direction == Axis.vertical ? 20 : 0,
+                  vertical: direction == Axis.vertical ? 0 : 20,
+                ),
+                child: OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.grey.shade700),
+                    shape: const StadiumBorder(),
+                    visualDensity: const VisualDensity(
+                      horizontal: VisualDensity.minimumDensity,
+                      vertical: VisualDensity.minimumDensity,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: direction == Axis.vertical ? 0 : 20,
+                      vertical: direction == Axis.vertical ? 32 : 0,
+                    ),
+                    foregroundColor: Colors.grey.shade700,
+                  ),
+                  child: Text(
+                    direction == Axis.vertical ? 'LAP' : 'L\nA\nP',
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -266,7 +304,7 @@ class _ClockPageState extends State<ClockPage> {
 
     return Flex(
       direction: direction,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           onPressed: _cubit.subtract30Seconds,
