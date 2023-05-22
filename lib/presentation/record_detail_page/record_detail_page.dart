@@ -114,7 +114,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           child: Row(
             children: [
               Container(
-                width: 0.7,
+                width: 2,
                 color: Color(_record.getGradeColor()),
               ),
               const SizedBox(width: 12),

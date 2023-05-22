@@ -40,7 +40,7 @@ class RecordTileState extends State<RecordTile> {
             child: Container(
               alignment: Alignment.centerRight,
               child: Container(
-                width: 1.5,
+                width: 2,
                 color: Color(widget.record.getGradeColor()),
               ),
             ),
