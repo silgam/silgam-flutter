@@ -12,8 +12,8 @@ class _ExamStartCard extends StatefulWidget {
 class _ExamStartCardState extends State<_ExamStartCard>
     with TickerProviderStateMixin {
   late final TabController _subjectController = TabController(
-    length: defaultExams.length,
-    initialIndex: 0,
+    length: defaultExams.length + 1,
+    initialIndex: 1,
     vsync: this,
   )..addListener(_onTapSelected);
   Exam? _selectedExam = defaultExams[0];
@@ -46,7 +46,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                   unselectedLabelStyle:
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
-                    // const Tab(text: '전과목'),
+                    const Tab(text: '전과목'),
                     for (Exam exam in defaultExams) Tab(text: exam.examName),
                   ],
                 ),
@@ -250,11 +250,17 @@ class _ExamStartCardState extends State<_ExamStartCard>
 
   void _onTapSelected() async {
     final index = _subjectController.index;
-    Exam exam = defaultExams[index];
-    if (_selectedExam != exam) {
+    if (index == 0) {
       setState(() {
-        _selectedExam = exam;
+        _selectedExam = null;
       });
+    } else {
+      Exam exam = defaultExams[index - 1];
+      if (_selectedExam != exam) {
+        setState(() {
+          _selectedExam = exam;
+        });
+      }
     }
   }
 
