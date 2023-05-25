@@ -33,8 +33,9 @@ abstract class RegisterModule {
           failureBody = FailureBody.unknown();
         }
 
-        e.error = ApiFailure(failureBody.message);
-        handler.next(e);
+        handler.next(e.copyWith(
+          error: ApiFailure(failureBody.message),
+        ));
       },
     ));
 }

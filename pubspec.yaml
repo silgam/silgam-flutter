@@ -33,8 +33,8 @@ dependencies:
   in_app_review: ^2.0.4
   url_launcher: ^6.0.20
   crypto: ^3.0.1
-  shared_preferences: ^2.0.13
-  kakao_flutter_sdk: ^1.1.1
+  shared_preferences: ^2.1.1
+  kakao_flutter_sdk: ^1.4.3
   http: ^0.13.4
   rich_text_controller: ^1.4.0
   screenshot: ^1.2.3
@@ -51,19 +51,19 @@ dependencies:
   fl_chart: ^0.55.2
   flutter_datetime_picker: ^1.5.1
   photo_view: ^0.14.0
-  dio: ^4.0.6
+  dio: ^5.1.2
   audio_session: ^0.1.10
   cached_network_image: ^3.2.2
   in_app_purchase: ^3.1.0
   injectable: ^2.1.0
   get_it: ^7.2.0
-  retrofit: ^3.3.1
-  pretty_dio_logger: ^1.2.0-beta-1
+  retrofit: ^4.0.1
+  pretty_dio_logger: ^1.3.1
   in_app_purchase_storekit: ^0.3.4+1
   flutter_easyloading: ^3.0.5
   multiple_result: ^4.0.0
   collection: ^1.16.0
-  webview_flutter: ^4.0.2
+  webview_flutter: ^4.2.0
   dotted_line: ^3.1.0
   flutter_heatmap_calendar:
     git:
@@ -80,7 +80,7 @@ dev_dependencies:
   json_serializable: ^6.1.5
   freezed: ^2.1.1
   injectable_generator: ^2.1.3
-  retrofit_generator: ^4.2.0
+  retrofit_generator: ^5.0.0+1
 
 flutter:
   uses-material-design: true
