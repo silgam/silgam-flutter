@@ -456,6 +456,8 @@ class _ClockPageState extends State<ClockPage> {
       name: '[ClockPage] Finish exam',
       properties: {
         'exam_name': widget.exams.toExamNamesString(),
+        'exam_names': widget.exams.map((e) => e.examName).toList(),
+        'subject_names': widget.exams.map((e) => e.subject.name).toList(),
         'is_exam_finished': _cubit.state.isFinished,
       },
     );

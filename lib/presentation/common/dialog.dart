@@ -141,8 +141,14 @@ Future<void> showMarketingInfoReceivingConsentDialog(
                   child: OutlinedButton(
                     onPressed: () async {
                       Navigator.pop(context);
+                      AnalyticsManager.logEvent(
+                        name:
+                            '[MarketingInfoReceivingConsentDialog] Close button tapped',
+                      );
                       await changeMarketingInfoReceivingConsentStatus(
-                          context, false);
+                        context,
+                        false,
+                      );
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.grey.shade600,
@@ -166,8 +172,14 @@ Future<void> showMarketingInfoReceivingConsentDialog(
                   child: OutlinedButton(
                     onPressed: () async {
                       Navigator.pop(context);
+                      AnalyticsManager.logEvent(
+                        name:
+                            '[MarketingInfoReceivingConsentDialog] Receive button tapped',
+                      );
                       await changeMarketingInfoReceivingConsentStatus(
-                          context, true);
+                        context,
+                        true,
+                      );
                     },
                     style: OutlinedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,

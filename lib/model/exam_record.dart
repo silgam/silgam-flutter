@@ -34,9 +34,9 @@ class ExamRecord with _$ExamRecord {
   int getGradeColor() {
     switch (grade) {
       case 1:
-        return 0xFF7201E2;
+        return 0xFF7900D9;
       case 2:
-        return 0xFF1201E2;
+        return 0xFF1D82CC;
       case 3:
         return 0xFF04A80B;
       case 4:
