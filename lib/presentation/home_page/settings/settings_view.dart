@@ -98,13 +98,6 @@ class _SettingsViewState extends State<SettingsView> {
         description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있어요.',
         showArrow: true,
       ),
-      const SettingDivider(),
-      const SettingTile(
-        title: '시험 종료 후 바로 기록하기',
-        description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어가요.',
-        disabledDescription: '시험이 끝난 후에 기록 목록 화면으로 넘어가요.',
-        preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
-      ),
       const Subtitle(text: '기타', margin: EdgeInsets.zero),
       if (appState.isSignedIn)
         SettingTile(

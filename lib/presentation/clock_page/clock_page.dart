@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
@@ -427,7 +426,6 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    final SharedPreferences sharedPreferences = getIt.get();
     final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     final sincePageOpenedMinutes =
         DateTime.now().difference(_cubit.state.pageOpenedTime).inMinutes;
@@ -444,17 +442,11 @@ class _ClockPageState extends State<ClockPage> {
       ),
     );
     Navigator.pop(context);
-
-    const key = PreferenceKey.showAddRecordPageAfterExamFinished;
-    final showAddRecordPageAfterExamFinished =
-        sharedPreferences.getBool(key) ?? true;
-    if (showAddRecordPageAfterExamFinished && _appCubit.state.isSignedIn) {
-      Navigator.pushNamed(
-        context,
-        ExamOverviewPage.routeName,
-        arguments: arguments,
-      );
-    }
+    Navigator.pushNamed(
+      context,
+      ExamOverviewPage.routeName,
+      arguments: arguments,
+    );
 
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
