@@ -100,17 +100,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _initializeCreateMode() {
-    final examStartedTime = widget.arguments.examStartedTime;
-    if (examStartedTime != null) {
-      _examStartedTime = examStartedTime;
-    }
+    _examStartedTime = widget.arguments.examStartedTime ?? _examStartedTime;
+
+    final examFinishedTime =
+        widget.arguments.examFinishedTime ?? DateTime.now();
+    _examDurationEditingController.text =
+        examFinishedTime.difference(_examStartedTime).inMinutes.toString();
 
     final exam = widget.arguments.inputExam;
-    if (exam != null) {
-      _examDurationEditingController.text =
-          DateTime.now().difference(_examStartedTime).inMinutes.toString();
-      _selectedSubject = exam.subject;
-    }
+    _selectedSubject = exam?.subject ?? _selectedSubject;
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
@@ -856,11 +854,13 @@ class _HorizontalFadingRow extends StatelessWidget {
 class EditRecordPageArguments {
   final Exam? inputExam;
   final DateTime? examStartedTime;
+  final DateTime? examFinishedTime;
   final ExamRecord? recordToEdit;
 
   EditRecordPageArguments({
     this.inputExam,
     this.examStartedTime,
+    this.examFinishedTime,
     this.recordToEdit,
   });
 }
