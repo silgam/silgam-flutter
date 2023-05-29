@@ -14,6 +14,8 @@ class ClockState with _$ClockState {
     @Default(0) int currentExamIndex,
     required DateTime currentTime,
     required DateTime examStartedTime,
+    @Default(null) DateTime? examFinishedTime,
+    required DateTime pageOpenedTime,
   }) = _ClockState;
 
   Breakpoint get currentBreakpoint => breakpoints[currentBreakpointIndex];

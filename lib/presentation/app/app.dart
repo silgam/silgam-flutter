@@ -110,8 +110,11 @@ class SilgamApp extends StatelessWidget {
                     settings: settings,
                   );
                 case ExamOverviewPage.routeName:
+                  final args = settings.arguments as ExamOverviewPageArguments;
                   return MaterialPageRoute(
-                    builder: (_) => const ExamOverviewPage(),
+                    builder: (_) => ExamOverviewPage(
+                      examDetail: args.examDetail,
+                    ),
                     settings: settings,
                   );
               }

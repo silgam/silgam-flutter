@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
+import '../../model/exam_detail.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
@@ -15,7 +16,6 @@ import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/empty_scroll_behavior.dart';
-import '../edit_record_page/edit_record_page.dart';
 import '../exam_overview_page/exam_overview_page.dart';
 import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
@@ -37,8 +37,6 @@ class ClockPage extends StatefulWidget {
 class _ClockPageState extends State<ClockPage> {
   final AppCubit _appCubit = getIt.get();
   late final ClockCubit _cubit = getIt.get(param1: widget.exams);
-
-  final DateTime _pageStartedTime = DateTime.now();
 
   final TransformationController _clockTransformController =
       TransformationController();
@@ -431,14 +429,19 @@ class _ClockPageState extends State<ClockPage> {
   void _finishExam() {
     final SharedPreferences sharedPreferences = getIt.get();
     final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
-    if (!isAdsRemoved &&
-        DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
+    final sincePageOpenedMinutes =
+        DateTime.now().difference(_cubit.state.pageOpenedTime).inMinutes;
+    if (!isAdsRemoved && sincePageOpenedMinutes >= 10) {
       _interstitialAd?.show();
     }
 
-    final arguments = EditRecordPageArguments(
-      inputExam: widget.exams[0],
-      examStartedTime: _cubit.state.examStartedTime,
+    final arguments = ExamOverviewPageArguments(
+      examDetail: ExamDetail(
+        exams: _cubit.state.exams,
+        examStartedTime: _cubit.state.examStartedTime,
+        examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
+        pageOpenedTime: _cubit.state.pageOpenedTime,
+      ),
     );
     Navigator.pop(context);
 

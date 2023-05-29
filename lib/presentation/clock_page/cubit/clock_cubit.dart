@@ -32,6 +32,7 @@ class ClockCubit extends Cubit<ClockState> {
   ) : super(ClockState(
           currentTime: DateTime.now(),
           examStartedTime: DateTime.now(),
+          pageOpenedTime: DateTime.now(),
           exams: exams,
         )) {
     _initialize();
@@ -194,6 +195,7 @@ class ClockCubit extends Cubit<ClockState> {
       currentExamIndex: nextExamIndex,
     ));
     _saveExamStartedTimeIfNeeded();
+    _saveExamFinishedTimeIfNeeded();
     _announcementPlayer.pause();
     if (adjustTime) {
       emit(state.copyWith(currentTime: state.currentBreakpoint.time));
@@ -217,6 +219,13 @@ class ClockCubit extends Cubit<ClockState> {
     final currentAnnouncementTime = state.currentBreakpoint.announcement.time;
     if (currentAnnouncementTime == const RelativeTime.afterStart(minutes: 0)) {
       emit(state.copyWith(examStartedTime: DateTime.now()));
+    }
+  }
+
+  void _saveExamFinishedTimeIfNeeded() {
+    final currentAnnouncementTime = state.currentBreakpoint.announcement.time;
+    if (currentAnnouncementTime == const RelativeTime.afterFinish(minutes: 0)) {
+      emit(state.copyWith(examFinishedTime: DateTime.now()));
     }
   }
 
