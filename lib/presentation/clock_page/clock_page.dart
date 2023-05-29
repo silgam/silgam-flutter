@@ -16,6 +16,7 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../edit_record_page/edit_record_page.dart';
+import '../exam_overview_page/exam_overview_page.dart';
 import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
 import 'wrist_watch.dart';
@@ -447,7 +448,7 @@ class _ClockPageState extends State<ClockPage> {
     if (showAddRecordPageAfterExamFinished && _appCubit.state.isSignedIn) {
       Navigator.pushNamed(
         context,
-        EditRecordPage.routeName,
+        ExamOverviewPage.routeName,
         arguments: arguments,
       );
     }
