@@ -555,10 +555,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _checkIfRecordLimitExceeded() {
-    if (_isEditingMode) return;
     final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
     final examRecordCount = _recordListCubit.state.originalRecords.length;
-    if (examRecordLimit != -1 && examRecordCount >= examRecordLimit) {
+    if (examRecordLimit != -1 &&
+        (_isEditingMode
+            ? examRecordCount > examRecordLimit
+            : examRecordCount >= examRecordLimit)) {
       Navigator.pop(context);
       showExamRecordLimitInfoDialog(context);
     }
