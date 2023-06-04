@@ -247,7 +247,7 @@ class _PurchasePageState extends State<PurchasePage> {
                   _buildInfo('이용 가능 기간 : $now ~ $trialEndTime'),
                   _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
                   _buildInfo(
-                    '무료 체험 기간이 끝난 후, 체험 기간 중 작성한 실모 기록은 ${appCubit.state.freeProductBenefit.examRecordLimit}개까지만 열람하실 수 있습니다.',
+                    '무료 체험 기간이 끝나는 시점까지 작성되어있는 모의고사 기록이 ${appCubit.state.freeProductBenefit.examRecordLimit}개를 초과하면, 체험 기간 후에는 모의고사 기록을 열람 및 삭제만 할 수 있습니다. (${appCubit.state.freeProductBenefit.examRecordLimit}개 미만까지 삭제할 시에만 추가/수정 가능)',
                   ),
                 ],
               ),

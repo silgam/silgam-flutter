@@ -1,22 +1,17 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
-import '../../common/dialog.dart';
 import '../../common/material_hero.dart';
 
 class RecordTile extends StatefulWidget {
   final ExamRecord record;
   final GestureTapCallback onTileTap;
-  final bool isLocked;
 
   const RecordTile({
     Key? key,
     required this.record,
     required this.onTileTap,
-    required this.isLocked,
   }) : super(key: key);
 
   @override
@@ -48,7 +43,7 @@ class RecordTileState extends State<RecordTile> {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: widget.isLocked ? null : widget.onTileTap,
+              onTap: widget.onTileTap,
               splashColor: Colors.transparent,
               child: Padding(
                 padding:
@@ -57,28 +52,6 @@ class RecordTileState extends State<RecordTile> {
               ),
             ),
           ),
-          if (widget.isLocked)
-            Positioned.fill(
-              child: InkWell(
-                onTap: () => showExamRecordLimitInfoDialog(context),
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
-                      ),
-                      child: Icon(
-                        Icons.lock_outline,
-                        size: 20,
-                        color: Colors.grey.shade400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );

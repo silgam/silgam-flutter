@@ -66,8 +66,7 @@ class _RecordListViewState extends State<RecordListView> {
                     slivers: [
                       _buildQuerySection(state, appState),
                       if (appState.isNotSignedIn) _buildLoginButton(),
-                      if (appState.isSignedIn)
-                        _buildListSection(state.records, state.lockedRecordIds),
+                      if (appState.isSignedIn) _buildListSection(state.records),
                       if (appState.isSignedIn && state.records.isEmpty)
                         _buildDescription(),
                     ],
@@ -215,7 +214,6 @@ class _RecordListViewState extends State<RecordListView> {
 
   Widget _buildListSection(
     List<ExamRecord> records,
-    List<String> lockedRecordIds,
   ) {
     return SliverPadding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -225,7 +223,6 @@ class _RecordListViewState extends State<RecordListView> {
             return RecordTile(
               record: records[index],
               onTileTap: () => _onTileTap(records[index]),
-              isLocked: lockedRecordIds.contains(records[index].documentId),
             );
           },
           childCount: records.length,

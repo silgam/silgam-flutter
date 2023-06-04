@@ -172,7 +172,7 @@ class MyPage extends StatelessWidget {
                       ),
                       _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
                       _buildInfo(
-                        '실감패스 이용 기간 중 작성한 모의고사 기록들은, 실감패스 이용 기간이 끝나면 가장 최근에 작성된 ${appState.freeProductBenefit.examRecordLimit}개만 열람이 가능합니다.',
+                        '실감패스 이용 기간 중 작성한 모의고사 기록이 ${appState.freeProductBenefit.examRecordLimit}개를 초과할 경우, 실감패스 이용 기간 이후에는 기록을 추가하거나 기존의 기록을 수정할 수 없습니다. (열람 및 삭제만 가능) 단, 기록이 ${appState.freeProductBenefit.examRecordLimit}개 이하가 되도록 일부 기록을 삭제할 경우 추가 및 수정이 가능합니다.',
                       ),
                       _buildInfo(
                         '구매 취소 및 환불은 구입일로부터 7일 이내에만 가능하며, 환불 절차는 스토어의 운영 정책을 따릅니다.',
