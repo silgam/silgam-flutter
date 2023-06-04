@@ -161,8 +161,11 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void onLapTimeButtonPressed() {
-    final newLapTime = LapTime(time: state.currentTime);
-    if (!state.lapTimes.contains(newLapTime)) {
+    final newLapTime = LapTime(
+      time: state.currentTime,
+      createdAt: DateTime.now(),
+    );
+    if (state.lapTimes.every((e) => e.time != newLapTime.time)) {
       emit(state.copyWith(
         lapTimes: [...state.lapTimes, newLapTime],
       ));
