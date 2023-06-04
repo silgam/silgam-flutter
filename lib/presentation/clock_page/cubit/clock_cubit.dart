@@ -9,6 +9,7 @@ import 'package:injectable/injectable.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../../model/exam.dart';
+import '../../../model/lap_time.dart';
 import '../../../model/relative_time.dart';
 import '../../../repository/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
@@ -155,6 +156,24 @@ class ClockCubit extends Cubit<ClockState> {
         'subject_names': state.exams.map((e) => e.subject.name).toList(),
         'current_time': state.currentTime.toString(),
         'running': state.isRunning,
+      },
+    );
+  }
+
+  void onLapTimeButtonPressed() {
+    final newLapTime = LapTime(time: state.currentTime);
+    emit(state.copyWith(
+      lapTimes: [...state.lapTimes, newLapTime],
+    ));
+
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Lap Time Button Pressed',
+      properties: {
+        'exam_name': state.exams.toExamNamesString(),
+        'exam_names': state.exams.map((e) => e.examName).toList(),
+        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        'current_time': state.currentTime.toString(),
+        'lap_times': state.lapTimes.toString(),
       },
     );
   }

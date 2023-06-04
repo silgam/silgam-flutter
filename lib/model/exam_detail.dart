@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'exam.dart';
+import 'lap_time.dart';
 
 part 'exam_detail.freezed.dart';
 
@@ -11,5 +12,6 @@ class ExamDetail with _$ExamDetail {
     required DateTime examStartedTime,
     required DateTime examFinishedTime,
     required DateTime pageOpenedTime,
+    required List<LapTime> lapTimes,
   }) = _ExamDetail;
 }

@@ -154,31 +154,7 @@ class _ClockPageState extends State<ClockPage> {
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: direction == Axis.vertical ? 20 : 0,
-                  vertical: direction == Axis.vertical ? 0 : 20,
-                ),
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey.shade700),
-                    shape: const StadiumBorder(),
-                    visualDensity: const VisualDensity(
-                      horizontal: VisualDensity.minimumDensity,
-                      vertical: VisualDensity.minimumDensity,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: direction == Axis.vertical ? 0 : 20,
-                      vertical: direction == Axis.vertical ? 32 : 0,
-                    ),
-                    foregroundColor: Colors.grey.shade700,
-                  ),
-                  child: Text(
-                    direction == Axis.vertical ? 'LAP' : 'L\nA\nP',
-                  ),
-                ),
-              ),
+              _buildLapTimeButton(direction),
             ],
           ),
         ),
@@ -328,6 +304,34 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
+  Widget _buildLapTimeButton(Axis direction) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: direction == Axis.vertical ? 20 : 0,
+        vertical: direction == Axis.vertical ? 0 : 20,
+      ),
+      child: OutlinedButton(
+        onPressed: _cubit.onLapTimeButtonPressed,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: Colors.grey.shade700),
+          shape: const StadiumBorder(),
+          visualDensity: const VisualDensity(
+            horizontal: VisualDensity.minimumDensity,
+            vertical: VisualDensity.minimumDensity,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: direction == Axis.vertical ? 0 : 20,
+            vertical: direction == Axis.vertical ? 32 : 0,
+          ),
+          foregroundColor: Colors.grey.shade700,
+        ),
+        child: Text(
+          direction == Axis.vertical ? 'LAP' : 'L\nA\nP',
+        ),
+      ),
+    );
+  }
+
   Widget _buildScreenOverlay() {
     const int defaultScreenOverlayAlpha = 220;
     int screenOverlayAlpha = defaultScreenOverlayAlpha;
@@ -439,6 +443,7 @@ class _ClockPageState extends State<ClockPage> {
         examStartedTime: _cubit.state.examStartedTime,
         examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
         pageOpenedTime: _cubit.state.pageOpenedTime,
+        lapTimes: _cubit.state.lapTimes,
       ),
     );
     Navigator.pop(context);
