@@ -162,9 +162,11 @@ class ClockCubit extends Cubit<ClockState> {
 
   void onLapTimeButtonPressed() {
     final newLapTime = LapTime(time: state.currentTime);
-    emit(state.copyWith(
-      lapTimes: [...state.lapTimes, newLapTime],
-    ));
+    if (!state.lapTimes.contains(newLapTime)) {
+      emit(state.copyWith(
+        lapTimes: [...state.lapTimes, newLapTime],
+      ));
+    }
 
     AnalyticsManager.logEvent(
       name: '[ClockPage] Lap Time Button Pressed',

@@ -260,10 +260,23 @@ class _ClockPageState extends State<ClockPage> {
             duration.inSeconds;
       }
 
+      final markerPositions = state.lapTimes
+          .where((lapTime) =>
+              lapTime.time.isAtSameMomentAs(breakpoint.time) ||
+              lapTime.time.isAfter(breakpoint.time) &&
+                  lapTime.time.isBefore(nextBreakpoint.time))
+          .map((lapTime) {
+        final lapTimeProgress =
+            lapTime.time.difference(breakpoint.time).inSeconds /
+                duration.inSeconds;
+        return lapTimeProgress;
+      }).toList();
+
       tiles.add(TimelineConnector(
         duration.inMinutes,
         progress,
         direction: orientation,
+        markerPositions: markerPositions,
         key: _timelineConnectorKeys[index],
       ));
     });
