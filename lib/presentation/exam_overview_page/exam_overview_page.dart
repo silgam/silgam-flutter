@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -37,7 +39,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.4,
   );
 
-  final ExamOverviewCubit _cubit = getIt.get();
+  late final ExamOverviewCubit _cubit = getIt.get(
+    param1: widget.examDetail,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +57,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               _buildTitle(),
               const SizedBox(height: 40),
               _buildExamTimeCard(),
+              const SizedBox(height: 20),
+              _buildLapTimeCard(),
             ],
           ),
         ),
@@ -182,6 +188,118 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLapTimeCard() {
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(
+        horizontal: _horizontalPadding,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 20,
+      ),
+      child: Column(
+        children: [
+          Text(
+            '랩 타임',
+            style: _titleTextStyle,
+          ),
+          const SizedBox(height: 12),
+          Column(
+            children: _cubit.state.lapTimeItemGroups
+                .map(
+                  (lapTimeItemGroup) => Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      Text(
+                        '${lapTimeItemGroup.title} (${DateFormat.Hm().format(lapTimeItemGroup.startTime)})',
+                        style: TextStyle(
+                          color: _contentTextStyle.color,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      ...lapTimeItemGroup.lapTimeItems.mapIndexed(
+                        (index, lapTimeItem) => _buildLapTimeItem(
+                          index: index,
+                          time: lapTimeItem.time,
+                          timeDifference: lapTimeItem.timeDifference,
+                          timeElapsed: lapTimeItem.timeElapsed,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+                .toList(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLapTimeItem({
+    required int index,
+    required DateTime time,
+    required Duration timeDifference,
+    required Duration timeElapsed,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 4,
+        horizontal: 8,
+      ),
+      child: Row(
+        children: [
+          Text(
+            '${index + 1}',
+            style: _contentTextStyle.copyWith(
+              color: Theme.of(context).primaryColor,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            DateFormat.Hms().format(time),
+            style: _contentTextStyle.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: _contentTextStyle.fontSize! - 5,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: DottedLine(
+              dashLength: 1,
+              dashColor: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${timeDifference.isNegative ? '-' : '+'}'
+                ' '
+                '${timeDifference.inMinutes.abs().toString().padLeft(2, '0')}'
+                ':'
+                '${(timeDifference.inSeconds.abs() % 60).toString().padLeft(2, '0')}',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${timeElapsed.inMinutes.toString().padLeft(2, '0')}'
+                ':'
+                '${(timeElapsed.inSeconds % 60).toString().padLeft(2, '0')}',
+                style: TextStyle(
+                  color: Colors.grey.shade700,
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );

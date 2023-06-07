@@ -1,11 +1,95 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+
+import '../../../model/exam.dart';
+import '../../../model/exam_detail.dart';
+import '../../../model/lap_time.dart';
 
 part 'exam_overview_cubit.freezed.dart';
 part 'exam_overview_state.dart';
 
 @injectable
 class ExamOverviewCubit extends Cubit<ExamOverviewState> {
-  ExamOverviewCubit() : super(const ExamOverviewState());
+  ExamOverviewCubit(
+    @factoryParam this._examDetail,
+  ) : super(const ExamOverviewState()) {
+    _initialize();
+  }
+
+  final ExamDetail _examDetail;
+
+  void _initialize() {
+    _updateLapTimeItemGroups(
+      exams: _examDetail.exams,
+      lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
+    );
+  }
+
+  void _updateLapTimeItemGroups({
+    required List<Exam> exams,
+    required List<LapTime> lapTimes,
+  }) {
+    final List<LapTimeItemGroup> lapTimeItemGroups = [];
+    for (final exam in exams) {
+      for (final announcement in exam.announcements) {
+        if (announcement.title.contains('예비령')) {
+          lapTimeItemGroups.add(LapTimeItemGroup(
+            title: announcement.title,
+            startTime: announcement.time.calculateBreakpointTime(
+              exam.examStartTime,
+              exam.examEndTime,
+            ),
+            lapTimeItems: [],
+          ));
+        } else if (announcement.title.contains('본령')) {
+          lapTimeItemGroups.add(LapTimeItemGroup(
+            title: announcement.title,
+            startTime: announcement.time.calculateBreakpointTime(
+              exam.examStartTime,
+              exam.examEndTime,
+            ),
+            lapTimeItems: [],
+          ));
+        }
+      }
+    }
+
+    lapTimeItemGroups.forEachIndexed((index, group) {
+      final lapTimesForGroup = lapTimes
+          .where(
+            (lapTime) =>
+                (lapTime.time.isAfter(group.startTime) ||
+                    lapTime.time.isAtSameMomentAs(group.startTime)) &&
+                (index == lapTimeItemGroups.length - 1
+                    ? true
+                    : lapTime.time
+                        .isBefore(lapTimeItemGroups[index + 1].startTime)),
+          )
+          .toList();
+      final lapTimeItems = lapTimesForGroup.mapIndexed(
+        (index, lapTime) {
+          final timeDifference = index == 0
+              ? lapTime.time.difference(group.startTime)
+              : lapTime.time.difference(lapTimesForGroup[index - 1].time);
+          final timeElapsed = lapTime.time.difference(group.startTime);
+          return LapTimeItem(
+            time: lapTime.time,
+            timeDifference: timeDifference,
+            timeElapsed: timeElapsed,
+          );
+        },
+      ).toList();
+      lapTimeItemGroups[index] = group.copyWith(
+        lapTimeItems: lapTimeItems,
+      );
+    });
+
+    lapTimeItemGroups.removeWhere((group) => group.lapTimeItems.isEmpty);
+
+    emit(state.copyWith(
+      lapTimeItemGroups: lapTimeItemGroups,
+    ));
+  }
 }
