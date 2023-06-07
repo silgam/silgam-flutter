@@ -49,17 +49,20 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       create: (_) => _cubit,
       child: Scaffold(
         body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildCloseButton(),
-              const SizedBox(height: 24),
-              _buildTitle(),
-              const SizedBox(height: 40),
-              _buildExamTimeCard(),
-              const SizedBox(height: 20),
-              _buildLapTimeCard(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildCloseButton(),
+                const SizedBox(height: 24),
+                _buildTitle(),
+                const SizedBox(height: 40),
+                _buildExamTimeCard(),
+                const SizedBox(height: 20),
+                _buildLapTimeCard(),
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
