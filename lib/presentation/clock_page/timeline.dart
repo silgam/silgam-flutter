@@ -25,7 +25,7 @@ class TimelineTile extends StatelessWidget {
       highlightColor: Colors.white12,
       borderRadius: BorderRadius.circular(4),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -109,7 +109,7 @@ class TimelineConnector extends StatelessWidget {
         horizontal: _markerWidth / 2,
         vertical: 1,
       );
-      width = duration * widthScale;
+      width = duration * widthScale + connectorMargin.horizontal * 2;
       height = (1 + connectorMargin.vertical * 2) + _markerHeight * 2;
       connecterWidth = null;
       connecterHeight = 1;
@@ -122,7 +122,7 @@ class TimelineConnector extends StatelessWidget {
         vertical: _markerWidth / 2,
         horizontal: 1,
       );
-      height = duration * heightScale;
+      height = duration * heightScale + connectorMargin.vertical * 2;
       width = (1 + connectorMargin.horizontal * 2) + _markerHeight * 2;
       connecterWidth = 1;
       connecterHeight = null;
