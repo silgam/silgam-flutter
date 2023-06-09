@@ -29,14 +29,15 @@ class ExamOverviewPage extends StatefulWidget {
 class _ExamOverviewPageState extends State<ExamOverviewPage> {
   static const _horizontalPadding = 24.0;
   static final TextStyle _titleTextStyle = TextStyle(
-    fontSize: 18,
-    color: Colors.grey.shade700,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: Colors.grey.shade800,
   );
   static final TextStyle _contentTextStyle = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: Colors.grey.shade900,
-    height: 1.4,
+    height: 1.2,
   );
 
   late final ExamOverviewCubit _cubit = getIt.get(
@@ -54,7 +55,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildCloseButton(),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 _buildTitle(),
                 const SizedBox(height: 40),
                 _buildExamTimeCard(),
@@ -120,7 +121,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       ),
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
-        vertical: 20,
+        vertical: 16,
       ),
       child: Column(
         children: [
@@ -139,7 +140,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 Icon(
                   Icons.timer_outlined,
                   color: Theme.of(context).primaryColor,
-                  size: 32,
+                  size: 24,
                 ),
                 const SizedBox(width: 8),
                 IntrinsicHeight(
@@ -149,39 +150,45 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     children: [
                       Text(
                         '$startedTimeString ~ $finishedTimeString',
-                        style: _contentTextStyle,
+                        style: _contentTextStyle.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       VerticalDivider(
-                        color: Colors.grey.shade600,
+                        color: Colors.grey.shade900,
                         width: 20,
-                        thickness: 0.7,
-                        indent: 2,
-                        endIndent: 2,
+                        thickness: 0.9,
+                        indent: 6,
+                        endIndent: 6,
                       ),
                       Text(
                         '$durationMinutes',
-                        style: _contentTextStyle,
+                        style: _contentTextStyle.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(width: 1),
                       Text(
                         'm',
                         style: _contentTextStyle.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                           height: 2,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '${durationSeconds % 60}',
-                        style: _contentTextStyle,
+                        style: _contentTextStyle.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(width: 1),
                       Text(
                         's',
                         style: _contentTextStyle.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                           height: 2,
                         ),
                       )
@@ -203,7 +210,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       ),
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
-        vertical: 20,
+        vertical: 16,
       ),
       child: Column(
         children: [
@@ -211,20 +218,36 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             '랩 타임',
             style: _titleTextStyle,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Column(
             children: _cubit.state.lapTimeItemGroups
                 .map(
                   (lapTimeItemGroup) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 8),
-                      Text(
-                        '${lapTimeItemGroup.title} (${DateFormat.Hm().format(lapTimeItemGroup.startTime)})',
-                        style: TextStyle(
-                          color: _contentTextStyle.color,
+                      Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 5,
+                          horizontal: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 6),
                       ...lapTimeItemGroup.lapTimeItems.mapIndexed(
                         (index, lapTimeItem) => _buildLapTimeItem(
                           index: index,
@@ -254,55 +277,57 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         vertical: 4,
         horizontal: 8,
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            '${index + 1}',
-            style: _contentTextStyle.copyWith(
-              color: Theme.of(context).primaryColor,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            DateFormat.Hms().format(time),
-            style: _contentTextStyle.copyWith(
-              fontWeight: FontWeight.w500,
-              fontSize: _contentTextStyle.fontSize! - 5,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: DottedLine(
-              dashLength: 1,
-              dashColor: Colors.grey.shade700,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
             children: [
               Text(
-                '${timeDifference.isNegative ? '-' : '+'}'
-                ' '
+                '${index + 1}',
+                style: _contentTextStyle.copyWith(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: _contentTextStyle.fontSize! - 5,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                DateFormat.Hms().format(time),
+                style: _contentTextStyle.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: _contentTextStyle.fontSize! - 5,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: DottedLine(
+                  dashLength: 1,
+                  dashColor: Colors.grey.shade700,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                '+ '
                 '${timeDifference.inMinutes.abs().toString().padLeft(2, '0')}'
                 ':'
                 '${(timeDifference.inSeconds.abs() % 60).toString().padLeft(2, '0')}',
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
+                  height: 1,
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '${timeElapsed.inMinutes.toString().padLeft(2, '0')}'
-                ':'
-                '${(timeElapsed.inSeconds % 60).toString().padLeft(2, '0')}',
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                ),
-              ),
+              )
             ],
-          )
+          ),
+          Text(
+            '${timeElapsed.inMinutes.toString().padLeft(2, '0')}'
+            ':'
+            '${(timeElapsed.inSeconds % 60).toString().padLeft(2, '0')}',
+            style: TextStyle(
+              color: Colors.grey.shade700,
+              height: 1,
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );
