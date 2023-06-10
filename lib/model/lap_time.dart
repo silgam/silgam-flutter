@@ -35,11 +35,11 @@ class LapTimeItemGroup with _$LapTimeItemGroup {
 extension LapTimeItemGroupsExtension on List<LapTimeItemGroup> {
   String toCopyableString() {
     final buffer = StringBuffer();
-    buffer.writeln('      |      시간      |   간격  |   누적   |  분류');
+    buffer.writeln('      |      시간      |   간격   |   누적   |  분류');
 
     for (final group in this) {
       buffer.writeln(
-        '--- | ---------- | -------| ------  | ------',
+        '————————————————————',
       );
       buffer.writeln(
         '  0 | ${DateFormat.Hms().format(group.startTime)} | 00:00 | 00:00 | ${group.title}',
