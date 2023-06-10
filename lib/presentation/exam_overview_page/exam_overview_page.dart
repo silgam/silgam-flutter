@@ -9,11 +9,15 @@ import 'package:intl/intl.dart';
 
 import '../../model/exam_detail.dart';
 import '../../model/lap_time.dart';
+import '../../util/analytics_manager.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 import '../common/custom_card.dart';
+import '../common/free_user_block_overlay.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'cubit/exam_overview_cubit.dart';
+import 'example_lap_time_groups.dart';
 
 part 'exam_overview_messages.dart';
 
@@ -43,13 +47,35 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     color: Colors.grey.shade900,
     height: 1.2,
   );
+  final AppCubit _appCubit = getIt.get();
 
-  late final ExamOverviewCubit _cubit = getIt.get(
-    param1: widget.examDetail,
-  );
+  late final firstExam = widget.examDetail.exams.first;
+  late final List<LapTimeItemGroup>? exampleLapTimeItemGroups = _appCubit
+          .state.productBenefit.isLapTimeAvailable
+      ? null
+      : getExampleLapTimeGroups(
+          startTime: firstExam.announcements.first.time.calculateBreakpointTime(
+            firstExam.examStartTime,
+            firstExam.examEndTime,
+          ),
+        );
 
-  void _onCopyLapTimePressed() {
-    final textToCopy = _cubit.state.lapTimeItemGroups.toCopyableString();
+  void _onCloseButtonPressed() {
+    Navigator.of(context).pop();
+
+    AnalyticsManager.logEvent(
+      name: '[ExamOverviewPage] Close button pressed',
+      properties: {
+        'exam_detail': widget.examDetail.toString(),
+      },
+    );
+  }
+
+  void _onCopyLapTimePressed({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+  }) {
+    final textToCopy =
+        (exampleLapTimeItemGroups ?? lapTimeItemGroups).toCopyableString();
     Clipboard.setData(ClipboardData(text: textToCopy));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -57,57 +83,87 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         content: Text('복사되었습니다.'),
       ),
     );
+
+    AnalyticsManager.logEvent(
+      name: '[ExamOverviewPage] Copy lap time button pressed',
+      properties: {
+        'copy_text': textToCopy,
+        'is_example': exampleLapTimeItemGroups != null,
+        'exam_detail': widget.examDetail.toString(),
+      },
+    );
   }
 
-  void _onBottomButtonPressed() {
-    final arguments = EditRecordPageArguments(
-      inputExam: widget.examDetail.exams.first,
-      examStartedTime: widget.examDetail.examStartedTime,
-      examFinishedTime: widget.examDetail.examFinishedTime,
-      prefillFeedback: _cubit.state.lapTimeItemGroups.toCopyableString(),
-    );
-
+  void _onBottomButtonPressed({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+  }) {
     Navigator.of(context).pop();
-    Navigator.pushNamed(
-      context,
-      EditRecordPage.routeName,
-      arguments: arguments,
+
+    if (_appCubit.state.isSignedIn) {
+      final arguments = EditRecordPageArguments(
+        inputExam: widget.examDetail.exams.first,
+        examStartedTime: widget.examDetail.examStartedTime,
+        examFinishedTime: widget.examDetail.examFinishedTime,
+        prefillFeedback: lapTimeItemGroups.isItemsEmpty
+            ? null
+            : lapTimeItemGroups.toCopyableString(),
+      );
+      Navigator.pushNamed(
+        context,
+        EditRecordPage.routeName,
+        arguments: arguments,
+      );
+    }
+
+    AnalyticsManager.logEvent(
+      name: '[ExamOverviewPage] Go to record button pressed',
+      properties: {
+        'exam_detail': widget.examDetail.toString(),
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => _cubit,
+    return BlocProvider<ExamOverviewCubit>(
+      create: (_) => getIt.get(param1: widget.examDetail),
       child: Scaffold(
         body: SafeArea(
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildCloseButton(),
-                    const SizedBox(height: 16),
-                    _buildTitle(),
-                    const SizedBox(height: 40),
-                    _buildExamTimeCard(),
-                    const SizedBox(height: 20),
-                    _buildLapTimeCard(),
-                    const SizedBox(height: 120),
-                  ],
-                ),
-              ),
-              Container(
-                alignment: Alignment.bottomCenter,
-                margin: const EdgeInsets.only(
-                  left: _horizontalPadding,
-                  right: _horizontalPadding,
-                  bottom: 20,
-                ),
-                child: _buildBottomButton(),
-              ),
-            ],
+          child: BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
+            builder: (context, state) {
+              return Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildCloseButton(),
+                        const SizedBox(height: 16),
+                        _buildTitle(),
+                        const SizedBox(height: 40),
+                        _buildExamTimeCard(),
+                        const SizedBox(height: 20),
+                        _buildLapTimeCard(
+                          lapTimeItemGroups: state.lapTimeItemGroups,
+                        ),
+                        const SizedBox(height: 120),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    margin: const EdgeInsets.only(
+                      left: _horizontalPadding,
+                      right: _horizontalPadding,
+                      bottom: 20,
+                    ),
+                    child: _buildBottomButton(
+                      lapTimeItemGroups: state.lapTimeItemGroups,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -123,7 +179,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       child: IconButton(
         splashRadius: 20,
         icon: const Icon(Icons.close),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: _onCloseButtonPressed,
       ),
     );
   }
@@ -247,7 +303,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildLapTimeCard() {
+  Widget _buildLapTimeCard({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+  }) {
     return CustomCard(
       margin: const EdgeInsets.symmetric(
         horizontal: _horizontalPadding,
@@ -268,7 +326,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  onPressed: _onCopyLapTimePressed,
+                  onPressed: () => _onCopyLapTimePressed(
+                    lapTimeItemGroups: lapTimeItemGroups,
+                  ),
                   splashColor: Colors.transparent,
                   padding: const EdgeInsets.all(0),
                   splashRadius: 24,
@@ -286,48 +346,76 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ],
           ),
           const SizedBox(height: 8),
-          Column(
-            children: _cubit.state.lapTimeItemGroups
-                .map(
-                  (lapTimeItemGroup) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 8),
-                      Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 5,
-                          horizontal: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).primaryColor,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      ...lapTimeItemGroup.lapTimeItems.mapIndexed(
-                        (index, lapTimeItem) => _buildLapTimeItem(
-                          index: index,
-                          time: lapTimeItem.time,
-                          timeDifference: lapTimeItem.timeDifference,
-                          timeElapsed: lapTimeItem.timeElapsed,
+          if (lapTimeItemGroups.isItemsEmpty &&
+              _appCubit.state.productBenefit.isLapTimeAvailable)
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 20),
+              child: Text(
+                _appCubit.state.productBenefit.isLapTimeAvailable &&
+                        !_appCubit.useLapTime
+                    ? '랩 타임 기능이 꺼져있어요.\n설정에서 랩 타임 기능을 켜보세요.'
+                    : '기록된 랩 타임이 없어요.\n시험 중에 LAP 버튼을 눌러 랩 타임을 기록해보세요.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                  height: 1.3,
+                ),
+              ),
+            )
+          else
+            Stack(
+              children: [
+                Column(
+                  children: (exampleLapTimeItemGroups ?? lapTimeItemGroups)
+                      .map(
+                        (lapTimeItemGroup) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 8),
+                            Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 5,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            ...lapTimeItemGroup.lapTimeItems.mapIndexed(
+                              (index, lapTimeItem) => _buildLapTimeItem(
+                                index: index,
+                                time: lapTimeItem.time,
+                                timeDifference: lapTimeItem.timeDifference,
+                                timeElapsed: lapTimeItem.timeElapsed,
+                              ),
+                            )
+                          ],
                         ),
                       )
-                    ],
-                  ),
-                )
-                .toList(),
-          )
+                      .toList(),
+                ),
+                if (exampleLapTimeItemGroups != null)
+                  const Positioned.fill(
+                    child: FreeUserBlockOverlay(
+                      text: '예시 데이터입니다.\n랩 타임 기능은 실감패스 사용자만 이용 가능해요.',
+                    ),
+                  )
+              ],
+            )
         ],
       ),
     );
@@ -395,7 +483,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildBottomButton() {
+  Widget _buildBottomButton({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+  }) {
     return Material(
       color: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.circular(100),
@@ -403,7 +493,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       elevation: 10,
       shadowColor: Colors.black.withAlpha(180),
       child: InkWell(
-        onTap: _onBottomButtonPressed,
+        onTap: () => _onBottomButtonPressed(
+          lapTimeItemGroups: lapTimeItemGroups,
+        ),
         splashColor: Colors.transparent,
         highlightColor: Colors.grey.withAlpha(60),
         child: Container(

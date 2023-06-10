@@ -52,4 +52,8 @@ extension LapTimeItemGroupsExtension on List<LapTimeItemGroup> {
     }
     return buffer.toString();
   }
+
+  bool get isItemsEmpty {
+    return every((group) => group.lapTimeItems.isEmpty);
+  }
 }
