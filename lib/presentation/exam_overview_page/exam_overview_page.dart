@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../model/exam_detail.dart';
 import '../../util/injection.dart';
 import '../common/custom_card.dart';
+import '../edit_record_page/edit_record_page.dart';
 import 'cubit/exam_overview_cubit.dart';
 
 part 'exam_overview_messages.dart';
@@ -44,26 +45,53 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     param1: widget.examDetail,
   );
 
+  void _onBottomButtonPressed() {
+    final arguments = EditRecordPageArguments(
+      inputExam: widget.examDetail.exams.first,
+      examStartedTime: widget.examDetail.examStartedTime,
+      examFinishedTime: widget.examDetail.examFinishedTime,
+    );
+
+    Navigator.of(context).pop();
+    Navigator.pushNamed(
+      context,
+      EditRecordPage.routeName,
+      arguments: arguments,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => _cubit,
       child: Scaffold(
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildCloseButton(),
-                const SizedBox(height: 16),
-                _buildTitle(),
-                const SizedBox(height: 40),
-                _buildExamTimeCard(),
-                const SizedBox(height: 20),
-                _buildLapTimeCard(),
-                const SizedBox(height: 40),
-              ],
-            ),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildCloseButton(),
+                    const SizedBox(height: 16),
+                    _buildTitle(),
+                    const SizedBox(height: 40),
+                    _buildExamTimeCard(),
+                    const SizedBox(height: 20),
+                    _buildLapTimeCard(),
+                    const SizedBox(height: 100),
+                  ],
+                ),
+              ),
+              Container(
+                alignment: Alignment.bottomCenter,
+                margin: const EdgeInsets.symmetric(
+                  horizontal: _horizontalPadding,
+                  vertical: 8,
+                ),
+                child: _buildBottomButton(),
+              ),
+            ],
           ),
         ),
       ),
@@ -329,6 +357,50 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBottomButton() {
+    return Material(
+      color: Theme.of(context).primaryColor,
+      borderRadius: BorderRadius.circular(100),
+      clipBehavior: Clip.antiAlias,
+      elevation: 10,
+      shadowColor: Colors.black.withAlpha(180),
+      child: InkWell(
+        onTap: _onBottomButtonPressed,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.grey.withAlpha(60),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 20,
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: const [
+              Text(
+                '기록하러 가기',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: Icon(
+                  Icons.chevron_right,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
