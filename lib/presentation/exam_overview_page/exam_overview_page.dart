@@ -3,10 +3,13 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam_detail.dart';
+import '../../model/lap_time.dart';
+import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../common/custom_card.dart';
 import '../edit_record_page/edit_record_page.dart';
@@ -45,11 +48,23 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     param1: widget.examDetail,
   );
 
+  void _onCopyLapTimePressed() {
+    final textToCopy = _cubit.state.lapTimeItemGroups.toCopyableString();
+    Clipboard.setData(ClipboardData(text: textToCopy));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('복사되었습니다.'),
+      ),
+    );
+  }
+
   void _onBottomButtonPressed() {
     final arguments = EditRecordPageArguments(
       inputExam: widget.examDetail.exams.first,
       examStartedTime: widget.examDetail.examStartedTime,
       examFinishedTime: widget.examDetail.examFinishedTime,
+      prefillFeedback: _cubit.state.lapTimeItemGroups.toCopyableString(),
     );
 
     Navigator.of(context).pop();
@@ -79,15 +94,16 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     _buildExamTimeCard(),
                     const SizedBox(height: 20),
                     _buildLapTimeCard(),
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 120),
                   ],
                 ),
               ),
               Container(
                 alignment: Alignment.bottomCenter,
-                margin: const EdgeInsets.symmetric(
-                  horizontal: _horizontalPadding,
-                  vertical: 8,
+                margin: const EdgeInsets.only(
+                  left: _horizontalPadding,
+                  right: _horizontalPadding,
+                  bottom: 20,
                 ),
                 child: _buildBottomButton(),
               ),
@@ -242,9 +258,32 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       ),
       child: Column(
         children: [
-          Text(
-            '랩 타임',
-            style: _titleTextStyle,
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Text(
+                '랩 타임',
+                style: _titleTextStyle,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: _onCopyLapTimePressed,
+                  splashColor: Colors.transparent,
+                  padding: const EdgeInsets.all(0),
+                  splashRadius: 24,
+                  visualDensity: const VisualDensity(
+                    horizontal: VisualDensity.minimumDensity,
+                    vertical: VisualDensity.minimumDensity,
+                  ),
+                  tooltip: '복사하기',
+                  icon: const Icon(
+                    Icons.copy,
+                    size: 20,
+                  ),
+                ),
+              )
+            ],
           ),
           const SizedBox(height: 8),
           Column(
@@ -335,10 +374,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               ),
               const SizedBox(width: 16),
               Text(
-                '+ '
-                '${timeDifference.inMinutes.abs().toString().padLeft(2, '0')}'
-                ':'
-                '${(timeDifference.inSeconds.abs() % 60).toString().padLeft(2, '0')}',
+                '+ ${timeDifference.to2DigitString()}',
                 style: const TextStyle(
                   fontSize: 14,
                   height: 1,
@@ -347,9 +383,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ],
           ),
           Text(
-            '${timeElapsed.inMinutes.toString().padLeft(2, '0')}'
-            ':'
-            '${(timeElapsed.inSeconds % 60).toString().padLeft(2, '0')}',
+            timeElapsed.to2DigitString(),
             style: TextStyle(
               color: Colors.grey.shade700,
               height: 1,

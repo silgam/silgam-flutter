@@ -109,6 +109,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
     final exam = widget.arguments.inputExam;
     _selectedSubject = exam?.subject ?? _selectedSubject;
+    _feedbackEditingController.text = widget.arguments.prefillFeedback ?? '';
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
@@ -858,11 +859,13 @@ class EditRecordPageArguments {
   final DateTime? examStartedTime;
   final DateTime? examFinishedTime;
   final ExamRecord? recordToEdit;
+  final String? prefillFeedback;
 
   EditRecordPageArguments({
     this.inputExam,
     this.examStartedTime,
     this.examFinishedTime,
     this.recordToEdit,
+    this.prefillFeedback,
   });
 }
