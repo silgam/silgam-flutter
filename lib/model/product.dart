@@ -33,6 +33,7 @@ class ProductBenefit with _$ProductBenefit {
     required final int examRecordLimit,
     required final List<int> availableNoiseIds,
     required final bool isCustomSubjectNameAvailable,
+    required final bool isLapTimeAvailable,
   }) = _ProductBenefit;
 
   factory ProductBenefit.fromJson(Map<String, dynamic> json) =>
@@ -44,5 +45,6 @@ class ProductBenefit with _$ProductBenefit {
     examRecordLimit: 30,
     availableNoiseIds: [0, 2, 3, 10, 12],
     isCustomSubjectNameAvailable: false,
+    isLapTimeAvailable: false,
   );
 }

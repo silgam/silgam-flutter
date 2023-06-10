@@ -85,6 +85,19 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
+      appState.productBenefit.isLapTimeAvailable
+          ? const SettingTile(
+              title: '랩 타임 기능 사용',
+              description: '시험 중 랩 타임을 기록할 수 있어요.',
+              preferenceKey: PreferenceKey.useLapTime,
+            )
+          : SettingTile(
+              onTap: _onLapTimeSettingButtonTap,
+              title: '랩 타임 기능 사용',
+              description: '시험 중 랩 타임을 기록할 수 있어요.',
+              showArrow: true,
+            ),
+      const SettingDivider(),
       SettingTile(
         onTap: _onCustomizeSubjectNameButtonTap,
         title: '과목 이름 설정',
@@ -413,6 +426,10 @@ class _SettingsViewState extends State<SettingsView> {
         ],
       ),
     );
+  }
+
+  void _onLapTimeSettingButtonTap() {
+    showLapTimeLimitInfoDialog(context);
   }
 
   void _onNoiseSettingButtonTap() {

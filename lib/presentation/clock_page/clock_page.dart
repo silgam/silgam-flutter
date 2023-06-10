@@ -154,7 +154,7 @@ class _ClockPageState extends State<ClockPage> {
                   ],
                 ),
               ),
-              _buildLapTimeButton(direction),
+              if (_appCubit.useLapTime) _buildLapTimeButton(direction),
             ],
           ),
         ),

@@ -32,6 +32,10 @@ class AppCubit extends Cubit<AppState> {
   final SharedPreferences _sharedPreferences;
   late final IapCubit _iapCubit = getIt.get();
 
+  bool get useLapTime =>
+      (_sharedPreferences.getBool(PreferenceKey.useLapTime) ?? true) &&
+      state.productBenefit.isLapTimeAvailable;
+
   Future<void> initialize() async {
     final connectivity = await Connectivity().checkConnectivity();
     onConnectivityChanged(connectivity);

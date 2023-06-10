@@ -65,6 +65,61 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
   );
 }
 
+void showLapTimeLimitInfoDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    routeSettings: const RouteSettings(
+      name: '/lap_time_limit_help_dialog',
+    ),
+    builder: (context) {
+      return BlocBuilder<AppCubit, AppState>(
+        builder: (context, appState) {
+          return BlocBuilder<IapCubit, IapState>(
+            builder: (context, iapState) {
+              return AlertDialog(
+                title: const Text(
+                  '랩 타임 사용 제한 안내',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+                content: const Text(
+                  '랩 타임 제한 설명',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                    ),
+                    child: const Text('확인'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      AnalyticsManager.logEvent(
+                        name:
+                            '[LapTimeLimitHelpDialog] Check pass button tapped',
+                      );
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed(
+                        PurchasePage.routeName,
+                        arguments: PurchasePageArguments(
+                          product: iapState.activeProducts.first,
+                        ),
+                      );
+                    },
+                    child: const Text('실감패스 확인하러 가기'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
 Future<void> showMarketingInfoReceivingConsentDialog(
   BuildContext context, {
   bool isDismissible = false,
