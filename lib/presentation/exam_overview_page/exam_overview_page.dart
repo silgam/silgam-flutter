@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import '../../model/exam_detail.dart';
 import '../../model/lap_time.dart';
+import '../../model/subject.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
@@ -34,6 +35,7 @@ class ExamOverviewPage extends StatefulWidget {
   State<ExamOverviewPage> createState() => _ExamOverviewPageState();
 }
 
+// TODO 과목 이름 표시, 랩타임 타임라인 표시
 class _ExamOverviewPageState extends State<ExamOverviewPage> {
   static const _horizontalPadding = 24.0;
   static final TextStyle _titleTextStyle = TextStyle(
@@ -43,7 +45,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   );
   static final TextStyle _contentTextStyle = TextStyle(
     fontSize: 24,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w900,
     color: Colors.grey.shade900,
     height: 1.2,
   );
@@ -141,6 +143,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                         const SizedBox(height: 16),
                         _buildTitle(),
                         const SizedBox(height: 40),
+                        _buildSubjectCard(),
+                        const SizedBox(height: 20),
                         _buildExamTimeCard(),
                         const SizedBox(height: 20),
                         _buildLapTimeCard(
@@ -204,6 +208,42 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
+  Widget _buildSubjectCard() {
+    var subjects = widget.examDetail.exams.map((e) => e.subject).toList();
+    if (subjects.contains(Subject.investigation)) {
+      subjects = [Subject.investigation, Subject.investigation2];
+    }
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        children: [
+          Text(
+            '과목',
+            style: _titleTextStyle,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: subjects
+                .map(
+                  (subject) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(
+                      subject.subjectName,
+                      style: _contentTextStyle.copyWith(
+                        color: Color(subject.firstColor),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _buildExamTimeCard() {
     String startedTimeString =
         DateFormat.Hm().format(widget.examDetail.examStartedTime);
@@ -250,45 +290,39 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     children: [
                       Text(
                         '$startedTimeString ~ $finishedTimeString',
-                        style: _contentTextStyle.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: _contentTextStyle,
                       ),
                       VerticalDivider(
                         color: Colors.grey.shade900,
                         width: 20,
-                        thickness: 0.9,
+                        thickness: 1.1,
                         indent: 6,
                         endIndent: 6,
                       ),
                       Text(
                         '$durationMinutes',
-                        style: _contentTextStyle.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: _contentTextStyle,
                       ),
                       const SizedBox(width: 1),
                       Text(
                         'm',
                         style: _contentTextStyle.copyWith(
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w700,
                           height: 2,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '${durationSeconds % 60}',
-                        style: _contentTextStyle.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: _contentTextStyle,
                       ),
                       const SizedBox(width: 1),
                       Text(
                         's',
                         style: _contentTextStyle.copyWith(
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w700,
                           height: 2,
                         ),
                       )
@@ -441,7 +475,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 '${index + 1}',
                 style: _contentTextStyle.copyWith(
                   color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w900,
                   fontSize: _contentTextStyle.fontSize! - 5,
                 ),
               ),
@@ -449,7 +483,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               Text(
                 DateFormat.Hms().format(time),
                 style: _contentTextStyle.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w900,
                   fontSize: _contentTextStyle.fontSize! - 5,
                 ),
               ),
