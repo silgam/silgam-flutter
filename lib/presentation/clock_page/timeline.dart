@@ -87,12 +87,18 @@ class TimelineConnector extends StatelessWidget {
   final double progress;
   final Axis direction;
   final List<double> markerPositions;
+  final bool unsetWidth;
+  final bool unsetHeight;
+  final Color enabledColor;
 
   const TimelineConnector(
     this.duration,
     this.progress, {
     this.direction = Axis.horizontal,
     this.markerPositions = const [],
+    this.unsetWidth = false,
+    this.unsetHeight = false,
+    this.enabledColor = Colors.white,
     Key? key,
   }) : super(key: key);
 
@@ -130,14 +136,15 @@ class TimelineConnector extends StatelessWidget {
       end = Alignment.bottomCenter;
     }
     return Container(
-      width: width,
-      height: height,
+      width: unsetWidth ? null : width,
+      height: unsetHeight ? null : height,
       margin: margin,
       child: Flex(
         direction: flipAxis(direction),
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
+            flex: unsetHeight ? 0 : 1,
             child: Stack(
               children: markerPositions
                   .map(
@@ -153,7 +160,10 @@ class TimelineConnector extends StatelessWidget {
                           child: TimelineMarker(
                             width: _markerWidth,
                             height: _markerHeight,
-                            color: _getTimelineColor(position > progress),
+                            color: _getTimelineColor(
+                              position > progress,
+                              enabledColor: enabledColor,
+                            ),
                           ),
                         ),
                         if (position < 1)
@@ -174,21 +184,33 @@ class TimelineConnector extends StatelessWidget {
               gradient: LinearGradient(
                 begin: begin,
                 end: end,
-                colors: [_getTimelineColor(false), _getTimelineColor(true)],
+                colors: [
+                  _getTimelineColor(
+                    false,
+                    enabledColor: enabledColor,
+                  ),
+                  _getTimelineColor(
+                    true,
+                    enabledColor: enabledColor,
+                  )
+                ],
                 stops: [progress, progress],
               ),
             ),
           ),
-          const Spacer(),
+          if (!unsetHeight) const Spacer(),
         ],
       ),
     );
   }
 }
 
-Color _getTimelineColor(bool disabled) {
+Color _getTimelineColor(
+  bool disabled, {
+  Color enabledColor = Colors.white,
+}) {
   if (disabled) return Colors.grey[700]!;
-  return Colors.white;
+  return enabledColor;
 }
 
 extension on double {

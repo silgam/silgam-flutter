@@ -14,6 +14,7 @@ import '../../util/analytics_manager.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
+import '../clock_page/timeline.dart';
 import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
 import '../edit_record_page/edit_record_page.dart';
@@ -35,7 +36,6 @@ class ExamOverviewPage extends StatefulWidget {
   State<ExamOverviewPage> createState() => _ExamOverviewPageState();
 }
 
-// TODO 과목 이름 표시, 랩타임 타임라인 표시
 class _ExamOverviewPageState extends State<ExamOverviewPage> {
   static const _horizontalPadding = 24.0;
   static final TextStyle _titleTextStyle = TextStyle(
@@ -401,46 +401,51 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             Stack(
               children: [
                 Column(
-                  children: (exampleLapTimeItemGroups ?? lapTimeItemGroups)
-                      .map(
-                        (lapTimeItemGroup) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const SizedBox(height: 8),
-                            Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 5,
-                                horizontal: 8,
+                  children: [
+                    _buildLapTimeTimeline(
+                      lapTimeItemGroups:
+                          exampleLapTimeItemGroups ?? lapTimeItemGroups,
+                    ),
+                    const SizedBox(height: 8),
+                    ...(exampleLapTimeItemGroups ?? lapTimeItemGroups).map(
+                      (lapTimeItemGroup) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 8),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 5,
+                              horizontal: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 1,
                               ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 14,
-                                ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 14,
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            ...lapTimeItemGroup.lapTimeItems.mapIndexed(
-                              (index, lapTimeItem) => _buildLapTimeItem(
-                                index: index,
-                                time: lapTimeItem.time,
-                                timeDifference: lapTimeItem.timeDifference,
-                                timeElapsed: lapTimeItem.timeElapsed,
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                      .toList(),
+                          ),
+                          const SizedBox(height: 6),
+                          ...lapTimeItemGroup.lapTimeItems.mapIndexed(
+                            (index, lapTimeItem) => _buildLapTimeItem(
+                              index: index,
+                              time: lapTimeItem.time,
+                              timeDifference: lapTimeItem.timeDifference,
+                              timeElapsed: lapTimeItem.timeElapsed,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 if (exampleLapTimeItemGroups != null)
                   const Positioned.fill(
@@ -450,6 +455,69 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   )
               ],
             )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLapTimeTimeline({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).primaryColor,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: [
+          TimelineConnector(
+            1,
+            1,
+            unsetWidth: true,
+            unsetHeight: true,
+            enabledColor: Theme.of(context).primaryColor,
+            markerPositions: lapTimeItemGroups
+                .map((group) => group.lapTimeItems)
+                .flattened
+                .map((lapTimeItem) {
+                  final startTime = lapTimeItemGroups.first.startTime;
+                  final seconds =
+                      lapTimeItem.time.difference(startTime).inSeconds;
+                  final duration =
+                      firstExam.examEndTime.difference(startTime).inSeconds;
+                  return seconds / duration;
+                })
+                .where(
+                  (position) => position >= 0 && position <= 1,
+                )
+                .toList(),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                DateFormat.Hm().format(lapTimeItemGroups.first.startTime),
+                style: TextStyle(
+                  height: 1,
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                DateFormat.Hm().format(firstExam.examEndTime),
+                style: TextStyle(
+                  height: 1,
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
