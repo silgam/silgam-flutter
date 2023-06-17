@@ -19,7 +19,6 @@ import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
 import '../edit_record_page/edit_record_page.dart';
 import 'cubit/exam_overview_cubit.dart';
-import 'example_lap_time_groups.dart';
 
 part 'exam_overview_messages.dart';
 
@@ -51,17 +50,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   );
   final AppCubit _appCubit = getIt.get();
 
-  late final firstExam = widget.examDetail.exams.first;
-  late final List<LapTimeItemGroup>? exampleLapTimeItemGroups = _appCubit
-          .state.productBenefit.isLapTimeAvailable
-      ? null
-      : getExampleLapTimeGroups(
-          startTime: firstExam.announcements.first.time.calculateBreakpointTime(
-            firstExam.examStartTime,
-            firstExam.examEndTime,
-          ),
-        );
-
   void _onCloseButtonPressed() {
     Navigator.of(context).pop();
 
@@ -75,9 +63,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   void _onCopyLapTimePressed({
     required List<LapTimeItemGroup> lapTimeItemGroups,
+    required bool isUsingExample,
   }) {
-    final textToCopy =
-        (exampleLapTimeItemGroups ?? lapTimeItemGroups).toCopyableString();
+    final textToCopy = lapTimeItemGroups.toCopyableString();
     Clipboard.setData(ClipboardData(text: textToCopy));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -90,7 +78,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       name: '[ExamOverviewPage] Copy lap time button pressed',
       properties: {
         'copy_text': textToCopy,
-        'is_example': exampleLapTimeItemGroups != null,
+        'is_example': isUsingExample,
         'exam_detail': widget.examDetail.toString(),
       },
     );
@@ -149,6 +137,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                         const SizedBox(height: 20),
                         _buildLapTimeCard(
                           lapTimeItemGroups: state.lapTimeItemGroups,
+                          isUsingExample: state.isUsingExampleLapTimeItemGroups,
                         ),
                         const SizedBox(height: 120),
                       ],
@@ -339,6 +328,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   Widget _buildLapTimeCard({
     required List<LapTimeItemGroup> lapTimeItemGroups,
+    required bool isUsingExample,
   }) {
     return CustomCard(
       margin: const EdgeInsets.symmetric(
@@ -362,6 +352,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 child: IconButton(
                   onPressed: () => _onCopyLapTimePressed(
                     lapTimeItemGroups: lapTimeItemGroups,
+                    isUsingExample: isUsingExample,
                   ),
                   splashColor: Colors.transparent,
                   padding: const EdgeInsets.all(0),
@@ -403,11 +394,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 Column(
                   children: [
                     _buildLapTimeTimeline(
-                      lapTimeItemGroups:
-                          exampleLapTimeItemGroups ?? lapTimeItemGroups,
+                      lapTimeItemGroups: lapTimeItemGroups,
                     ),
                     const SizedBox(height: 8),
-                    ...(exampleLapTimeItemGroups ?? lapTimeItemGroups).map(
+                    ...lapTimeItemGroups.map(
                       (lapTimeItemGroup) => Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -447,7 +437,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     ),
                   ],
                 ),
-                if (exampleLapTimeItemGroups != null)
+                if (isUsingExample)
                   const Positioned.fill(
                     child: FreeUserBlockOverlay(
                       text: '예시 데이터입니다.\n랩 타임 기능은 실감패스 사용자만 이용 가능해요.',
@@ -463,6 +453,18 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildLapTimeTimeline({
     required List<LapTimeItemGroup> lapTimeItemGroups,
   }) {
+    final startTime = lapTimeItemGroups.first.startTime;
+    final endTime = widget.examDetail.exams.last.examEndTime;
+    final durationSeconds = endTime.difference(startTime).inSeconds;
+
+    final markerPositions = lapTimeItemGroups
+        .map((group) => group.lapTimeItems)
+        .flattened
+        .map((lapTimeItem) =>
+            lapTimeItem.time.difference(startTime).inSeconds / durationSeconds)
+        .where((position) => position >= 0 && position <= 1)
+        .toList();
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -480,28 +482,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             unsetWidth: true,
             unsetHeight: true,
             enabledColor: Theme.of(context).primaryColor,
-            markerPositions: lapTimeItemGroups
-                .map((group) => group.lapTimeItems)
-                .flattened
-                .map((lapTimeItem) {
-                  final startTime = lapTimeItemGroups.first.startTime;
-                  final seconds =
-                      lapTimeItem.time.difference(startTime).inSeconds;
-                  final duration =
-                      firstExam.examEndTime.difference(startTime).inSeconds;
-                  return seconds / duration;
-                })
-                .where(
-                  (position) => position >= 0 && position <= 1,
-                )
-                .toList(),
+            markerPositions: markerPositions,
           ),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                DateFormat.Hm().format(lapTimeItemGroups.first.startTime),
+                DateFormat.Hm().format(startTime),
                 style: TextStyle(
                   height: 1,
                   color: Theme.of(context).primaryColor,
@@ -509,7 +497,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 ),
               ),
               Text(
-                DateFormat.Hm().format(firstExam.examEndTime),
+                DateFormat.Hm().format(endTime),
                 style: TextStyle(
                   height: 1,
                   color: Theme.of(context).primaryColor,

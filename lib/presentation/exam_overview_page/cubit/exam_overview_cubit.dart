@@ -6,6 +6,8 @@ import 'package:injectable/injectable.dart';
 import '../../../model/exam.dart';
 import '../../../model/exam_detail.dart';
 import '../../../model/lap_time.dart';
+import '../../app/cubit/app_cubit.dart';
+import '../example_lap_time_groups.dart';
 
 part 'exam_overview_cubit.freezed.dart';
 part 'exam_overview_state.dart';
@@ -14,17 +16,23 @@ part 'exam_overview_state.dart';
 class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   ExamOverviewCubit(
     @factoryParam this._examDetail,
+    this._appCubit,
   ) : super(const ExamOverviewState()) {
     _initialize();
   }
 
   final ExamDetail _examDetail;
+  final AppCubit _appCubit;
 
   void _initialize() {
-    _updateLapTimeItemGroups(
-      exams: _examDetail.exams,
-      lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
-    );
+    if (_appCubit.state.productBenefit.isLapTimeAvailable) {
+      _updateLapTimeItemGroups(
+        exams: _examDetail.exams,
+        lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
+      );
+    } else {
+      _updateLapTimeItemGroupsUsingExample();
+    }
   }
 
   void _updateLapTimeItemGroups({
@@ -90,6 +98,21 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
 
     emit(state.copyWith(
       lapTimeItemGroups: lapTimeItemGroups,
+    ));
+  }
+
+  void _updateLapTimeItemGroupsUsingExample() {
+    final firstExam = _examDetail.exams.first;
+    final exampleLapTimeItemGroups = getExampleLapTimeGroups(
+      startTime: firstExam.announcements.first.time.calculateBreakpointTime(
+        firstExam.examStartTime,
+        firstExam.examEndTime,
+      ),
+    );
+
+    emit(state.copyWith(
+      lapTimeItemGroups: exampleLapTimeItemGroups,
+      isUsingExampleLapTimeItemGroups: true,
     ));
   }
 }
