@@ -397,6 +397,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                       lapTimeItemGroups: lapTimeItemGroups,
                     ),
                     const SizedBox(height: 8),
+                    const Divider(
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 2),
                     ...lapTimeItemGroups.map(
                       (lapTimeItemGroup) => Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -493,7 +497,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 style: TextStyle(
                   height: 1,
                   color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
               Text(
@@ -501,7 +504,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 style: TextStyle(
                   height: 1,
                   color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
