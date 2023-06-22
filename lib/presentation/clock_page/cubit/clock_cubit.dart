@@ -9,6 +9,7 @@ import 'package:injectable/injectable.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../../model/exam.dart';
+import '../../../model/lap_time.dart';
 import '../../../model/relative_time.dart';
 import '../../../repository/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
@@ -32,6 +33,7 @@ class ClockCubit extends Cubit<ClockState> {
   ) : super(ClockState(
           currentTime: DateTime.now(),
           examStartedTime: DateTime.now(),
+          pageOpenedTime: DateTime.now(),
           exams: exams,
         )) {
     _initialize();
@@ -158,6 +160,29 @@ class ClockCubit extends Cubit<ClockState> {
     );
   }
 
+  void onLapTimeButtonPressed() {
+    final newLapTime = LapTime(
+      time: state.currentTime,
+      createdAt: DateTime.now(),
+    );
+    if (state.lapTimes.every((e) => e.time != newLapTime.time)) {
+      emit(state.copyWith(
+        lapTimes: [...state.lapTimes, newLapTime],
+      ));
+    }
+
+    AnalyticsManager.logEvent(
+      name: '[ClockPage] Lap Time Button Pressed',
+      properties: {
+        'exam_name': state.exams.toExamNamesString(),
+        'exam_names': state.exams.map((e) => e.examName).toList(),
+        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        'current_time': state.currentTime.toString(),
+        'lap_times': state.lapTimes.toString(),
+      },
+    );
+  }
+
   void _onEverySecond(DateTime newTime) {
     emit(state.copyWith(currentTime: newTime));
     if (!state.isFinished) {
@@ -194,6 +219,7 @@ class ClockCubit extends Cubit<ClockState> {
       currentExamIndex: nextExamIndex,
     ));
     _saveExamStartedTimeIfNeeded();
+    _saveExamFinishedTimeIfNeeded();
     _announcementPlayer.pause();
     if (adjustTime) {
       emit(state.copyWith(currentTime: state.currentBreakpoint.time));
@@ -217,6 +243,13 @@ class ClockCubit extends Cubit<ClockState> {
     final currentAnnouncementTime = state.currentBreakpoint.announcement.time;
     if (currentAnnouncementTime == const RelativeTime.afterStart(minutes: 0)) {
       emit(state.copyWith(examStartedTime: DateTime.now()));
+    }
+  }
+
+  void _saveExamFinishedTimeIfNeeded() {
+    final currentAnnouncementTime = state.currentBreakpoint.announcement.time;
+    if (currentAnnouncementTime == const RelativeTime.afterFinish(minutes: 0)) {
+      emit(state.copyWith(examFinishedTime: DateTime.now()));
     }
   }
 

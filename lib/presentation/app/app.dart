@@ -13,6 +13,7 @@ import '../clock_page/clock_page.dart';
 import '../common/progress_overlay.dart';
 import '../customize_subject_name_page/customize_subject_name_page.dart';
 import '../edit_record_page/edit_record_page.dart';
+import '../exam_overview_page/exam_overview_page.dart';
 import '../home_page/home_page.dart';
 import '../login_page/login_page.dart';
 import '../my_page/my_page.dart';
@@ -105,6 +106,14 @@ class SilgamApp extends StatelessWidget {
                   return MaterialPageRoute(
                     builder: (_) => PurchasePage(
                       product: args.product,
+                    ),
+                    settings: settings,
+                  );
+                case ExamOverviewPage.routeName:
+                  final args = settings.arguments as ExamOverviewPageArguments;
+                  return MaterialPageRoute(
+                    builder: (_) => ExamOverviewPage(
+                      examDetail: args.examDetail,
                     ),
                     settings: settings,
                   );

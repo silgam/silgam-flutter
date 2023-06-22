@@ -85,6 +85,19 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
+      appState.productBenefit.isLapTimeAvailable
+          ? const SettingTile(
+              title: '랩타임 기능 사용',
+              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
+              preferenceKey: PreferenceKey.useLapTime,
+            )
+          : SettingTile(
+              onTap: _onLapTimeSettingButtonTap,
+              title: '랩타임 기능 사용',
+              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
+              showArrow: true,
+            ),
+      const SettingDivider(),
       SettingTile(
         onTap: _onCustomizeSubjectNameButtonTap,
         title: '과목 이름 설정',
@@ -97,13 +110,6 @@ class _SettingsViewState extends State<SettingsView> {
         title: '백색 소음, 시험장 소음 설정',
         description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있어요.',
         showArrow: true,
-      ),
-      const SettingDivider(),
-      const SettingTile(
-        title: '시험 종료 후 바로 기록하기',
-        description: '시험이 끝난 후에 모의고사를 기록할 수 있는 화면으로 넘어가요.',
-        disabledDescription: '시험이 끝난 후에 기록 목록 화면으로 넘어가요.',
-        preferenceKey: PreferenceKey.showAddRecordPageAfterExamFinished,
       ),
       const Subtitle(text: '기타', margin: EdgeInsets.zero),
       if (appState.isSignedIn)
@@ -420,6 +426,10 @@ class _SettingsViewState extends State<SettingsView> {
         ],
       ),
     );
+  }
+
+  void _onLapTimeSettingButtonTap() {
+    showLapTimeLimitInfoDialog(context);
   }
 
   void _onNoiseSettingButtonTap() {

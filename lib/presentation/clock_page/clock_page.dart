@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../model/exam.dart';
+import '../../model/exam_detail.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
@@ -15,7 +15,7 @@ import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/empty_scroll_behavior.dart';
-import '../edit_record_page/edit_record_page.dart';
+import '../exam_overview_page/exam_overview_page.dart';
 import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
 import 'wrist_watch.dart';
@@ -36,8 +36,6 @@ class ClockPage extends StatefulWidget {
 class _ClockPageState extends State<ClockPage> {
   final AppCubit _appCubit = getIt.get();
   late final ClockCubit _cubit = getIt.get(param1: widget.exams);
-
-  final DateTime _pageStartedTime = DateTime.now();
 
   final TransformationController _clockTransformController =
       TransformationController();
@@ -109,11 +107,7 @@ class _ClockPageState extends State<ClockPage> {
                           ),
                         ),
                       ),
-                      Visibility(
-                        visible: state.isUiVisible,
-                        maintainState: true,
-                        child: _buildBackgroundUi(),
-                      ),
+                      _buildBackgroundUi(state.isUiVisible),
                       if (!state.isStarted) _buildScreenOverlay(),
                     ],
                   );
@@ -126,23 +120,41 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildBackgroundUi() {
+  Widget _buildBackgroundUi(bool isUiVisible) {
     Axis direction = Axis.vertical;
     if (_isSmallHeightScreen()) direction = Axis.horizontal;
     return Flex(
       direction: direction,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: _buildExamTitle(_cubit.state.currentExam),
+          child: Visibility(
+            visible: isUiVisible,
+            maintainState: true,
+            child: _buildExamTitle(_cubit.state.currentExam),
+          ),
         ),
         const WristWatchContainer(),
         Expanded(
           child: Flex(
             direction: direction,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildTimeline(),
-              _buildNavigator(),
+              Visibility(
+                visible: isUiVisible,
+                maintainState: true,
+                maintainSize: true,
+                maintainAnimation: true,
+                child: Flex(
+                  direction: direction,
+                  children: [
+                    _buildTimeline(),
+                    _buildNavigator(),
+                  ],
+                ),
+              ),
+              if (_appCubit.useLapTime) _buildLapTimeButton(direction),
             ],
           ),
         ),
@@ -248,10 +260,23 @@ class _ClockPageState extends State<ClockPage> {
             duration.inSeconds;
       }
 
+      final markerPositions = state.lapTimes
+          .where((lapTime) =>
+              lapTime.time.isAtSameMomentAs(breakpoint.time) ||
+              lapTime.time.isAfter(breakpoint.time) &&
+                  lapTime.time.isBefore(nextBreakpoint.time))
+          .map((lapTime) {
+        final lapTimeProgress =
+            lapTime.time.difference(breakpoint.time).inSeconds /
+                duration.inSeconds;
+        return lapTimeProgress;
+      }).toList();
+
       tiles.add(TimelineConnector(
         duration.inMinutes,
         progress,
         direction: orientation,
+        markerPositions: markerPositions,
         key: _timelineConnectorKeys[index],
       ));
     });
@@ -266,7 +291,7 @@ class _ClockPageState extends State<ClockPage> {
 
     return Flex(
       direction: direction,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           onPressed: _cubit.subtract30Seconds,
@@ -289,6 +314,34 @@ class _ClockPageState extends State<ClockPage> {
           splashRadius: 20,
         ),
       ],
+    );
+  }
+
+  Widget _buildLapTimeButton(Axis direction) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: direction == Axis.vertical ? 20 : 0,
+        vertical: direction == Axis.vertical ? 0 : 20,
+      ),
+      child: OutlinedButton(
+        onPressed: _cubit.onLapTimeButtonPressed,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: Colors.grey.shade700),
+          shape: const StadiumBorder(),
+          visualDensity: const VisualDensity(
+            horizontal: VisualDensity.minimumDensity,
+            vertical: VisualDensity.minimumDensity,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: direction == Axis.vertical ? 0 : 20,
+            vertical: direction == Axis.vertical ? 32 : 0,
+          ),
+          foregroundColor: Colors.grey.shade700,
+        ),
+        child: Text(
+          direction == Axis.vertical ? 'LAP' : 'L\nA\nP',
+        ),
+      ),
     );
   }
 
@@ -390,29 +443,28 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    final SharedPreferences sharedPreferences = getIt.get();
     final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
-    if (!isAdsRemoved &&
-        DateTime.now().difference(_pageStartedTime).inMinutes >= 10) {
+    final sincePageOpenedMinutes =
+        DateTime.now().difference(_cubit.state.pageOpenedTime).inMinutes;
+    if (!isAdsRemoved && sincePageOpenedMinutes >= 10) {
       _interstitialAd?.show();
     }
 
-    final arguments = EditRecordPageArguments(
-      inputExam: widget.exams[0],
-      examStartedTime: _cubit.state.examStartedTime,
+    final arguments = ExamOverviewPageArguments(
+      examDetail: ExamDetail(
+        exams: _cubit.state.exams,
+        examStartedTime: _cubit.state.examStartedTime,
+        examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
+        pageOpenedTime: _cubit.state.pageOpenedTime,
+        lapTimes: _cubit.state.lapTimes,
+      ),
     );
     Navigator.pop(context);
-
-    const key = PreferenceKey.showAddRecordPageAfterExamFinished;
-    final showAddRecordPageAfterExamFinished =
-        sharedPreferences.getBool(key) ?? true;
-    if (showAddRecordPageAfterExamFinished && _appCubit.state.isSignedIn) {
-      Navigator.pushNamed(
-        context,
-        EditRecordPage.routeName,
-        arguments: arguments,
-      );
-    }
+    Navigator.pushNamed(
+      context,
+      ExamOverviewPage.routeName,
+      arguments: arguments,
+    );
 
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',

@@ -12,3 +12,11 @@ extension DateTimeUtil on DateTime {
     }
   }
 }
+
+extension DurationExtension on Duration {
+  String to2DigitString() {
+    final minutes = inMinutes.toString().padLeft(2, '0');
+    final seconds = (inSeconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+}

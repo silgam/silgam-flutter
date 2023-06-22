@@ -1,6 +1,5 @@
 import '../../model/announcement.dart';
 import '../../model/exam.dart';
-import '../../model/relative_time.dart';
 
 class Breakpoint {
   final String title;
@@ -17,24 +16,8 @@ class Breakpoint {
     final breakpoints = <Breakpoint>[];
 
     for (var announcement in exam.announcements) {
-      final int minutes = announcement.time.minutes;
-      final DateTime breakpointTime;
-      switch (announcement.time.type) {
-        case RelativeTimeType.beforeStart:
-          breakpointTime =
-              exam.examStartTime.subtract(Duration(minutes: minutes));
-          break;
-        case RelativeTimeType.afterStart:
-          breakpointTime = exam.examStartTime.add(Duration(minutes: minutes));
-          break;
-        case RelativeTimeType.beforeFinish:
-          breakpointTime =
-              exam.examEndTime.subtract(Duration(minutes: minutes));
-          break;
-        case RelativeTimeType.afterFinish:
-          breakpointTime = exam.examEndTime.add(Duration(minutes: minutes));
-          break;
-      }
+      final DateTime breakpointTime = announcement.time
+          .calculateBreakpointTime(exam.examStartTime, exam.examEndTime);
       breakpoints.add(Breakpoint(
         title: announcement.title,
         time: breakpointTime,
