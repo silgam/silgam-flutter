@@ -86,6 +86,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   void _onBottomButtonPressed({
     required List<LapTimeItemGroup> lapTimeItemGroups,
+    required bool isUsingExample,
   }) {
     Navigator.of(context).pop();
 
@@ -94,7 +95,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         inputExam: widget.examDetail.exams.first,
         examStartedTime: widget.examDetail.examStartedTime,
         examFinishedTime: widget.examDetail.examFinishedTime,
-        prefillFeedback: lapTimeItemGroups.isItemsEmpty
+        prefillFeedback: (lapTimeItemGroups.isItemsEmpty || isUsingExample)
             ? null
             : lapTimeItemGroups.toCopyableString(),
       );
@@ -171,6 +172,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           ),
           child: _buildBottomButton(
             lapTimeItemGroups: state.lapTimeItemGroups,
+            isUsingExample: state.isUsingExampleLapTimeItemGroups,
           ),
         ),
       ],
@@ -228,6 +230,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           ),
           child: _buildBottomButton(
             lapTimeItemGroups: state.lapTimeItemGroups,
+            isUsingExample: state.isUsingExampleLapTimeItemGroups,
           ),
         ),
         Positioned(
@@ -638,6 +641,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   Widget _buildBottomButton({
     required List<LapTimeItemGroup> lapTimeItemGroups,
+    required bool isUsingExample,
   }) {
     return Material(
       color: Theme.of(context).primaryColor,
@@ -648,6 +652,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       child: InkWell(
         onTap: () => _onBottomButtonPressed(
           lapTimeItemGroups: lapTimeItemGroups,
+          isUsingExample: isUsingExample,
         ),
         splashColor: Colors.transparent,
         highlightColor: Colors.grey.withAlpha(60),
