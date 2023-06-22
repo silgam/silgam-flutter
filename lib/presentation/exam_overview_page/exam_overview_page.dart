@@ -36,7 +36,7 @@ class ExamOverviewPage extends StatefulWidget {
 }
 
 class _ExamOverviewPageState extends State<ExamOverviewPage> {
-  static const _horizontalPadding = 24.0;
+  static const _tabletLayoutWidth = 800.0;
   static final TextStyle _titleTextStyle = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.bold,
@@ -115,47 +115,16 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider<ExamOverviewCubit>(
       create: (_) => getIt.get(param1: widget.examDetail),
       child: Scaffold(
         body: SafeArea(
           child: BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
             builder: (context, state) {
-              return Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildCloseButton(),
-                        const SizedBox(height: 16),
-                        _buildTitle(),
-                        const SizedBox(height: 40),
-                        _buildSubjectCard(),
-                        const SizedBox(height: 20),
-                        _buildExamTimeCard(),
-                        const SizedBox(height: 20),
-                        _buildLapTimeCard(
-                          lapTimeItemGroups: state.lapTimeItemGroups,
-                          isUsingExample: state.isUsingExampleLapTimeItemGroups,
-                        ),
-                        const SizedBox(height: 120),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    margin: const EdgeInsets.only(
-                      left: _horizontalPadding,
-                      right: _horizontalPadding,
-                      bottom: 20,
-                    ),
-                    child: _buildBottomButton(
-                      lapTimeItemGroups: state.lapTimeItemGroups,
-                    ),
-                  ),
-                ],
-              );
+              return screenWidth > _tabletLayoutWidth
+                  ? _buildTabletLayout(state)
+                  : _buildMobileLayout(state);
             },
           ),
         ),
@@ -163,12 +132,116 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
+  Widget _buildMobileLayout(ExamOverviewState state) {
+    const horizontalPadding = 24.0;
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 12),
+                _buildCloseButton(),
+                const SizedBox(height: 16),
+                _buildTitle(),
+                const SizedBox(height: 40),
+                _buildSubjectCard(),
+                const SizedBox(height: 20),
+                _buildExamTimeCard(),
+                const SizedBox(height: 20),
+                _buildLapTimeCard(
+                  lapTimeItemGroups: state.lapTimeItemGroups,
+                  isUsingExample: state.isUsingExampleLapTimeItemGroups,
+                ),
+                const SizedBox(height: 120),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.bottomCenter,
+          margin: const EdgeInsets.only(
+            left: horizontalPadding,
+            right: horizontalPadding,
+            bottom: 20,
+          ),
+          child: _buildBottomButton(
+            lapTimeItemGroups: state.lapTimeItemGroups,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabletLayout(ExamOverviewState state) {
+    const horizontalPadding = 60.0;
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: _tabletLayoutWidth),
+              padding: const EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 40),
+                  _buildTitle(),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: _buildSubjectCard(),
+                      ),
+                      const SizedBox(width: 28),
+                      Expanded(
+                        flex: 3,
+                        child: _buildExamTimeCard(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+                  _buildLapTimeCard(
+                    lapTimeItemGroups: state.lapTimeItemGroups,
+                    isUsingExample: state.isUsingExampleLapTimeItemGroups,
+                  ),
+                  const SizedBox(height: 120),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.bottomCenter,
+          margin: const EdgeInsets.only(
+            left: horizontalPadding,
+            right: horizontalPadding,
+            bottom: 20,
+          ),
+          child: _buildBottomButton(
+            lapTimeItemGroups: state.lapTimeItemGroups,
+          ),
+        ),
+        Positioned(
+          top: 12,
+          right: 20,
+          child: _buildCloseButton(),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCloseButton() {
     return Container(
       alignment: Alignment.centerRight,
-      padding: const EdgeInsets.symmetric(
-        horizontal: _horizontalPadding,
-      ),
       child: IconButton(
         splashRadius: 20,
         icon: const Icon(Icons.close),
@@ -178,20 +251,15 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildTitle() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: _horizontalPadding,
-      ),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.centerLeft,
-        child: Text(
-          _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)],
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-            height: 1.3,
-          ),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Text(
+        _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)],
+        style: const TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w900,
+          height: 1.3,
         ),
       ),
     );
@@ -203,7 +271,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       subjects = [Subject.investigation, Subject.investigation2];
     }
     return CustomCard(
-      margin: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
@@ -245,9 +312,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         .difference(widget.examDetail.examStartedTime)
         .inSeconds;
     return CustomCard(
-      margin: const EdgeInsets.symmetric(
-        horizontal: _horizontalPadding,
-      ),
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 16,
@@ -331,9 +395,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     required bool isUsingExample,
   }) {
     return CustomCard(
-      margin: const EdgeInsets.symmetric(
-        horizontal: _horizontalPadding,
-      ),
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 16,
