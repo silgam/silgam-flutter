@@ -405,7 +405,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             alignment: Alignment.topCenter,
             children: [
               Text(
-                '랩 타임',
+                '랩타임',
                 style: _titleTextStyle,
               ),
               Align(
@@ -439,8 +439,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               child: Text(
                 _appCubit.state.productBenefit.isLapTimeAvailable &&
                         !_appCubit.useLapTime
-                    ? '랩 타임 기능이 꺼져있어요.\n설정에서 랩 타임 기능을 켜보세요.'
-                    : '기록된 랩 타임이 없어요.\n시험 중에 LAP 버튼을 눌러 랩 타임을 기록해보세요.',
+                    ? '랩타임 기능이 꺼져있어요.\n설정에서 랩타임 기능을 켜보세요.'
+                    : '기록된 랩타임이 없어요.\n시험 중에 LAP 버튼을 눌러 랩타임을 기록해보세요.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.grey,
@@ -505,7 +505,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 if (isUsingExample)
                   const Positioned.fill(
                     child: FreeUserBlockOverlay(
-                      text: '예시 데이터입니다.\n랩 타임 기능은 실감패스 사용자만 이용 가능해요.',
+                      text: '예시 데이터입니다.\n랩타임 기능은 실감패스 사용자만 이용 가능해요.',
                     ),
                   )
               ],

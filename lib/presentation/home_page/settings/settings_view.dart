@@ -87,14 +87,14 @@ class _SettingsViewState extends State<SettingsView> {
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
-              title: '랩 타임 기능 사용',
-              description: '시험 중 랩 타임을 기록할 수 있어요.',
+              title: '랩타임 기능 사용',
+              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
               preferenceKey: PreferenceKey.useLapTime,
             )
           : SettingTile(
               onTap: _onLapTimeSettingButtonTap,
-              title: '랩 타임 기능 사용',
-              description: '시험 중 랩 타임을 기록할 수 있어요.',
+              title: '랩타임 기능 사용',
+              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
               showArrow: true,
             ),
       const SettingDivider(),

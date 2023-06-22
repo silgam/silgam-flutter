@@ -78,11 +78,11 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
             builder: (context, iapState) {
               return AlertDialog(
                 title: const Text(
-                  '랩 타임 사용 제한 안내',
+                  '랩타임 기능 이용 제한 안내',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 content: const Text(
-                  '랩 타임 제한 설명',
+                  '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
                 ),
                 actions: [
                   TextButton(
