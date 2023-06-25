@@ -6,14 +6,19 @@ import '../app/cubit/iap_cubit.dart';
 import 'purchase_button.dart';
 
 class FreeUserBlockOverlay extends StatelessWidget {
-  const FreeUserBlockOverlay({super.key, required this.text});
+  const FreeUserBlockOverlay({
+    super.key,
+    required this.text,
+    this.overlayColor,
+  });
 
   final String text;
+  final Color? overlayColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white.withOpacity(0.65),
+      color: overlayColor ?? Colors.white.withOpacity(0.65),
       alignment: Alignment.center,
       padding: const EdgeInsets.all(20),
       child: Column(

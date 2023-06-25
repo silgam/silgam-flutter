@@ -506,8 +506,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   ],
                 ),
                 if (isUsingExample)
-                  const Positioned.fill(
+                  Positioned.fill(
                     child: FreeUserBlockOverlay(
+                      overlayColor: Colors.white.withOpacity(0.8),
                       text: '예시 데이터입니다.\n랩타임 기능은 실감패스 사용자만 이용 가능해요.',
                     ),
                   )
