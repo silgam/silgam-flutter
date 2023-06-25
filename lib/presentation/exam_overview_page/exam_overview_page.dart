@@ -165,16 +165,28 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        Container(
+        Align(
           alignment: Alignment.bottomCenter,
-          margin: const EdgeInsets.only(
-            left: horizontalPadding,
-            right: horizontalPadding,
-            bottom: 20,
-          ),
-          child: _buildBottomButton(
-            lapTimeItemGroups: state.lapTimeItemGroups,
-            isUsingExample: state.isUsingExampleLapTimeItemGroups,
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: horizontalPadding,
+              right: horizontalPadding,
+              bottom: 20,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.grey.shade50.withOpacity(0),
+                  Colors.grey.shade50,
+                ],
+              ),
+            ),
+            child: _buildBottomButton(
+              lapTimeItemGroups: state.lapTimeItemGroups,
+              isUsingExample: state.isUsingExampleLapTimeItemGroups,
+            ),
           ),
         ),
       ],
@@ -223,16 +235,28 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        Container(
+        Align(
           alignment: Alignment.bottomCenter,
-          margin: const EdgeInsets.only(
-            left: horizontalPadding,
-            right: horizontalPadding,
-            bottom: 20,
-          ),
-          child: _buildBottomButton(
-            lapTimeItemGroups: state.lapTimeItemGroups,
-            isUsingExample: state.isUsingExampleLapTimeItemGroups,
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: horizontalPadding,
+              right: horizontalPadding,
+              bottom: 20,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.grey.shade50.withOpacity(0),
+                  Colors.grey.shade50,
+                ],
+              ),
+            ),
+            child: _buildBottomButton(
+              lapTimeItemGroups: state.lapTimeItemGroups,
+              isUsingExample: state.isUsingExampleLapTimeItemGroups,
+            ),
           ),
         ),
         Positioned(
