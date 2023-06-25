@@ -325,18 +325,32 @@ class _ClockPageState extends State<ClockPage> {
       ),
       child: OutlinedButton(
         onPressed: _cubit.onLapTimeButtonPressed,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.grey.shade700),
-          shape: const StadiumBorder(),
+        style: ButtonStyle(
+          side: MaterialStateProperty.all(
+            BorderSide(
+              color: Colors.grey.shade700,
+              width: 1,
+            ),
+          ),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(1000),
+            ),
+          ),
           visualDensity: const VisualDensity(
             horizontal: VisualDensity.minimumDensity,
             vertical: VisualDensity.minimumDensity,
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: direction == Axis.vertical ? 0 : 20,
-            vertical: direction == Axis.vertical ? 32 : 0,
+          padding: MaterialStateProperty.all(
+            EdgeInsets.symmetric(
+              horizontal: direction == Axis.vertical ? 0 : 20,
+              vertical: direction == Axis.vertical ? 32 : 0,
+            ),
           ),
-          foregroundColor: Colors.grey.shade700,
+          foregroundColor: MaterialStateProperty.all(Colors.grey.shade700),
+          overlayColor: MaterialStateProperty.all(
+            Colors.white.withOpacity(0.4),
+          ),
         ),
         child: Text(
           direction == Axis.vertical ? 'LAP' : 'L\nA\nP',
