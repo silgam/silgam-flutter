@@ -51,8 +51,83 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.2,
   );
 
-  void _onCloseButtonPressed() {
-    Navigator.of(context).pop();
+  Future<bool> _onBackPressed({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+    required bool isUsingExample,
+    required bool isSignedIn,
+  }) async {
+    _onCloseButtonPressed(
+      lapTimeItemGroups: lapTimeItemGroups,
+      isUsingExample: isUsingExample,
+      isSignedIn: isSignedIn,
+    );
+    return false;
+  }
+
+  void _onCloseButtonPressed({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+    required bool isUsingExample,
+    required bool isSignedIn,
+  }) {
+    var content = '기록한 랩타임과 시험에 대한 피드백을 저장해보세요.';
+    if (!isSignedIn) {
+      content = '로그인을 하면 시험 기록을 피드백과 함께 저장할 수 있어요.';
+    } else if (lapTimeItemGroups.isItemsEmpty || isUsingExample) {
+      content = '이번 시험에서 틀린 문제와 피드백을 기록해보세요.';
+    }
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(name: '/exam_overview/close_dialog'),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            '아직 시험 기록이 저장되지 않았어요!',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+
+                AnalyticsManager.logEvent(
+                  name: '[ExamOverviewPage-CloseDialog] Exit button pressed',
+                  properties: {
+                    'exam_detail': widget.examDetail.toString(),
+                  },
+                );
+              },
+              child: Text(
+                '나가기',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _onBottomButtonPressed(
+                  lapTimeItemGroups: lapTimeItemGroups,
+                  isUsingExample: isUsingExample,
+                  isSignedIn: isSignedIn,
+                );
+
+                AnalyticsManager.logEvent(
+                  name:
+                      '[ExamOverviewPage-CloseDialog] Continue button pressed',
+                  properties: {
+                    'exam_detail': widget.examDetail.toString(),
+                  },
+                );
+              },
+              child: Text(isSignedIn ? '기록하기' : '로그인'),
+            ),
+          ],
+        );
+      },
+    );
 
     AnalyticsManager.logEvent(
       name: '[ExamOverviewPage] Close button pressed',
@@ -136,9 +211,16 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 context.read<ExamOverviewCubit>().initialize();
                 return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
                   builder: (context, state) {
-                    return screenWidth > _tabletLayoutWidth
-                        ? _buildTabletLayout(state, appState)
-                        : _buildMobileLayout(state, appState);
+                    return WillPopScope(
+                      onWillPop: () => _onBackPressed(
+                        lapTimeItemGroups: state.lapTimeItemGroups,
+                        isUsingExample: state.isUsingExampleLapTimeItemGroups,
+                        isSignedIn: appState.isSignedIn,
+                      ),
+                      child: screenWidth > _tabletLayoutWidth
+                          ? _buildTabletLayout(state, appState)
+                          : _buildMobileLayout(state, appState),
+                    );
                   },
                 );
               },
@@ -162,7 +244,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 12),
-                _buildCloseButton(),
+                _buildCloseButton(
+                  lapTimeItemGroups: state.lapTimeItemGroups,
+                  isUsingExample: state.isUsingExampleLapTimeItemGroups,
+                  isSignedIn: appState.isSignedIn,
+                ),
                 const SizedBox(height: 16),
                 _buildTitle(),
                 const SizedBox(height: 40),
@@ -284,19 +370,31 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         Positioned(
           top: 12,
           right: 20,
-          child: _buildCloseButton(),
+          child: _buildCloseButton(
+            lapTimeItemGroups: state.lapTimeItemGroups,
+            isUsingExample: state.isUsingExampleLapTimeItemGroups,
+            isSignedIn: appState.isSignedIn,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildCloseButton() {
+  Widget _buildCloseButton({
+    required List<LapTimeItemGroup> lapTimeItemGroups,
+    required bool isUsingExample,
+    required bool isSignedIn,
+  }) {
     return Container(
       alignment: Alignment.centerRight,
       child: IconButton(
         splashRadius: 20,
         icon: const Icon(Icons.close),
-        onPressed: _onCloseButtonPressed,
+        onPressed: () => _onCloseButtonPressed(
+          lapTimeItemGroups: lapTimeItemGroups,
+          isUsingExample: isUsingExample,
+          isSignedIn: isSignedIn,
+        ),
       ),
     );
   }
