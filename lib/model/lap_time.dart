@@ -33,8 +33,11 @@ class LapTimeItemGroup with _$LapTimeItemGroup {
 }
 
 extension LapTimeItemGroupsExtension on List<LapTimeItemGroup> {
-  String toCopyableString() {
+  String toCopyableString({bool isExample = false}) {
     final buffer = StringBuffer();
+    if (isExample) {
+      buffer.writeln('(예시 텍스트입니다. )');
+    }
     buffer.writeln('      |      시간      |   간격   |   누적   |  분류');
 
     for (final group in this) {

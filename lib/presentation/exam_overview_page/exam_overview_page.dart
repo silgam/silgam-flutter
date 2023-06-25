@@ -65,7 +65,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     required List<LapTimeItemGroup> lapTimeItemGroups,
     required bool isUsingExample,
   }) {
-    final textToCopy = lapTimeItemGroups.toCopyableString();
+    final textToCopy = lapTimeItemGroups.toCopyableString(
+      isExample: isUsingExample,
+    );
     Clipboard.setData(ClipboardData(text: textToCopy));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
