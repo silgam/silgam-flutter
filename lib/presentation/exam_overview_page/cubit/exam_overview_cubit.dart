@@ -18,13 +18,13 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     @factoryParam this._examDetail,
     this._appCubit,
   ) : super(const ExamOverviewState()) {
-    _initialize();
+    initialize();
   }
 
   final ExamDetail _examDetail;
   final AppCubit _appCubit;
 
-  void _initialize() {
+  void initialize() {
     if (_appCubit.state.productBenefit.isLapTimeAvailable) {
       _updateLapTimeItemGroups(
         exams: _examDetail.exams,

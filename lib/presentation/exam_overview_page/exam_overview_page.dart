@@ -13,11 +13,13 @@ import '../../model/subject.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../clock_page/timeline.dart';
 import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
 import '../edit_record_page/edit_record_page.dart';
+import '../login_page/login_page.dart';
 import 'cubit/exam_overview_cubit.dart';
 
 part 'exam_overview_messages.dart';
@@ -48,7 +50,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     color: Colors.grey.shade900,
     height: 1.2,
   );
-  final AppCubit _appCubit = getIt.get();
 
   void _onCloseButtonPressed() {
     Navigator.of(context).pop();
@@ -89,10 +90,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   void _onBottomButtonPressed({
     required List<LapTimeItemGroup> lapTimeItemGroups,
     required bool isUsingExample,
+    required bool isSignedIn,
   }) {
-    Navigator.of(context).pop();
-
-    if (_appCubit.state.isSignedIn) {
+    if (isSignedIn) {
+      Navigator.of(context).pop();
       final arguments = EditRecordPageArguments(
         inputExam: widget.examDetail.exams.first,
         examStartedTime: widget.examDetail.examStartedTime,
@@ -105,6 +106,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         context,
         EditRecordPage.routeName,
         arguments: arguments,
+      );
+    } else {
+      Navigator.pushNamed(
+        context,
+        LoginPage.routeName,
       );
     }
 
@@ -121,21 +127,29 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider<ExamOverviewCubit>(
       create: (_) => getIt.get(param1: widget.examDetail),
-      child: Scaffold(
-        body: SafeArea(
-          child: BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
-            builder: (context, state) {
-              return screenWidth > _tabletLayoutWidth
-                  ? _buildTabletLayout(state)
-                  : _buildMobileLayout(state);
-            },
+      child: AnnotatedRegion(
+        value: defaultSystemUiOverlayStyle,
+        child: Scaffold(
+          body: SafeArea(
+            child: BlocBuilder<AppCubit, AppState>(
+              builder: (context, appState) {
+                context.read<ExamOverviewCubit>().initialize();
+                return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
+                  builder: (context, state) {
+                    return screenWidth > _tabletLayoutWidth
+                        ? _buildTabletLayout(state, appState)
+                        : _buildMobileLayout(state, appState);
+                  },
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildMobileLayout(ExamOverviewState state) {
+  Widget _buildMobileLayout(ExamOverviewState state, AppState appState) {
     const horizontalPadding = 24.0;
     return Stack(
       children: [
@@ -159,6 +173,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 _buildLapTimeCard(
                   lapTimeItemGroups: state.lapTimeItemGroups,
                   isUsingExample: state.isUsingExampleLapTimeItemGroups,
+                  isLapTimeAvailable:
+                      appState.productBenefit.isLapTimeAvailable,
+                  useLapTime: getIt.get<AppCubit>().useLapTime,
                 ),
                 const SizedBox(height: 120),
               ],
@@ -186,6 +203,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             child: _buildBottomButton(
               lapTimeItemGroups: state.lapTimeItemGroups,
               isUsingExample: state.isUsingExampleLapTimeItemGroups,
+              isSignedIn: appState.isSignedIn,
             ),
           ),
         ),
@@ -193,7 +211,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildTabletLayout(ExamOverviewState state) {
+  Widget _buildTabletLayout(ExamOverviewState state, AppState appState) {
     const horizontalPadding = 60.0;
     return Stack(
       children: [
@@ -228,6 +246,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   _buildLapTimeCard(
                     lapTimeItemGroups: state.lapTimeItemGroups,
                     isUsingExample: state.isUsingExampleLapTimeItemGroups,
+                    isLapTimeAvailable:
+                        appState.productBenefit.isLapTimeAvailable,
+                    useLapTime: getIt.get<AppCubit>().useLapTime,
                   ),
                   const SizedBox(height: 120),
                 ],
@@ -256,6 +277,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             child: _buildBottomButton(
               lapTimeItemGroups: state.lapTimeItemGroups,
               isUsingExample: state.isUsingExampleLapTimeItemGroups,
+              isSignedIn: appState.isSignedIn,
             ),
           ),
         ),
@@ -422,6 +444,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildLapTimeCard({
     required List<LapTimeItemGroup> lapTimeItemGroups,
     required bool isUsingExample,
+    required bool isLapTimeAvailable,
+    required bool useLapTime,
   }) {
     return CustomCard(
       padding: const EdgeInsets.symmetric(
@@ -461,13 +485,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ],
           ),
           const SizedBox(height: 8),
-          if (lapTimeItemGroups.isItemsEmpty &&
-              _appCubit.state.productBenefit.isLapTimeAvailable)
+          if (lapTimeItemGroups.isItemsEmpty && isLapTimeAvailable)
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 20),
               child: Text(
-                _appCubit.state.productBenefit.isLapTimeAvailable &&
-                        !_appCubit.useLapTime
+                isLapTimeAvailable && useLapTime
                     ? '랩타임 기능이 꺼져있어요.\n설정에서 랩타임 기능을 켜보세요.'
                     : '기록된 랩타임이 없어요.\n시험 중에 LAP 버튼을 눌러 랩타임을 기록해보세요.',
                 textAlign: TextAlign.center,
@@ -669,6 +691,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildBottomButton({
     required List<LapTimeItemGroup> lapTimeItemGroups,
     required bool isUsingExample,
+    required bool isSignedIn,
   }) {
     return Material(
       color: Theme.of(context).primaryColor,
@@ -680,6 +703,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         onTap: () => _onBottomButtonPressed(
           lapTimeItemGroups: lapTimeItemGroups,
           isUsingExample: isUsingExample,
+          isSignedIn: isSignedIn,
         ),
         splashColor: Colors.transparent,
         highlightColor: Colors.grey.withAlpha(60),
