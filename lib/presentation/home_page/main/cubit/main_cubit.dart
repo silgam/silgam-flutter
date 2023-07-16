@@ -43,7 +43,7 @@ class MainCubit extends Cubit<MainState> {
     } catch (e) {
       log(
         'Failed to update ads from cache: $e',
-        name: 'MainCubit',
+        name: runtimeType.toString(),
         error: e,
         stackTrace: StackTrace.current,
       );
@@ -54,7 +54,7 @@ class MainCubit extends Cubit<MainState> {
     } catch (e) {
       log(
         'Failed to update dDays from cache: $e',
-        name: 'MainCubit',
+        name: runtimeType.toString(),
         error: e,
         stackTrace: StackTrace.current,
       );
@@ -121,7 +121,7 @@ class MainCubit extends Cubit<MainState> {
     final cachedAds = _sharedPreferences.getString(PreferenceKey.cacheAds);
     if (cachedAds == null) return null;
 
-    log('Set ads from cache: $cachedAds', name: 'MainCubit');
+    log('Set ads from cache: $cachedAds', name: runtimeType.toString());
     final adsJson = jsonDecode(cachedAds) as List<dynamic>;
     return adsJson.map((e) => Ads.fromJson(e)).toList();
   }
@@ -130,7 +130,7 @@ class MainCubit extends Cubit<MainState> {
     final cachedDDays = _sharedPreferences.getString(PreferenceKey.cacheDDays);
     if (cachedDDays == null) return null;
 
-    log('Set ddays from cache: $cachedDDays', name: 'MainCubit');
+    log('Set ddays from cache: $cachedDDays', name: runtimeType.toString());
     final dDaysJson = jsonDecode(cachedDDays) as List<dynamic>;
     return dDaysJson.map((e) => DDay.fromJson(e)).toList();
   }

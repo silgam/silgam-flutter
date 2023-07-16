@@ -111,7 +111,7 @@ class AppCubit extends Cubit<AppState> {
     } catch (e) {
       log(
         'Failed to update user from cache: $e',
-        name: 'AppCubit',
+        name: runtimeType.toString(),
         error: e,
         stackTrace: StackTrace.current,
       );
@@ -177,7 +177,7 @@ class AppCubit extends Cubit<AppState> {
     final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
     if (cachedMe == null) return null;
 
-    log('Set user from cache: $cachedMe', name: 'AppCubit');
+    log('Set user from cache: $cachedMe', name: runtimeType.toString());
     return User.fromJson(jsonDecode(cachedMe));
   }
 }

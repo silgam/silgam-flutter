@@ -365,7 +365,7 @@ class IapCubit extends Cubit<IapState> {
     } catch (e) {
       log(
         'Failed to update products from cache: $e',
-        name: 'PurchaseCubit',
+        name: runtimeType.toString(),
         error: e,
         stackTrace: StackTrace.current,
       );
@@ -422,7 +422,10 @@ class IapCubit extends Cubit<IapState> {
         _sharedPreferences.getString(PreferenceKey.cacheProducts);
     if (cachedProducts == null) return null;
 
-    log('Set products from cache: $cachedProducts', name: 'PurchaseCubit');
+    log(
+      'Set products from cache: $cachedProducts',
+      name: runtimeType.toString(),
+    );
     final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
     return productsJson.map((e) => Product.fromJson(e)).toList();
   }
