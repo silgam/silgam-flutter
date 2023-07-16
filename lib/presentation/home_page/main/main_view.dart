@@ -58,7 +58,6 @@ class _MainViewState extends State<MainView> {
       child: Align(
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
