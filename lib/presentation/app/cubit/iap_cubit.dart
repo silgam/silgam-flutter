@@ -359,51 +359,72 @@ class IapCubit extends Cubit<IapState> {
   Future<void> _fetchProducts() async {
     _updateProducts();
 
-    final cachedProducts =
-        _sharedPreferences.getString(PreferenceKey.cacheProducts);
-    if (cachedProducts != null) {
-      log('Set products from cache: $cachedProducts', name: 'PurchaseCubit');
-      final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
-      final products = productsJson.map((e) => Product.fromJson(e)).toList();
-      emit(state.copyWith(activeProducts: products, products: products));
-      _appCubit.updateProductBenefit();
+    try {
+      final products = _fetchProductsFromCache();
+      if (products != null) _updateProducts(cachedProducts: products);
+    } catch (e) {
+      log(
+        'Failed to update products from cache: $e',
+        name: 'PurchaseCubit',
+        error: e,
+        stackTrace: StackTrace.current,
+      );
     }
   }
 
-  Future<void> _updateProducts() async {
-    final productsResult = await _productRepository.getAllProducts();
-    final products = productsResult.tryGetSuccess();
-    if (products == null) {
-      _sharedPreferences.remove(PreferenceKey.cacheProducts);
+  Future<void> _updateProducts({
+    List<Product>? cachedProducts,
+  }) async {
+    List<Product> products = [];
+
+    if (cachedProducts != null) {
+      products = cachedProducts;
     } else {
-      _sharedPreferences.setString(
-        PreferenceKey.cacheProducts,
-        jsonEncode(products),
-      );
+      final getProductsResult = await _productRepository.getAllProducts();
+      final productsResult = getProductsResult.tryGetSuccess();
+      if (productsResult == null) {
+        _sharedPreferences.remove(PreferenceKey.cacheProducts);
+      } else {
+        _sharedPreferences.setString(
+          PreferenceKey.cacheProducts,
+          jsonEncode(productsResult),
+        );
+      }
+      products = productsResult ?? [];
     }
 
     final today = DateTime.now();
     final versionNumber = await _getVersionNumber();
     final activeProducts = products
-        ?.where((e) =>
+        .where((e) =>
             e.sellingStartDate.isBefore(today) &&
             e.sellingEndDate.isAfter(today) &&
             e.minVersionNumber <= versionNumber &&
             e.id != 'free')
         .toList();
     emit(state.copyWith(
-      activeProducts: activeProducts ?? [],
-      products: products ?? [],
+      activeProducts: activeProducts,
+      products: products,
     ));
     _appCubit.updateProductBenefit();
 
     if (!kIsWeb) {
       final productDetailsResponse = await _iap.queryProductDetails(
-        activeProducts?.map((e) => e.id).toSet() ?? {},
+        activeProducts.map((e) => e.id).toSet(),
       );
       final productDetails = productDetailsResponse.productDetails;
       emit(state.copyWith(productDetails: productDetails));
     }
+  }
+
+  List<Product>? _fetchProductsFromCache() {
+    final cachedProducts =
+        _sharedPreferences.getString(PreferenceKey.cacheProducts);
+    if (cachedProducts == null) return null;
+
+    log('Set products from cache: $cachedProducts', name: 'PurchaseCubit');
+    final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
+    return productsJson.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<int> _getVersionNumber() async {

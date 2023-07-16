@@ -38,61 +38,93 @@ class AppCubit extends Cubit<AppState> {
 
   Future<void> initialize() async {
     final connectivity = await Connectivity().checkConnectivity();
-    onConnectivityChanged(connectivity);
+    _onConnectivityChanged(connectivity);
 
-    final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
-    if (cachedMe != null) {
-      onUserChange();
-
-      log('Set user from cache: $cachedMe', name: 'AppCubit');
-      emit(state.copyWith(me: User.fromJson(jsonDecode(cachedMe))));
-
-      updateProductBenefit();
-    } else {
-      await onUserChange();
-    }
+    _updateUser();
 
     FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
       await onUserChange();
     });
 
     Connectivity().onConnectivityChanged.listen((connectivityResult) async {
-      onConnectivityChanged(connectivityResult);
+      _onConnectivityChanged(connectivityResult);
     });
   }
 
-  Future<void> onUserChange() async {
-    final getMeResult = await _userRepository.getMe();
-    final me = getMeResult.tryGetSuccess();
-
-    if (me == null) {
-      AnalyticsManager.setPeopleProperty('[Product] Id', null);
-      AnalyticsManager.setPeopleProperty('[Product] Purchased Store', null);
-      AnalyticsManager.setPeopleProperty(
-        'Marketing Info Receiving Consented',
-        null,
-      );
-      await _sharedPreferences.remove(PreferenceKey.cacheMe);
+  Future<void> onUserChange({
+    User? cachedMe,
+  }) async {
+    User? me;
+    if (cachedMe != null) {
+      me = cachedMe;
     } else {
-      AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
-      AnalyticsManager.setPeopleProperty(
-        '[Product] Purchased Store',
-        me.activeProduct.id != 'free' ? me.receipts.last.store : null,
-      );
-      AnalyticsManager.setPeopleProperty(
-        'Marketing Info Receiving Consented',
-        me.isMarketingInfoReceivingConsented,
-      );
-      await _sharedPreferences.setString(PreferenceKey.cacheMe, jsonEncode(me));
+      final getMeResult = await _userRepository.getMe();
+      me = getMeResult.tryGetSuccess();
+
+      if (me == null) {
+        AnalyticsManager.setPeopleProperty('[Product] Id', null);
+        AnalyticsManager.setPeopleProperty('[Product] Purchased Store', null);
+        AnalyticsManager.setPeopleProperty(
+          'Marketing Info Receiving Consented',
+          null,
+        );
+        await _sharedPreferences.remove(PreferenceKey.cacheMe);
+      } else {
+        AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
+        AnalyticsManager.setPeopleProperty(
+          '[Product] Purchased Store',
+          me.activeProduct.id != 'free' ? me.receipts.last.store : null,
+        );
+        AnalyticsManager.setPeopleProperty(
+          'Marketing Info Receiving Consented',
+          me.isMarketingInfoReceivingConsented,
+        );
+        await _sharedPreferences.setString(
+            PreferenceKey.cacheMe, jsonEncode(me));
+      }
+      _updateFcmToken(updatedMe: me, previousMe: state.me);
     }
 
-    updateFcmToken(updatedMe: me, previousMe: state.me);
     emit(state.copyWith(me: me));
 
     updateProductBenefit();
   }
 
-  Future<void> updateFcmToken({
+  void updateProductBenefit() {
+    final products = _iapCubit.state.products;
+    final freeProduct = products.firstWhereOrNull((p) => p.id == 'free');
+    final productBenefit = state.me?.activeProduct.benefit ??
+        freeProduct?.benefit ??
+        ProductBenefit.initial;
+
+    emit(state.copyWith(
+      productBenefit: productBenefit,
+      freeProductBenefit: freeProduct?.benefit ?? ProductBenefit.initial,
+    ));
+    log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
+  }
+
+  Future<void> _updateUser() async {
+    User? cachedMe;
+    try {
+      cachedMe = _fetchUserFromCache();
+    } catch (e) {
+      log(
+        'Failed to update user from cache: $e',
+        name: 'AppCubit',
+        error: e,
+        stackTrace: StackTrace.current,
+      );
+    }
+    if (cachedMe != null) {
+      onUserChange();
+      onUserChange(cachedMe: cachedMe);
+    } else {
+      await onUserChange();
+    }
+  }
+
+  Future<void> _updateFcmToken({
     required User? updatedMe,
     required User? previousMe,
   }) async {
@@ -126,21 +158,7 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-  void updateProductBenefit() {
-    final products = _iapCubit.state.products;
-    final freeProduct = products.firstWhereOrNull((p) => p.id == 'free');
-    final productBenefit = state.me?.activeProduct.benefit ??
-        freeProduct?.benefit ??
-        ProductBenefit.initial;
-
-    emit(state.copyWith(
-      productBenefit: productBenefit,
-      freeProductBenefit: freeProduct?.benefit ?? ProductBenefit.initial,
-    ));
-    log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
-  }
-
-  void onConnectivityChanged(ConnectivityResult connectivityResult) {
+  void _onConnectivityChanged(ConnectivityResult connectivityResult) {
     log('Connectivity changed: $connectivityResult', name: 'AppCubit');
     if (state.connectivityResult == ConnectivityResult.none &&
         connectivityResult != ConnectivityResult.none) {
@@ -153,5 +171,13 @@ class AppCubit extends Cubit<AppState> {
       connectivityResult: connectivityResult,
       me: connectivityResult == ConnectivityResult.none ? null : state.me,
     ));
+  }
+
+  User? _fetchUserFromCache() {
+    final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
+    if (cachedMe == null) return null;
+
+    log('Set user from cache: $cachedMe', name: 'AppCubit');
+    return User.fromJson(jsonDecode(cachedMe));
   }
 }
