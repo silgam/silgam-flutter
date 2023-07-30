@@ -8,6 +8,7 @@ import '../../app/cubit/app_cubit.dart';
 import '../../common/dialog.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
+import '../../common/search_field.dart';
 import '../../common/subject_filter_chip.dart';
 import '../../login_page/login_page.dart';
 import '../../record_detail_page/record_detail_page.dart';
@@ -103,27 +104,9 @@ class _RecordListViewState extends State<RecordListView> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: TextField(
+                child: SearchField(
                   onChanged: (value) => _cubit.onSearchTextChanged(value),
-                  cursorWidth: 1,
-                  cursorColor: Colors.grey.shade700,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 12,
-                    ),
-                    isCollapsed: true,
-                    filled: true,
-                    fillColor: Colors.grey.shade200,
-                    hintText: '제목, 피드백 검색',
-                    hintStyle: const TextStyle(fontWeight: FontWeight.w300),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                  ),
+                  hintText: '제목, 피드백 검색',
                 ),
               ),
               const SizedBox(height: 12),
