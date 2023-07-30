@@ -38,6 +38,10 @@ class StatCubit extends Cubit<StatState> {
     emit(state.copyWith(isLoading: false));
   }
 
+  void onSearchTextChanged(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
+
   void onSubjectFilterButtonTapped(Subject subject) {
     final selectedSubjects = [...state.selectedSubjects];
     if (selectedSubjects.contains(subject)) {

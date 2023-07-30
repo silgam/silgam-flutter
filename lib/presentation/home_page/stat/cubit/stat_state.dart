@@ -5,6 +5,7 @@ class StatState with _$StatState {
   const factory StatState({
     @Default([]) List<ExamRecord> originalRecords,
     @Default(false) bool isLoading,
+    @Default('') String searchQuery,
     @Default([]) List<Subject> selectedSubjects,
     required ExamValueType selectedExamValueType,
   }) = _StatState;

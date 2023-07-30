@@ -15,6 +15,7 @@ import '../../app/cubit/app_cubit.dart';
 import '../../common/custom_card.dart';
 import '../../common/free_user_block_overlay.dart';
 import '../../common/scaffold_body.dart';
+import '../../common/search_field.dart';
 import '../../common/subject_filter_chip.dart';
 import '../cubit/home_cubit.dart';
 import '../home_page.dart';
@@ -105,9 +106,15 @@ class _StatViewState extends State<StatView> {
           builder: (context, appState) {
             return BlocBuilder<StatCubit, StatState>(
               builder: (context, state) {
-                final records = appState.productBenefit.isStatisticAvailable
+                var records = appState.productBenefit.isStatisticAvailable
                     ? state.originalRecords
                     : exampleRecords;
+                if (state.searchQuery.isNotEmpty) {
+                  records = records
+                      .where(
+                          (record) => record.title.contains(state.searchQuery))
+                      .toList();
+                }
                 final Map<Subject, List<ExamRecord>> filteredRecords =
                     records.groupListsBy((record) => record.subject)
                       ..removeWhere(
@@ -245,40 +252,52 @@ class _StatViewState extends State<StatView> {
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
         return SliverToBoxAdapter(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
-            child: Row(
-              children: [
-                SizedBox(width: horizontalPadding),
-                ActionChip(
-                  label: Icon(
-                    Icons.replay,
-                    size: 16,
-                    color: Colors.grey.shade700,
-                  ),
-                  onPressed: _cubit.onFilterResetButtonTapped,
-                  tooltip: '초기화',
-                  pressElevation: 0,
-                  backgroundColor: Colors.grey.shade700.withAlpha(10),
-                  padding: EdgeInsets.zero,
-                  side: BorderSide(
-                    color: Colors.grey.shade700,
-                    width: 0.4,
-                  ),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: SearchField(
+                  onChanged: (value) => _cubit.onSearchTextChanged(value),
+                  hintText: '제목 검색',
                 ),
-                const SizedBox(width: 6),
-                for (Subject subject in Subject.values)
-                  SubjectFilterChip(
-                    subject: subject,
-                    isSelected: selectedSubjects.contains(subject),
-                    onSelected: () =>
-                        _cubit.onSubjectFilterButtonTapped(subject),
-                  ),
-                SizedBox(width: horizontalPadding),
-              ],
-            ),
+              ),
+              const SizedBox(height: 12),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
+                child: Row(
+                  children: [
+                    SizedBox(width: horizontalPadding),
+                    ActionChip(
+                      label: Icon(
+                        Icons.replay,
+                        size: 16,
+                        color: Colors.grey.shade700,
+                      ),
+                      onPressed: _cubit.onFilterResetButtonTapped,
+                      tooltip: '초기화',
+                      pressElevation: 0,
+                      backgroundColor: Colors.grey.shade700.withAlpha(10),
+                      padding: EdgeInsets.zero,
+                      side: BorderSide(
+                        color: Colors.grey.shade700,
+                        width: 0.4,
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    const SizedBox(width: 6),
+                    for (Subject subject in Subject.values)
+                      SubjectFilterChip(
+                        subject: subject,
+                        isSelected: selectedSubjects.contains(subject),
+                        onSelected: () =>
+                            _cubit.onSubjectFilterButtonTapped(subject),
+                      ),
+                    SizedBox(width: horizontalPadding),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
       },
