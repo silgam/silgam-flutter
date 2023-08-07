@@ -189,7 +189,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 28),
-        _buildSubTitle('모의고사 기록하기'),
+        _buildSubTitle('모의고사 이름', isRequired: true),
         const SizedBox(height: 6),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -444,15 +444,32 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildSubTitle(String text, {bool hasPadding = true}) {
+  Widget _buildSubTitle(
+    String text, {
+    bool hasPadding = true,
+    bool isRequired = false,
+  }) {
     return Padding(
       padding: EdgeInsets.only(left: hasPadding ? 20 : 0),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Colors.grey.shade500,
-          fontWeight: FontWeight.w500,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          if (isRequired)
+            const Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+        ],
       ),
     );
   }
