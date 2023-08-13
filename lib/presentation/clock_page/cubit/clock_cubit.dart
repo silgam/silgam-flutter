@@ -231,7 +231,11 @@ class ClockCubit extends Cubit<ClockState> {
     await _announcementPlayer.pause();
     final String? currentFileName =
         state.currentBreakpoint.announcement.fileName;
-    if (currentFileName == null) return;
+    if (currentFileName == null) {
+      await _announcementPlayer.seek(_announcementPlayer.duration);
+      return;
+    }
+
     await _announcementPlayer
         .setAsset('$_announcementsAssetPath/$currentFileName');
     if (state.isRunning) {
