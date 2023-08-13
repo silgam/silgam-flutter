@@ -114,7 +114,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
             child: Container(
               alignment: Alignment.center,
               child: const Text(
-                '시험시작',
+                '시험 시작',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
