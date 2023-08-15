@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
@@ -606,15 +605,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _onExamStartedTimeTextTapped() async {
-    final dateTime = await DatePicker.showDateTimePicker(
-      context,
-      locale: LocaleType.ko,
-      currentTime: _examStartedTime,
-    );
-    if (dateTime == null) return;
-    setState(() {
-      _examStartedTime = dateTime;
-    });
+    // final dateTime = await DatePicker.showDateTimePicker(
+    //   context,
+    //   locale: LocaleType.ko,
+    //   currentTime: _examStartedTime,
+    // );
+    // if (dateTime == null) return;
+    // setState(() {
+    //   _examStartedTime = dateTime;
+    // });
   }
 
   void _onWrongProblemChipDeleted(WrongProblem problem) {
