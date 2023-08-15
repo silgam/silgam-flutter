@@ -43,7 +43,7 @@ Future<void> initializeFirebase() async {
           .setCrashlyticsCollectionEnabled(kReleaseMode),
   ]);
 
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
