@@ -308,6 +308,37 @@ class _EditRecordPageState extends State<EditRecordPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _buildSubTitle('시험 본 날짜', hasPadding: false),
+                const SizedBox(height: 6),
+                GestureDetector(
+                  onTap: _onExamStartedDateTextTapped,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: 0.5,
+                      ),
+                    ),
+                    child: Text(
+                      DateFormat.yMEd('ko_KR').format(_examStartedTime),
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 _buildSubTitle('시험 시작 시각', hasPadding: false),
                 const SizedBox(height: 6),
                 GestureDetector(
@@ -326,9 +357,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                       ),
                     ),
                     child: Text(
-                      DateFormat.yMEd('ko_KR')
-                          .add_Hm()
-                          .format(_examStartedTime),
+                      DateFormat.jm('ko_KR').format(_examStartedTime),
                       style: const TextStyle(
                         fontSize: 16,
                       ),
@@ -604,16 +633,39 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
+  void _onExamStartedDateTextTapped() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _examStartedTime,
+      firstDate: _examStartedTime.subtract(const Duration(days: 365)),
+      lastDate: _examStartedTime.add(const Duration(days: 365)),
+      locale: const Locale('ko'),
+    );
+    if (date == null) return;
+    setState(() {
+      _examStartedTime = _examStartedTime.copyWith(
+        year: date.year,
+        month: date.month,
+        day: date.day,
+      );
+    });
+  }
+
   void _onExamStartedTimeTextTapped() async {
-    // final dateTime = await DatePicker.showDateTimePicker(
-    //   context,
-    //   locale: LocaleType.ko,
-    //   currentTime: _examStartedTime,
-    // );
-    // if (dateTime == null) return;
-    // setState(() {
-    //   _examStartedTime = dateTime;
-    // });
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_examStartedTime),
+    );
+    if (time == null) return;
+    setState(() {
+      _examStartedTime = DateTime(
+        _examStartedTime.year,
+        _examStartedTime.month,
+        _examStartedTime.day,
+        time.hour,
+        time.minute,
+      );
+    });
   }
 
   void _onWrongProblemChipDeleted(WrongProblem problem) {
