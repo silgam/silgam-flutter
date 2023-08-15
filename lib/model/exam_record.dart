@@ -11,7 +11,9 @@ class ExamRecord with _$ExamRecord {
   const ExamRecord._();
 
   factory ExamRecord({
-    @JsonKey(ignore: true) @Default('') String documentId,
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    @Default('')
+    String documentId,
     required final String userId,
     required final String title,
     required final Subject subject,
@@ -22,10 +24,10 @@ class ExamRecord with _$ExamRecord {
     final int? percentile,
     final int? standardScore,
     @JsonKey(toJson: WrongProblem.toJsonList)
-        required final List<WrongProblem> wrongProblems,
+    required final List<WrongProblem> wrongProblems,
     required final String feedback,
     @JsonKey(toJson: ReviewProblem.toJsonList)
-        required final List<ReviewProblem> reviewProblems,
+    required final List<ReviewProblem> reviewProblems,
   }) = _ExamRecord;
 
   factory ExamRecord.fromJson(Map<String, dynamic> json) =>

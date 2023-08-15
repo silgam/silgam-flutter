@@ -199,10 +199,10 @@ class _ExamStartCardState extends State<_ExamStartCard>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(width: 32),
-        Expanded(
+        const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [],
+            children: [],
           ),
         ),
         const SizedBox(width: 20),

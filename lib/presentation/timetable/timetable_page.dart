@@ -14,9 +14,9 @@ class TimetablePage extends StatelessWidget {
       value: darkSystemUiOverlayStyle,
       child: Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
-        body: SafeArea(
+        body: const SafeArea(
           child: Column(
-            children: const [
+            children: [
               CustomMenuBar(
                 title: '전과목 시험보기',
                 lightText: true,

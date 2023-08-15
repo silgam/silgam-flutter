@@ -811,9 +811,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             horizontal: 20,
             vertical: 20,
           ),
-          child: Stack(
+          child: const Stack(
             alignment: Alignment.center,
-            children: const [
+            children: [
               Text(
                 '기록하러 가기',
                 textAlign: TextAlign.center,

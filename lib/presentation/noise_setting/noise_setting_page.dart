@@ -311,9 +311,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 decoration: BoxDecoration(
                   color: Colors.black.withAlpha(100),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(
                       Icons.lock,
                       color: Colors.white,
