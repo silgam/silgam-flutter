@@ -15,18 +15,18 @@ dependencies:
   cupertino_icons: ^1.0.4
   flutter_svg: ^1.0.3
   just_audio: 0.9.20
-  firebase_core: ^2.6.0
-  firebase_analytics: ^10.1.2
-  firebase_crashlytics: ^3.0.13
-  firebase_messaging: ^14.2.3
-  firebase_auth: ^4.2.7
-  firebase_storage: ^11.0.12
-  cloud_firestore: ^4.4.1
+  firebase_core: ^2.15.0
+  firebase_analytics: ^10.4.4
+  firebase_crashlytics: ^3.3.4
+  firebase_messaging: ^14.6.5
+  firebase_auth: ^4.7.2
+  firebase_storage: ^11.2.5
+  cloud_firestore: ^4.8.4
   google_sign_in: ^5.2.4
   flutter_facebook_auth: ^4.1.1
   sign_in_with_apple: ^4.1.0
   image_picker: ^0.8.4+11
-  intl: ^0.17.0
+  intl: any
   json_annotation: ^4.4.0
   uuid: ^3.0.6
   package_info_plus: ^4.1.0
@@ -69,6 +69,8 @@ dependencies:
       url: https://github.com/silgam/flutter_heatmap_calendar.git
   connectivity_plus: ^3.0.3
   wakelock_plus: ^1.1.1
+  flutter_localizations:
+    sdk: flutter
 dev_dependencies:
   flutter_test:
     sdk: flutter
