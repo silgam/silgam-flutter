@@ -308,7 +308,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSubTitle('시험 본 날짜', hasPadding: false),
+                _buildSubTitle('응시 일자', hasPadding: false),
                 const SizedBox(height: 6),
                 GestureDetector(
                   onTap: _onExamStartedDateTextTapped,
@@ -339,7 +339,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSubTitle('시험 시작 시각', hasPadding: false),
+                _buildSubTitle('응시 시작 시각', hasPadding: false),
                 const SizedBox(height: 6),
                 GestureDetector(
                   onTap: _onExamStartedTimeTextTapped,
@@ -369,7 +369,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             const SizedBox(width: 12),
             _buildNumberInputWithTitle(
               _examDurationEditingController,
-              '시험 시간',
+              '응시 시간',
               '분',
               63,
               maxLength: 3,

@@ -294,7 +294,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       if (percentile != null) _buildScoreItem('백분위', percentile),
       if (standardScore != null) _buildScoreItem('표준점수', standardScore),
       if (examDurationMinutes != null)
-        _buildScoreItem('시험 시간', examDurationMinutes),
+        _buildScoreItem('응시 시간', examDurationMinutes),
     ];
 
     for (var i = scoreItems.length - 1; i >= 0; i--) {
