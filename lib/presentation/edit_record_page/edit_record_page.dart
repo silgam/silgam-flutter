@@ -38,7 +38,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
 
-  final TextEditingController _titleEditingController = TextEditingController();
+  String title = '';
   final TextEditingController _examDurationEditingController =
       TextEditingController();
   final TextEditingController _scoreEditingController = TextEditingController();
@@ -55,9 +55,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   Subject _selectedSubject = Subject.language;
   DateTime _examStartedTime = DateTime.now();
-  bool _isTitleEmpty = true;
   bool _isEditingMode = false;
   bool _isSaving = false;
+
+  late final List<String> autocompleteTitles = _recordListCubit
+      .state.originalRecords
+      .map((e) => e.title)
+      .toSet()
+      .toList();
 
   @override
   void initState() {
@@ -79,7 +84,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _isEditingMode = true;
       _initializeEditMode(recordToEdit);
     }
-    _isTitleEmpty = _titleEditingController.text.isEmpty;
 
     AnalyticsManager.eventStartTime(name: '[EditExamRecordPage] Edit finished');
     super.initState();
@@ -112,7 +116,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
-    _titleEditingController.text = recordToEdit.title;
+    title = recordToEdit.title;
     _selectedSubject = recordToEdit.subject;
     _examStartedTime = recordToEdit.examStartedTime;
     _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
@@ -190,40 +194,104 @@ class _EditRecordPageState extends State<EditRecordPage> {
         const SizedBox(height: 28),
         _buildSubTitle('모의고사 이름', isRequired: true),
         const SizedBox(height: 6),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: TextField(
-            controller: _titleEditingController,
-            onChanged: _onTitleChanged,
-            style: const TextStyle(
-              fontSize: 20,
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
-            ),
-            decoration: InputDecoration(
-              hintText: '실감 모의고사 시즌1 1회',
-              hintStyle: TextStyle(color: Colors.grey.shade500),
-              filled: true,
-              fillColor: Colors.white,
-              isCollapsed: true,
-              contentPadding: const EdgeInsets.all(12),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Theme.of(context).primaryColor,
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-              ),
-            ),
-          ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return Autocomplete(
+              initialValue: TextEditingValue(text: title),
+              optionsBuilder: (textEditingValue) {
+                return autocompleteTitles.where((element) {
+                  return element.contains(textEditingValue.text);
+                }).toList();
+              },
+              optionsViewBuilder: (context, onSelected, options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    constraints: BoxConstraints(
+                      maxHeight: 200,
+                      maxWidth: constraints.maxWidth - 40,
+                    ),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        final option = options.elementAt(index);
+                        return ListTile(
+                          title: Text(option),
+                          onTap: () {
+                            onSelected(option);
+                            _onTitleChanged(option);
+                          },
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const Divider(height: 1);
+                      },
+                    ),
+                  ),
+                );
+              },
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  onFieldSubmitted) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    onChanged: _onTitleChanged,
+                    onSubmitted: (_) => onFieldSubmitted(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: '실감 모의고사 시즌1 1회',
+                      hintStyle: TextStyle(color: Colors.grey.shade500),
+                      filled: true,
+                      fillColor: Colors.white,
+                      isCollapsed: true,
+                      contentPadding: const EdgeInsets.all(12),
+                      border: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 0.5, color: Colors.grey.shade300),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 0.5, color: Colors.grey.shade300),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 0.5,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
         ),
         const SizedBox(height: 12),
         _buildDivder(),
@@ -582,14 +650,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
             onPressed: _onSavePressed,
             style: TextButton.styleFrom(
               foregroundColor:
-                  _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
+                  title.isEmpty ? Colors.grey : Theme.of(context).primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 16),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
               _isEditingMode ? '수정' : '저장',
               style: TextStyle(
-                color: _isTitleEmpty ? Colors.grey.shade600 : null,
+                color: title.isEmpty ? Colors.grey.shade600 : null,
               ),
             ),
           ),
@@ -610,19 +678,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
     }
   }
 
-  void _onTitleChanged(String title) {
-    if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
-      setState(() {
-        _isTitleEmpty = false;
-      });
-      return;
-    }
-    if (!_isTitleEmpty && _titleEditingController.text.isEmpty) {
-      setState(() {
-        _isTitleEmpty = true;
-      });
-      return;
-    }
+  void _onTitleChanged(String text) {
+    setState(() {
+      title = text;
+    });
   }
 
   void _onSelectedSubjectChanged(Subject? newSubject) {
@@ -752,7 +811,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _onSavePressed() async {
     _checkIfRecordLimitExceeded();
 
-    if (_isTitleEmpty) {
+    if (title.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('모의고사 이름을 입력해주세요.'),
@@ -775,7 +834,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
     final ExamRecord record = ExamRecord(
       userId: _appCubit.state.me!.id,
-      title: _titleEditingController.text,
+      title: title,
       subject: _selectedSubject,
       examStartedTime: _examStartedTime,
       examDurationMinutes: int.tryParse(_examDurationEditingController.text),
