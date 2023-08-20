@@ -587,9 +587,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 20),
               child: Text(
-                isLapTimeAvailable && useLapTime
-                    ? '랩타임 기능이 꺼져있어요.\n설정에서 랩타임 기능을 켜보세요.'
-                    : '기록된 랩타임이 없어요.\n시험 중에 LAP 버튼을 눌러 랩타임을 기록해보세요.',
+                useLapTime
+                    ? '기록된 랩타임이 없어요.\n시험 중에 LAP 버튼을 눌러 랩타임을 기록해보세요.'
+                    : '랩타임 기능이 꺼져있어요.\n설정에서 랩타임 기능을 켜보세요.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.grey,
