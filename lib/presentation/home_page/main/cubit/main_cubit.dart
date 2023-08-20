@@ -34,12 +34,12 @@ class MainCubit extends Cubit<MainState> {
   final AppCubit _appCubit;
 
   void initialize() {
-    _updateAds();
+    updateAds();
     _updateDDays();
 
     try {
       final ads = _fetchAdsFromCache();
-      if (ads != null) _updateAds(cachedAds: ads);
+      if (ads != null) updateAds(cachedAds: ads);
     } catch (e) {
       log(
         'Failed to update ads from cache: $e',
@@ -61,7 +61,7 @@ class MainCubit extends Cubit<MainState> {
     }
   }
 
-  Future<void> _updateAds({
+  Future<void> updateAds({
     List<Ads>? cachedAds,
   }) async {
     List<Ads> ads = [];

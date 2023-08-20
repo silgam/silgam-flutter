@@ -55,16 +55,22 @@ class _MainViewState extends State<MainView> {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider.value(
       value: getIt.get<MainCubit>(),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              screenWidth > tabletScreenWidth
-                  ? _buildTabletLayout()
-                  : _buildMobileLayout(),
-            ],
+      child: BlocListener<AppCubit, AppState>(
+        listenWhen: (previous, current) => previous.me != current.me,
+        listener: (context, state) {
+          context.read<MainCubit>().updateAds();
+        },
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                screenWidth > tabletScreenWidth
+                    ? _buildTabletLayout()
+                    : _buildMobileLayout(),
+              ],
+            ),
           ),
         ),
       ),
