@@ -85,6 +85,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           content: Text(content),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -98,31 +103,42 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   },
                 );
               },
-              child: Text(
-                '나가기',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                ),
-              ),
+              child: const Text('나가기'),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _onBottomButtonPressed(
-                  lapTimeItemGroups: lapTimeItemGroups,
-                  isUsingExample: isUsingExample,
-                  isSignedIn: isSignedIn,
-                );
-
-                AnalyticsManager.logEvent(
-                  name:
-                      '[ExamOverviewPage-CloseDialog] Continue button pressed',
-                  properties: {
-                    'exam_detail': widget.examDetail.toString(),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
                   },
-                );
-              },
-              child: Text(isSignedIn ? '기록하기' : '로그인'),
+                  child: Text(
+                    '취소',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _onBottomButtonPressed(
+                      lapTimeItemGroups: lapTimeItemGroups,
+                      isUsingExample: isUsingExample,
+                      isSignedIn: isSignedIn,
+                    );
+
+                    AnalyticsManager.logEvent(
+                      name:
+                          '[ExamOverviewPage-CloseDialog] Continue button pressed',
+                      properties: {
+                        'exam_detail': widget.examDetail.toString(),
+                      },
+                    );
+                  },
+                  child: Text(isSignedIn ? '기록하기' : '로그인'),
+                ),
+              ],
             ),
           ],
         );
