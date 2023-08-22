@@ -57,7 +57,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               CustomMenuBar(
                 actionButtons: [
                   ActionButton(
-                    icon: const Icon(Icons.image),
+                    icon: const Icon(Icons.download),
                     tooltip: '이미지 저장',
                     onPressed: _onSaveImageButtonPressed,
                   ),
