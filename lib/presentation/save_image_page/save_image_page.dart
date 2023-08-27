@@ -188,8 +188,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
-                  DateFormat.yMEd('ko_KR')
-                      .format(widget.examRecord.examStartedTime),
+                  DateFormat.yMEd().format(widget.examRecord.examStartedTime),
                   style: const TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.w700,

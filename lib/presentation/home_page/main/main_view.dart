@@ -211,7 +211,7 @@ class _MainViewState extends State<MainView> {
         Padding(
           padding: EdgeInsets.only(left: horizontalPadding),
           child: Text(
-            DateFormat.MMMMEEEEd('ko_KR').format(today),
+            DateFormat.MMMMEEEEd().format(today),
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: isTablet ? 28 : 24,

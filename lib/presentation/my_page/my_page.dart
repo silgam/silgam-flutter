@@ -192,12 +192,11 @@ class MyPage extends StatelessWidget {
   Widget _buildPass(BuildContext context, User user) {
     final isTrial = user.isProductTrial;
     final purchaseDateString =
-        DateFormat.yMd('ko_KR').add_Hm().format(user.receipts.last.createdAt);
+        DateFormat.yMd().add_Hm().format(user.receipts.last.createdAt);
     final expiryDate = isTrial
         ? DateTime.parse(user.receipts.last.token).toLocal()
         : user.activeProduct.expiryDate;
-    final expiryDateString =
-        DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
+    final expiryDateString = DateFormat.yMd().add_Hm().format(expiryDate);
 
     final now = DateTime.now();
     final expiryDay =
@@ -321,11 +320,10 @@ class MyPage extends StatelessWidget {
   Widget _buildReceipt(Receipt receipt, Product product) {
     final isTrial = receipt.store == 'trial';
     final purchaseDateString =
-        DateFormat.yMd('ko_KR').add_Hm().format(receipt.createdAt);
+        DateFormat.yMd().add_Hm().format(receipt.createdAt);
     final expiryDate =
         isTrial ? DateTime.parse(receipt.token).toLocal() : product.expiryDate;
-    final expiryDateString =
-        DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
+    final expiryDateString = DateFormat.yMd().add_Hm().format(expiryDate);
 
     var store = '';
     switch (receipt.store) {

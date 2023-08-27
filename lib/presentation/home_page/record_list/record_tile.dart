@@ -67,7 +67,7 @@ class RecordTileState extends State<RecordTile> {
               MaterialHero(
                 tag: 'time ${widget.record.hashCode}',
                 child: Text(
-                  DateFormat.yMEd('ko_KR')
+                  DateFormat.yMEd()
                       .add_Hm()
                       .format(widget.record.examStartedTime),
                   style: TextStyle(

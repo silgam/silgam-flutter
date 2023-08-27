@@ -34,7 +34,7 @@ class _DDaysCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat.yMEd('ko_KR').format(dDayItem.date),
+                  DateFormat.yMEd().format(dDayItem.date),
                   style: const TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 12,

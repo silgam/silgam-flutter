@@ -221,8 +221,8 @@ class _PurchasePageState extends State<PurchasePage> {
             'product_name': widget.product.name,
           },
         );
-        final now = DateFormat.yMd('ko_KR').add_Hm().format(DateTime.now());
-        final trialEndTime = DateFormat.yMd('ko_KR').add_Hm().format(
+        final now = DateFormat.yMd().add_Hm().format(DateTime.now());
+        final trialEndTime = DateFormat.yMd().add_Hm().format(
               DateTime.now()
                   .add(Duration(days: widget.product.trialPeriod))
                   .subtract(const Duration(seconds: 1)),
