@@ -160,16 +160,16 @@ class AppCubit extends Cubit<AppState> {
 
   void _onConnectivityChanged(ConnectivityResult connectivityResult) {
     log('Connectivity changed: $connectivityResult', name: 'AppCubit');
-    if (state.connectivityResult == ConnectivityResult.none &&
-        connectivityResult != ConnectivityResult.none) {
+    final isOffline = connectivityResult == ConnectivityResult.none;
+    if (state.isOffline != isOffline) {
       onUserChange();
       getIt.get<IapCubit>().initialize();
       getIt.get<MainCubit>().initialize();
     }
 
     emit(state.copyWith(
-      connectivityResult: connectivityResult,
-      me: connectivityResult == ConnectivityResult.none ? null : state.me,
+      isOffline: isOffline,
+      me: isOffline ? null : state.me,
     ));
   }
 

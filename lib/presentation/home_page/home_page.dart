@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -100,13 +99,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                   bottomNavigationBar: BlocBuilder<AppCubit, AppState>(
                     buildWhen: (previous, current) =>
-                        previous.connectivityResult !=
-                        current.connectivityResult,
+                        previous.isOffline != current.isOffline,
                     builder: (context, appState) {
-                      final isOffline = appState.connectivityResult ==
-                          ConnectivityResult.none;
                       return SafeArea(
-                        bottom: isOffline,
+                        bottom: appState.isOffline,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -126,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                                   .map((view) => view.bottomNavigationBarItem)
                                   .toList(growable: false),
                             ),
-                            !isOffline
+                            !appState.isOffline
                                 ? const SizedBox.shrink()
                                 : Container(
                                     color: Theme.of(context).primaryColor,
