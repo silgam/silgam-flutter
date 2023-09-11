@@ -412,8 +412,6 @@ class _StatViewState extends State<StatView> {
       final subject = entry.key;
       final color = Color(subject.firstColor);
       return LineChartBarData(
-        isCurved: true,
-        preventCurveOverShooting: true,
         color: color,
         barWidth: 4,
         belowBarData: BarAreaData(
