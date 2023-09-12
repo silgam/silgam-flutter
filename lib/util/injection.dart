@@ -21,21 +21,24 @@ abstract class RegisterModule {
       SharedPreferences.getInstance();
 
   @singleton
-  Dio get dio => Dio(BaseOptions(baseUrl: urlSilgamApi))
-    ..interceptors.add(PrettyDioLogger())
-    ..interceptors.add(InterceptorsWrapper(
-      onError: (e, handler) {
-        final body = e.response?.data;
-        FailureBody failureBody;
-        if (body is Map<String, dynamic>) {
-          failureBody = FailureBody.fromJson(body);
-        } else {
-          failureBody = FailureBody.unknown();
-        }
+  Dio get dio => Dio(BaseOptions(
+        baseUrl: urlSilgamApi,
+        contentType: Headers.jsonContentType,
+      ))
+        ..interceptors.add(PrettyDioLogger())
+        ..interceptors.add(InterceptorsWrapper(
+          onError: (e, handler) {
+            final body = e.response?.data;
+            FailureBody failureBody;
+            if (body is Map<String, dynamic>) {
+              failureBody = FailureBody.fromJson(body);
+            } else {
+              failureBody = FailureBody.unknown();
+            }
 
-        handler.next(e.copyWith(
-          error: ApiFailure(failureBody.message),
+            handler.next(e.copyWith(
+              error: ApiFailure(failureBody.message),
+            ));
+          },
         ));
-      },
-    ));
 }
