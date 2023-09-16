@@ -28,7 +28,7 @@ class AdsRepository {
         ..shuffle()
         ..sort((a, b) => a.priority - b.priority);
       return Result.success(ads);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log(e.toString(), name: 'AdsRepository.getAllAds');
       return Result.error(e.error as ApiFailure);
     }

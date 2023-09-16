@@ -25,7 +25,7 @@ class DDayRepository {
           )
           .toList();
       return Result.success(ddaysLocal);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log(e.toString(), name: 'DDayRepository.getAllDDays');
       return Result.error(e.error as ApiFailure);
     }
