@@ -237,7 +237,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
         MaterialHero(
           tag: 'time ${_record.hashCode}',
           child: Text(
-            DateFormat.yMEd().add_Hm().format(_record.examStartedTime),
+            DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
             style: TextStyle(
               fontWeight: FontWeight.w300,
               fontSize: 12,

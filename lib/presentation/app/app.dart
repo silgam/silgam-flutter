@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 
 import '../../model/subject.dart';
 import '../../util/analytics_manager.dart';
@@ -175,9 +174,8 @@ class SilgamApp extends StatelessWidget {
 
   void initialize() {
     FirebaseMessaging.instance.requestPermission();
-    initializeEasyLoading();
     initializeDateFormatting('ko_KR');
-    Intl.defaultLocale = 'ko_KR';
+    initializeEasyLoading();
   }
 }
 
