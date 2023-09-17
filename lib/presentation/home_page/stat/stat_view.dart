@@ -556,7 +556,9 @@ class _StatViewState extends State<StatView> {
           showTitles: true,
           reservedSize: 16,
           getTitlesWidget: (value, meta) {
-            if (value == meta.max || value - value.truncate() != 0) {
+            if (value == meta.max ||
+                value - value.truncate() != 0 ||
+                value >= dateToRecordsMap.length) {
               return const SizedBox.shrink();
             }
             final index = value.toInt();
