@@ -457,7 +457,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+    final isAdsRemoved =
+        isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
     final sincePageOpenedMinutes =
         DateTime.now().difference(_cubit.state.pageOpenedTime).inMinutes;
     if (!isAdsRemoved && sincePageOpenedMinutes >= 10) {
@@ -521,7 +522,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Future<void> _loadAd() async {
-    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+    final isAdsRemoved =
+        isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
     if (isAdsRemoved) return;
     await InterstitialAd.load(
       adUnitId: interstitialAdId,

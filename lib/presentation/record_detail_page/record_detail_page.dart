@@ -6,6 +6,7 @@ import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../repository/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
@@ -213,7 +214,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               previous.productBenefit.isAdsRemoved !=
               current.productBenefit.isAdsRemoved,
           builder: (context, appState) {
-            if (appState.productBenefit.isAdsRemoved) {
+            if (isAdmobDisabled || appState.productBenefit.isAdsRemoved) {
               return const SizedBox.shrink();
             }
             return LayoutBuilder(

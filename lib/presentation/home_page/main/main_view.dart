@@ -127,21 +127,7 @@ class _MainViewState extends State<MainView> {
                   )
                 ],
               ),
-              BlocBuilder<AppCubit, AppState>(
-                builder: (context, appState) {
-                  if (appState.productBenefit.isAdsRemoved) {
-                    return const SizedBox.shrink();
-                  }
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      return AdTile(
-                        width: constraints.maxWidth.toInt(),
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                      );
-                    },
-                  );
-                },
-              ),
+              _buildAd(),
               const SizedBox(height: 20),
             ],
           ),
@@ -174,24 +160,7 @@ class _MainViewState extends State<MainView> {
               _buildNoiseSettingCard(),
               _buildRecordCard(),
               _buildSendFeedbackCard(),
-              BlocBuilder<AppCubit, AppState>(
-                buildWhen: (previous, current) =>
-                    previous.productBenefit.isAdsRemoved !=
-                    current.productBenefit.isAdsRemoved,
-                builder: (context, appState) {
-                  if (appState.productBenefit.isAdsRemoved) {
-                    return const SizedBox.shrink();
-                  }
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      return AdTile(
-                        width: constraints.maxWidth.toInt(),
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                      );
-                    },
-                  );
-                },
-              ),
+              _buildAd(),
               const SizedBox(height: 20),
             ],
           ),
@@ -366,6 +335,27 @@ class _MainViewState extends State<MainView> {
       onTap: _onSendFeedbackButtonTap,
       iconData: CupertinoIcons.paperplane_fill,
       title: '실감팀에게 의견 보내기',
+    );
+  }
+
+  Widget _buildAd() {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) =>
+          previous.productBenefit.isAdsRemoved !=
+          current.productBenefit.isAdsRemoved,
+      builder: (context, appState) {
+        if (isAdmobDisabled || appState.productBenefit.isAdsRemoved) {
+          return const SizedBox.shrink();
+        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return AdTile(
+              width: constraints.maxWidth.toInt(),
+              margin: const EdgeInsets.symmetric(vertical: 8),
+            );
+          },
+        );
+      },
     );
   }
 

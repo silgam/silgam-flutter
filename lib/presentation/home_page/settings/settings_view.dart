@@ -75,7 +75,7 @@ class _SettingsViewState extends State<SettingsView> {
           );
         },
       ),
-      if (!appState.productBenefit.isAdsRemoved)
+      if (!isAdmobDisabled && !appState.productBenefit.isAdsRemoved)
         LayoutBuilder(
           builder: (context, constraints) {
             return AdTile(
