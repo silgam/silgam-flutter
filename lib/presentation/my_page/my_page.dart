@@ -4,6 +4,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:silgam/util/const.dart';
 
 import '../../model/product.dart';
 import '../../model/user.dart';
@@ -82,14 +83,14 @@ class MyPage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            if (me.activeProduct.id != 'free')
+                            if (me.activeProduct.id != ProductId.free)
                               ConstrainedBox(
                                 constraints: const BoxConstraints(
                                   maxWidth: _cardMaxWidth,
                                 ),
                                 child: _buildPass(context, me),
                               ),
-                            if (me.activeProduct.id == 'free')
+                            if (me.activeProduct.id == ProductId.free)
                               Container(
                                 width: double.infinity,
                                 alignment: Alignment.center,
@@ -125,7 +126,7 @@ class MyPage extends StatelessWidget {
                         builder: (context, iapState) {
                           return Column(
                             children: [
-                              if ((me.activeProduct.id == 'free' ||
+                              if ((me.activeProduct.id == ProductId.free ||
                                       me.isProductTrial) &&
                                   iapState.activeProducts.isNotEmpty)
                                 PurchaseButton(

@@ -400,7 +400,7 @@ class IapCubit extends Cubit<IapState> {
             e.sellingStartDate.isBefore(today) &&
             e.sellingEndDate.isAfter(today) &&
             e.minVersionNumber <= versionNumber &&
-            e.id != 'free')
+            e.id != ProductId.free)
         .toList();
     emit(state.copyWith(
       activeProducts: activeProducts,

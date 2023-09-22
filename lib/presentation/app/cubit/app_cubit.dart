@@ -73,7 +73,7 @@ class AppCubit extends Cubit<AppState> {
         AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
         AnalyticsManager.setPeopleProperty(
           '[Product] Purchased Store',
-          me.activeProduct.id != 'free' ? me.receipts.last.store : null,
+          me.activeProduct.id != ProductId.free ? me.receipts.last.store : null,
         );
         AnalyticsManager.setPeopleProperty(
           'Marketing Info Receiving Consented',
@@ -92,7 +92,8 @@ class AppCubit extends Cubit<AppState> {
 
   void updateProductBenefit() {
     final products = _iapCubit.state.products;
-    final freeProduct = products.firstWhereOrNull((p) => p.id == 'free');
+    final freeProduct =
+        products.firstWhereOrNull((p) => p.id == ProductId.free);
     final productBenefit = state.me?.activeProduct.benefit ??
         freeProduct?.benefit ??
         ProductBenefit.initial;

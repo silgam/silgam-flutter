@@ -65,7 +65,7 @@ class _SettingsViewState extends State<SettingsView> {
         builder: (context, state) {
           final product = state.activeProducts.firstOrNull;
           final isPurchasedUser = appState.me?.isProductTrial == false &&
-              appState.me?.activeProduct.id != 'free';
+              appState.me?.activeProduct.id != ProductId.free;
           if (product == null || isPurchasedUser) {
             return const SizedBox(height: 16);
           }

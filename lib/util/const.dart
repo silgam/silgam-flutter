@@ -28,11 +28,6 @@ abstract class PreferenceKey {
   static const cacheDDays = 'ddays';
 }
 
-abstract class BannerIntent {
-  static const openPurchasePage = "openPurchasePage";
-}
-
 abstract class ProductId {
-  static const free = "free";
-  static const silgamPass = "com.seunghyun.silgam.pass2024";
+  static const free = 'free';
 }
