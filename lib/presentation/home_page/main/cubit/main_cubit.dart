@@ -84,9 +84,12 @@ class MainCubit extends Cubit<MainState> {
     }
 
     final isPurchasedUser = _appCubit.state.me?.isPurchasedUser ?? false;
+    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     emit(state.copyWith(
       ads: ads
-          .whereNot((ad) => isPurchasedUser && ad.isHiddenToPurchasedUser)
+          .whereNot((ad) =>
+              (isPurchasedUser && ad.isHiddenToPurchasedUser) ||
+              (isAdsRemoved && ad.isAd))
           .toList(),
     ));
   }
