@@ -22,6 +22,8 @@ class AdsRepository {
       ads = ads
           .where((ad) =>
               ad.minVersionNumber <= versionNumber &&
+              (ad.maxVersionNumber == null ||
+                  ad.maxVersionNumber! >= versionNumber) &&
               ad.expiryDate.isAfter(DateTime.now()) &&
               ad.startDate.isBefore(DateTime.now()))
           .toList()
