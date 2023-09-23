@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,14 +62,14 @@ class _SettingsViewState extends State<SettingsView> {
           : LoginButton(onTap: _onLoginTap),
       BlocBuilder<IapCubit, IapState>(
         builder: (context, state) {
-          final product = state.activeProducts.firstOrNull;
+          final sellingProduct = state.sellingProduct;
           final isPurchasedUser = appState.me?.isProductTrial == false &&
               appState.me?.activeProduct.id != ProductId.free;
-          if (product == null || isPurchasedUser) {
+          if (sellingProduct == null || isPurchasedUser) {
             return const SizedBox(height: 16);
           }
           return PurchaseButton(
-            product: product,
+            product: sellingProduct,
             margin: const EdgeInsets.symmetric(vertical: 16),
           );
         },

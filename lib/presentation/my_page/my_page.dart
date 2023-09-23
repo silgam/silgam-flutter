@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -121,16 +122,14 @@ class MyPage extends StatelessWidget {
                       const SizedBox(height: 24),
                       BlocBuilder<IapCubit, IapState>(
                         buildWhen: (previous, current) =>
-                            previous.products != current.products ||
-                            previous.activeProducts != current.activeProducts,
+                            previous.products != current.products,
                         builder: (context, iapState) {
+                          final sellingProduct = iapState.sellingProduct;
                           return Column(
                             children: [
-                              if ((me.activeProduct.id == ProductId.free ||
-                                      me.isProductTrial) &&
-                                  iapState.activeProducts.isNotEmpty)
+                              if (!me.isPurchasedUser && sellingProduct != null)
                                 PurchaseButton(
-                                  product: iapState.activeProducts.first,
+                                  product: sellingProduct,
                                   margin: const EdgeInsets.only(
                                     left: 24,
                                     right: 24,
@@ -147,9 +146,14 @@ class MyPage extends StatelessWidget {
                                 ),
                               const SizedBox(height: 8),
                               ...me.receipts.reversed.map((receipt) {
-                                final product = iapState.products.firstWhere(
-                                    (product) =>
-                                        product.id == receipt.productId);
+                                final product =
+                                    iapState.products.firstWhereOrNull(
+                                  (product) => product.id == receipt.productId,
+                                );
+                                if (product == null) {
+                                  return const SizedBox.shrink();
+                                }
+
                                 return Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 32,

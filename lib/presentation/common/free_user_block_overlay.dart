@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,14 +33,14 @@ class FreeUserBlockOverlay extends StatelessWidget {
           ),
           BlocBuilder<IapCubit, IapState>(
             builder: (context, iapState) {
-              final product = iapState.activeProducts.firstOrNull;
-              if (product == null) {
+              final sellingProduct = iapState.sellingProduct;
+              if (sellingProduct == null) {
                 return const SizedBox.shrink();
               }
               return Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: PurchaseButton(
-                  product: iapState.activeProducts.first,
+                  product: sellingProduct,
                   expand: false,
                 ),
               );
