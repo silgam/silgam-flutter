@@ -12,7 +12,6 @@ import '../../../model/user.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
-import '../../app/cubit/iap_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import '../../common/dialog.dart';
@@ -60,20 +59,11 @@ class _SettingsViewState extends State<SettingsView> {
       appState.isSignedIn
           ? _buildLoginInfo(appState.me!)
           : LoginButton(onTap: _onLoginTap),
-      BlocBuilder<IapCubit, IapState>(
-        builder: (context, state) {
-          final sellingProduct = state.sellingProduct;
-          final isPurchasedUser = appState.me?.isProductTrial == false &&
-              appState.me?.activeProduct.id != ProductId.free;
-          if (sellingProduct == null || isPurchasedUser) {
-            return const SizedBox(height: 16);
-          }
-          return PurchaseButton(
-            product: sellingProduct,
-            margin: const EdgeInsets.symmetric(vertical: 16),
-          );
-        },
-      ),
+      if (appState.me?.isPurchasedUser != true)
+        buildPurchaseButtonOr(
+          margin: const EdgeInsets.symmetric(vertical: 16),
+          or: const SizedBox(height: 16),
+        ),
       if (!isAdmobDisabled && !appState.productBenefit.isAdsRemoved)
         LayoutBuilder(
           builder: (context, constraints) {

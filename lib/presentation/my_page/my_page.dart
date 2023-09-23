@@ -5,10 +5,10 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:silgam/util/const.dart';
 
 import '../../model/product.dart';
 import '../../model/user.dart';
+import '../../util/const.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/custom_card.dart';
@@ -124,12 +124,10 @@ class MyPage extends StatelessWidget {
                         buildWhen: (previous, current) =>
                             previous.products != current.products,
                         builder: (context, iapState) {
-                          final sellingProduct = iapState.sellingProduct;
                           return Column(
                             children: [
-                              if (!me.isPurchasedUser && sellingProduct != null)
-                                PurchaseButton(
-                                  product: sellingProduct,
+                              if (!me.isPurchasedUser)
+                                buildPurchaseButtonOr(
                                   margin: const EdgeInsets.only(
                                     left: 24,
                                     right: 24,
@@ -163,7 +161,7 @@ class MyPage extends StatelessWidget {
                                   ),
                                   child: _buildReceipt(receipt, product),
                                 );
-                              }).toList(),
+                              }),
                             ],
                           );
                         },
