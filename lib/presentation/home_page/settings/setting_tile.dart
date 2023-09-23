@@ -98,9 +98,10 @@ class _SettingTileState extends State<SettingTile> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             if (widget.showArrow)
-              Icon(
+              const Icon(
                 CupertinoIcons.chevron_right,
-                color: Colors.black.withAlpha(40),
+                color: Colors.black26,
+                size: 18,
               ),
             if (widget.showArrow) const SizedBox(width: 2)
           ],
