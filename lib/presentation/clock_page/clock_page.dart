@@ -14,6 +14,7 @@ import '../../util/const.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
+import '../common/bullet_text.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../exam_overview_page/exam_overview_page.dart';
 import 'cubit/clock_cubit.dart';
@@ -400,27 +401,45 @@ class _ClockPageState extends State<ClockPage> {
             width: double.infinity,
             height: double.infinity,
             alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             color: Colors.black.withAlpha(screenOverlayAlpha),
             duration: const Duration(milliseconds: 100),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const Spacer(),
                 const Text(
                   '화면을 터치하면 시작합니다',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '소리를 켜면 안내방송을 들을 수 있어요!\n소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withAlpha(200),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                    height: 1.3,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...[
+                        '소리를 켜면 안내방송을 들을 수 있어요.',
+                        '소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
+                        _appCubit.useLapTime
+                            ? '시험 시작 후 화면을 터치하면 시계와 랩타임 버튼만 보이게 할 수 있어요.'
+                            : '시험 시작 후 화면을 터치하면 시계만 보이게 할 수 있어요.',
+                        '화면 속 시계는 터치를 통해 확대/축소하고 위치를 바꿀 수 있어요.',
+                        '화면을 길게 누르면 시계가 기본 위치와 크기로 돌아가요.',
+                      ].map(
+                        (text) => BulletText(
+                          text: text,
+                          style: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                   ),
                 ),
               ],
