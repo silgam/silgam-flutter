@@ -98,13 +98,27 @@ class _ClockPageState extends State<ClockPage> {
                       Visibility(
                         visible: state.isUiVisible,
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          child: IconButton(
-                            splashRadius: 20,
-                            icon: const Icon(Icons.close),
-                            onPressed: _onCloseButtonPressed,
-                            color: Colors.white,
-                          ),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: state.isFinished ? 20 : 8),
+                          width: state.isFinished ? double.infinity : null,
+                          child: state.isFinished
+                              ? OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    side: const BorderSide(
+                                      color: Colors.white,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: const Text('시험 종료'),
+                                )
+                              : IconButton(
+                                  splashRadius: 20,
+                                  icon: const Icon(Icons.close),
+                                  onPressed: _onCloseButtonPressed,
+                                  color: Colors.white,
+                                ),
                         ),
                       ),
                       _buildBackgroundUi(state.isUiVisible),
