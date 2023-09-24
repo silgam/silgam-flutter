@@ -85,6 +85,7 @@ class _ClockPageState extends State<ClockPage> {
                       InteractiveViewer(
                         transformationController: _clockTransformController,
                         minScale: 0.5,
+                        clipBehavior: Clip.none,
                         boundaryMargin: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width,
                           vertical: MediaQuery.of(context).size.height,
