@@ -11,6 +11,7 @@ import '../../model/user.dart';
 import '../../util/const.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
+import '../common/bullet_text.dart';
 import '../common/custom_card.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/purchase_button.dart';
@@ -435,28 +436,12 @@ class MyPage extends StatelessWidget {
   Widget _buildInfo(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '• ',
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w300,
-              color: Colors.grey,
-              height: 1.2,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.grey,
-                height: 1.2,
-              ),
-            ),
-          ),
-        ],
+      child: BulletText(
+        text: text,
+        style: const TextStyle(
+          color: Colors.grey,
+          height: 1.2,
+        ),
       ),
     );
   }
