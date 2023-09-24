@@ -47,6 +47,7 @@ class _ClockPageState extends State<ClockPage> {
       _cubit.state.breakpoints.length - 1, (index) => GlobalKey());
 
   InterstitialAd? _interstitialAd;
+  bool get _isSmallHeightScreen => MediaQuery.of(context).size.height < 600;
 
   @override
   void initState() {
@@ -100,12 +101,18 @@ class _ClockPageState extends State<ClockPage> {
                       Visibility(
                         visible: state.isUiVisible,
                         child: Container(
+                          width: state.isFinished && !_isSmallHeightScreen
+                              ? double.infinity
+                              : null,
                           margin: EdgeInsets.symmetric(
-                              horizontal: state.isFinished ? 20 : 8),
-                          width: state.isFinished ? double.infinity : null,
+                            horizontal: state.isFinished ? 20 : 8,
+                            vertical: state.isFinished && _isSmallHeightScreen
+                                ? 12
+                                : 0,
+                          ),
                           child: state.isFinished
                               ? OutlinedButton(
-                                  onPressed: () {},
+                                  onPressed: _onCloseButtonPressed,
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     side: const BorderSide(
@@ -138,7 +145,7 @@ class _ClockPageState extends State<ClockPage> {
 
   Widget _buildBackgroundUi(bool isUiVisible) {
     Axis direction = Axis.vertical;
-    if (_isSmallHeightScreen()) direction = Axis.horizontal;
+    if (_isSmallHeightScreen) direction = Axis.horizontal;
     return Flex(
       direction: direction,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -220,7 +227,7 @@ class _ClockPageState extends State<ClockPage> {
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 40);
     EdgeInsets margin = const EdgeInsets.only(bottom: 12);
     Axis direction = Axis.horizontal;
-    if (_isSmallHeightScreen()) {
+    if (_isSmallHeightScreen) {
       padding = const EdgeInsets.symmetric(vertical: 40);
       margin = const EdgeInsets.only(right: 12);
       direction = Axis.vertical;
@@ -301,7 +308,7 @@ class _ClockPageState extends State<ClockPage> {
 
   Widget _buildNavigator() {
     Axis direction = Axis.horizontal;
-    if (_isSmallHeightScreen()) {
+    if (_isSmallHeightScreen) {
       direction = Axis.vertical;
     }
 
@@ -528,7 +535,7 @@ class _ClockPageState extends State<ClockPage> {
 
   void _animateTimeline(int currentBreakpointIndex) {
     double progressedSize = 0;
-    if (_isSmallHeightScreen()) {
+    if (_isSmallHeightScreen) {
       for (int i = 0; i < currentBreakpointIndex; i++) {
         progressedSize +=
             _timelineTileKeys[i].currentContext?.size?.height ?? 0;
@@ -582,10 +589,6 @@ class _ClockPageState extends State<ClockPage> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     AndroidAudioManager.controlDefaultVolume();
     super.dispose();
-  }
-
-  bool _isSmallHeightScreen() {
-    return MediaQuery.of(context).size.height < 600;
   }
 }
 
