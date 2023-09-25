@@ -9,7 +9,9 @@ const String urlSupport = "https://silgam.app/support";
 const String urlOpenchat = "https://silgam.app/openchat";
 const String urlPrivacy = "https://silgam.app/privacy";
 const String urlTerms = "https://silgam.app/terms";
-const String urlSilgamApi = "https://api.silgam.app";
+const String urlSilgamApi = useFirebaseEmulator
+    ? "http://localhost:5001/silgam-app/asia-northeast3/api"
+    : "https://api.silgam.app";
 
 const isAdmobDisabled = true;
 final String bannerAdId = Platform.isAndroid
@@ -32,3 +34,5 @@ abstract class PreferenceKey {
 abstract class ProductId {
   static const free = 'free';
 }
+
+const bool useFirebaseEmulator = false;
