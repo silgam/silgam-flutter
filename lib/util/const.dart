@@ -9,8 +9,8 @@ const String urlSupport = "https://silgam.app/support";
 const String urlOpenchat = "https://silgam.app/openchat";
 const String urlPrivacy = "https://silgam.app/privacy";
 const String urlTerms = "https://silgam.app/terms";
-const String urlSilgamApi = useFirebaseEmulator
-    ? "http://localhost:5001/silgam-app/asia-northeast3/api"
+final String urlSilgamApi = useFirebaseEmulator
+    ? "http://${Platform.isAndroid ? '10.0.2.2' : 'localhost'}:5001/silgam-app/asia-northeast3/api"
     : "https://api.silgam.app";
 
 const isAdmobDisabled = true;
