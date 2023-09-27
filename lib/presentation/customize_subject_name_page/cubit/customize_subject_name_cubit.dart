@@ -35,7 +35,7 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
     }
 
     EasyLoading.show();
-    await _userRepository.updateCustomSubjectNameMap(
+    _userRepository.updateCustomSubjectNameMap(
       userId: me.id,
       subjectNameMap: subjectNameMap,
     );

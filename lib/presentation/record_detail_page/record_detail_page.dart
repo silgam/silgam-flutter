@@ -400,7 +400,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     setState(() {
       _isDeleting = true;
     });
-    await _recordRepository.deleteExamRecord(_record);
+    _recordRepository.deleteExamRecord(_record);
     getIt.get<RecordListCubit>().refresh();
     if (mounted) Navigator.pop(context);
 

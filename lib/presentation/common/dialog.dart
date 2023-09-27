@@ -271,7 +271,7 @@ Future<void> changeMarketingInfoReceivingConsentStatus(
   final me = appCubit.state.me;
   if (me == null) return;
 
-  await userRepository.updateMarketingConsent(
+  userRepository.updateMarketingConsent(
     userId: me.id,
     isConsent: isConsent,
   );

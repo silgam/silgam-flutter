@@ -134,7 +134,7 @@ class AppCubit extends Cubit<AppState> {
       if (previousMe == null) return;
 
       if (previousMe.fcmTokens.contains(fcmToken)) {
-        await _userRepository.removeFcmToken(
+        _userRepository.removeFcmToken(
           userId: previousMe.id,
           fcmToken: fcmToken,
         );
@@ -143,7 +143,7 @@ class AppCubit extends Cubit<AppState> {
     } else {
       if (updatedMe.fcmTokens.contains(fcmToken)) return;
 
-      await _userRepository.addFcmToken(
+      _userRepository.addFcmToken(
         userId: updatedMe.id,
         fcmToken: fcmToken,
       );
