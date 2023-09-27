@@ -66,26 +66,32 @@ class _AdsCardState extends State<AdsCard> {
   }
 
   void _onAdsTap(Ads ads) {
-    String? url = ads.url;
-    if (url != null) {
-      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    }
-
-    String? intent = ads.intent;
-    if (intent != null) {
-      if (intent.contains(BannerIntent.openPurchasePage)) {
-        final productId = intent.split('&')[1];
-        final product = getIt
-            .get<IapCubit>()
-            .state
-            .products
-            .firstWhereOrNull((p) => p.id == productId);
-        if (product != null) {
-          Navigator.of(context).pushNamed(
-            PurchasePage.routeName,
-            arguments: PurchasePageArguments(product: product),
-          );
-        }
+    for (final action in ads.actions) {
+      switch (action.intent) {
+        case AdsIntent.openUrl:
+          launchUrl(Uri.parse(action.data),
+              mode: LaunchMode.externalApplication);
+          break;
+        case AdsIntent.openAdUrl:
+          launchUrl(Uri.parse(action.data),
+              mode: LaunchMode.externalApplication);
+          break;
+        case AdsIntent.openPurchasePage:
+          final productId = action.data;
+          final product = getIt
+              .get<IapCubit>()
+              .state
+              .products
+              .firstWhereOrNull((p) => p.id == productId);
+          if (product != null) {
+            Navigator.of(context).pushNamed(
+              PurchasePage.routeName,
+              arguments: PurchasePageArguments(product: product),
+            );
+          }
+          break;
+        case AdsIntent.unknown:
+          break;
       }
     }
 
@@ -93,7 +99,9 @@ class _AdsCardState extends State<AdsCard> {
       name: '[HomePage-main] Silgam ads tapped',
       properties: {
         'title': ads.title,
-        'url': url,
+        'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
+        'actionData': ads.actions.map((e) => e.data).join(', '),
+        'priority': ads.priority,
       },
     );
   }

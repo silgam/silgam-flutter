@@ -395,23 +395,21 @@ class IapCubit extends Cubit<IapState> {
 
     final today = DateTime.now();
     final versionNumber = await _getVersionNumber();
-    final activeProducts = products
-        .where((e) =>
-            e.sellingStartDate.isBefore(today) &&
-            e.sellingEndDate.isAfter(today) &&
-            e.minVersionNumber <= versionNumber &&
-            e.id != 'free')
-        .toList();
+    final sellingProduct = products.firstWhereOrNull((e) =>
+        e.sellingStartDate.isBefore(today) &&
+        e.sellingEndDate.isAfter(today) &&
+        e.minVersionNumber <= versionNumber &&
+        e.id != ProductId.free);
     emit(state.copyWith(
-      activeProducts: activeProducts,
+      sellingProduct: sellingProduct,
       products: products,
     ));
     _appCubit.updateProductBenefit();
 
-    if (!kIsWeb) {
-      final productDetailsResponse = await _iap.queryProductDetails(
-        activeProducts.map((e) => e.id).toSet(),
-      );
+    if (!kIsWeb && sellingProduct != null) {
+      final productDetailsResponse = await _iap.queryProductDetails({
+        sellingProduct.id,
+      });
       final productDetails = productDetailsResponse.productDetails;
       emit(state.copyWith(productDetails: productDetails));
     }

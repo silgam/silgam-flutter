@@ -22,6 +22,7 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
         builder: (context, appState) {
           return BlocBuilder<IapCubit, IapState>(
             builder: (context, iapState) {
+              final sellingProduct = iapState.sellingProduct;
               return AlertDialog(
                 title: const Text(
                   '실모 기록 개수 제한 안내',
@@ -40,21 +41,22 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
                     ),
                     child: const Text('확인'),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      AnalyticsManager.logEvent(
-                        name: '[HomePage-list] Check pass button tapped',
-                      );
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pushNamed(
-                        PurchasePage.routeName,
-                        arguments: PurchasePageArguments(
-                          product: iapState.activeProducts.first,
-                        ),
-                      );
-                    },
-                    child: const Text('실감패스 확인하러 가기'),
-                  ),
+                  if (sellingProduct != null)
+                    TextButton(
+                      onPressed: () {
+                        AnalyticsManager.logEvent(
+                          name: '[HomePage-list] Check pass button tapped',
+                        );
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamed(
+                          PurchasePage.routeName,
+                          arguments: PurchasePageArguments(
+                            product: sellingProduct,
+                          ),
+                        );
+                      },
+                      child: const Text('실감패스 확인하러 가기'),
+                    ),
                 ],
               );
             },
@@ -72,47 +74,42 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
       name: '/lap_time_limit_help_dialog',
     ),
     builder: (context) {
-      return BlocBuilder<AppCubit, AppState>(
-        builder: (context, appState) {
-          return BlocBuilder<IapCubit, IapState>(
-            builder: (context, iapState) {
-              return AlertDialog(
-                title: const Text(
-                  '랩타임 기능 이용 제한 안내',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+      return BlocBuilder<IapCubit, IapState>(
+        builder: (context, iapState) {
+          final sellingProduct = iapState.sellingProduct;
+          return AlertDialog(
+            title: const Text(
+              '랩타임 기능 이용 제한 안내',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            content: const Text(
+              '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey,
                 ),
-                content: const Text(
-                  '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
+                child: const Text('확인'),
+              ),
+              if (sellingProduct != null)
+                TextButton(
+                  onPressed: () {
+                    AnalyticsManager.logEvent(
+                      name: '[LapTimeLimitHelpDialog] Check pass button tapped',
+                    );
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(
+                      PurchasePage.routeName,
+                      arguments: PurchasePageArguments(product: sellingProduct),
+                    );
+                  },
+                  child: const Text('실감패스 확인하러 가기'),
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey,
-                    ),
-                    child: const Text('확인'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      AnalyticsManager.logEvent(
-                        name:
-                            '[LapTimeLimitHelpDialog] Check pass button tapped',
-                      );
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pushNamed(
-                        PurchasePage.routeName,
-                        arguments: PurchasePageArguments(
-                          product: iapState.activeProducts.first,
-                        ),
-                      );
-                    },
-                    child: const Text('실감패스 확인하러 가기'),
-                  ),
-                ],
-              );
-            },
+            ],
           );
         },
       );

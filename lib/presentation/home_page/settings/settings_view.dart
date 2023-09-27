@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +12,6 @@ import '../../../model/user.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
-import '../../app/cubit/iap_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import '../../common/dialog.dart';
@@ -61,21 +59,12 @@ class _SettingsViewState extends State<SettingsView> {
       appState.isSignedIn
           ? _buildLoginInfo(appState.me!)
           : LoginButton(onTap: _onLoginTap),
-      BlocBuilder<IapCubit, IapState>(
-        builder: (context, state) {
-          final product = state.activeProducts.firstOrNull;
-          final isPurchasedUser = appState.me?.isProductTrial == false &&
-              appState.me?.activeProduct.id != 'free';
-          if (product == null || isPurchasedUser) {
-            return const SizedBox(height: 16);
-          }
-          return PurchaseButton(
-            product: product,
-            margin: const EdgeInsets.symmetric(vertical: 16),
-          );
-        },
-      ),
-      if (!appState.productBenefit.isAdsRemoved)
+      if (appState.me?.isPurchasedUser != true)
+        buildPurchaseButtonOr(
+          margin: const EdgeInsets.symmetric(vertical: 16),
+          or: const SizedBox(height: 16),
+        ),
+      if (!isAdmobDisabled && !appState.productBenefit.isAdsRemoved)
         LayoutBuilder(
           builder: (context, constraints) {
             return AdTile(

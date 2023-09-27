@@ -22,13 +22,15 @@ class AdsRepository {
       ads = ads
           .where((ad) =>
               ad.minVersionNumber <= versionNumber &&
+              (ad.maxVersionNumber == null ||
+                  ad.maxVersionNumber! >= versionNumber) &&
               ad.expiryDate.isAfter(DateTime.now()) &&
               ad.startDate.isBefore(DateTime.now()))
           .toList()
         ..shuffle()
         ..sort((a, b) => a.priority - b.priority);
       return Result.success(ads);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log(e.toString(), name: 'AdsRepository.getAllAds');
       return Result.error(e.error as ApiFailure);
     }

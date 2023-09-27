@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,8 +8,10 @@ import 'package:intl/intl.dart';
 
 import '../../model/product.dart';
 import '../../model/user.dart';
+import '../../util/const.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
+import '../common/bullet_text.dart';
 import '../common/custom_card.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/purchase_button.dart';
@@ -82,14 +85,14 @@ class MyPage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            if (me.activeProduct.id != 'free')
+                            if (me.activeProduct.id != ProductId.free)
                               ConstrainedBox(
                                 constraints: const BoxConstraints(
                                   maxWidth: _cardMaxWidth,
                                 ),
                                 child: _buildPass(context, me),
                               ),
-                            if (me.activeProduct.id == 'free')
+                            if (me.activeProduct.id == ProductId.free)
                               Container(
                                 width: double.infinity,
                                 alignment: Alignment.center,
@@ -120,16 +123,12 @@ class MyPage extends StatelessWidget {
                       const SizedBox(height: 24),
                       BlocBuilder<IapCubit, IapState>(
                         buildWhen: (previous, current) =>
-                            previous.products != current.products ||
-                            previous.activeProducts != current.activeProducts,
+                            previous.products != current.products,
                         builder: (context, iapState) {
                           return Column(
                             children: [
-                              if ((me.activeProduct.id == 'free' ||
-                                      me.isProductTrial) &&
-                                  iapState.activeProducts.isNotEmpty)
-                                PurchaseButton(
-                                  product: iapState.activeProducts.first,
+                              if (!me.isPurchasedUser)
+                                buildPurchaseButtonOr(
                                   margin: const EdgeInsets.only(
                                     left: 24,
                                     right: 24,
@@ -146,9 +145,14 @@ class MyPage extends StatelessWidget {
                                 ),
                               const SizedBox(height: 8),
                               ...me.receipts.reversed.map((receipt) {
-                                final product = iapState.products.firstWhere(
-                                    (product) =>
-                                        product.id == receipt.productId);
+                                final product =
+                                    iapState.products.firstWhereOrNull(
+                                  (product) => product.id == receipt.productId,
+                                );
+                                if (product == null) {
+                                  return const SizedBox.shrink();
+                                }
+
                                 return Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 32,
@@ -158,7 +162,7 @@ class MyPage extends StatelessWidget {
                                   ),
                                   child: _buildReceipt(receipt, product),
                                 );
-                              }).toList(),
+                              }),
                             ],
                           );
                         },
@@ -192,11 +196,12 @@ class MyPage extends StatelessWidget {
   Widget _buildPass(BuildContext context, User user) {
     final isTrial = user.isProductTrial;
     final purchaseDateString =
-        DateFormat.yMd().add_Hm().format(user.receipts.last.createdAt);
+        DateFormat.yMd('ko_KR').add_Hm().format(user.receipts.last.createdAt);
     final expiryDate = isTrial
         ? DateTime.parse(user.receipts.last.token).toLocal()
         : user.activeProduct.expiryDate;
-    final expiryDateString = DateFormat.yMd().add_Hm().format(expiryDate);
+    final expiryDateString =
+        DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
 
     final now = DateTime.now();
     final expiryDay =
@@ -320,10 +325,11 @@ class MyPage extends StatelessWidget {
   Widget _buildReceipt(Receipt receipt, Product product) {
     final isTrial = receipt.store == 'trial';
     final purchaseDateString =
-        DateFormat.yMd().add_Hm().format(receipt.createdAt);
+        DateFormat.yMd('ko_KR').add_Hm().format(receipt.createdAt);
     final expiryDate =
         isTrial ? DateTime.parse(receipt.token).toLocal() : product.expiryDate;
-    final expiryDateString = DateFormat.yMd().add_Hm().format(expiryDate);
+    final expiryDateString =
+        DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
 
     var store = '';
     switch (receipt.store) {
@@ -430,28 +436,12 @@ class MyPage extends StatelessWidget {
   Widget _buildInfo(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '• ',
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w300,
-              color: Colors.grey,
-              height: 1.2,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.grey,
-                height: 1.2,
-              ),
-            ),
-          ),
-        ],
+      child: BulletText(
+        text: text,
+        style: const TextStyle(
+          color: Colors.grey,
+          height: 1.2,
+        ),
       ),
     );
   }

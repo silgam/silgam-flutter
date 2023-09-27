@@ -394,7 +394,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                       ),
                     ),
                     child: Text(
-                      DateFormat.yMEd().format(_examStartedTime),
+                      DateFormat.yMEd('ko_KR').format(_examStartedTime),
                       style: const TextStyle(
                         fontSize: 16,
                       ),
@@ -425,7 +425,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                       ),
                     ),
                     child: Text(
-                      DateFormat.jm().format(_examStartedTime),
+                      DateFormat.jm('ko_KR').format(_examStartedTime),
                       style: const TextStyle(
                         fontSize: 16,
                       ),

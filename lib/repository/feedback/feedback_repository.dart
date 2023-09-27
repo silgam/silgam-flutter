@@ -27,7 +27,7 @@ class FeedbackRepository {
     try {
       await _feedbackApi.sendFeedback(request);
       return Result.success(unit);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log(e.toString(), name: 'FeedbackRepository.sendFeedback');
       return Result.error(e.error as ApiFailure);
     }

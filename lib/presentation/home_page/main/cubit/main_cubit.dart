@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -82,11 +83,13 @@ class MainCubit extends Cubit<MainState> {
       ads = adsResult ?? [];
     }
 
+    final isPurchasedUser = _appCubit.state.me?.isPurchasedUser ?? false;
+    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     emit(state.copyWith(
       ads: ads
-          .where((element) =>
-              element.intent?.contains(BannerIntent.openPurchasePage) != true ||
-              _appCubit.state.me?.isPurchasedUser != true)
+          .whereNot((ad) =>
+              (isPurchasedUser && ad.isHiddenToPurchasedUser) ||
+              (isAdsRemoved && ad.isAd))
           .toList(),
     ));
   }

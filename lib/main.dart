@@ -1,6 +1,9 @@
 import 'package:audio_session/audio_session.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -13,6 +16,7 @@ import 'presentation/app/cubit/app_cubit.dart';
 import 'presentation/app/cubit/iap_cubit.dart';
 import 'presentation/home_page/main/cubit/main_cubit.dart';
 import 'util/analytics_manager.dart';
+import 'util/const.dart';
 import 'util/injection.dart';
 
 void main() async {
@@ -31,6 +35,13 @@ void main() async {
 
 Future<void> initializeFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  if (useFirebaseEmulator) {
+    FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+    FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  }
+
   await AnalyticsManager.init();
 
   getIt.get<IapCubit>().initialize();

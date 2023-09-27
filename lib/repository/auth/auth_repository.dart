@@ -22,7 +22,7 @@ class AuthRepository {
     try {
       final response = await _authApi.authKakao(requestBody);
       return Result.success(response.firebaseToken);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log(e.toString(), name: 'AuthRepository.authKakao');
       return Result.error(e.error as ApiFailure);
     }

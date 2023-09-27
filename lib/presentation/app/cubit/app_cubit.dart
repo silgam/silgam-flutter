@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -73,7 +72,7 @@ class AppCubit extends Cubit<AppState> {
         AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
         AnalyticsManager.setPeopleProperty(
           '[Product] Purchased Store',
-          me.activeProduct.id != 'free' ? me.receipts.last.store : null,
+          me.activeProduct.id != ProductId.free ? me.receipts.last.store : null,
         );
         AnalyticsManager.setPeopleProperty(
           'Marketing Info Receiving Consented',
@@ -91,15 +90,14 @@ class AppCubit extends Cubit<AppState> {
   }
 
   void updateProductBenefit() {
-    final products = _iapCubit.state.products;
-    final freeProduct = products.firstWhereOrNull((p) => p.id == 'free');
-    final productBenefit = state.me?.activeProduct.benefit ??
-        freeProduct?.benefit ??
-        ProductBenefit.initial;
+    final freeProductBenefit =
+        _iapCubit.state.freeProduct?.benefit ?? ProductBenefit.initial;
+    final productBenefit =
+        state.me?.activeProduct.benefit ?? freeProductBenefit;
 
     emit(state.copyWith(
       productBenefit: productBenefit,
-      freeProductBenefit: freeProduct?.benefit ?? ProductBenefit.initial,
+      freeProductBenefit: freeProductBenefit,
     ));
     log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
   }

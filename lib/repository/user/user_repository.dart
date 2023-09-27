@@ -50,7 +50,7 @@ class UserRepository {
         ),
       );
       return Result.success(me);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log('getMe() failed: $e', name: 'UserRepository');
       return Result.error(e.error as ApiFailure);
     }

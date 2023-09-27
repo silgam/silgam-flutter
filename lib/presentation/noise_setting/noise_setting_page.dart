@@ -345,6 +345,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
       builder: (context) {
         return BlocBuilder<IapCubit, IapState>(
           builder: (context, iapState) {
+            final sellingProduct = iapState.sellingProduct;
             return AlertDialog(
               content: const Text('실감패스 사용자만 이용 가능한 소음이에요.'),
               contentPadding: const EdgeInsets.only(
@@ -363,21 +364,22 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                   ),
                   child: const Text('확인'),
                 ),
-                TextButton(
-                  onPressed: () {
-                    AnalyticsManager.logEvent(
-                      name: '[NoiseSettingPage] Check pass button tapped',
-                    );
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed(
-                      PurchasePage.routeName,
-                      arguments: PurchasePageArguments(
-                        product: iapState.activeProducts.first,
-                      ),
-                    );
-                  },
-                  child: const Text('실감패스 확인하러 가기'),
-                ),
+                if (sellingProduct != null)
+                  TextButton(
+                    onPressed: () {
+                      AnalyticsManager.logEvent(
+                        name: '[NoiseSettingPage] Check pass button tapped',
+                      );
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed(
+                        PurchasePage.routeName,
+                        arguments: PurchasePageArguments(
+                          product: sellingProduct,
+                        ),
+                      );
+                    },
+                    child: const Text('실감패스 확인하러 가기'),
+                  ),
               ],
             );
           },

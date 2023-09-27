@@ -14,6 +14,7 @@ import '../../util/const.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
+import '../common/bullet_text.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../exam_overview_page/exam_overview_page.dart';
 import 'cubit/clock_cubit.dart';
@@ -46,6 +47,7 @@ class _ClockPageState extends State<ClockPage> {
       _cubit.state.breakpoints.length - 1, (index) => GlobalKey());
 
   InterstitialAd? _interstitialAd;
+  bool get _isSmallHeightScreen => MediaQuery.of(context).size.height < 600;
 
   @override
   void initState() {
@@ -85,6 +87,7 @@ class _ClockPageState extends State<ClockPage> {
                       InteractiveViewer(
                         transformationController: _clockTransformController,
                         minScale: 0.5,
+                        clipBehavior: Clip.none,
                         boundaryMargin: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width,
                           vertical: MediaQuery.of(context).size.height,
@@ -98,13 +101,33 @@ class _ClockPageState extends State<ClockPage> {
                       Visibility(
                         visible: state.isUiVisible,
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          child: IconButton(
-                            splashRadius: 20,
-                            icon: const Icon(Icons.close),
-                            onPressed: _onCloseButtonPressed,
-                            color: Colors.white,
+                          width: state.isFinished && !_isSmallHeightScreen
+                              ? double.infinity
+                              : null,
+                          margin: EdgeInsets.symmetric(
+                            horizontal: state.isFinished ? 20 : 8,
+                            vertical: state.isFinished && _isSmallHeightScreen
+                                ? 12
+                                : 0,
                           ),
+                          child: state.isFinished
+                              ? OutlinedButton(
+                                  onPressed: _onCloseButtonPressed,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    side: const BorderSide(
+                                      color: Colors.white,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: const Text('시험 종료'),
+                                )
+                              : IconButton(
+                                  splashRadius: 20,
+                                  icon: const Icon(Icons.close),
+                                  onPressed: _onCloseButtonPressed,
+                                  color: Colors.white,
+                                ),
                         ),
                       ),
                       _buildBackgroundUi(state.isUiVisible),
@@ -122,7 +145,7 @@ class _ClockPageState extends State<ClockPage> {
 
   Widget _buildBackgroundUi(bool isUiVisible) {
     Axis direction = Axis.vertical;
-    if (_isSmallHeightScreen()) direction = Axis.horizontal;
+    if (_isSmallHeightScreen) direction = Axis.horizontal;
     return Flex(
       direction: direction,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -204,7 +227,7 @@ class _ClockPageState extends State<ClockPage> {
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 40);
     EdgeInsets margin = const EdgeInsets.only(bottom: 12);
     Axis direction = Axis.horizontal;
-    if (_isSmallHeightScreen()) {
+    if (_isSmallHeightScreen) {
       padding = const EdgeInsets.symmetric(vertical: 40);
       margin = const EdgeInsets.only(right: 12);
       direction = Axis.vertical;
@@ -285,7 +308,7 @@ class _ClockPageState extends State<ClockPage> {
 
   Widget _buildNavigator() {
     Axis direction = Axis.horizontal;
-    if (_isSmallHeightScreen()) {
+    if (_isSmallHeightScreen) {
       direction = Axis.vertical;
     }
 
@@ -385,27 +408,45 @@ class _ClockPageState extends State<ClockPage> {
             width: double.infinity,
             height: double.infinity,
             alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             color: Colors.black.withAlpha(screenOverlayAlpha),
             duration: const Duration(milliseconds: 100),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const Spacer(),
                 const Text(
                   '화면을 터치하면 시작합니다',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '소리를 켜면 안내방송을 들을 수 있어요!\n소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withAlpha(200),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                    height: 1.3,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...[
+                        '소리를 켜면 안내방송을 들을 수 있어요.',
+                        '소음 기능을 사용할 때는 양쪽 이어폰을 모두 착용하는 것을 권장해요.',
+                        _appCubit.useLapTime
+                            ? '시험 시작 후 화면을 터치하면 시계와 랩타임 버튼만 보이게 할 수 있어요.'
+                            : '시험 시작 후 화면을 터치하면 시계만 보이게 할 수 있어요.',
+                        '화면 속 시계는 터치를 통해 확대/축소하고 위치를 바꿀 수 있어요.',
+                        '화면을 길게 누르면 시계가 기본 위치와 크기로 돌아가요.',
+                      ].map(
+                        (text) => BulletText(
+                          text: text,
+                          style: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                   ),
                 ),
               ],
@@ -457,7 +498,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+    final isAdsRemoved =
+        isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
     final sincePageOpenedMinutes =
         DateTime.now().difference(_cubit.state.pageOpenedTime).inMinutes;
     if (!isAdsRemoved && sincePageOpenedMinutes >= 10) {
@@ -493,7 +535,7 @@ class _ClockPageState extends State<ClockPage> {
 
   void _animateTimeline(int currentBreakpointIndex) {
     double progressedSize = 0;
-    if (_isSmallHeightScreen()) {
+    if (_isSmallHeightScreen) {
       for (int i = 0; i < currentBreakpointIndex; i++) {
         progressedSize +=
             _timelineTileKeys[i].currentContext?.size?.height ?? 0;
@@ -521,7 +563,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Future<void> _loadAd() async {
-    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+    final isAdsRemoved =
+        isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
     if (isAdsRemoved) return;
     await InterstitialAd.load(
       adUnitId: interstitialAdId,
@@ -546,10 +589,6 @@ class _ClockPageState extends State<ClockPage> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     AndroidAudioManager.controlDefaultVolume();
     super.dispose();
-  }
-
-  bool _isSmallHeightScreen() {
-    return MediaQuery.of(context).size.height < 600;
   }
 }
 

@@ -1,13 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../model/product.dart';
+import '../app/cubit/iap_cubit.dart';
 import '../purchase_page/purchase_page.dart';
 import 'custom_card.dart';
 
-class PurchaseButton extends StatelessWidget {
-  const PurchaseButton({
-    super.key,
+Widget buildPurchaseButtonOr({
+  EdgeInsetsGeometry? margin,
+  bool expand = true,
+  Widget or = const SizedBox.shrink(),
+}) {
+  return BlocBuilder<IapCubit, IapState>(
+    buildWhen: (previous, current) =>
+        previous.sellingProduct != current.sellingProduct,
+    builder: (context, state) {
+      final sellingProduct = state.sellingProduct;
+      if (sellingProduct == null) {
+        return or;
+      }
+      return _PurchaseButton(
+        product: sellingProduct,
+        margin: margin,
+        expand: expand,
+      );
+    },
+  );
+}
+
+class _PurchaseButton extends StatelessWidget {
+  const _PurchaseButton({
     required this.product,
     this.margin,
     this.expand = true,

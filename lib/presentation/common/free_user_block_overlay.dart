@@ -1,8 +1,5 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../app/cubit/iap_cubit.dart';
 import 'purchase_button.dart';
 
 class FreeUserBlockOverlay extends StatelessWidget {
@@ -32,20 +29,9 @@ class FreeUserBlockOverlay extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          BlocBuilder<IapCubit, IapState>(
-            builder: (context, iapState) {
-              final product = iapState.activeProducts.firstOrNull;
-              if (product == null) {
-                return const SizedBox.shrink();
-              }
-              return Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: PurchaseButton(
-                  product: iapState.activeProducts.first,
-                  expand: false,
-                ),
-              );
-            },
+          buildPurchaseButtonOr(
+            margin: const EdgeInsets.only(top: 20),
+            expand: false,
           ),
         ],
       ),

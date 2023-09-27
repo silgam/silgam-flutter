@@ -9,8 +9,11 @@ const String urlSupport = "https://silgam.app/support";
 const String urlOpenchat = "https://silgam.app/openchat";
 const String urlPrivacy = "https://silgam.app/privacy";
 const String urlTerms = "https://silgam.app/terms";
-const String urlSilgamApi = "https://api.silgam.app";
+final String urlSilgamApi = useFirebaseEmulator
+    ? "http://${Platform.isAndroid ? '10.0.2.2' : 'localhost'}:5001/silgam-app/asia-northeast3/api"
+    : "https://api.silgam.app";
 
+const isAdmobDisabled = true;
 final String bannerAdId = Platform.isAndroid
     ? "ca-app-pub-5293956621132135/7574334463"
     : "ca-app-pub-5293956621132135/7145274842";
@@ -28,11 +31,8 @@ abstract class PreferenceKey {
   static const cacheDDays = 'ddays';
 }
 
-abstract class BannerIntent {
-  static const openPurchasePage = "openPurchasePage";
+abstract class ProductId {
+  static const free = 'free';
 }
 
-abstract class ProductId {
-  static const free = "free";
-  static const silgamPass = "com.seunghyun.silgam.pass2024";
-}
+const bool useFirebaseEmulator = false;

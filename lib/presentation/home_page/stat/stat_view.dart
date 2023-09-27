@@ -415,15 +415,16 @@ class _StatViewState extends State<StatView> {
         color: color,
         barWidth: 4,
         belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                color.withOpacity(0.3),
-                color.withOpacity(0),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            )),
+          show: true,
+          gradient: LinearGradient(
+            colors: [
+              color.withOpacity(0.3),
+              color.withOpacity(0),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         dotData: FlDotData(
           getDotPainter: (p0, p1, p2, p3) {
             return FlDotCirclePainter(
@@ -458,7 +459,7 @@ class _StatViewState extends State<StatView> {
         return spotIndexes.map((spotIndex) {
           return TouchedSpotIndicatorData(
             FlLine(
-              color: barData.color,
+              color: barData.color ?? Colors.black,
               dashArray: [5, 5],
               strokeWidth: 1,
             ),
@@ -466,7 +467,7 @@ class _StatViewState extends State<StatView> {
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
                   radius: 4,
-                  color: barData.color,
+                  color: barData.color ?? Colors.black,
                   strokeWidth: 1,
                   strokeColor: Colors.white,
                 );
@@ -516,14 +517,14 @@ class _StatViewState extends State<StatView> {
       ),
     );
     final titleData = FlTitlesData(
-      topTitles: AxisTitles(
+      topTitles: const AxisTitles(
         sideTitles: SideTitles(showTitles: false),
       ),
-      rightTitles: AxisTitles(
+      rightTitles: const AxisTitles(
         sideTitles: SideTitles(showTitles: false),
       ),
       leftTitles: AxisTitles(
-        drawBehindEverything: true,
+        drawBelowEverything: true,
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 24,
@@ -550,12 +551,14 @@ class _StatViewState extends State<StatView> {
         ),
       ),
       bottomTitles: AxisTitles(
-        drawBehindEverything: true,
+        drawBelowEverything: true,
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 16,
           getTitlesWidget: (value, meta) {
-            if (value == meta.max || value - value.truncate() != 0) {
+            if (value == meta.max ||
+                value - value.truncate() != 0 ||
+                value >= dateToRecordsMap.length) {
               return const SizedBox.shrink();
             }
             final index = value.toInt();
@@ -589,12 +592,13 @@ class _StatViewState extends State<StatView> {
         left: BorderSide(color: Colors.grey.shade300),
       ),
     );
-    final gridData = FlGridData(show: false);
+    const gridData = FlGridData(show: false);
     return MediaQuery(
       data: const MediaQueryData(textScaleFactor: 1.0),
       child: LineChart(
-        swapAnimationDuration: Duration.zero,
+        duration: Duration.zero,
         LineChartData(
+          backgroundColor: Colors.white,
           minY: minValue - minMaxGap * 0.1,
           maxY: maxValue + minMaxGap * 0.05,
           maxX: maxLength - 1 + maxLength * 0.05,
