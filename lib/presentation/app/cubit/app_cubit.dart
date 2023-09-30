@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -14,6 +13,7 @@ import '../../../model/subject.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
 import '../../../util/analytics_manager.dart';
+import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../home_page/main/cubit/main_cubit.dart';
@@ -24,11 +24,12 @@ part 'app_state.dart';
 
 @lazySingleton
 class AppCubit extends Cubit<AppState> {
-  AppCubit(this._userRepository, this._sharedPreferences)
+  AppCubit(this._userRepository, this._sharedPreferences, this._cacheManager)
       : super(const AppState());
 
   final UserRepository _userRepository;
   final SharedPreferences _sharedPreferences;
+  final CacheManager _cacheManager;
   late final IapCubit _iapCubit = getIt.get();
 
   bool get useLapTime =>
@@ -67,7 +68,7 @@ class AppCubit extends Cubit<AppState> {
           'Marketing Info Receiving Consented',
           null,
         );
-        await _sharedPreferences.remove(PreferenceKey.cacheMe);
+        await _cacheManager.setMe(null);
       } else {
         AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
         AnalyticsManager.setPeopleProperty(
@@ -78,8 +79,7 @@ class AppCubit extends Cubit<AppState> {
           'Marketing Info Receiving Consented',
           me.isMarketingInfoReceivingConsented,
         );
-        await _sharedPreferences.setString(
-            PreferenceKey.cacheMe, jsonEncode(me));
+        await _cacheManager.setMe(me);
       }
       _updateFcmToken(updatedMe: me, previousMe: state.me);
     }
@@ -105,7 +105,7 @@ class AppCubit extends Cubit<AppState> {
   Future<void> _updateUser() async {
     User? cachedMe;
     try {
-      cachedMe = _fetchUserFromCache();
+      cachedMe = _cacheManager.getMe();
     } catch (e) {
       log(
         'Failed to update user from cache: $e',
@@ -169,13 +169,5 @@ class AppCubit extends Cubit<AppState> {
       isOffline: isOffline,
       me: isOffline ? null : state.me,
     ));
-  }
-
-  User? _fetchUserFromCache() {
-    final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
-    if (cachedMe == null) return null;
-
-    log('Set user from cache: $cachedMe', name: runtimeType.toString());
-    return User.fromJson(jsonDecode(cachedMe));
   }
 }

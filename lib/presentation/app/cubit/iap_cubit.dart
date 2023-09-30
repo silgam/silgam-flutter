@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -12,11 +11,11 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
 import '../../../util/analytics_manager.dart';
+import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
 
@@ -28,11 +27,11 @@ class IapCubit extends Cubit<IapState> {
   IapCubit(
     this._productRepository,
     this._appCubit,
-    this._sharedPreferences,
+    this._cacheManager,
   ) : super(const IapState());
 
   final ProductRepository _productRepository;
-  final SharedPreferences _sharedPreferences;
+  final CacheManager _cacheManager;
   final AppCubit _appCubit;
   late final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription? _purchaseStream;
@@ -360,7 +359,7 @@ class IapCubit extends Cubit<IapState> {
     _updateProducts();
 
     try {
-      final products = _fetchProductsFromCache();
+      final products = _cacheManager.getProducts();
       if (products != null) _updateProducts(cachedProducts: products);
     } catch (e) {
       log(
@@ -383,12 +382,9 @@ class IapCubit extends Cubit<IapState> {
       final getProductsResult = await _productRepository.getAllProducts();
       final productsResult = getProductsResult.tryGetSuccess();
       if (productsResult == null) {
-        _sharedPreferences.remove(PreferenceKey.cacheProducts);
+        _cacheManager.setProducts(null);
       } else {
-        _sharedPreferences.setString(
-          PreferenceKey.cacheProducts,
-          jsonEncode(productsResult),
-        );
+        _cacheManager.setProducts(productsResult);
       }
       products = productsResult ?? [];
     }
@@ -413,19 +409,6 @@ class IapCubit extends Cubit<IapState> {
       final productDetails = productDetailsResponse.productDetails;
       emit(state.copyWith(productDetails: productDetails));
     }
-  }
-
-  List<Product>? _fetchProductsFromCache() {
-    final cachedProducts =
-        _sharedPreferences.getString(PreferenceKey.cacheProducts);
-    if (cachedProducts == null) return null;
-
-    log(
-      'Set products from cache: $cachedProducts',
-      name: runtimeType.toString(),
-    );
-    final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
-    return productsJson.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<int> _getVersionNumber() async {

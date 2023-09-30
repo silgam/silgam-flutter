@@ -1,17 +1,15 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../model/ads.dart';
 import '../../../../model/dday.dart';
 import '../../../../repository/ads/ads_repository.dart';
 import '../../../../repository/dday/dday_repository.dart';
-import '../../../../util/const.dart';
+import '../../../../util/cache_manager.dart';
 import '../../../../util/dday_util.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../main_view.dart';
@@ -24,13 +22,13 @@ class MainCubit extends Cubit<MainState> {
   MainCubit(
     this._adsRepository,
     this._dDayRepository,
-    this._sharedPreferences,
+    this._cacheManager,
     this._appCubit,
   ) : super(const MainState());
 
   final AdsRepository _adsRepository;
   final DDayRepository _dDayRepository;
-  final SharedPreferences _sharedPreferences;
+  final CacheManager _cacheManager;
 
   final AppCubit _appCubit;
 
@@ -39,7 +37,7 @@ class MainCubit extends Cubit<MainState> {
     _updateDDays();
 
     try {
-      final ads = _fetchAdsFromCache();
+      final ads = _cacheManager.getAds();
       if (ads != null) updateAds(cachedAds: ads);
     } catch (e) {
       log(
@@ -50,7 +48,7 @@ class MainCubit extends Cubit<MainState> {
       );
     }
     try {
-      final dDays = _fetchDDaysFromCache();
+      final dDays = _cacheManager.getDDays();
       if (dDays != null) _updateDDays(cachedDDays: dDays);
     } catch (e) {
       log(
@@ -73,12 +71,9 @@ class MainCubit extends Cubit<MainState> {
       final getAdsResult = await _adsRepository.getAllAds();
       final adsResult = getAdsResult.tryGetSuccess();
       if (adsResult == null) {
-        await _sharedPreferences.remove(PreferenceKey.cacheAds);
+        await _cacheManager.setAds(null);
       } else {
-        await _sharedPreferences.setString(
-          PreferenceKey.cacheAds,
-          jsonEncode(adsResult),
-        );
+        await _cacheManager.setAds(adsResult);
       }
       ads = adsResult ?? [];
     }
@@ -105,12 +100,9 @@ class MainCubit extends Cubit<MainState> {
       final getDDaysResult = await _dDayRepository.getAllDDays();
       final dDaysResult = getDDaysResult.tryGetSuccess();
       if (dDaysResult == null) {
-        await _sharedPreferences.remove(PreferenceKey.cacheDDays);
+        await _cacheManager.setDDays(null);
       } else {
-        await _sharedPreferences.setString(
-          PreferenceKey.cacheDDays,
-          jsonEncode(dDaysResult),
-        );
+        await _cacheManager.setDDays(dDaysResult);
       }
       dDays = dDaysResult ?? [];
     }
@@ -118,23 +110,5 @@ class MainCubit extends Cubit<MainState> {
     final dDayItems = DDayUtil(dDays).getItemsToShow(DateTime.now());
 
     emit(state.copyWith(dDayItems: dDayItems));
-  }
-
-  List<Ads>? _fetchAdsFromCache() {
-    final cachedAds = _sharedPreferences.getString(PreferenceKey.cacheAds);
-    if (cachedAds == null) return null;
-
-    log('Set ads from cache: $cachedAds', name: runtimeType.toString());
-    final adsJson = jsonDecode(cachedAds) as List<dynamic>;
-    return adsJson.map((e) => Ads.fromJson(e)).toList();
-  }
-
-  List<DDay>? _fetchDDaysFromCache() {
-    final cachedDDays = _sharedPreferences.getString(PreferenceKey.cacheDDays);
-    if (cachedDDays == null) return null;
-
-    log('Set ddays from cache: $cachedDDays', name: runtimeType.toString());
-    final dDaysJson = jsonDecode(cachedDDays) as List<dynamic>;
-    return dDaysJson.map((e) => DDay.fromJson(e)).toList();
   }
 }
