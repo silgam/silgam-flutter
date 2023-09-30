@@ -38,8 +38,10 @@ class AnalyticsManager {
     FirebaseAuth.instance.authStateChanges().listen((event) {
       registerUserProperties({'Firebase User ID': event?.uid});
       setUserId(userId: event?.uid);
-      setPeopleProperty("\$name", event?.uid);
-      setPeopleProperty('\$email', event?.email);
+      setPeopleProperties({
+        '\$name': event?.uid,
+        '\$email': event?.email,
+      });
     });
   }
 
@@ -91,11 +93,18 @@ class AnalyticsManager {
     await _firebaseAnalytics.setUserId(id: userId);
   }
 
-  static setPeopleProperty(String prop, dynamic to) {
+  static void setPeopleProperty(String prop, dynamic to) {
     if (kIsWeb) return;
 
     log('People Property Set: $prop, $to');
     _mixpanel.getPeople().set(prop, to);
+  }
+
+  static void setPeopleProperties(Map<String, dynamic> properties) {
+    if (kIsWeb) return;
+    properties.forEach((key, value) {
+      setPeopleProperty(key, value);
+    });
   }
 }
 

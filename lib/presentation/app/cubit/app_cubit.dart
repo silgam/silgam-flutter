@@ -12,7 +12,6 @@ import '../../../model/product.dart';
 import '../../../model/subject.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
-import '../../../util/analytics_manager.dart';
 import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
@@ -54,38 +53,17 @@ class AppCubit extends Cubit<AppState> {
   Future<void> onUserChange({
     User? cachedMe,
   }) async {
-    User? me;
-    if (cachedMe != null) {
-      me = cachedMe;
-    } else {
+    User? me = cachedMe;
+
+    if (me == null) {
       final getMeResult = await _userRepository.getMe();
       me = getMeResult.tryGetSuccess();
 
-      if (me == null) {
-        AnalyticsManager.setPeopleProperty('[Product] Id', null);
-        AnalyticsManager.setPeopleProperty('[Product] Purchased Store', null);
-        AnalyticsManager.setPeopleProperty(
-          'Marketing Info Receiving Consented',
-          null,
-        );
-        await _cacheManager.setMe(null);
-      } else {
-        AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
-        AnalyticsManager.setPeopleProperty(
-          '[Product] Purchased Store',
-          me.activeProduct.id != ProductId.free ? me.receipts.last.store : null,
-        );
-        AnalyticsManager.setPeopleProperty(
-          'Marketing Info Receiving Consented',
-          me.isMarketingInfoReceivingConsented,
-        );
-        await _cacheManager.setMe(me);
-      }
+      await _cacheManager.setMe(me);
       _updateFcmToken(updatedMe: me, previousMe: state.me);
     }
 
     emit(state.copyWith(me: me));
-
     updateProductBenefit();
   }
 
