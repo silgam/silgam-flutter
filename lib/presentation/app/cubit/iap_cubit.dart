@@ -357,37 +357,20 @@ class IapCubit extends Cubit<IapState> {
 
   Future<void> _fetchProducts() async {
     _updateProducts();
-
-    try {
-      final products = _cacheManager.getProducts();
-      if (products != null) _updateProducts(cachedProducts: products);
-    } catch (e) {
-      log(
-        'Failed to update products from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-    }
+    final products = _cacheManager.getProducts();
+    if (products != null) _updateProducts(cachedProducts: products);
   }
 
   Future<void> _updateProducts({
     List<Product>? cachedProducts,
   }) async {
-    List<Product> products = [];
-
-    if (cachedProducts != null) {
-      products = cachedProducts;
-    } else {
+    List<Product>? products = cachedProducts;
+    if (cachedProducts == null) {
       final getProductsResult = await _productRepository.getAllProducts();
-      final productsResult = getProductsResult.tryGetSuccess();
-      if (productsResult == null) {
-        _cacheManager.setProducts(null);
-      } else {
-        _cacheManager.setProducts(productsResult);
-      }
-      products = productsResult ?? [];
+      products = getProductsResult.tryGetSuccess();
+      _cacheManager.setProducts(products);
     }
+    products ??= [];
 
     final today = DateTime.now();
     final versionNumber = await _getVersionNumber();

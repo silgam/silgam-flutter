@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,9 +17,14 @@ class CacheManager {
   final SharedPreferences _sharedPreferences;
 
   User? getMe() {
-    final meString = _sharedPreferences.getString(PreferenceKey.cacheMe);
-    if (meString == null) return null;
-    return User.fromJson(jsonDecode(meString));
+    try {
+      final meString = _sharedPreferences.getString(PreferenceKey.cacheMe);
+      if (meString == null) return null;
+      return User.fromJson(jsonDecode(meString));
+    } catch (e) {
+      _logError('getMe', e);
+      return null;
+    }
   }
 
   Future<void> setMe(User? me) async {
@@ -30,10 +36,15 @@ class CacheManager {
   }
 
   List<Ads>? getAds() {
-    final adsString = _sharedPreferences.getString(PreferenceKey.cacheAds);
-    if (adsString == null) return null;
-    final adsJson = jsonDecode(adsString) as List<dynamic>;
-    return adsJson.map((e) => Ads.fromJson(e)).toList();
+    try {
+      final adsString = _sharedPreferences.getString(PreferenceKey.cacheAds);
+      if (adsString == null) return null;
+      final adsJson = jsonDecode(adsString) as List<dynamic>;
+      return adsJson.map((e) => Ads.fromJson(e)).toList();
+    } catch (e) {
+      _logError('getAds', e);
+      return null;
+    }
   }
 
   Future<void> setAds(List<Ads>? ads) async {
@@ -48,10 +59,16 @@ class CacheManager {
   }
 
   List<DDay>? getDDays() {
-    final cachedDDays = _sharedPreferences.getString(PreferenceKey.cacheDDays);
-    if (cachedDDays == null) return null;
-    final dDaysJson = jsonDecode(cachedDDays) as List<dynamic>;
-    return dDaysJson.map((e) => DDay.fromJson(e)).toList();
+    try {
+      final cachedDDays =
+          _sharedPreferences.getString(PreferenceKey.cacheDDays);
+      if (cachedDDays == null) return null;
+      final dDaysJson = jsonDecode(cachedDDays) as List<dynamic>;
+      return dDaysJson.map((e) => DDay.fromJson(e)).toList();
+    } catch (e) {
+      _logError('getDDays', e);
+      return null;
+    }
   }
 
   Future<void> setDDays(List<DDay>? dDays) async {
@@ -66,11 +83,16 @@ class CacheManager {
   }
 
   List<Product>? getProducts() {
-    final cachedProducts =
-        _sharedPreferences.getString(PreferenceKey.cacheProducts);
-    if (cachedProducts == null) return null;
-    final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
-    return productsJson.map((e) => Product.fromJson(e)).toList();
+    try {
+      final cachedProducts =
+          _sharedPreferences.getString(PreferenceKey.cacheProducts);
+      if (cachedProducts == null) return null;
+      final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
+      return productsJson.map((e) => Product.fromJson(e)).toList();
+    } catch (e) {
+      _logError('getProducts', e);
+      return null;
+    }
   }
 
   Future<void> setProducts(List<Product>? products) async {
@@ -82,5 +104,14 @@ class CacheManager {
         jsonEncode(products),
       );
     }
+  }
+
+  void _logError(String name, Object e) {
+    log(
+      '$name error: $e',
+      name: runtimeType.toString(),
+      error: e,
+      stackTrace: StackTrace.current,
+    );
   }
 }

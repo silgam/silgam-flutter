@@ -54,11 +54,9 @@ class AppCubit extends Cubit<AppState> {
     User? cachedMe,
   }) async {
     User? me = cachedMe;
-
     if (me == null) {
       final getMeResult = await _userRepository.getMe();
       me = getMeResult.tryGetSuccess();
-
       await _cacheManager.setMe(me);
       _updateFcmToken(updatedMe: me, previousMe: state.me);
     }
@@ -81,22 +79,12 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> _updateUser() async {
-    User? cachedMe;
-    try {
-      cachedMe = _cacheManager.getMe();
-    } catch (e) {
-      log(
-        'Failed to update user from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-    }
-    if (cachedMe != null) {
+    User? cachedMe = _cacheManager.getMe();
+    if (cachedMe == null) {
+      await onUserChange();
+    } else {
       onUserChange();
       onUserChange(cachedMe: cachedMe);
-    } else {
-      await onUserChange();
     }
   }
 

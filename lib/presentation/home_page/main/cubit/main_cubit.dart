@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -34,49 +32,24 @@ class MainCubit extends Cubit<MainState> {
 
   void initialize() {
     updateAds();
-    _updateDDays();
+    final ads = _cacheManager.getAds();
+    if (ads != null) updateAds(cachedAds: ads);
 
-    try {
-      final ads = _cacheManager.getAds();
-      if (ads != null) updateAds(cachedAds: ads);
-    } catch (e) {
-      log(
-        'Failed to update ads from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-    }
-    try {
-      final dDays = _cacheManager.getDDays();
-      if (dDays != null) _updateDDays(cachedDDays: dDays);
-    } catch (e) {
-      log(
-        'Failed to update dDays from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-    }
+    _updateDDays();
+    final dDays = _cacheManager.getDDays();
+    if (dDays != null) _updateDDays(cachedDDays: dDays);
   }
 
   Future<void> updateAds({
     List<Ads>? cachedAds,
   }) async {
-    List<Ads> ads = [];
-
-    if (cachedAds != null) {
-      ads = cachedAds;
-    } else {
+    List<Ads>? ads = cachedAds;
+    if (cachedAds == null) {
       final getAdsResult = await _adsRepository.getAllAds();
-      final adsResult = getAdsResult.tryGetSuccess();
-      if (adsResult == null) {
-        await _cacheManager.setAds(null);
-      } else {
-        await _cacheManager.setAds(adsResult);
-      }
-      ads = adsResult ?? [];
+      ads = getAdsResult.tryGetSuccess();
+      await _cacheManager.setAds(ads);
     }
+    ads ??= [];
 
     final isPurchasedUser = _appCubit.state.me?.isPurchasedUser ?? false;
     final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
@@ -92,23 +65,15 @@ class MainCubit extends Cubit<MainState> {
   Future<void> _updateDDays({
     List<DDay>? cachedDDays,
   }) async {
-    List<DDay> dDays = [];
-
-    if (cachedDDays != null) {
-      dDays = cachedDDays;
-    } else {
+    List<DDay>? dDays = cachedDDays;
+    if (cachedDDays == null) {
       final getDDaysResult = await _dDayRepository.getAllDDays();
-      final dDaysResult = getDDaysResult.tryGetSuccess();
-      if (dDaysResult == null) {
-        await _cacheManager.setDDays(null);
-      } else {
-        await _cacheManager.setDDays(dDaysResult);
-      }
-      dDays = dDaysResult ?? [];
+      dDays = getDDaysResult.tryGetSuccess();
+      await _cacheManager.setDDays(dDays);
     }
+    dDays ??= [];
 
     final dDayItems = DDayUtil(dDays).getItemsToShow(DateTime.now());
-
     emit(state.copyWith(dDayItems: dDayItems));
   }
 }
