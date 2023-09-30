@@ -435,12 +435,13 @@ class _ClockPageState extends State<ClockPage> {
                             : '시험 시작 후 화면을 터치하면 시계만 보이게 할 수 있어요.',
                         '화면 속 시계는 터치를 통해 확대/축소하고 위치를 바꿀 수 있어요.',
                         '화면을 길게 누르면 시계가 기본 위치와 크기로 돌아가요.',
+                        '화면 하단의 타임라인에 글자를 누르면 각 지점으로 이동할 수 있어요.'
                       ].map(
                         (text) => BulletText(
                           text: text,
-                          style: TextStyle(
-                            color: Colors.grey.shade300,
-                            fontSize: 13,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
                             height: 1.4,
                           ),
                         ),
