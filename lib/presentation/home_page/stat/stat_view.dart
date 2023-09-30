@@ -414,6 +414,8 @@ class _StatViewState extends State<StatView> {
       return LineChartBarData(
         color: color,
         barWidth: 4,
+        isStrokeCapRound: true,
+        isStrokeJoinRound: true,
         belowBarData: BarAreaData(
           show: true,
           gradient: LinearGradient(
