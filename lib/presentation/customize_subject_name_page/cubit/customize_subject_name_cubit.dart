@@ -28,6 +28,14 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
   ) async {
     emit(state.copyWith(subjectNameMap: subjectNameMap));
 
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showError(
+        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     final me = _appCubit.state.me;
     if (me == null) {
       EasyLoading.showError('로그인이 필요합니다.', dismissOnTap: true);
@@ -35,7 +43,7 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
     }
 
     EasyLoading.show();
-    _userRepository.updateCustomSubjectNameMap(
+    await _userRepository.updateCustomSubjectNameMap(
       userId: me.id,
       subjectNameMap: subjectNameMap,
     );
