@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -7,6 +8,7 @@ import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../presentation/app/cubit/app_cubit.dart';
 import 'api_failure.dart';
 import 'const.dart';
 import 'injection.config.dart';
@@ -30,13 +32,24 @@ abstract class RegisterModule {
       ))
         ..interceptors.add(PrettyDioLogger())
         ..interceptors.add(InterceptorsWrapper(
+          onResponse: (response, handler) {
+            if (response.statusCode == 200) {
+              getIt.get<AppCubit>().updateIsOffline(false);
+            }
+            handler.next(response);
+          },
           onError: (e, handler) {
-            log('Dio error: ${e.error}', name: 'DioInterceptor');
+            log('Dio error: ${e.error}, type: ${e.type}',
+                name: 'DioInterceptor');
 
             final body = e.response?.data;
             ApiFailure failure;
-            if (e.error is SocketException) {
+            if (e.error is SocketException ||
+                e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.sendTimeout ||
+                e.type == DioExceptionType.receiveTimeout) {
               failure = ApiFailure.noNetwork();
+              getIt.get<AppCubit>().updateIsOffline(true);
             } else if (body is Map<String, dynamic>) {
               final message = body['message'] as String?;
               failure = ApiFailure(

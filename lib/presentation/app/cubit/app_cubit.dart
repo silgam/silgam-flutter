@@ -81,6 +81,17 @@ class AppCubit extends Cubit<AppState> {
     log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
   }
 
+  void updateIsOffline(bool isOffline) {
+    if (state.isOffline != isOffline) {
+      emit(state.copyWith(
+        isOffline: isOffline,
+      ));
+      onUserChange();
+      getIt.get<IapCubit>().initialize();
+      getIt.get<MainCubit>().initialize();
+    }
+  }
+
   Future<void> _updateUser() async {
     User? cachedMe = _cacheManager.getMe();
     if (cachedMe == null) {
@@ -128,13 +139,6 @@ class AppCubit extends Cubit<AppState> {
   void _onConnectivityChanged(ConnectivityResult connectivityResult) {
     log('Connectivity changed: $connectivityResult', name: 'AppCubit');
     final isOffline = connectivityResult == ConnectivityResult.none;
-    if (state.isOffline != isOffline) {
-      emit(state.copyWith(
-        isOffline: isOffline,
-      ));
-      onUserChange();
-      getIt.get<IapCubit>().initialize();
-      getIt.get<MainCubit>().initialize();
-    }
+    updateIsOffline(isOffline);
   }
 }
