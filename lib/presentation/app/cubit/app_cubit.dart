@@ -39,31 +39,26 @@ class AppCubit extends Cubit<AppState> {
   Future<void> initialize() async {
     final connectivity = await Connectivity().checkConnectivity();
     _onConnectivityChanged(connectivity);
-
-    _updateUser();
-
-    FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
-      await onUserChange();
-    });
-
     Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
+
+    onUserChange();
+    FirebaseAuth.instance
+        .userChanges()
+        .skip(1)
+        .listen((user) => onUserChange());
   }
 
-  Future<void> onUserChange({
-    User? cachedMe,
-  }) async {
-    User? me = cachedMe;
-    if (me == null) {
-      final getMeResult = await _userRepository.getMe();
-      me = getMeResult.tryGetSuccess();
+  Future<void> onUserChange() async {
+    User? cachedMe = _cacheManager.getMe();
+    emit(state.copyWith(me: cachedMe));
+    updateProductBenefit();
 
-      final error = getMeResult.tryGetError();
-      if (error?.type != ApiFailureType.noNetwork) {
-        await _cacheManager.setMe(me);
-        _updateFcmToken(updatedMe: me, previousMe: state.me);
-      }
-    }
+    final getMeResult = await _userRepository.getMe();
+    if (getMeResult.tryGetError()?.type == ApiFailureType.noNetwork) return;
 
+    User? me = getMeResult.tryGetSuccess();
+    await _cacheManager.setMe(me);
+    _updateFcmToken(updatedMe: me, previousMe: state.me);
     emit(state.copyWith(me: me));
     updateProductBenefit();
   }
@@ -89,16 +84,6 @@ class AppCubit extends Cubit<AppState> {
       onUserChange();
       getIt.get<IapCubit>().initialize();
       getIt.get<MainCubit>().initialize();
-    }
-  }
-
-  Future<void> _updateUser() async {
-    User? cachedMe = _cacheManager.getMe();
-    if (cachedMe == null) {
-      await onUserChange();
-    } else {
-      onUserChange();
-      onUserChange(cachedMe: cachedMe);
     }
   }
 
