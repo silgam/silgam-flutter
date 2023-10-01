@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -227,19 +228,26 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                 children: [
                   Builder(builder: (context) {
                     if (imagePath.startsWith('http')) {
-                      return Image.network(
-                        imagePath,
+                      return CachedNetworkImage(
+                        imageUrl: imagePath,
                         fit: BoxFit.cover,
-                        loadingBuilder: (_, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                        progressIndicatorBuilder: (_, __, progress) => Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              value: progress.progress,
+                              strokeWidth: 2,
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 18,
+                            color: Colors.grey.shade200,
+                          ),
+                        ),
                       );
                     } else {
                       return Image.file(

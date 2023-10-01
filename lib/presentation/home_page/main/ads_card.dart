@@ -37,6 +37,13 @@ class _AdsCardState extends State<AdsCard> {
                   child: CachedNetworkImage(
                     imageUrl: ads.imagePath,
                     fit: BoxFit.cover,
+                    errorWidget: (_, __, ___) => Center(
+                      child: Icon(
+                        Icons.image,
+                        size: 32,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
                   ),
                 ),
             ],

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,7 +51,35 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
             builder: (_, index) => PhotoViewGalleryPageOptions(
               onTapUp: (_, __, ___) => _onPhotoViewTapUp(),
               onScaleEnd: _onPhotoViewScaleEnd,
-              imageProvider: NetworkImage(problem.imagePaths[index]),
+              imageProvider: CachedNetworkImageProvider(
+                problem.imagePaths[index],
+              ),
+              errorBuilder: (_, __, ___) {
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  alignment: Alignment.center,
+                  child: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '이미지를 불러올 수 없어요.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 이미지만 볼 수 있어요.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             onPageChanged: _onPhotoChanged,
             loadingBuilder: (context, event) => const Center(

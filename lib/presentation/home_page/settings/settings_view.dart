@@ -232,8 +232,8 @@ class _SettingsViewState extends State<SettingsView> {
               children: [
                 const SizedBox(width: 10),
                 CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    user.photoUrl ?? 'https://via.placeholder.com/150?text=ㅇ',
+                  backgroundImage: CachedNetworkImageProvider(
+                    user.photoUrl ?? '',
                   ),
                   backgroundColor: Colors.grey,
                   radius: 24,
@@ -290,6 +290,8 @@ class _SettingsViewState extends State<SettingsView> {
                       ? user.activeProduct.trialStampImageUrl
                       : user.activeProduct.stampImageUrl,
                   height: 74,
+                  errorWidget: (_, __, ___) =>
+                      const AspectRatio(aspectRatio: 1),
                 ),
               ],
             ),

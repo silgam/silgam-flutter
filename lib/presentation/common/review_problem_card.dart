@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/problem.dart';
@@ -44,15 +45,43 @@ class ReviewProblemCard extends StatelessWidget {
                   child: Builder(builder: (context) {
                     String imagePath = problem.imagePaths.first;
                     if (imagePath.startsWith('http')) {
-                      return Image.network(
-                        imagePath,
+                      return CachedNetworkImage(
+                        imageUrl: imagePath,
                         width: double.infinity,
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
-                        loadingBuilder: (_, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                        progressIndicatorBuilder: (_, __, progress) => Center(
+                          child: CircularProgressIndicator(
+                            value: progress.progress,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) {
+                          return Container(
+                            padding: const EdgeInsets.all(20),
+                            alignment: Alignment.center,
+                            child: const Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '이미지를 불러올 수 없어요.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 이미지만 볼 수 있어요.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         },
                       );
