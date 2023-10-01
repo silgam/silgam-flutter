@@ -849,13 +849,13 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
       record.documentId = oldRecord.documentId;
-      _recordRepository.updateExamRecord(
+      await _recordRepository.updateExamRecord(
         userId: _appCubit.state.me!.id,
         oldRecord: oldRecord,
         newRecord: record,
       );
     } else {
-      _recordRepository.addExamRecord(
+      await _recordRepository.addExamRecord(
         userId: _appCubit.state.me!.id,
         record: record,
       );
