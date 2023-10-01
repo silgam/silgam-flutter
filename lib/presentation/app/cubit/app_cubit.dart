@@ -12,6 +12,7 @@ import '../../../model/product.dart';
 import '../../../model/subject.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
+import '../../../util/api_failure.dart';
 import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
@@ -45,9 +46,7 @@ class AppCubit extends Cubit<AppState> {
       await onUserChange();
     });
 
-    Connectivity().onConnectivityChanged.listen((connectivityResult) async {
-      _onConnectivityChanged(connectivityResult);
-    });
+    Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
   }
 
   Future<void> onUserChange({
@@ -57,8 +56,12 @@ class AppCubit extends Cubit<AppState> {
     if (me == null) {
       final getMeResult = await _userRepository.getMe();
       me = getMeResult.tryGetSuccess();
-      await _cacheManager.setMe(me);
-      _updateFcmToken(updatedMe: me, previousMe: state.me);
+
+      final error = getMeResult.tryGetError();
+      if (error?.type != ApiFailureType.noNetwork) {
+        await _cacheManager.setMe(me);
+        _updateFcmToken(updatedMe: me, previousMe: state.me);
+      }
     }
 
     emit(state.copyWith(me: me));
@@ -126,14 +129,12 @@ class AppCubit extends Cubit<AppState> {
     log('Connectivity changed: $connectivityResult', name: 'AppCubit');
     final isOffline = connectivityResult == ConnectivityResult.none;
     if (state.isOffline != isOffline) {
+      emit(state.copyWith(
+        isOffline: isOffline,
+      ));
       onUserChange();
       getIt.get<IapCubit>().initialize();
       getIt.get<MainCubit>().initialize();
     }
-
-    emit(state.copyWith(
-      isOffline: isOffline,
-      me: isOffline ? null : state.me,
-    ));
   }
 }
