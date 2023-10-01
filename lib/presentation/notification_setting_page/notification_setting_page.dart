@@ -17,6 +17,10 @@ class NotificationSettingPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: BlocConsumer<AppCubit, AppState>(
+          listenWhen: (previous, current) =>
+              previous.me?.isMarketingInfoReceivingConsented !=
+                  current.me?.isMarketingInfoReceivingConsented ||
+              previous.isOffline != current.isOffline,
           listener: (context, appState) {
             EasyLoading.dismiss();
           },

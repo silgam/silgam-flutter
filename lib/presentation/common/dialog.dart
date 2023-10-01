@@ -267,11 +267,19 @@ Future<void> changeMarketingInfoReceivingConsentStatus(
   bool isConsent,
 ) async {
   final appCubit = getIt.get<AppCubit>();
-  final userRepository = getIt.get<UserRepository>();
+  if (appCubit.state.isOffline) {
+    EasyLoading.showError(
+      '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+      dismissOnTap: true,
+    );
+    return;
+  }
+
   final me = appCubit.state.me;
   if (me == null) return;
 
-  userRepository.updateMarketingConsent(
+  final userRepository = getIt.get<UserRepository>();
+  await userRepository.updateMarketingConsent(
     userId: me.id,
     isConsent: isConsent,
   );
