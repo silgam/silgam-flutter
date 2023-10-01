@@ -62,7 +62,7 @@ class IapCubit extends Cubit<IapState> {
 
     final me = _appCubit.state.me;
     if (me == null) {
-      EasyLoading.showError('먼저 로그인해주세요.');
+      EasyLoading.showError('먼저 로그인해주세요.', dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Start free trial process failed',
         properties: {
@@ -93,7 +93,7 @@ class IapCubit extends Cubit<IapState> {
 
     final me = _appCubit.state.me;
     if (me == null) {
-      EasyLoading.showError('먼저 로그인해주세요.');
+      EasyLoading.showError('먼저 로그인해주세요.', dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -106,7 +106,10 @@ class IapCubit extends Cubit<IapState> {
     }
 
     if (!state.isStoreAvailable) {
-      EasyLoading.showError('이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.');
+      EasyLoading.showError(
+        '이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.',
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -122,7 +125,10 @@ class IapCubit extends Cubit<IapState> {
       (productDetails) => productDetails.id == product.id,
     );
     if (productDetails == null) {
-      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      EasyLoading.showError(
+        '정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.',
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -143,7 +149,10 @@ class IapCubit extends Cubit<IapState> {
     if (canPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = canPurchaseResult.tryGetError()!.message;
-      EasyLoading.showError(canPurchaseResult.tryGetError()!.message);
+      EasyLoading.showError(
+        canPurchaseResult.tryGetError()!.message,
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -170,7 +179,10 @@ class IapCubit extends Cubit<IapState> {
     if (trialProductDetailResponse.error != null ||
         trialProductDetailResponse.productDetails.isEmpty) {
       emit(state.copyWith(isLoading: false));
-      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      EasyLoading.showError(
+        '정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.',
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Start free trial process failed',
         properties: {
@@ -197,7 +209,7 @@ class IapCubit extends Cubit<IapState> {
     if (startTrialResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = startTrialResult.tryGetError()!.message;
-      EasyLoading.showError(message);
+      EasyLoading.showError(message, dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Start free trial process failed',
         properties: {
@@ -313,7 +325,7 @@ class IapCubit extends Cubit<IapState> {
     if (onPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = onPurchaseResult.tryGetError()!.message;
-      EasyLoading.showError(message);
+      EasyLoading.showError(message, dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] onPurchase failed',
         properties: {

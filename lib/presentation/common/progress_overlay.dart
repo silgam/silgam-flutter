@@ -64,6 +64,7 @@ void initializeEasyLoading() {
       fontWeight: FontWeight.w700,
       fontSize: 15,
       color: Colors.white,
+      height: 1.4,
     )
     ..textColor = Colors.white
     ..indicatorColor = Colors.white
