@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
@@ -28,16 +31,24 @@ abstract class RegisterModule {
         ..interceptors.add(PrettyDioLogger())
         ..interceptors.add(InterceptorsWrapper(
           onError: (e, handler) {
+            log('Dio error: ${e.error}', name: 'DioInterceptor');
+
             final body = e.response?.data;
-            FailureBody failureBody;
-            if (body is Map<String, dynamic>) {
-              failureBody = FailureBody.fromJson(body);
+            ApiFailure failure;
+            if (e.error is SocketException) {
+              failure = ApiFailure.noNetwork();
+            } else if (body is Map<String, dynamic>) {
+              final message = body['message'] as String?;
+              failure = ApiFailure(
+                type: ApiFailureType.unknown,
+                message: message ?? ApiFailureType.unknown.message,
+              );
             } else {
-              failureBody = FailureBody.unknown();
+              failure = ApiFailure.unknown();
             }
 
             handler.next(e.copyWith(
-              error: ApiFailure(failureBody.message),
+              error: failure,
             ));
           },
         ));

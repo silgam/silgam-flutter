@@ -28,7 +28,7 @@ class UserRepository {
     final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
     if (authToken == null) {
       log('getMe() failed: firebase token is null', name: 'UserRepository');
-      return Result.error(const ApiFailure('인증에 실패했습니다. 앱을 다시 실행해주세요.'));
+      return Result.error(ApiFailure.unauthorized());
     }
 
     try {
@@ -78,9 +78,9 @@ class UserRepository {
         'fcmTokens': FieldValue.arrayUnion([fcmToken]),
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('addFcmToken() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 
@@ -93,9 +93,9 @@ class UserRepository {
         'fcmTokens': FieldValue.arrayRemove([fcmToken]),
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('removeFcmToken() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 
@@ -110,9 +110,9 @@ class UserRepository {
             DateTime.now().toUtc().toIso8601String(),
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('updateMarketingConsent() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 
@@ -127,9 +127,9 @@ class UserRepository {
         )
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('updateCustomSubjectNameMap() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 }
