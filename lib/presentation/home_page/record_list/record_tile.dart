@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
-import '../../common/material_hero.dart';
 
 class RecordTile extends StatefulWidget {
   final ExamRecord record;
@@ -64,17 +63,14 @@ class RecordTileState extends State<RecordTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MaterialHero(
-                tag: 'time ${widget.record.hashCode}',
-                child: Text(
-                  DateFormat.yMEd('ko_KR')
-                      .add_Hm()
-                      .format(widget.record.examStartedTime),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+              Text(
+                DateFormat.yMEd('ko_KR')
+                    .add_Hm()
+                    .format(widget.record.examStartedTime),
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
                 ),
               ),
               const SizedBox(height: 2),
@@ -82,29 +78,23 @@ class RecordTileState extends State<RecordTile> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Flexible(
-                    child: MaterialHero(
-                      tag: 'title ${widget.record.hashCode}',
-                      child: Text(
-                        widget.record.title,
-                        overflow: TextOverflow.ellipsis,
-                        textWidthBasis: TextWidthBasis.longestLine,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                        ),
+                    child: Text(
+                      widget.record.title,
+                      overflow: TextOverflow.ellipsis,
+                      textWidthBasis: TextWidthBasis.longestLine,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
                       ),
                     ),
                   ),
                   const SizedBox(width: 4),
-                  MaterialHero(
-                    tag: 'subject ${widget.record.hashCode}',
-                    child: Text(
-                      widget.record.subject.subjectName,
-                      style: TextStyle(
-                        color: Color(widget.record.subject.firstColor),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                      ),
+                  Text(
+                    widget.record.subject.subjectName,
+                    style: TextStyle(
+                      color: Color(widget.record.subject.firstColor),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
                     ),
                   ),
                 ],

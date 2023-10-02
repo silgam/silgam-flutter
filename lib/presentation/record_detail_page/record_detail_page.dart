@@ -11,7 +11,6 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
 import '../common/custom_menu_bar.dart';
-import '../common/material_hero.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record_page/edit_record_page.dart';
@@ -235,15 +234,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MaterialHero(
-          tag: 'time ${_record.hashCode}',
-          child: Text(
-            DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
-            style: TextStyle(
-              fontWeight: FontWeight.w300,
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
+        Text(
+          DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
+          style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: Colors.grey.shade600,
           ),
         ),
         Center(
@@ -252,27 +248,21 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Flexible(
-                child: MaterialHero(
-                  tag: 'title ${_record.hashCode}',
-                  child: Text(
-                    _record.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
+                child: Text(
+                  _record.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
                   ),
                 ),
               ),
               const SizedBox(width: 6),
-              MaterialHero(
-                tag: 'subject ${_record.hashCode}',
-                child: Text(
-                  _record.subject.subjectName,
-                  style: TextStyle(
-                    color: Color(_record.subject.firstColor),
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                  ),
+              Text(
+                _record.subject.subjectName,
+                style: TextStyle(
+                  color: Color(_record.subject.firstColor),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
                 ),
               ),
             ],
