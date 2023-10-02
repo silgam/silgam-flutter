@@ -15,6 +15,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
 import '../../../util/analytics_manager.dart';
+import '../../../util/api_failure.dart';
 import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -47,7 +48,7 @@ class IapCubit extends Cubit<IapState> {
       _checkStoreAvailability();
     }
 
-    _fetchProducts();
+    _updateProducts();
     _appCubit.updateProductBenefit();
   }
 
@@ -367,23 +368,21 @@ class IapCubit extends Cubit<IapState> {
     }
   }
 
-  Future<void> _fetchProducts() async {
-    _updateProducts();
-    final products = _cacheManager.getProducts();
-    if (products != null) _updateProducts(cachedProducts: products);
+  Future<void> _updateProducts() async {
+    List<Product>? cachedProducts = _cacheManager.getProducts();
+    await _onProductsChange(cachedProducts ?? []);
+
+    final getProductsResult = await _productRepository.getAllProducts();
+    if (getProductsResult.tryGetError()?.type == ApiFailureType.noNetwork) {
+      return;
+    }
+
+    List<Product>? products = getProductsResult.tryGetSuccess();
+    _cacheManager.setProducts(products);
+    await _onProductsChange(products ?? []);
   }
 
-  Future<void> _updateProducts({
-    List<Product>? cachedProducts,
-  }) async {
-    List<Product>? products = cachedProducts;
-    if (cachedProducts == null) {
-      final getProductsResult = await _productRepository.getAllProducts();
-      products = getProductsResult.tryGetSuccess();
-      _cacheManager.setProducts(products);
-    }
-    products ??= [];
-
+  Future<void> _onProductsChange(List<Product> products) async {
     final today = DateTime.now();
     final versionNumber = await _getVersionNumber();
     final sellingProduct = products.firstWhereOrNull((e) =>
