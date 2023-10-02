@@ -30,7 +30,7 @@ abstract class RegisterModule {
         baseUrl: urlSilgamApi,
         contentType: Headers.jsonContentType,
       ))
-        ..interceptors.add(PrettyDioLogger())
+        ..interceptors.add(PrettyDioLogger(responseBody: false))
         ..interceptors.add(InterceptorsWrapper(
           onResponse: (response, handler) {
             if (response.statusCode == 200) {
