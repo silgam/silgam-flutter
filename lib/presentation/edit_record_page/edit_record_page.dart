@@ -832,8 +832,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _isSaving = true;
     });
 
+    final userId = _appCubit.state.me!.id;
     final ExamRecord record = ExamRecord(
-      userId: _appCubit.state.me!.id,
+      id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
+      userId: userId,
       title: title,
       subject: _selectedSubject,
       examStartedTime: _examStartedTime,
@@ -845,14 +847,17 @@ class _EditRecordPageState extends State<EditRecordPage> {
       wrongProblems: _wrongProblems,
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
+      createdAt: DateTime.now().toUtc(),
     );
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
-      record.documentId = oldRecord.documentId;
       await _recordRepository.updateExamRecord(
         userId: _appCubit.state.me!.id,
         oldRecord: oldRecord,
-        newRecord: record,
+        newRecord: record.copyWith(
+          id: oldRecord.id,
+          createdAt: oldRecord.createdAt,
+        ),
       );
     } else {
       await _recordRepository.addExamRecord(

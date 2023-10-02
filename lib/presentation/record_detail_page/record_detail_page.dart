@@ -340,7 +340,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   void _refresh() async {
-    _record = await _recordRepository.getExamRecordById(_record.documentId);
+    _record = await _recordRepository.getExamRecordById(_record.id);
     setState(() {});
   }
 
