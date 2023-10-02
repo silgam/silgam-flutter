@@ -63,6 +63,15 @@ class AppCubit extends Cubit<AppState> {
     updateProductBenefit();
   }
 
+  Future<void> onLogout() async {
+    await _cacheManager.setMe(null);
+    _updateFcmToken(updatedMe: null, previousMe: state.me);
+    emit(state.copyWith(me: null));
+    updateProductBenefit();
+
+    await FirebaseAuth.instance.signOut();
+  }
+
   void updateProductBenefit() {
     final freeProductBenefit =
         _iapCubit.state.freeProduct?.benefit ?? ProductBenefit.initial;

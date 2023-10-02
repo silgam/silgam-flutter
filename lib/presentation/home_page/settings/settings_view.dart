@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../model/user.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
+import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
@@ -358,7 +359,7 @@ class _SettingsViewState extends State<SettingsView> {
           ),
           TextButton(
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              await getIt<AppCubit>().onLogout();
               if (mounted) Navigator.pop(context);
               await AnalyticsManager.logEvent(
                   name: '[HomePage-settings] Logout');
