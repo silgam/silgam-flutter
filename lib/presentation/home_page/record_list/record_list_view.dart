@@ -49,6 +49,10 @@ class _RecordListViewState extends State<RecordListView> {
             },
           ),
           BlocListener<AppCubit, AppState>(
+            listenWhen: (previous, current) =>
+                previous.me != current.me ||
+                previous.productBenefit != current.productBenefit ||
+                previous.isOffline != current.isOffline,
             listener: (context, state) {
               _cubit.refresh();
             },
@@ -227,15 +231,16 @@ class _RecordListViewState extends State<RecordListView> {
     );
   }
 
-  void _onLoginTap() async {
-    await Navigator.pushNamed(context, LoginPage.routeName);
-    await _cubit.refresh();
+  void _onLoginTap() {
+    Navigator.pushNamed(context, LoginPage.routeName);
   }
 
-  void _onTileTap(ExamRecord record) async {
-    final args = RecordDetailPageArguments(record: record);
-    await Navigator.pushNamed(context, RecordDetailPage.routeName,
-        arguments: args);
+  void _onTileTap(ExamRecord record) {
+    Navigator.pushNamed(
+      context,
+      RecordDetailPage.routeName,
+      arguments: RecordDetailPageArguments(recordId: record.id),
+    );
   }
 }
 

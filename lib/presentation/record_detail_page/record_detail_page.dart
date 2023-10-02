@@ -33,14 +33,13 @@ class RecordDetailPage extends StatefulWidget {
 
 class _RecordDetailPageState extends State<RecordDetailPage> {
   final ExamRecordRepository _recordRepository = getIt.get();
-  late ExamRecord _record;
+  final RecordListCubit _recordListCubit = getIt.get();
+  late ExamRecord _record = _getRecord();
   bool _isDeleting = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _record = widget.arguments.record;
-    _refresh();
+  ExamRecord _getRecord() {
+    return _recordListCubit.state.originalRecords
+        .firstWhere((r) => r.id == widget.arguments.recordId);
   }
 
   @override
@@ -329,11 +328,6 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  void _refresh() async {
-    _record = await _recordRepository.getExamRecordById(_record.id);
-    setState(() {});
-  }
-
   void _onSaveImageButtonPressed() async {
     final arguments = SaveImagePageArguments(recordToSave: _record);
     await Navigator.pushNamed(context, SaveImagePage.routeName,
@@ -342,9 +336,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 
   void _onEditButtonPressed() async {
     final arguments = EditRecordPageArguments(recordToEdit: _record);
-    await Navigator.pushNamed(context, EditRecordPage.routeName,
-        arguments: arguments);
-    _refresh();
+    await Navigator.pushNamed(
+      context,
+      EditRecordPage.routeName,
+      arguments: arguments,
+    );
+    setState(() {
+      _record = _getRecord();
+    });
   }
 
   void _onDeleteButtonPressed() {
@@ -390,8 +389,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     setState(() {
       _isDeleting = true;
     });
-    _recordRepository.deleteExamRecord(_record);
-    getIt.get<RecordListCubit>().refresh();
+    await _recordRepository.deleteExamRecord(_record);
+    _recordListCubit.onRecordDeleted(_record);
     if (mounted) Navigator.pop(context);
 
     await AnalyticsManager.logEvent(
@@ -406,7 +405,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 }
 
 class RecordDetailPageArguments {
-  final ExamRecord record;
+  final String recordId;
 
-  RecordDetailPageArguments({required this.record});
+  RecordDetailPageArguments({required this.recordId});
 }

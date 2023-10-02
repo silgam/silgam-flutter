@@ -27,11 +27,6 @@ class ExamRecordRepository {
     return record;
   }
 
-  Future<ExamRecord> getExamRecordById(String id) async {
-    final snapshot = await _recordsRef.doc(id).get();
-    return snapshot.data()!;
-  }
-
   Future<List<ExamRecord>> getMyExamRecords(String userId) async {
     final querySnapshot = await _recordsRef
         .where('userId', isEqualTo: userId)
@@ -68,7 +63,7 @@ class ExamRecordRepository {
     for (final imageUrl in allImages) {
       await _deleteImage(imageUrl);
     }
-    return await _recordsRef.doc(examRecord.id).delete();
+    _recordsRef.doc(examRecord.id).delete();
   }
 
   Future<void> _uploadProblemImages(String userId, ExamRecord record) async {

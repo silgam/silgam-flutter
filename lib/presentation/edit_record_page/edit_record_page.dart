@@ -822,19 +822,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       );
       return;
     }
-    final savedRecord = await _saveRecord();
-    getIt.get<RecordListCubit>().refresh();
-    if (mounted) {
-      if (_isEditingMode || savedRecord == null) {
-        Navigator.pop(context, savedRecord);
-      } else {
-        Navigator.pushReplacementNamed(
-          context,
-          RecordDetailPage.routeName,
-          arguments: RecordDetailPageArguments(record: savedRecord),
-        );
-      }
-    }
+    await _saveRecord();
   }
 
   Future<ExamRecord?> _saveRecord() async {
@@ -871,11 +859,21 @@ class _EditRecordPageState extends State<EditRecordPage> {
           createdAt: oldRecord.createdAt,
         ),
       );
+      _recordListCubit.onRecordUpdated(record);
+      if (mounted) Navigator.pop(context);
     } else {
       record = await _recordRepository.addExamRecord(
         userId: _appCubit.state.me!.id,
         record: record,
       );
+      _recordListCubit.onRecordCreated(record);
+      if (mounted) {
+        Navigator.pushReplacementNamed(
+          context,
+          RecordDetailPage.routeName,
+          arguments: RecordDetailPageArguments(recordId: record.id),
+        );
+      }
     }
 
     AnalyticsManager.logEvent(
