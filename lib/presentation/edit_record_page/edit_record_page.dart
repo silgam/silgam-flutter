@@ -16,6 +16,7 @@ import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../home_page/record_list/cubit/record_list_cubit.dart';
+import '../record_detail_page/record_detail_page.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
@@ -821,19 +822,29 @@ class _EditRecordPageState extends State<EditRecordPage> {
       );
       return;
     }
-    await saveRecord();
+    final savedRecord = await _saveRecord();
     getIt.get<RecordListCubit>().refresh();
-    if (mounted) Navigator.pop(context);
+    if (mounted) {
+      if (_isEditingMode || savedRecord == null) {
+        Navigator.pop(context, savedRecord);
+      } else {
+        Navigator.pushReplacementNamed(
+          context,
+          RecordDetailPage.routeName,
+          arguments: RecordDetailPageArguments(record: savedRecord),
+        );
+      }
+    }
   }
 
-  Future<void> saveRecord() async {
-    if (_isSaving) return;
+  Future<ExamRecord?> _saveRecord() async {
+    if (_isSaving) return null;
     setState(() {
       _isSaving = true;
     });
 
     final userId = _appCubit.state.me!.id;
-    final ExamRecord record = ExamRecord(
+    ExamRecord record = ExamRecord(
       id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
       userId: userId,
       title: title,
@@ -849,9 +860,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
       reviewProblems: _reviewProblems,
       createdAt: DateTime.now().toUtc(),
     );
+
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
-      await _recordRepository.updateExamRecord(
+      record = await _recordRepository.updateExamRecord(
         userId: _appCubit.state.me!.id,
         oldRecord: oldRecord,
         newRecord: record.copyWith(
@@ -860,17 +872,13 @@ class _EditRecordPageState extends State<EditRecordPage> {
         ),
       );
     } else {
-      await _recordRepository.addExamRecord(
+      record = await _recordRepository.addExamRecord(
         userId: _appCubit.state.me!.id,
         record: record,
       );
     }
 
-    setState(() {
-      _isSaving = false;
-    });
-
-    await AnalyticsManager.logEvent(
+    AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Exam record saved',
       properties: {
         'subject': _selectedSubject.subjectName,
@@ -878,6 +886,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
         'input_exam_existed': widget.arguments.inputExam != null,
       },
     );
+
+    return record;
   }
 
   Future<bool> _onBackPressed() async {
