@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
@@ -33,6 +34,7 @@ class RecordDetailPage extends StatefulWidget {
 
 class _RecordDetailPageState extends State<RecordDetailPage> {
   final ExamRecordRepository _recordRepository = getIt.get();
+  final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
   late ExamRecord _record = _getRecord();
   bool _isDeleting = false;
@@ -386,6 +388,15 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   Future<void> _deleteRecord() async {
+    if (_appCubit.state.isOffline &&
+        _record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 복습할 문제 사진이 있는 기록을 삭제할 수 없습니다.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     setState(() {
       _isDeleting = true;
     });

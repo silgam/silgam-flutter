@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../model/problem.dart';
+import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 
 class EditReviewProblemDialog extends StatefulWidget {
   final ReviewProblemAddModeParams? reviewProblemAddModeParams;
@@ -25,6 +28,7 @@ class EditReviewProblemDialog extends StatefulWidget {
 }
 
 class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
+  final AppCubit _appCubit = getIt.get();
   final _titleEditingController = TextEditingController();
   final _memoEditingController = TextEditingController();
   final List<String> _tempImagePaths = [];
@@ -307,12 +311,28 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onImageTapped(String imagePath) {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진을 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     setState(() {
       _tempImagePaths.remove(imagePath);
     });
   }
 
   void _onImageAddButtonPressed() async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진을 추가할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     final picker = ImagePicker();
     List<XFile> files = await picker.pickMultiImage();
     setState(() {
@@ -321,6 +341,14 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onDeleteButtonPressed() {
+    if (_appCubit.state.isOffline && _tempImagePaths.isNotEmpty) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
     reviewProblemEditModeParams
         ?.onReviewProblemDeleted(reviewProblemEditModeParams.initialData);

@@ -62,7 +62,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '이미지를 불러올 수 없어요.',
+                        '사진을 불러올 수 없어요.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.grey,
@@ -70,7 +70,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 이미지만 볼 수 있어요.',
+                        '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.grey,
