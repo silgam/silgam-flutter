@@ -47,7 +47,6 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: ProgressOverlay(
         isProgressing: _isDeleting,
         description: '삭제하는 중',
