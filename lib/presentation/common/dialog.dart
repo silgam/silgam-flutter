@@ -1,11 +1,14 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../repository/feedback/feedback_repository.dart';
 import '../../repository/user/user_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
@@ -347,14 +350,31 @@ void showSendFeedbackDialog(BuildContext context) {
                       width: 1,
                     ),
                   ),
-                  child: Text(
-                    '실감팀의 답변이 필요하신 내용은 설정 > 카카오톡 채널로 문의하기 기능을 이용해주세요.',
+                  child: RichText(
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      height: 1.5,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.grey.shade600,
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade800,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: '기능상의 오류나 기타 실감팀의 답변이 필요하신 내용은 ',
+                        ),
+                        TextSpan(
+                          text: '카카오톡 채널',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => launchUrl(Uri.parse(urlSupport),
+                                mode: LaunchMode.externalApplication),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: '을 이용해주세요.',
+                        ),
+                      ],
                     ),
                   ),
                 ),
