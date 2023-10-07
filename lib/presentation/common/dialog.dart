@@ -359,7 +359,13 @@ void showSendFeedbackDialog(BuildContext context) {
                       ),
                       children: [
                         const TextSpan(
-                          text: '기능상의 오류나 기타 실감팀의 답변이 필요하신 내용은 ',
+                          text: '기능상의 오류',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: '나 기타 실감팀의 답변이 필요하신 내용은 ',
                         ),
                         TextSpan(
                           text: '카카오톡 채널',
