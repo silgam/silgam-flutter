@@ -29,9 +29,9 @@ abstract class RegisterModule {
   Dio get dio => Dio(BaseOptions(
         baseUrl: urlSilgamApi,
         contentType: Headers.jsonContentType,
-        sendTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
-        connectTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 20),
+        receiveTimeout: const Duration(seconds: 20),
+        connectTimeout: const Duration(seconds: 20),
       ))
         ..interceptors.add(PrettyDioLogger(responseBody: false))
         ..interceptors.add(InterceptorsWrapper(
