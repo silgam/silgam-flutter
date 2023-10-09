@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -53,10 +52,7 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> initialize() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    _onConnectivityChanged(connectivity);
-    Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
-
+    await _connectivityManger.updateConnectivityListener();
     _connectivityManger.updateRealtimeDatabaseListener(userId: state.me?.id);
 
     FirebaseAuth.instance.userChanges().listen((user) {
@@ -144,11 +140,5 @@ class AppCubit extends Cubit<AppState> {
       ));
       log('fcmToken added', name: 'AppCubit');
     }
-  }
-
-  void _onConnectivityChanged(ConnectivityResult connectivityResult) {
-    log('Connectivity changed: $connectivityResult', name: 'AppCubit');
-    final isOffline = connectivityResult == ConnectivityResult.none;
-    updateIsOffline(isOffline);
   }
 }

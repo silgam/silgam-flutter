@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
@@ -11,10 +12,22 @@ import 'injection.dart';
 @lazySingleton
 class ConnectivityManger {
   late final AppCubit _appCubit = getIt.get();
+
+  StreamSubscription? _connectivityListener;
+
   final String _uuid = const Uuid().v1();
   StreamSubscription? _realtimeDatabaseListener;
   OnDisconnect? _onDisconnect;
   DatabaseReference? _connectedAtRef;
+
+  Future<void> updateConnectivityListener() async {
+    final connectivity = await Connectivity().checkConnectivity();
+    _onConnectivityChanged(connectivity);
+
+    _connectivityListener?.cancel();
+    _connectivityListener =
+        Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
+  }
 
   void updateRealtimeDatabaseListener({required String? userId}) {
     log(
@@ -45,5 +58,11 @@ class ConnectivityManger {
         _connectedAtRef?.set(ServerValue.timestamp);
       }
     });
+  }
+
+  void _onConnectivityChanged(ConnectivityResult connectivityResult) {
+    log('Connectivity changed: $connectivityResult', name: 'AppCubit');
+    final isOffline = connectivityResult == ConnectivityResult.none;
+    _appCubit.updateIsOffline(isOffline);
   }
 }
