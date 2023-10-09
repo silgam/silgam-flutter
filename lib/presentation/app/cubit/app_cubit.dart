@@ -14,6 +14,7 @@ import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
 import '../../../util/api_failure.dart';
 import '../../../util/cache_manager.dart';
+import '../../../util/connectivity_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../home_page/main/cubit/main_cubit.dart';
@@ -24,28 +25,43 @@ part 'app_state.dart';
 
 @lazySingleton
 class AppCubit extends Cubit<AppState> {
-  AppCubit(this._userRepository, this._sharedPreferences, this._cacheManager)
-      : super(const AppState());
+  AppCubit(
+    this._userRepository,
+    this._sharedPreferences,
+    this._cacheManager,
+    this._connectivityManger,
+  ) : super(const AppState());
 
   final UserRepository _userRepository;
   final SharedPreferences _sharedPreferences;
   final CacheManager _cacheManager;
+  final ConnectivityManger _connectivityManger;
   late final IapCubit _iapCubit = getIt.get();
 
   bool get useLapTime =>
       (_sharedPreferences.getBool(PreferenceKey.useLapTime) ?? true) &&
       state.productBenefit.isLapTimeAvailable;
 
+  @override
+  void onChange(Change<AppState> change) {
+    if (change.nextState.me?.id != change.currentState.me?.id) {
+      _connectivityManger.updateRealtimeDatabaseListener(
+        userId: change.nextState.me?.id,
+      );
+    }
+    super.onChange(change);
+  }
+
   Future<void> initialize() async {
     final connectivity = await Connectivity().checkConnectivity();
     _onConnectivityChanged(connectivity);
     Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
 
-    onUserChange();
-    FirebaseAuth.instance
-        .userChanges()
-        .skip(1)
-        .listen((user) => onUserChange());
+    _connectivityManger.updateRealtimeDatabaseListener(userId: state.me?.id);
+
+    FirebaseAuth.instance.userChanges().listen((user) {
+      onUserChange();
+    });
   }
 
   Future<void> onUserChange() async {
