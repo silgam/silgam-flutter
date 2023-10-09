@@ -15,7 +15,7 @@ class ConnectivityManger {
 
   StreamSubscription? _connectivityListener;
 
-  final String _sessionId = const Uuid().v1();
+  String _sessionId = const Uuid().v1();
   StreamSubscription? _realtimeDatabaseListener;
   OnDisconnect? _onDisconnect;
   DatabaseReference? _connectedAtRef;
@@ -53,6 +53,8 @@ class ConnectivityManger {
             .onDisconnect();
         _onDisconnect?.set(ServerValue.timestamp);
         _connectedAtRef?.set(ServerValue.timestamp);
+      } else {
+        _sessionId = const Uuid().v1();
       }
     });
   }
