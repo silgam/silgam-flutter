@@ -45,7 +45,7 @@ class AppCubit extends Cubit<AppState> {
   void onChange(Change<AppState> change) {
     if (change.nextState.me?.id != change.currentState.me?.id) {
       _connectivityManger.updateRealtimeDatabaseListener(
-        userId: change.nextState.me?.id,
+        currentUserId: change.nextState.me?.id,
       );
     }
     super.onChange(change);
@@ -53,7 +53,9 @@ class AppCubit extends Cubit<AppState> {
 
   Future<void> initialize() async {
     await _connectivityManger.updateConnectivityListener();
-    _connectivityManger.updateRealtimeDatabaseListener(userId: state.me?.id);
+    _connectivityManger.updateRealtimeDatabaseListener(
+      currentUserId: state.me?.id,
+    );
 
     FirebaseAuth.instance.userChanges().listen((user) {
       onUserChange();

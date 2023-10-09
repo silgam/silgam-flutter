@@ -15,7 +15,7 @@ class ConnectivityManger {
 
   StreamSubscription? _connectivityListener;
 
-  final String _uuid = const Uuid().v1();
+  final String _sessionId = const Uuid().v1();
   StreamSubscription? _realtimeDatabaseListener;
   OnDisconnect? _onDisconnect;
   DatabaseReference? _connectedAtRef;
@@ -29,12 +29,7 @@ class ConnectivityManger {
         Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
   }
 
-  void updateRealtimeDatabaseListener({required String? userId}) {
-    log(
-      'updateRealtimeDatabaseListener: $userId',
-      name: runtimeType.toString(),
-    );
-
+  void updateRealtimeDatabaseListener({required String? currentUserId}) {
     _realtimeDatabaseListener?.cancel();
     _onDisconnect?.cancel();
     _connectedAtRef?.remove();
@@ -50,10 +45,12 @@ class ConnectivityManger {
       _appCubit.updateIsOffline(!connected);
 
       if (connected) {
-        final id = userId ?? _uuid;
-        _connectedAtRef = db.ref('users/$id/sessions/$_uuid/connectedAt');
-        _onDisconnect =
-            db.ref('users/$id/sessions/$_uuid/disconnectedAt').onDisconnect();
+        final userId = currentUserId ?? 'anonymous';
+        _connectedAtRef =
+            db.ref('users/$userId/sessions/$_sessionId/connectedAt');
+        _onDisconnect = db
+            .ref('users/$userId/sessions/$_sessionId/disconnectedAt')
+            .onDisconnect();
         _onDisconnect?.set(ServerValue.timestamp);
         _connectedAtRef?.set(ServerValue.timestamp);
       }
