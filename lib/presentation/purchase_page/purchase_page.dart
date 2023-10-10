@@ -29,6 +29,7 @@ class PurchasePage extends StatefulWidget {
 }
 
 class _PurchasePageState extends State<PurchasePage> {
+  final AppCubit _appCubit = getIt.get();
   final PurchaseCubit _cubit = getIt.get();
 
   late final backgroundColor =
@@ -50,6 +51,14 @@ class _PurchasePageState extends State<PurchasePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 실감패스를 확인할 수 없어요.',
+        dismissOnTap: true,
+      );
+      Navigator.of(context).pop();
+    }
+
     return BlocProvider(
       create: (context) => _cubit,
       child: MultiBlocListener(

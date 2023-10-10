@@ -390,7 +390,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (_appCubit.state.isOffline &&
         _record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
       EasyLoading.showToast(
-        '오프라인 상태에서는 복습할 문제 사진이 있는 기록을 삭제할 수 없습니다.',
+        '오프라인 상태에서는 복습할 문제 사진을 포함한 기록을 삭제할 수 없어요.',
         dismissOnTap: true,
       );
       return;

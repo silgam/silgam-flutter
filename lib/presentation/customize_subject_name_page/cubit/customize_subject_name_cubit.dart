@@ -29,8 +29,8 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
     emit(state.copyWith(subjectNameMap: subjectNameMap));
 
     if (_appCubit.state.isOffline) {
-      EasyLoading.showError(
-        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+      EasyLoading.showToast(
+        '오프라인 상태에서는 수정할 수 없어요.',
         dismissOnTap: true,
       );
       return;

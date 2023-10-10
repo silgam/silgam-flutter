@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -36,6 +37,8 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
+  final AppCubit _appCubit = getIt.get();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
@@ -338,6 +341,14 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void _onLogoutTap() async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'logout_confirm_dialog'),
@@ -372,6 +383,14 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void _onDeleteAccountTap() async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'account_delete_confirm_dialog'),
@@ -437,6 +456,14 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void _onWriteReviewButtonTap() async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     final InAppReview inAppReview = InAppReview.instance;
     if (await inAppReview.isAvailable()) {
       await inAppReview.requestReview();

@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                                       vertical: 4,
                                     ),
                                     child: const Text(
-                                      '오프라인 상태에선 일부 기능만 사용 가능해요',
+                                      '오프라인 상태에선 일부 기능만 사용 가능해요.',
                                       style: TextStyle(
                                         fontSize: 12,
                                         height: 1.2,

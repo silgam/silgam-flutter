@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,17 +14,27 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../repository/auth/auth_repository.dart';
+import '../../app/cubit/app_cubit.dart';
 
 part 'login_cubit.freezed.dart';
 part 'login_state.dart';
 
 @injectable
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit(this._authRepository) : super(const LoginState());
+  LoginCubit(this._appCubit, this._authRepository) : super(const LoginState());
 
+  final AppCubit _appCubit;
   final AuthRepository _authRepository;
 
   Future<void> onLoginButtonTap(Future<void> Function() loginFunction) async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 로그인할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     emit(state.copyWith(isProgressing: true));
     try {
       await loginFunction();
