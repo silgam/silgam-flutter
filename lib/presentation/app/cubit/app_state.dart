@@ -8,7 +8,7 @@ class AppState with _$AppState {
     User? me,
     @Default(ProductBenefit.initial) ProductBenefit productBenefit,
     @Default(ProductBenefit.initial) ProductBenefit freeProductBenefit,
-    ConnectivityResult? connectivityResult,
+    @Default(false) bool isOffline,
   }) = _AppState;
 
   bool get isSignedIn => me != null;

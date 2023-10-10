@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
@@ -11,7 +12,6 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
 import '../common/custom_menu_bar.dart';
-import '../common/material_hero.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record_page/edit_record_page.dart';
@@ -34,20 +34,19 @@ class RecordDetailPage extends StatefulWidget {
 
 class _RecordDetailPageState extends State<RecordDetailPage> {
   final ExamRecordRepository _recordRepository = getIt.get();
-  late ExamRecord _record;
+  final AppCubit _appCubit = getIt.get();
+  final RecordListCubit _recordListCubit = getIt.get();
+  late ExamRecord _record = _getRecord();
   bool _isDeleting = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _record = widget.arguments.record;
-    _refresh();
+  ExamRecord _getRecord() {
+    return _recordListCubit.state.originalRecords
+        .firstWhere((r) => r.id == widget.arguments.recordId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: ProgressOverlay(
         isProgressing: _isDeleting,
         description: '삭제하는 중',
@@ -235,15 +234,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MaterialHero(
-          tag: 'time ${_record.hashCode}',
-          child: Text(
-            DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
-            style: TextStyle(
-              fontWeight: FontWeight.w300,
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
+        Text(
+          DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
+          style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: Colors.grey.shade600,
           ),
         ),
         Center(
@@ -252,27 +248,21 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Flexible(
-                child: MaterialHero(
-                  tag: 'title ${_record.hashCode}',
-                  child: Text(
-                    _record.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
+                child: Text(
+                  _record.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
                   ),
                 ),
               ),
               const SizedBox(width: 6),
-              MaterialHero(
-                tag: 'subject ${_record.hashCode}',
-                child: Text(
-                  _record.subject.subjectName,
-                  style: TextStyle(
-                    color: Color(_record.subject.firstColor),
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                  ),
+              Text(
+                _record.subject.subjectName,
+                style: TextStyle(
+                  color: Color(_record.subject.firstColor),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
                 ),
               ),
             ],
@@ -339,11 +329,6 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  void _refresh() async {
-    _record = await _recordRepository.getExamRecordById(_record.documentId);
-    setState(() {});
-  }
-
   void _onSaveImageButtonPressed() async {
     final arguments = SaveImagePageArguments(recordToSave: _record);
     await Navigator.pushNamed(context, SaveImagePage.routeName,
@@ -352,9 +337,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 
   void _onEditButtonPressed() async {
     final arguments = EditRecordPageArguments(recordToEdit: _record);
-    await Navigator.pushNamed(context, EditRecordPage.routeName,
-        arguments: arguments);
-    _refresh();
+    await Navigator.pushNamed(
+      context,
+      EditRecordPage.routeName,
+      arguments: arguments,
+    );
+    setState(() {
+      _record = _getRecord();
+    });
   }
 
   void _onDeleteButtonPressed() {
@@ -397,11 +387,20 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   Future<void> _deleteRecord() async {
+    if (_appCubit.state.isOffline &&
+        _record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 복습할 문제 사진을 포함한 기록을 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     setState(() {
       _isDeleting = true;
     });
     await _recordRepository.deleteExamRecord(_record);
-    getIt.get<RecordListCubit>().refresh();
+    _recordListCubit.onRecordDeleted(_record);
     if (mounted) Navigator.pop(context);
 
     await AnalyticsManager.logEvent(
@@ -416,7 +415,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 }
 
 class RecordDetailPageArguments {
-  final ExamRecord record;
+  final String recordId;
 
-  RecordDetailPageArguments({required this.record});
+  RecordDetailPageArguments({required this.recordId});
 }

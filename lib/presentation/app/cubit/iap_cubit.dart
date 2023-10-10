@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -12,11 +11,12 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
 import '../../../util/analytics_manager.dart';
+import '../../../util/api_failure.dart';
+import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
 
@@ -28,11 +28,11 @@ class IapCubit extends Cubit<IapState> {
   IapCubit(
     this._productRepository,
     this._appCubit,
-    this._sharedPreferences,
+    this._cacheManager,
   ) : super(const IapState());
 
   final ProductRepository _productRepository;
-  final SharedPreferences _sharedPreferences;
+  final CacheManager _cacheManager;
   final AppCubit _appCubit;
   late final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription? _purchaseStream;
@@ -48,7 +48,7 @@ class IapCubit extends Cubit<IapState> {
       _checkStoreAvailability();
     }
 
-    _fetchProducts();
+    _updateProducts();
     _appCubit.updateProductBenefit();
   }
 
@@ -63,7 +63,7 @@ class IapCubit extends Cubit<IapState> {
 
     final me = _appCubit.state.me;
     if (me == null) {
-      EasyLoading.showError('먼저 로그인해주세요.');
+      EasyLoading.showError('먼저 로그인해주세요.', dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Start free trial process failed',
         properties: {
@@ -94,7 +94,7 @@ class IapCubit extends Cubit<IapState> {
 
     final me = _appCubit.state.me;
     if (me == null) {
-      EasyLoading.showError('먼저 로그인해주세요.');
+      EasyLoading.showError('먼저 로그인해주세요.', dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -107,7 +107,10 @@ class IapCubit extends Cubit<IapState> {
     }
 
     if (!state.isStoreAvailable) {
-      EasyLoading.showError('이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.');
+      EasyLoading.showError(
+        '이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.',
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -123,7 +126,10 @@ class IapCubit extends Cubit<IapState> {
       (productDetails) => productDetails.id == product.id,
     );
     if (productDetails == null) {
-      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      EasyLoading.showError(
+        '정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.',
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -144,7 +150,10 @@ class IapCubit extends Cubit<IapState> {
     if (canPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = canPurchaseResult.tryGetError()!.message;
-      EasyLoading.showError(canPurchaseResult.tryGetError()!.message);
+      EasyLoading.showError(
+        canPurchaseResult.tryGetError()!.message,
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -171,7 +180,10 @@ class IapCubit extends Cubit<IapState> {
     if (trialProductDetailResponse.error != null ||
         trialProductDetailResponse.productDetails.isEmpty) {
       emit(state.copyWith(isLoading: false));
-      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      EasyLoading.showError(
+        '정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.',
+        dismissOnTap: true,
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Start free trial process failed',
         properties: {
@@ -198,7 +210,7 @@ class IapCubit extends Cubit<IapState> {
     if (startTrialResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = startTrialResult.tryGetError()!.message;
-      EasyLoading.showError(message);
+      EasyLoading.showError(message, dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Start free trial process failed',
         properties: {
@@ -314,7 +326,7 @@ class IapCubit extends Cubit<IapState> {
     if (onPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = onPurchaseResult.tryGetError()!.message;
-      EasyLoading.showError(message);
+      EasyLoading.showError(message, dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] onPurchase failed',
         properties: {
@@ -356,43 +368,21 @@ class IapCubit extends Cubit<IapState> {
     }
   }
 
-  Future<void> _fetchProducts() async {
-    _updateProducts();
+  Future<void> _updateProducts() async {
+    List<Product>? cachedProducts = _cacheManager.getProducts();
+    await _onProductsChange(cachedProducts ?? []);
 
-    try {
-      final products = _fetchProductsFromCache();
-      if (products != null) _updateProducts(cachedProducts: products);
-    } catch (e) {
-      log(
-        'Failed to update products from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
+    final getProductsResult = await _productRepository.getAllProducts();
+    if (getProductsResult.tryGetError()?.type == ApiFailureType.noNetwork) {
+      return;
     }
+
+    List<Product>? products = getProductsResult.tryGetSuccess();
+    _cacheManager.setProducts(products);
+    await _onProductsChange(products ?? []);
   }
 
-  Future<void> _updateProducts({
-    List<Product>? cachedProducts,
-  }) async {
-    List<Product> products = [];
-
-    if (cachedProducts != null) {
-      products = cachedProducts;
-    } else {
-      final getProductsResult = await _productRepository.getAllProducts();
-      final productsResult = getProductsResult.tryGetSuccess();
-      if (productsResult == null) {
-        _sharedPreferences.remove(PreferenceKey.cacheProducts);
-      } else {
-        _sharedPreferences.setString(
-          PreferenceKey.cacheProducts,
-          jsonEncode(productsResult),
-        );
-      }
-      products = productsResult ?? [];
-    }
-
+  Future<void> _onProductsChange(List<Product> products) async {
     final today = DateTime.now();
     final versionNumber = await _getVersionNumber();
     final sellingProduct = products.firstWhereOrNull((e) =>
@@ -413,19 +403,6 @@ class IapCubit extends Cubit<IapState> {
       final productDetails = productDetailsResponse.productDetails;
       emit(state.copyWith(productDetails: productDetails));
     }
-  }
-
-  List<Product>? _fetchProductsFromCache() {
-    final cachedProducts =
-        _sharedPreferences.getString(PreferenceKey.cacheProducts);
-    if (cachedProducts == null) return null;
-
-    log(
-      'Set products from cache: $cachedProducts',
-      name: runtimeType.toString(),
-    );
-    final productsJson = jsonDecode(cachedProducts) as List<dynamic>;
-    return productsJson.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<int> _getVersionNumber() async {

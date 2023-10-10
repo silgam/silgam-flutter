@@ -50,6 +50,43 @@ class RecordListCubit extends Cubit<RecordListState> {
         'Number of Exam Records', records.length);
   }
 
+  Future<void> onRecordCreated(ExamRecord record) async {
+    final newOriginalRecords = [...state.originalRecords, record];
+    emit(state.copyWith(
+      originalRecords: newOriginalRecords,
+      records: _getFilteredAndSortedRecords(
+        originalRecords: newOriginalRecords,
+      ),
+    ));
+    await refresh();
+  }
+
+  Future<void> onRecordUpdated(ExamRecord record) async {
+    final newOriginalRecords = [
+      ...state.originalRecords.where((r) => r.id != record.id),
+      record
+    ];
+    emit(state.copyWith(
+      originalRecords: newOriginalRecords,
+      records: _getFilteredAndSortedRecords(
+        originalRecords: newOriginalRecords,
+      ),
+    ));
+    await refresh();
+  }
+
+  Future<void> onRecordDeleted(ExamRecord record) async {
+    final newOriginalRecords =
+        state.originalRecords.where((r) => r.id != record.id).toList();
+    emit(state.copyWith(
+      originalRecords: newOriginalRecords,
+      records: _getFilteredAndSortedRecords(
+        originalRecords: newOriginalRecords,
+      ),
+    ));
+    await refresh();
+  }
+
   void onSearchTextChanged(String query) {
     final records = _getFilteredAndSortedRecords(searchQuery: query);
     emit(state.copyWith(searchQuery: query, records: records));

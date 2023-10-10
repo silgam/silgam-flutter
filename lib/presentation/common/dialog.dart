@@ -270,10 +270,18 @@ Future<void> changeMarketingInfoReceivingConsentStatus(
   bool isConsent,
 ) async {
   final appCubit = getIt.get<AppCubit>();
-  final userRepository = getIt.get<UserRepository>();
+  if (appCubit.state.isOffline) {
+    EasyLoading.showToast(
+      '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+      dismissOnTap: true,
+    );
+    return;
+  }
+
   final me = appCubit.state.me;
   if (me == null) return;
 
+  final userRepository = getIt.get<UserRepository>();
   await userRepository.updateMarketingConsent(
     userId: me.id,
     isConsent: isConsent,
@@ -292,6 +300,14 @@ Future<void> changeMarketingInfoReceivingConsentStatus(
 }
 
 void showSendFeedbackDialog(BuildContext context) {
+  final AppCubit appCubit = getIt.get();
+  if (appCubit.state.isOffline) {
+    EasyLoading.showToast(
+      '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+      dismissOnTap: true,
+    );
+  }
+
   final textEditingController = TextEditingController();
   showModalBottomSheet(
     context: context,
@@ -410,6 +426,14 @@ void showSendFeedbackDialog(BuildContext context) {
                 const SizedBox(height: 20),
                 OutlinedButton(
                   onPressed: () async {
+                    if (appCubit.state.isOffline) {
+                      EasyLoading.showToast(
+                        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+                        dismissOnTap: true,
+                      );
+                      return;
+                    }
+
                     final text = textEditingController.text.trim();
                     if (text.isEmpty) {
                       EasyLoading.showToast(
@@ -418,6 +442,10 @@ void showSendFeedbackDialog(BuildContext context) {
                       );
                       return;
                     }
+
+                    getIt
+                        .get<FeedbackRepository>()
+                        .sendFeedback(feedback: text);
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text(
@@ -430,9 +458,6 @@ void showSendFeedbackDialog(BuildContext context) {
                         'content': text,
                       },
                     );
-                    getIt
-                        .get<FeedbackRepository>()
-                        .sendFeedback(feedback: text);
                   },
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,

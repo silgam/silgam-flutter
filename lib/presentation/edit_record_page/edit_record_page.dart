@@ -16,6 +16,7 @@ import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../home_page/record_list/cubit/record_list_cubit.dart';
+import '../record_detail_page/record_detail_page.dart';
 import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
@@ -821,19 +822,19 @@ class _EditRecordPageState extends State<EditRecordPage> {
       );
       return;
     }
-    await saveRecord();
-    getIt.get<RecordListCubit>().refresh();
-    if (mounted) Navigator.pop(context);
+    await _saveRecord();
   }
 
-  Future<void> saveRecord() async {
-    if (_isSaving) return;
+  Future<ExamRecord?> _saveRecord() async {
+    if (_isSaving) return null;
     setState(() {
       _isSaving = true;
     });
 
-    final ExamRecord record = ExamRecord(
-      userId: _appCubit.state.me!.id,
+    final userId = _appCubit.state.me!.id;
+    ExamRecord record = ExamRecord(
+      id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
+      userId: userId,
       title: title,
       subject: _selectedSubject,
       examStartedTime: _examStartedTime,
@@ -845,27 +846,37 @@ class _EditRecordPageState extends State<EditRecordPage> {
       wrongProblems: _wrongProblems,
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
+      createdAt: DateTime.now().toUtc(),
     );
+
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
-      record.documentId = oldRecord.documentId;
-      await _recordRepository.updateExamRecord(
+      record = await _recordRepository.updateExamRecord(
         userId: _appCubit.state.me!.id,
         oldRecord: oldRecord,
-        newRecord: record,
+        newRecord: record.copyWith(
+          id: oldRecord.id,
+          createdAt: oldRecord.createdAt,
+        ),
       );
+      _recordListCubit.onRecordUpdated(record);
+      if (mounted) Navigator.pop(context);
     } else {
-      await _recordRepository.addExamRecord(
+      record = await _recordRepository.addExamRecord(
         userId: _appCubit.state.me!.id,
         record: record,
       );
+      _recordListCubit.onRecordCreated(record);
+      if (mounted) {
+        Navigator.pushReplacementNamed(
+          context,
+          RecordDetailPage.routeName,
+          arguments: RecordDetailPageArguments(recordId: record.id),
+        );
+      }
     }
 
-    setState(() {
-      _isSaving = false;
-    });
-
-    await AnalyticsManager.logEvent(
+    AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Exam record saved',
       properties: {
         'subject': _selectedSubject.subjectName,
@@ -873,6 +884,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
         'input_exam_existed': widget.arguments.inputExam != null,
       },
     );
+
+    return record;
   }
 
   Future<bool> _onBackPressed() async {

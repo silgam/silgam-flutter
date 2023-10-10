@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -13,7 +11,9 @@ import '../../../model/product.dart';
 import '../../../model/subject.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
-import '../../../util/analytics_manager.dart';
+import '../../../util/api_failure.dart';
+import '../../../util/cache_manager.dart';
+import '../../../util/connectivity_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../home_page/main/cubit/main_cubit.dart';
@@ -24,69 +24,66 @@ part 'app_state.dart';
 
 @lazySingleton
 class AppCubit extends Cubit<AppState> {
-  AppCubit(this._userRepository, this._sharedPreferences)
-      : super(const AppState());
+  AppCubit(
+    this._userRepository,
+    this._sharedPreferences,
+    this._cacheManager,
+    this._connectivityManger,
+  ) : super(const AppState());
 
   final UserRepository _userRepository;
   final SharedPreferences _sharedPreferences;
+  final CacheManager _cacheManager;
+  final ConnectivityManger _connectivityManger;
   late final IapCubit _iapCubit = getIt.get();
 
   bool get useLapTime =>
       (_sharedPreferences.getBool(PreferenceKey.useLapTime) ?? true) &&
       state.productBenefit.isLapTimeAvailable;
 
+  @override
+  void onChange(Change<AppState> change) {
+    if (change.nextState.me?.id != change.currentState.me?.id) {
+      _connectivityManger.updateRealtimeDatabaseListener(
+        currentUserId: change.nextState.me?.id,
+      );
+    }
+    super.onChange(change);
+  }
+
   Future<void> initialize() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    _onConnectivityChanged(connectivity);
+    await _connectivityManger.updateConnectivityListener();
+    _connectivityManger.updateRealtimeDatabaseListener(
+      currentUserId: state.me?.id,
+    );
 
-    _updateUser();
-
-    FirebaseAuth.instance.userChanges().skip(1).listen((user) async {
-      await onUserChange();
-    });
-
-    Connectivity().onConnectivityChanged.listen((connectivityResult) async {
-      _onConnectivityChanged(connectivityResult);
+    FirebaseAuth.instance.userChanges().listen((user) {
+      onUserChange();
     });
   }
 
-  Future<void> onUserChange({
-    User? cachedMe,
-  }) async {
-    User? me;
-    if (cachedMe != null) {
-      me = cachedMe;
-    } else {
-      final getMeResult = await _userRepository.getMe();
-      me = getMeResult.tryGetSuccess();
-
-      if (me == null) {
-        AnalyticsManager.setPeopleProperty('[Product] Id', null);
-        AnalyticsManager.setPeopleProperty('[Product] Purchased Store', null);
-        AnalyticsManager.setPeopleProperty(
-          'Marketing Info Receiving Consented',
-          null,
-        );
-        await _sharedPreferences.remove(PreferenceKey.cacheMe);
-      } else {
-        AnalyticsManager.setPeopleProperty('[Product] Id', me.activeProduct.id);
-        AnalyticsManager.setPeopleProperty(
-          '[Product] Purchased Store',
-          me.activeProduct.id != ProductId.free ? me.receipts.last.store : null,
-        );
-        AnalyticsManager.setPeopleProperty(
-          'Marketing Info Receiving Consented',
-          me.isMarketingInfoReceivingConsented,
-        );
-        await _sharedPreferences.setString(
-            PreferenceKey.cacheMe, jsonEncode(me));
-      }
-      _updateFcmToken(updatedMe: me, previousMe: state.me);
-    }
-
-    emit(state.copyWith(me: me));
-
+  Future<void> onUserChange() async {
+    User? cachedMe = _cacheManager.getMe();
+    emit(state.copyWith(me: cachedMe));
     updateProductBenefit();
+
+    final getMeResult = await _userRepository.getMe();
+    if (getMeResult.tryGetError()?.type == ApiFailureType.noNetwork) return;
+
+    User? me = getMeResult.tryGetSuccess();
+    await _cacheManager.setMe(me);
+    _updateFcmToken(updatedMe: me, previousMe: state.me);
+    emit(state.copyWith(me: me));
+    updateProductBenefit();
+  }
+
+  Future<void> onLogout() async {
+    await _cacheManager.setMe(null);
+    _updateFcmToken(updatedMe: null, previousMe: state.me);
+    emit(state.copyWith(me: null));
+    updateProductBenefit();
+
+    await FirebaseAuth.instance.signOut();
   }
 
   void updateProductBenefit() {
@@ -102,23 +99,14 @@ class AppCubit extends Cubit<AppState> {
     log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
   }
 
-  Future<void> _updateUser() async {
-    User? cachedMe;
-    try {
-      cachedMe = _fetchUserFromCache();
-    } catch (e) {
-      log(
-        'Failed to update user from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-    }
-    if (cachedMe != null) {
+  void updateIsOffline(bool isOffline) {
+    if (state.isOffline != isOffline) {
+      emit(state.copyWith(
+        isOffline: isOffline,
+      ));
       onUserChange();
-      onUserChange(cachedMe: cachedMe);
-    } else {
-      await onUserChange();
+      getIt.get<IapCubit>().initialize();
+      getIt.get<MainCubit>().initialize();
     }
   }
 
@@ -154,28 +142,5 @@ class AppCubit extends Cubit<AppState> {
       ));
       log('fcmToken added', name: 'AppCubit');
     }
-  }
-
-  void _onConnectivityChanged(ConnectivityResult connectivityResult) {
-    log('Connectivity changed: $connectivityResult', name: 'AppCubit');
-    if (state.connectivityResult == ConnectivityResult.none &&
-        connectivityResult != ConnectivityResult.none) {
-      onUserChange();
-      getIt.get<IapCubit>().initialize();
-      getIt.get<MainCubit>().initialize();
-    }
-
-    emit(state.copyWith(
-      connectivityResult: connectivityResult,
-      me: connectivityResult == ConnectivityResult.none ? null : state.me,
-    ));
-  }
-
-  User? _fetchUserFromCache() {
-    final cachedMe = _sharedPreferences.getString(PreferenceKey.cacheMe);
-    if (cachedMe == null) return null;
-
-    log('Set user from cache: $cachedMe', name: runtimeType.toString());
-    return User.fromJson(jsonDecode(cachedMe));
   }
 }

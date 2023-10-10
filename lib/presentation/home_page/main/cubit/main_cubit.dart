@@ -1,17 +1,14 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../model/ads.dart';
 import '../../../../model/dday.dart';
 import '../../../../repository/ads/ads_repository.dart';
 import '../../../../repository/dday/dday_repository.dart';
-import '../../../../util/const.dart';
+import '../../../../util/api_failure.dart';
+import '../../../../util/cache_manager.dart';
 import '../../../../util/dday_util.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../main_view.dart';
@@ -24,117 +21,64 @@ class MainCubit extends Cubit<MainState> {
   MainCubit(
     this._adsRepository,
     this._dDayRepository,
-    this._sharedPreferences,
+    this._cacheManager,
     this._appCubit,
   ) : super(const MainState());
 
   final AdsRepository _adsRepository;
   final DDayRepository _dDayRepository;
-  final SharedPreferences _sharedPreferences;
+  final CacheManager _cacheManager;
 
   final AppCubit _appCubit;
 
   void initialize() {
     updateAds();
     _updateDDays();
-
-    try {
-      final ads = _fetchAdsFromCache();
-      if (ads != null) updateAds(cachedAds: ads);
-    } catch (e) {
-      log(
-        'Failed to update ads from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-    }
-    try {
-      final dDays = _fetchDDaysFromCache();
-      if (dDays != null) _updateDDays(cachedDDays: dDays);
-    } catch (e) {
-      log(
-        'Failed to update dDays from cache: $e',
-        name: runtimeType.toString(),
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-    }
   }
 
-  Future<void> updateAds({
-    List<Ads>? cachedAds,
-  }) async {
-    List<Ads> ads = [];
-
-    if (cachedAds != null) {
-      ads = cachedAds;
-    } else {
-      final getAdsResult = await _adsRepository.getAllAds();
-      final adsResult = getAdsResult.tryGetSuccess();
-      if (adsResult == null) {
-        await _sharedPreferences.remove(PreferenceKey.cacheAds);
-      } else {
-        await _sharedPreferences.setString(
-          PreferenceKey.cacheAds,
-          jsonEncode(adsResult),
-        );
-      }
-      ads = adsResult ?? [];
-    }
-
-    final isPurchasedUser = _appCubit.state.me?.isPurchasedUser ?? false;
-    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+  Future<void> updateAds() async {
+    List<Ads>? cachedAds = _cacheManager.getAds();
     emit(state.copyWith(
-      ads: ads
-          .whereNot((ad) =>
-              (isPurchasedUser && ad.isHiddenToPurchasedUser) ||
-              (isAdsRemoved && ad.isAd))
-          .toList(),
+      ads: _getAdsToShow(cachedAds ?? []),
+    ));
+
+    final getAdsResult = await _adsRepository.getAllAds();
+    if (getAdsResult.tryGetError()?.type == ApiFailureType.noNetwork) return;
+
+    List<Ads>? ads = getAdsResult.tryGetSuccess();
+    await _cacheManager.setAds(ads);
+    emit(state.copyWith(
+      ads: _getAdsToShow(ads ?? []),
     ));
   }
 
-  Future<void> _updateDDays({
-    List<DDay>? cachedDDays,
-  }) async {
-    List<DDay> dDays = [];
+  Future<void> _updateDDays() async {
+    List<DDay>? cachedDDays = _cacheManager.getDDays();
+    emit(state.copyWith(
+      dDayItems: getDDayItemsToShow(cachedDDays ?? []),
+    ));
 
-    if (cachedDDays != null) {
-      dDays = cachedDDays;
-    } else {
-      final getDDaysResult = await _dDayRepository.getAllDDays();
-      final dDaysResult = getDDaysResult.tryGetSuccess();
-      if (dDaysResult == null) {
-        await _sharedPreferences.remove(PreferenceKey.cacheDDays);
-      } else {
-        await _sharedPreferences.setString(
-          PreferenceKey.cacheDDays,
-          jsonEncode(dDaysResult),
-        );
-      }
-      dDays = dDaysResult ?? [];
-    }
+    final getDDaysResult = await _dDayRepository.getAllDDays();
+    if (getDDaysResult.tryGetError()?.type == ApiFailureType.noNetwork) return;
 
-    final dDayItems = DDayUtil(dDays).getItemsToShow(DateTime.now());
-
-    emit(state.copyWith(dDayItems: dDayItems));
+    List<DDay>? dDays = getDDaysResult.tryGetSuccess();
+    await _cacheManager.setDDays(dDays);
+    emit(state.copyWith(
+      dDayItems: getDDayItemsToShow(dDays ?? []),
+    ));
   }
 
-  List<Ads>? _fetchAdsFromCache() {
-    final cachedAds = _sharedPreferences.getString(PreferenceKey.cacheAds);
-    if (cachedAds == null) return null;
-
-    log('Set ads from cache: $cachedAds', name: runtimeType.toString());
-    final adsJson = jsonDecode(cachedAds) as List<dynamic>;
-    return adsJson.map((e) => Ads.fromJson(e)).toList();
+  List<Ads> _getAdsToShow(List<Ads> ads) {
+    final isPurchasedUser = _appCubit.state.me?.isPurchasedUser ?? false;
+    final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+    return ads
+        .whereNot((ad) =>
+            (isPurchasedUser && ad.isHiddenToPurchasedUser) ||
+            (isAdsRemoved && ad.isAd))
+        .toList();
   }
 
-  List<DDay>? _fetchDDaysFromCache() {
-    final cachedDDays = _sharedPreferences.getString(PreferenceKey.cacheDDays);
-    if (cachedDDays == null) return null;
-
-    log('Set ddays from cache: $cachedDDays', name: runtimeType.toString());
-    final dDaysJson = jsonDecode(cachedDDays) as List<dynamic>;
-    return dDaysJson.map((e) => DDay.fromJson(e)).toList();
+  List<DDayItem> getDDayItemsToShow(List<DDay> dDays) {
+    return DDayUtil(dDays).getItemsToShow(DateTime.now());
   }
 }

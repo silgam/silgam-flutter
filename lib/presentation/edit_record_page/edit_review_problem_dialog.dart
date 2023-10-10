@@ -1,10 +1,14 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../model/problem.dart';
+import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 
 class EditReviewProblemDialog extends StatefulWidget {
   final ReviewProblemAddModeParams? reviewProblemAddModeParams;
@@ -24,6 +28,7 @@ class EditReviewProblemDialog extends StatefulWidget {
 }
 
 class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
+  final AppCubit _appCubit = getIt.get();
   final _titleEditingController = TextEditingController();
   final _memoEditingController = TextEditingController();
   final List<String> _tempImagePaths = [];
@@ -227,19 +232,26 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                 children: [
                   Builder(builder: (context) {
                     if (imagePath.startsWith('http')) {
-                      return Image.network(
-                        imagePath,
+                      return CachedNetworkImage(
+                        imageUrl: imagePath,
                         fit: BoxFit.cover,
-                        loadingBuilder: (_, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                        progressIndicatorBuilder: (_, __, progress) => Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              value: progress.progress,
+                              strokeWidth: 2,
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 18,
+                            color: Colors.grey.shade200,
+                          ),
+                        ),
                       );
                     } else {
                       return Image.file(
@@ -299,12 +311,28 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onImageTapped(String imagePath) {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진을 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     setState(() {
       _tempImagePaths.remove(imagePath);
     });
   }
 
   void _onImageAddButtonPressed() async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진을 추가할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     final picker = ImagePicker();
     List<XFile> files = await picker.pickMultiImage();
     setState(() {
@@ -313,6 +341,14 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onDeleteButtonPressed() {
+    if (_appCubit.state.isOffline && _tempImagePaths.isNotEmpty) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
     reviewProblemEditModeParams
         ?.onReviewProblemDeleted(reviewProblemEditModeParams.initialData);

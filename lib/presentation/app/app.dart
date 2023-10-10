@@ -79,12 +79,8 @@ class SilgamApp extends StatelessWidget {
                   );
                 case RecordDetailPage.routeName:
                   final args = settings.arguments as RecordDetailPageArguments;
-                  return PageRouteBuilder(
-                    pageBuilder: (_, __, ___) =>
-                        RecordDetailPage(arguments: args),
-                    transitionsBuilder:
-                        (_, Animation<double> animation, __, Widget child) =>
-                            FadeTransition(opacity: animation, child: child),
+                  return MaterialPageRoute(
+                    builder: (_) => RecordDetailPage(arguments: args),
                     settings: settings,
                   );
                 case ReviewProblemDetailPage.routeName:

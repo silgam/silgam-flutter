@@ -9,6 +9,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../model/subject.dart';
 import '../../model/user.dart';
+import '../../util/analytics_manager.dart';
 import '../../util/api_failure.dart';
 import 'user_api.dart';
 
@@ -27,7 +28,7 @@ class UserRepository {
     final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
     if (authToken == null) {
       log('getMe() failed: firebase token is null', name: 'UserRepository');
-      return Result.error(const ApiFailure('인증에 실패했습니다. 앱을 다시 실행해주세요.'));
+      return Result.error(ApiFailure.unauthorized());
     }
 
     try {
@@ -49,9 +50,21 @@ class UserRepository {
           sellingEndDate: me.activeProduct.sellingEndDate.toLocal(),
         ),
       );
+
+      AnalyticsManager.setPeopleProperties({
+        '[Product] Id': me.activeProduct.id,
+        '[Product] Purchased Store': me.receipts.lastOrNull?.store,
+        'Marketing Info Receiving Consented':
+            me.isMarketingInfoReceivingConsented,
+      });
       return Result.success(me);
     } on DioException catch (e) {
       log('getMe() failed: $e', name: 'UserRepository');
+      AnalyticsManager.setPeopleProperties({
+        '[Product] Id': null,
+        '[Product] Purchased Store': null,
+        'Marketing Info Receiving Consented': null,
+      });
       return Result.error(e.error as ApiFailure);
     }
   }
@@ -65,9 +78,9 @@ class UserRepository {
         'fcmTokens': FieldValue.arrayUnion([fcmToken]),
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('addFcmToken() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 
@@ -80,9 +93,9 @@ class UserRepository {
         'fcmTokens': FieldValue.arrayRemove([fcmToken]),
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('removeFcmToken() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 
@@ -97,9 +110,9 @@ class UserRepository {
             DateTime.now().toUtc().toIso8601String(),
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('updateMarketingConsent() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 
@@ -114,9 +127,9 @@ class UserRepository {
         )
       });
       return Result.success(unit);
-    } catch (e) {
+    } on DioException catch (e) {
       log('updateCustomSubjectNameMap() failed: $e', name: 'UserRepository');
-      return Result.error(ApiFailure.from(FailureBody.unknown()));
+      return Result.error(e.error as ApiFailure);
     }
   }
 }
