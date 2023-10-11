@@ -26,7 +26,7 @@ void main() async {
   await configureDependencies();
   await Future.wait([
     initializeFirebase(),
-    if (!kIsWeb) MobileAds.instance.initialize(),
+    if (!kIsWeb && !isAdmobDisabled) MobileAds.instance.initialize(),
     initializeAudioSession(),
   ]);
 
