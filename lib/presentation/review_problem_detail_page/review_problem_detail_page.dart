@@ -4,12 +4,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../../model/problem.dart';
+import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 import '../common/custom_menu_bar.dart';
 
 class ReviewProblemDetailPage extends StatefulWidget {
@@ -27,16 +30,12 @@ class ReviewProblemDetailPage extends StatefulWidget {
 }
 
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
+  final AppCubit _appCubit = getIt.get();
   bool _hideUi = false;
   bool _hideMemo = true;
   int _currentIndex = 0;
   double _imageX = 0;
   double _imageY = 0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,6 +197,14 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   }
 
   void _onDownloadPressed() async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
     final appDocDir = await getTemporaryDirectory();
     String savePath = "${appDocDir.path}/temp.jpg";
     String imageUrl = widget.reviewProblem.imagePaths[_currentIndex];
