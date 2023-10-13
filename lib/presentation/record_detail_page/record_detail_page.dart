@@ -89,7 +89,10 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       height: 4,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.white, Colors.white.withAlpha(0)],
+                          colors: [
+                            Colors.grey.shade50,
+                            Colors.grey.shade50.withAlpha(0),
+                          ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
