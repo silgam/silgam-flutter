@@ -17,7 +17,6 @@ class ConnectivityManger {
 
   String _sessionId = const Uuid().v1();
   StreamSubscription? _realtimeDatabaseListener;
-  OnDisconnect? _onDisconnect;
   DatabaseReference? _connectedAtRef;
 
   Future<void> updateConnectivityListener() async {
@@ -31,9 +30,11 @@ class ConnectivityManger {
 
   void updateRealtimeDatabaseListener({required String? currentUserId}) {
     _realtimeDatabaseListener?.cancel();
-    _onDisconnect?.cancel();
-    _connectedAtRef?.remove();
+    _connectedAtRef
+      ?..remove()
+      ..onDisconnect().cancel();
 
+    _sessionId = const Uuid().v1();
     final db = FirebaseDatabase.instance;
     _realtimeDatabaseListener =
         db.ref('.info/connected').onValue.listen((event) {
@@ -47,12 +48,9 @@ class ConnectivityManger {
       if (connected) {
         final userId = currentUserId ?? 'anonymous';
         _connectedAtRef =
-            db.ref('users/$userId/sessions/$_sessionId/connectedAt');
-        _onDisconnect = db
-            .ref('users/$userId/sessions/$_sessionId/disconnectedAt')
-            .onDisconnect();
-        _onDisconnect?.set(ServerValue.timestamp);
-        _connectedAtRef?.set(ServerValue.timestamp);
+            db.ref('users/$userId/sessions/$_sessionId/connectedAt')
+              ..onDisconnect().remove()
+              ..set(ServerValue.timestamp);
       } else {
         _sessionId = const Uuid().v1();
       }
