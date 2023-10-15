@@ -11,6 +11,14 @@ extension DateTimeUtil on DateTime {
       return hour;
     }
   }
+
+  DateTime toDate() {
+    return DateTime(year, month, day);
+  }
+
+  bool isSameOrAfter(DateTime other) {
+    return isAfter(other) || isAtSameMomentAs(other);
+  }
 }
 
 extension DurationExtension on Duration {

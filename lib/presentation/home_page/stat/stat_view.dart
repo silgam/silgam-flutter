@@ -6,10 +6,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
 import '../../../util/const.dart';
+import '../../../util/date_time_extension.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/custom_card.dart';
@@ -76,6 +78,22 @@ class _StatViewState extends State<StatView> {
 
   final StatCubit _cubit = getIt.get();
 
+  void _onDateRangeButtonPressed() async {
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: _cubit.state.defaultStartDate,
+      lastDate: _cubit.state.defaultEndDate,
+      initialDateRange: _cubit.state.dateRange,
+      switchToCalendarEntryModeIcon: const Icon(
+        Icons.date_range,
+        color: Colors.white,
+      ),
+    );
+    if (picked != null) {
+      _cubit.onDateRangeChanged(picked);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -113,7 +131,9 @@ class _StatViewState extends State<StatView> {
                       isRefreshing: state.isLoading,
                       onRefresh: appState.isSignedIn ? _cubit.refresh : null,
                       slivers: [
-                        _buildSubjectFilterChips(
+                        _buildFilterChips(
+                          isDateRangeSet: state.isDateRangeSet,
+                          dateRange: state.dateRange,
                           selectedSubjects: state.selectedSubjects,
                         ),
                         screenWidth > tabletScreenWidth
@@ -230,7 +250,11 @@ class _StatViewState extends State<StatView> {
     );
   }
 
-  Widget _buildSubjectFilterChips({required List<Subject> selectedSubjects}) {
+  Widget _buildFilterChips({
+    required bool isDateRangeSet,
+    required DateTimeRange dateRange,
+    required List<Subject> selectedSubjects,
+  }) {
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
         return SliverToBoxAdapter(
@@ -258,6 +282,18 @@ class _StatViewState extends State<StatView> {
                       ),
                       onPressed: _cubit.onFilterResetButtonTapped,
                       tooltip: '초기화',
+                    ),
+                    const SizedBox(width: 6),
+                    FilterActionChip(
+                      label: Text(
+                        isDateRangeSet
+                            ? '${DateFormat.yMd('ko_KR').format(dateRange.start)}'
+                                ' ~ ${DateFormat.yMd('ko_KR').format(dateRange.end)}'
+                            : '전체 기간',
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
+                      onPressed: _onDateRangeButtonPressed,
+                      tooltip: '기간 설정',
                     ),
                     const SizedBox(width: 6),
                     for (Subject subject in Subject.values)
@@ -356,10 +392,10 @@ class _StatViewState extends State<StatView> {
     final dateToRecordsMap = SplayTreeMap<String, List<ExamRecord>>();
     recordsMap.forEach((subject, records) {
       records.forEachIndexed((index, record) {
-        final date = record.examStartedTime.toDateOnly();
+        final date = record.examStartedTime.toDate();
         final sameDateLength = records
             .take(index)
-            .where((element) => element.examStartedTime.toDateOnly() == date)
+            .where((element) => element.examStartedTime.toDate() == date)
             .length;
         final monthString = date.month.toString().padLeft(2, '0');
         final dayString = date.day.toString().padLeft(2, '0');
@@ -736,7 +772,7 @@ class _StatViewState extends State<StatView> {
     required Map<Subject, List<ExamRecord>> filteredRecords,
   }) {
     final datasets = filteredRecords.values.flattened
-        .groupListsBy((record) => record.examStartedTime.toDateOnly())
+        .groupListsBy((record) => record.examStartedTime.toDate())
         .map((date, records) => MapEntry(date, records.length));
 
     MapEntry<DateTime, int>? touchedData;
@@ -870,12 +906,6 @@ class ExamValueType {
   final bool reverse;
 
   int get reverseMultiple => reverse ? -1 : 1;
-}
-
-extension on DateTime {
-  DateTime toDateOnly() {
-    return DateTime(year, month, day);
-  }
 }
 
 extension on Duration {

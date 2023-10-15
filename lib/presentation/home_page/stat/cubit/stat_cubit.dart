@@ -1,11 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../model/exam_record.dart';
 import '../../../../model/subject.dart';
 import '../../../../util/analytics_manager.dart';
+import '../../../../util/date_time_extension.dart';
 import '../../../../util/injection.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../record_list/cubit/record_list_cubit.dart';
@@ -23,12 +25,20 @@ class StatCubit extends Cubit<StatState> {
   final RecordListCubit _recordListCubit = getIt.get();
 
   void onOriginalRecordsUpdated() {
-    final recordsToShow = _appCubit.state.productBenefit.isStatisticAvailable
+    var recordsToShow = _appCubit.state.productBenefit.isStatisticAvailable
         ? _recordListCubit.state.records
         : exampleRecords;
+    recordsToShow = recordsToShow.sortedBy((record) => record.examStartedTime);
+
     emit(state.copyWith(
       originalRecords: recordsToShow,
       records: _getFilteredRecords(originalRecords: recordsToShow),
+      dateRange: DateTimeRange(
+        start: state.isDateRangeSet
+            ? state.dateRange.start
+            : state.defaultStartDate,
+        end: state.isDateRangeSet ? state.dateRange.end : state.defaultEndDate,
+      ),
     ));
   }
 
@@ -78,11 +88,36 @@ class StatCubit extends Cubit<StatState> {
   void onFilterResetButtonTapped() {
     emit(state.copyWith(
       selectedSubjects: [],
-      records: _getFilteredRecords(selectedSubjects: []),
+      isDateRangeSet: false,
+      dateRange: state.defaultDateRange,
+      records: _getFilteredRecords(
+        selectedSubjects: [],
+        dateRange: state.defaultDateRange,
+      ),
     ));
 
     AnalyticsManager.logEvent(
         name: '[HomePage-stat] Filter reset button tapped');
+  }
+
+  void onDateRangeChanged(DateTimeRange dateRange) {
+    if (dateRange == state.dateRange) return;
+
+    emit(state.copyWith(
+      isDateRangeSet: dateRange != state.defaultDateRange,
+      dateRange: dateRange,
+      records: _getFilteredRecords(
+        dateRange: dateRange,
+      ),
+    ));
+
+    AnalyticsManager.logEvent(
+      name: '[HomePage-stat] Date range changed',
+      properties: {
+        'start_date': dateRange.start.toString(),
+        'end_date': dateRange.end.toString(),
+      },
+    );
   }
 
   void onExamValueTypeChanged(ExamValueType? examValueType) {
@@ -101,10 +136,12 @@ class StatCubit extends Cubit<StatState> {
     List<ExamRecord>? originalRecords,
     String? searchQuery,
     List<Subject>? selectedSubjects,
+    DateTimeRange? dateRange,
   }) {
     originalRecords ??= state.originalRecords;
     searchQuery ??= state.searchQuery;
     selectedSubjects ??= state.selectedSubjects;
+    dateRange ??= state.dateRange;
 
     var records = [...originalRecords];
     if (searchQuery.isNotEmpty) {
@@ -112,6 +149,15 @@ class StatCubit extends Cubit<StatState> {
           .where((record) => record.title.contains(searchQuery!))
           .toList();
     }
+    records = records
+        .where(
+          (record) =>
+              record.examStartedTime.isSameOrAfter(dateRange!.start) &&
+              record.examStartedTime.isBefore(
+                dateRange.end.add(const Duration(days: 1)),
+              ),
+        )
+        .toList();
     final Map<Subject, List<ExamRecord>> filteredRecords =
         records.groupListsBy((record) => record.subject)
           ..removeWhere(
