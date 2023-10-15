@@ -13,6 +13,7 @@ import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/custom_card.dart';
+import '../../common/filter_action_chip.dart';
 import '../../common/free_user_block_overlay.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/search_field.dart';
@@ -249,7 +250,7 @@ class _StatViewState extends State<StatView> {
                 child: Row(
                   children: [
                     SizedBox(width: horizontalPadding),
-                    ActionChip(
+                    FilterActionChip(
                       label: Icon(
                         Icons.replay,
                         size: 16,
@@ -257,14 +258,6 @@ class _StatViewState extends State<StatView> {
                       ),
                       onPressed: _cubit.onFilterResetButtonTapped,
                       tooltip: '초기화',
-                      pressElevation: 0,
-                      backgroundColor: Colors.grey.shade700.withAlpha(10),
-                      padding: EdgeInsets.zero,
-                      side: BorderSide(
-                        color: Colors.grey.shade700,
-                        width: 0.4,
-                      ),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     const SizedBox(width: 6),
                     for (Subject subject in Subject.values)

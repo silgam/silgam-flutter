@@ -6,6 +6,7 @@ import '../../../model/subject.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/dialog.dart';
+import '../../common/filter_action_chip.dart';
 import '../../common/login_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/search_field.dart';
@@ -121,34 +122,23 @@ class _RecordListViewState extends State<RecordListView> {
                   child: Row(
                     children: [
                       SizedBox(width: horizontalPadding),
-                      ActionChip(
-                        label: Icon(Icons.replay,
-                            size: 16, color: Colors.grey.shade700),
+                      FilterActionChip(
+                        label: Icon(
+                          Icons.replay,
+                          size: 16,
+                          color: Colors.grey.shade700,
+                        ),
                         onPressed: _cubit.onFilterResetButtonTapped,
                         tooltip: '초기화',
-                        pressElevation: 0,
-                        backgroundColor: Colors.grey.shade700.withAlpha(10),
-                        padding: EdgeInsets.zero,
-                        side: BorderSide(
-                          color: Colors.grey.shade700,
-                          width: 0.4,
-                        ),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       const SizedBox(width: 6),
-                      ActionChip(
+                      FilterActionChip(
                         label: Text(
                           state.sortType.name,
                           style: TextStyle(color: Colors.grey.shade700),
                         ),
                         onPressed: _cubit.onSortDateButtonTapped,
-                        pressElevation: 0,
-                        backgroundColor: Colors.grey.shade700.withAlpha(10),
-                        side: BorderSide(
-                          color: Colors.grey.shade700,
-                          width: 0.4,
-                        ),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        tooltip: '정렬',
                       ),
                       const VerticalDivider(
                         indent: 6,
