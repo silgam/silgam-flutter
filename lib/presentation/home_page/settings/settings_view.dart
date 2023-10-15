@@ -66,8 +66,8 @@ class _SettingsViewState extends State<SettingsView> {
       if (appState.me?.isPurchasedUser != true)
         buildPurchaseButtonOr(
           margin: const EdgeInsets.symmetric(vertical: 16),
-          or: const SizedBox(height: 16),
         ),
+      if (appState.me?.isPurchasedUser == true) const SizedBox(height: 16),
       if (!isAdmobDisabled && !appState.productBenefit.isAdsRemoved)
         LayoutBuilder(
           builder: (context, constraints) {

@@ -10,7 +10,6 @@ import 'custom_card.dart';
 Widget buildPurchaseButtonOr({
   EdgeInsetsGeometry? margin,
   bool expand = true,
-  Widget or = const SizedBox.shrink(),
 }) {
   return BlocBuilder<IapCubit, IapState>(
     buildWhen: (previous, current) =>
@@ -18,7 +17,7 @@ Widget buildPurchaseButtonOr({
     builder: (context, state) {
       final sellingProduct = state.sellingProduct;
       if (sellingProduct == null) {
-        return or;
+        return const SizedBox.shrink();
       }
       return _PurchaseButton(
         product: sellingProduct,
