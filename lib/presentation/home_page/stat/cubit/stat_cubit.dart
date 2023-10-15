@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,6 +9,7 @@ import '../../../../util/analytics_manager.dart';
 import '../../../../util/injection.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../record_list/cubit/record_list_cubit.dart';
+import '../example_records.dart';
 import '../stat_view.dart';
 
 part 'stat_cubit.freezed.dart';
@@ -20,14 +22,21 @@ class StatCubit extends Cubit<StatState> {
   final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
 
-  void onOriginalRecordsUpdated(List<ExamRecord> records) {
-    emit(state.copyWith(originalRecords: records));
+  void onOriginalRecordsUpdated() {
+    final recordsToShow = _appCubit.state.productBenefit.isStatisticAvailable
+        ? _recordListCubit.state.records
+        : exampleRecords;
+    emit(state.copyWith(
+      originalRecords: recordsToShow,
+      records: _getFilteredRecords(originalRecords: recordsToShow),
+    ));
   }
 
   Future<void> refresh() async {
     if (state.isLoading) return;
     if (_appCubit.state.isNotSignedIn) {
       emit(StatState.initial());
+      onOriginalRecordsUpdated();
       return;
     }
 
@@ -39,7 +48,10 @@ class StatCubit extends Cubit<StatState> {
   }
 
   void onSearchTextChanged(String query) {
-    emit(state.copyWith(searchQuery: query));
+    emit(state.copyWith(
+      searchQuery: query,
+      records: _getFilteredRecords(searchQuery: query),
+    ));
   }
 
   void onSubjectFilterButtonTapped(Subject subject) {
@@ -49,7 +61,10 @@ class StatCubit extends Cubit<StatState> {
     } else {
       selectedSubjects.add(subject);
     }
-    emit(state.copyWith(selectedSubjects: selectedSubjects));
+    emit(state.copyWith(
+      selectedSubjects: selectedSubjects,
+      records: _getFilteredRecords(selectedSubjects: selectedSubjects),
+    ));
 
     AnalyticsManager.logEvent(
       name: '[HomePage-stat] Subject filter button tapped',
@@ -63,6 +78,7 @@ class StatCubit extends Cubit<StatState> {
   void onFilterResetButtonTapped() {
     emit(state.copyWith(
       selectedSubjects: [],
+      records: _getFilteredRecords(selectedSubjects: []),
     ));
 
     AnalyticsManager.logEvent(
@@ -79,5 +95,31 @@ class StatCubit extends Cubit<StatState> {
         'exam_value_type': examValueType.name,
       },
     );
+  }
+
+  Map<Subject, List<ExamRecord>> _getFilteredRecords({
+    List<ExamRecord>? originalRecords,
+    String? searchQuery,
+    List<Subject>? selectedSubjects,
+  }) {
+    originalRecords ??= state.originalRecords;
+    searchQuery ??= state.searchQuery;
+    selectedSubjects ??= state.selectedSubjects;
+
+    var records = [...originalRecords];
+    if (searchQuery.isNotEmpty) {
+      records = records
+          .where((record) => record.title.contains(searchQuery!))
+          .toList();
+    }
+    final Map<Subject, List<ExamRecord>> filteredRecords =
+        records.groupListsBy((record) => record.subject)
+          ..removeWhere(
+            (subject, records) =>
+                records.isEmpty ||
+                (selectedSubjects!.isNotEmpty &&
+                    !selectedSubjects.contains(subject)),
+          );
+    return filteredRecords;
   }
 }

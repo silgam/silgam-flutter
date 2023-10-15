@@ -21,7 +21,6 @@ import '../cubit/home_cubit.dart';
 import '../home_page.dart';
 import '../record_list/cubit/record_list_cubit.dart';
 import 'cubit/stat_cubit.dart';
-import 'example_records.dart';
 
 class StatView extends StatefulWidget {
   const StatView({super.key});
@@ -98,31 +97,13 @@ class _StatViewState extends State<StatView> {
             bloc: getIt.get(),
             listenWhen: (previous, current) =>
                 previous.originalRecords != current.originalRecords,
-            listener: (_, recordListState) => _cubit
-                .onOriginalRecordsUpdated(recordListState.originalRecords),
+            listener: (_, recordListState) => _cubit.onOriginalRecordsUpdated(),
           ),
         ],
         child: BlocBuilder<AppCubit, AppState>(
           builder: (context, appState) {
             return BlocBuilder<StatCubit, StatState>(
               builder: (context, state) {
-                var records = appState.productBenefit.isStatisticAvailable
-                    ? state.originalRecords
-                    : exampleRecords;
-                if (state.searchQuery.isNotEmpty) {
-                  records = records
-                      .where(
-                          (record) => record.title.contains(state.searchQuery))
-                      .toList();
-                }
-                final Map<Subject, List<ExamRecord>> filteredRecords =
-                    records.groupListsBy((record) => record.subject)
-                      ..removeWhere(
-                        (subject, records) =>
-                            records.isEmpty ||
-                            (state.selectedSubjects.isNotEmpty &&
-                                !state.selectedSubjects.contains(subject)),
-                      );
                 return Stack(
                   fit: StackFit.expand,
                   children: [
@@ -136,13 +117,13 @@ class _StatViewState extends State<StatView> {
                         ),
                         screenWidth > tabletScreenWidth
                             ? _buildTabletLayout(
-                                filteredRecords: filteredRecords,
+                                filteredRecords: state.records,
                                 selectedSubjects: state.selectedSubjects,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
                               )
                             : _buildMobileLayout(
-                                filteredRecords: filteredRecords,
+                                filteredRecords: state.records,
                                 selectedSubjects: state.selectedSubjects,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
