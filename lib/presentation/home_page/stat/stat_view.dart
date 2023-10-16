@@ -81,8 +81,8 @@ class _StatViewState extends State<StatView> {
   void _onDateRangeButtonPressed() async {
     final picked = await showDateRangePicker(
       context: context,
-      firstDate: _cubit.state.defaultStartDate,
-      lastDate: _cubit.state.defaultEndDate,
+      firstDate: _cubit.state.defaultDateRange.start,
+      lastDate: _cubit.state.defaultDateRange.end,
       initialDateRange: _cubit.state.dateRange,
       switchToCalendarEntryModeIcon: const Icon(
         Icons.date_range,
@@ -185,6 +185,10 @@ class _StatViewState extends State<StatView> {
                     examValueType: selectedExamValueType,
                     selectedSubjects: selectedSubjects,
                   ),
+                  _buildAverageInfoCard(
+                    examValueType: selectedExamValueType,
+                    filteredRecords: filteredRecords,
+                  ),
                   _buildTotalExamDurationInfoCard(
                     filteredRecords: filteredRecords,
                   ),
@@ -225,6 +229,10 @@ class _StatViewState extends State<StatView> {
           filteredRecords: filteredRecords,
           examValueType: selectedExamValueType,
           selectedSubjects: selectedSubjects,
+        ),
+        _buildAverageInfoCard(
+          examValueType: selectedExamValueType,
+          filteredRecords: filteredRecords,
         ),
         IntrinsicHeight(
           child: Row(
@@ -321,10 +329,9 @@ class _StatViewState extends State<StatView> {
   }) {
     return CustomCard(
       margin: _cardMargin,
-      padding: const EdgeInsets.only(
-        left: _cardBetweenMarginHorizontal - 4,
-        right: _cardBetweenMarginHorizontal - 4,
-        bottom: 12,
+      padding: const EdgeInsets.symmetric(
+        horizontal: _cardBetweenMarginHorizontal - 4,
+        vertical: _cardPaddingVertical - 4,
       ),
       clipBehavior: Clip.none,
       child: Column(
@@ -337,25 +344,9 @@ class _StatViewState extends State<StatView> {
                 '과목별',
                 style: _titleTextStyle,
               ),
-              const SizedBox(width: 4),
-              ButtonTheme(
-                child: DropdownButton(
-                  value: examValueType,
-                  onChanged: _cubit.onExamValueTypeChanged,
-                  alignment: Alignment.center,
-                  items: StatView.examValueTypes
-                      .map((valueType) => DropdownMenuItem(
-                            value: valueType,
-                            alignment: Alignment.center,
-                            child: Text(
-                              valueType.name,
-                              style: _titleTextStyle,
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 6),
+              _buildExamValueTypeDropdown(examValueType),
+              const SizedBox(width: 6),
               Text(
                 '그래프',
                 style: _titleTextStyle,
@@ -624,6 +615,51 @@ class _StatViewState extends State<StatView> {
     );
   }
 
+  Widget _buildAverageInfoCard({
+    required ExamValueType examValueType,
+    required Map<Subject, List<ExamRecord>> filteredRecords,
+  }) {
+    final average = filteredRecords.values.flattened
+        .map((record) => examValueType.getValue(record))
+        .whereNotNull()
+        .averageOrNull
+        ?.toStringAsFixed(1);
+    return CustomCard(
+      margin: _cardMargin,
+      padding: const EdgeInsets.symmetric(
+        horizontal: _cardPaddingHorizontal,
+        vertical: _cardPaddingVertical - 4,
+      ),
+      isThin: true,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildExamValueTypeDropdown(examValueType),
+              const SizedBox(width: 6),
+              Text(
+                '평균',
+                textAlign: TextAlign.center,
+                style: _titleTextStyle,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            // TODO 태블릿
+            average != null ? '$average${examValueType.postfix}' : '-',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: _titleTextStyle.color,
+              fontSize: (_titleTextStyle.fontSize ?? 14) - 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPieChartCard({
     required final Map<Subject, List<ExamRecord>> filteredRecords,
   }) {
@@ -886,6 +922,26 @@ class _StatViewState extends State<StatView> {
       ),
     );
   }
+
+  Widget _buildExamValueTypeDropdown(ExamValueType examValueType) {
+    return DropdownButton(
+      value: examValueType,
+      onChanged: _cubit.onExamValueTypeChanged,
+      alignment: Alignment.center,
+      isDense: true,
+      iconSize: 0,
+      items: StatView.examValueTypes
+          .map((valueType) => DropdownMenuItem(
+                value: valueType,
+                alignment: Alignment.center,
+                child: Text(
+                  valueType.name,
+                  style: _titleTextStyle,
+                ),
+              ))
+          .toList(),
+    );
+  }
 }
 
 class ExamValueType {
@@ -913,5 +969,14 @@ extension on Duration {
     final hours = inHours;
     final minutes = inMinutes - hours * 60;
     return '$hours시간 $minutes분';
+  }
+}
+
+extension on Iterable<int> {
+  double? get averageOrNull {
+    if (isEmpty) {
+      return null;
+    }
+    return average;
   }
 }

@@ -25,18 +25,24 @@ class StatState with _$StatState {
     );
   }
 
-  DateTime get defaultStartDate => (originalRecords.isEmpty
-          ? DateTime.now().subtract(const Duration(days: 365))
-          : originalRecords.first.examStartedTime)
-      .toDate();
+  DateTime getDefaultStartDate({List<ExamRecord>? records}) {
+    records ??= originalRecords;
+    return (records.isEmpty
+            ? DateTime.now().subtract(const Duration(days: 365))
+            : records.first.examStartedTime)
+        .toDate();
+  }
 
-  DateTime get defaultEndDate => (originalRecords.isEmpty
-          ? DateTime.now()
-          : originalRecords.last.examStartedTime.isAfter(DateTime.now())
-              ? originalRecords.last.examStartedTime
-              : DateTime.now())
-      .toDate();
+  DateTime getDefaultEndDate({List<ExamRecord>? records}) {
+    records ??= originalRecords;
+    return (records.isEmpty
+            ? DateTime.now()
+            : records.last.examStartedTime.isAfter(DateTime.now())
+                ? records.last.examStartedTime
+                : DateTime.now())
+        .toDate();
+  }
 
   DateTimeRange get defaultDateRange =>
-      DateTimeRange(start: defaultStartDate, end: defaultEndDate);
+      DateTimeRange(start: getDefaultStartDate(), end: getDefaultEndDate());
 }

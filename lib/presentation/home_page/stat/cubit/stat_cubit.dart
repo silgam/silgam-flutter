@@ -36,8 +36,10 @@ class StatCubit extends Cubit<StatState> {
       dateRange: DateTimeRange(
         start: state.isDateRangeSet
             ? state.dateRange.start
-            : state.defaultStartDate,
-        end: state.isDateRangeSet ? state.dateRange.end : state.defaultEndDate,
+            : state.getDefaultStartDate(records: recordsToShow),
+        end: state.isDateRangeSet
+            ? state.dateRange.end
+            : state.getDefaultEndDate(records: recordsToShow),
       ),
     ));
   }
