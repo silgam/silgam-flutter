@@ -626,9 +626,11 @@ class _StatViewState extends State<StatView> {
         ?.toStringAsFixed(1);
     return CustomCard(
       margin: _cardMargin,
-      padding: const EdgeInsets.symmetric(
-        horizontal: _cardPaddingHorizontal,
-        vertical: _cardPaddingVertical - 4,
+      padding: const EdgeInsets.only(
+        left: _cardPaddingHorizontal,
+        right: _cardPaddingHorizontal,
+        bottom: _cardPaddingVertical - 4,
+        top: 6,
       ),
       isThin: true,
       child: Column(
@@ -645,9 +647,8 @@ class _StatViewState extends State<StatView> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
-            // TODO 태블릿
             average != null ? '$average${examValueType.postfix}' : '-',
             textAlign: TextAlign.center,
             style: TextStyle(
