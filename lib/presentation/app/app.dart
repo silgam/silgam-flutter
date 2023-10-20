@@ -20,6 +20,7 @@ import '../login_page/login_page.dart';
 import '../my_page/my_page.dart';
 import '../noise_setting/noise_setting_page.dart';
 import '../notification_setting_page/notification_setting_page.dart';
+import '../offline_guide_page/offline_guide_page.dart';
 import '../purchase_page/purchase_page.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
@@ -62,6 +63,7 @@ class SilgamApp extends StatelessWidget {
               TimetablePage.routeName: (_) => const TimetablePage(),
               CustomizeSubjectNamePage.routeName: (_) =>
                   CustomizeSubjectNamePage(),
+              OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
             },
             onGenerateRoute: (settings) {
               switch (settings.name) {

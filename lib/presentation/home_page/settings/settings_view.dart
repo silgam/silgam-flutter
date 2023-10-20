@@ -26,6 +26,7 @@ import '../../login_page/login_page.dart';
 import '../../my_page/my_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
 import '../../notification_setting_page/notification_setting_page.dart';
+import '../../offline_guide_page/offline_guide_page.dart';
 import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {
@@ -105,6 +106,12 @@ class _SettingsViewState extends State<SettingsView> {
         showArrow: true,
       ),
       const Subtitle(text: '기타', margin: EdgeInsets.zero),
+      SettingTile(
+        onTap: _onOfflineGuideButtonTap,
+        title: '오프라인 모드 이용 안내',
+        description: '인터넷이 없는 환경에서도 이용할 수 있는 기능들에 대해 알아보세요.',
+      ),
+      const SettingDivider(),
       if (appState.isSignedIn)
         SettingTile(
           onTap: _onNotificationSettingButtonTap,
@@ -449,6 +456,10 @@ class _SettingsViewState extends State<SettingsView> {
 
   void _onCustomizeSubjectNameButtonTap() {
     Navigator.pushNamed(context, CustomizeSubjectNamePage.routeName);
+  }
+
+  void _onOfflineGuideButtonTap() {
+    Navigator.pushNamed(context, OfflineGuidePage.routeName);
   }
 
   void _onNotificationSettingButtonTap() {
