@@ -185,10 +185,6 @@ class _StatViewState extends State<StatView> {
                     examValueType: selectedExamValueType,
                     selectedSubjects: selectedSubjects,
                   ),
-                  _buildAverageInfoCard(
-                    examValueType: selectedExamValueType,
-                    filteredRecords: filteredRecords,
-                  ),
                   _buildTotalExamDurationInfoCard(
                     filteredRecords: filteredRecords,
                   ),
@@ -229,10 +225,6 @@ class _StatViewState extends State<StatView> {
           filteredRecords: filteredRecords,
           examValueType: selectedExamValueType,
           selectedSubjects: selectedSubjects,
-        ),
-        _buildAverageInfoCard(
-          examValueType: selectedExamValueType,
-          filteredRecords: filteredRecords,
         ),
         IntrinsicHeight(
           child: Row(
@@ -327,6 +319,11 @@ class _StatViewState extends State<StatView> {
     required ExamValueType examValueType,
     required List<Subject> selectedSubjects,
   }) {
+    final average = filteredRecords.values.flattened
+        .map((record) => examValueType.getValue(record))
+        .whereNotNull()
+        .averageOrNull
+        ?.toStringAsFixed(1);
     return CustomCard(
       margin: _cardMargin,
       padding: const EdgeInsets.symmetric(
@@ -368,6 +365,27 @@ class _StatViewState extends State<StatView> {
               )..removeWhere((subject, records) => records.isEmpty),
             ),
           ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '평균',
+                textAlign: TextAlign.center,
+                style: _titleTextStyle.copyWith(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                average != null ? '$average${examValueType.postfix}' : '-',
+                textAlign: TextAlign.center,
+                style: _titleTextStyle.copyWith(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
         ],
       ),
     );
@@ -611,52 +629,6 @@ class _StatViewState extends State<StatView> {
           borderData: borderData,
           gridData: gridData,
         ),
-      ),
-    );
-  }
-
-  Widget _buildAverageInfoCard({
-    required ExamValueType examValueType,
-    required Map<Subject, List<ExamRecord>> filteredRecords,
-  }) {
-    final average = filteredRecords.values.flattened
-        .map((record) => examValueType.getValue(record))
-        .whereNotNull()
-        .averageOrNull
-        ?.toStringAsFixed(1);
-    return CustomCard(
-      margin: _cardMargin,
-      padding: const EdgeInsets.only(
-        left: _cardPaddingHorizontal,
-        right: _cardPaddingHorizontal,
-        bottom: _cardPaddingVertical - 4,
-        top: 6,
-      ),
-      isThin: true,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildExamValueTypeDropdown(examValueType),
-              const SizedBox(width: 6),
-              Text(
-                '평균',
-                textAlign: TextAlign.center,
-                style: _titleTextStyle,
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            average != null ? '$average${examValueType.postfix}' : '-',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: _titleTextStyle.color,
-              fontSize: (_titleTextStyle.fontSize ?? 14) - 1,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -930,7 +902,6 @@ class _StatViewState extends State<StatView> {
       onChanged: _cubit.onExamValueTypeChanged,
       alignment: Alignment.center,
       isDense: true,
-      iconSize: 0,
       items: StatView.examValueTypes
           .map((valueType) => DropdownMenuItem(
                 value: valueType,
