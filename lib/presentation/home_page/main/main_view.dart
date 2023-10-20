@@ -26,6 +26,7 @@ import '../../common/dialog.dart';
 import '../../edit_record_page/edit_record_page.dart';
 import '../../login_page/login_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
+import '../../offline_guide_page/offline_guide_page.dart';
 import '../../purchase_page/purchase_page.dart';
 import '../../timetable/timetable_page.dart';
 import '../cubit/home_cubit.dart';

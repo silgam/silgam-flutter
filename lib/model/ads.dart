@@ -36,7 +36,12 @@ class AdsAction with _$AdsAction {
 
   factory AdsAction.fromJson(Map<String, dynamic> json) =>
       _$AdsActionFromJson(json);
-  // ㅁ구ㅁ자 ㅈㄱ
 }
 
-enum AdsIntent { openUrl, openAdUrl, openPurchasePage, unknown }
+enum AdsIntent {
+  openUrl,
+  openAdUrl,
+  openPurchasePage,
+  openOfflineGuidePage,
+  unknown
+}
