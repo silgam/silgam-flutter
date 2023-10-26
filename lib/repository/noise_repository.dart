@@ -128,7 +128,7 @@ const defaultNoises = [
       NoisePreset.normal: 2,
       NoisePreset.hard: 3,
     },
-    existingFiles: 25,
+    existingFiles: 20,
   ),
   Noise(
     id: 11,
