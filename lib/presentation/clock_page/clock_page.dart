@@ -68,23 +68,26 @@ class _ClockPageState extends State<ClockPage> {
         child: Scaffold(
           backgroundColor: Colors.black,
           body: SafeArea(
-            child: GestureDetector(
-              onTap: _cubit.onScreenTap,
-              onLongPress: () {
-                _clockTransformController.value = Matrix4.identity();
+            child: BlocConsumer<ClockCubit, ClockState>(
+              listenWhen: (previous, current) =>
+                  previous.currentBreakpointIndex !=
+                  current.currentBreakpointIndex,
+              listener: (context, state) {
+                _animateTimeline(state.currentBreakpointIndex);
               },
-              behavior: HitTestBehavior.opaque,
-              child: BlocConsumer<ClockCubit, ClockState>(
-                listenWhen: (previous, current) =>
-                    previous.currentBreakpointIndex !=
-                    current.currentBreakpointIndex,
-                listener: (context, state) {
-                  _animateTimeline(state.currentBreakpointIndex);
-                },
-                builder: (context, state) {
-                  return Stack(
+              builder: (context, state) {
+                return GestureDetector(
+                  onTap: _cubit.onScreenTap,
+                  onLongPress: () {
+                    if (!state.isUiVisible) return;
+                    _clockTransformController.value = Matrix4.identity();
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Stack(
                     children: [
                       InteractiveViewer(
+                        panEnabled: state.isUiVisible,
+                        scaleEnabled: state.isUiVisible,
                         transformationController: _clockTransformController,
                         minScale: 0.5,
                         clipBehavior: Clip.none,
@@ -131,11 +134,23 @@ class _ClockPageState extends State<ClockPage> {
                         ),
                       ),
                       _buildBackgroundUi(state.isUiVisible),
+                      Positioned(
+                        right: _isSmallHeightScreen ? null : 20,
+                        left: _isSmallHeightScreen ? 20 : null,
+                        top: 12,
+                        child: Visibility(
+                          visible: !state.isUiVisible,
+                          child: Icon(
+                            Icons.lock,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                      ),
                       if (!state.isStarted) _buildScreenOverlay(),
                     ],
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ),
