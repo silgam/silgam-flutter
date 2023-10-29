@@ -140,16 +140,15 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  void _onBottomButtonPressed() {
+  void _onBottomButtonPressed(Subject subject) {
     final isSignedIn = _appCubit.state.isSignedIn;
     final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
     final isUsingExample =
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
 
     if (isSignedIn) {
-      Navigator.of(context).pop();
       final arguments = EditRecordPageArguments(
-        inputExam: widget.examDetail.exams.first,
+        inputExam: widget.examDetail.exams.first.copyWith(subject: subject),
         examStartedTime: widget.examDetail.examStartedTime,
         examFinishedTime: widget.examDetail.examFinishedTime,
         prefillFeedback: (lapTimeItemGroups.isItemsEmpty || isUsingExample)
@@ -231,7 +230,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 _buildExamTimeCard(),
                 const SizedBox(height: 20),
                 _buildLapTimeCard(),
-                const SizedBox(height: 120),
+                const SizedBox(height: 160),
               ],
             ),
           ),
@@ -274,7 +273,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   ),
                   const SizedBox(height: 28),
                   _buildLapTimeCard(),
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 160),
                 ],
               ),
             ),
@@ -687,41 +686,41 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildBottomButton() {
+  Widget _buildBottomButton(Subject subject) {
     return Material(
-      color: Theme.of(context).primaryColor,
+      color: Color(subject.firstColor),
       borderRadius: BorderRadius.circular(100),
       clipBehavior: Clip.antiAlias,
       elevation: 10,
       shadowColor: Colors.black.withAlpha(180),
       child: InkWell(
-        onTap: () => _onBottomButtonPressed(),
+        onTap: () => _onBottomButtonPressed(subject),
         splashColor: Colors.transparent,
         highlightColor: Colors.grey.withAlpha(60),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
             horizontal: 20,
-            vertical: 20,
+            vertical: 14,
           ),
-          child: const Stack(
+          child: Stack(
             alignment: Alignment.center,
             children: [
               Text(
-                '기록하러 가기',
+                '${subject.subjectName} 기록하기',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 18,
                 ),
               ),
-              Positioned(
+              const Positioned(
                 right: 0,
                 child: Icon(
                   Icons.chevron_right,
                   color: Colors.white,
-                  size: 32,
+                  size: 28,
                 ),
               )
             ],
@@ -734,6 +733,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildBottomButtons({
     required double horizontalPadding,
   }) {
+    final exam = widget.examDetail.exams.first;
+    var subjects = [exam.subject];
+    if (subjects.contains(Subject.investigation)) {
+      subjects = [Subject.investigation, Subject.investigation2];
+    }
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -752,7 +757,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ],
           ),
         ),
-        child: _buildBottomButton(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: subjects
+              .map((subject) => Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: _buildBottomButton(subject)))
+              .toList(),
+        ),
       ),
     );
   }
