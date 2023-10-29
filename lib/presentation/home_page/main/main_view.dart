@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,7 @@ part 'ads_card.dart';
 part 'button_card.dart';
 part 'd_days_card.dart';
 part 'exam_start_card.dart';
+part 'silgam_now_card.dart';
 part 'welcome_messages.dart';
 
 class MainView extends StatefulWidget {
@@ -122,6 +125,7 @@ class _MainViewState extends State<MainView> {
                     child: Column(
                       children: [
                         _buildDDaysCard(),
+                        const _SilgamNowCard(),
                         const _ExamStartCard(),
                       ],
                     ),
@@ -156,6 +160,7 @@ class _MainViewState extends State<MainView> {
               const Divider(indent: 20, endIndent: 20),
               _buildAdsCard(),
               _buildDDaysCard(),
+              const _SilgamNowCard(),
               const _ExamStartCard(),
               _buildLoginCard(),
               _buildNoiseSettingCard(),
