@@ -55,7 +55,17 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.2,
   );
 
+  final Set<Subject> _recordedSubjects = {};
+
   void _onCloseButtonPressed() {
+    final subject = widget.examDetail.exams.first.subject;
+    if ((subject == Subject.investigation && _recordedSubjects.length == 2) ||
+        (subject != Subject.investigation &&
+            _recordedSubjects.contains(subject))) {
+      Navigator.pop(context);
+      return;
+    }
+
     var content = '랩타임과 모의고사 기록을 저장하지 않고 나가시겠어요?';
     if (_examOverviewCubit.state.lapTimeItemGroups.isItemsEmpty ||
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups) {
@@ -160,6 +170,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         EditRecordPage.routeName,
         arguments: arguments,
       );
+      _recordedSubjects.add(subject);
     } else {
       Navigator.pushNamed(
         context,
