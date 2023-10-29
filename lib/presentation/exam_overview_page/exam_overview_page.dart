@@ -236,27 +236,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            padding: const EdgeInsets.only(
-              left: horizontalPadding,
-              right: horizontalPadding,
-              bottom: 20,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.grey.shade50.withOpacity(0),
-                  Colors.grey.shade50,
-                ],
-              ),
-            ),
-            child: _buildBottomButton(),
-          ),
-        ),
+        _buildBottomButtons(horizontalPadding: horizontalPadding),
       ],
     );
   }
@@ -300,27 +280,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            padding: const EdgeInsets.only(
-              left: horizontalPadding,
-              right: horizontalPadding,
-              bottom: 20,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.grey.shade50.withOpacity(0),
-                  Colors.grey.shade50,
-                ],
-              ),
-            ),
-            child: _buildBottomButton(),
-          ),
-        ),
+        _buildBottomButtons(horizontalPadding: horizontalPadding),
         Positioned(
           top: 12,
           right: 20,
@@ -767,6 +727,32 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBottomButtons({
+    required double horizontalPadding,
+  }) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: EdgeInsets.only(
+          left: horizontalPadding,
+          right: horizontalPadding,
+          bottom: 20,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.grey.shade50.withOpacity(0),
+              Colors.grey.shade50,
+            ],
+          ),
+        ),
+        child: _buildBottomButton(),
       ),
     );
   }
