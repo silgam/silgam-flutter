@@ -372,6 +372,7 @@ void showSendFeedbackDialog(BuildContext context) {
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey.shade800,
+                        fontFamily: 'NanumSquare',
                       ),
                       children: [
                         const TextSpan(
