@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
+import '../../../repository/exam_repository.dart';
 import '../../../util/const.dart';
 import '../../../util/date_time_extension.dart';
 import '../../../util/injection.dart';
@@ -319,6 +320,16 @@ class _StatViewState extends State<StatView> {
     required ExamValueType examValueType,
     required List<Subject> selectedSubjects,
   }) {
+    final isAllPerfectScoresSame = 1 ==
+        selectedSubjects
+            .map((subject) => defaultExams
+                .firstWhereOrNull((exam) =>
+                    (exam.subject == subject) ||
+                    (exam.subject == Subject.investigation &&
+                        subject == Subject.investigation2))
+                ?.perfectScore)
+            .toSet()
+            .length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
         .whereNotNull()
@@ -379,10 +390,26 @@ class _StatViewState extends State<StatView> {
               ),
               const SizedBox(width: 6),
               Text(
-                average != null ? '$average${examValueType.postfix}' : '-',
+                !isAllPerfectScoresSame || average == null
+                    ? '-'
+                    : '$average${examValueType.postfix}',
                 textAlign: TextAlign.center,
                 style: _titleTextStyle.copyWith(),
               ),
+              if (!isAllPerfectScoresSame || average == null)
+                const SizedBox(width: 6),
+              if (!isAllPerfectScoresSame || average == null)
+                Tooltip(
+                  message: isAllPerfectScoresSame
+                      ? '1개 이상의 기록이 있을 때에만 평균 계산이 가능해요'
+                      : '평균 계산은 만점이 같은 과목들끼리만 가능해요',
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 15,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 4),
