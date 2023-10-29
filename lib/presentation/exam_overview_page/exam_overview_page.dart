@@ -38,6 +38,10 @@ class ExamOverviewPage extends StatefulWidget {
 }
 
 class _ExamOverviewPageState extends State<ExamOverviewPage> {
+  final AppCubit _appCubit = getIt.get();
+  late final ExamOverviewCubit _examOverviewCubit =
+      getIt.get(param1: widget.examDetail);
+
   static const _tabletLayoutWidth = 800.0;
   static final TextStyle _titleTextStyle = TextStyle(
     fontSize: 14,
@@ -51,26 +55,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.2,
   );
 
-  Future<bool> _onBackPressed({
-    required List<LapTimeItemGroup> lapTimeItemGroups,
-    required bool isUsingExample,
-    required bool isSignedIn,
-  }) async {
-    _onCloseButtonPressed(
-      lapTimeItemGroups: lapTimeItemGroups,
-      isUsingExample: isUsingExample,
-      isSignedIn: isSignedIn,
-    );
-    return false;
-  }
-
-  void _onCloseButtonPressed({
-    required List<LapTimeItemGroup> lapTimeItemGroups,
-    required bool isUsingExample,
-    required bool isSignedIn,
-  }) {
+  void _onCloseButtonPressed() {
     var content = '랩타임과 모의고사 기록을 저장하지 않고 나가시겠어요?';
-    if (lapTimeItemGroups.isItemsEmpty || isUsingExample) {
+    if (_examOverviewCubit.state.lapTimeItemGroups.isItemsEmpty ||
+        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups) {
       content = '모의고사 기록을 저장하지 않고 나가시겠어요?';
     }
     showDialog(
@@ -152,11 +140,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  void _onBottomButtonPressed({
-    required List<LapTimeItemGroup> lapTimeItemGroups,
-    required bool isUsingExample,
-    required bool isSignedIn,
-  }) {
+  void _onBottomButtonPressed() {
+    final isSignedIn = _appCubit.state.isSignedIn;
+    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final isUsingExample =
+        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
+
     if (isSignedIn) {
       Navigator.of(context).pop();
       final arguments = EditRecordPageArguments(
@@ -191,25 +180,24 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider<ExamOverviewCubit>(
-      create: (_) => getIt.get(param1: widget.examDetail),
+      create: (_) => _examOverviewCubit,
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
         child: Scaffold(
           body: SafeArea(
             child: BlocBuilder<AppCubit, AppState>(
               builder: (context, appState) {
-                context.read<ExamOverviewCubit>().initialize();
+                _examOverviewCubit.initialize();
                 return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
                   builder: (context, state) {
                     return WillPopScope(
-                      onWillPop: () => _onBackPressed(
-                        lapTimeItemGroups: state.lapTimeItemGroups,
-                        isUsingExample: state.isUsingExampleLapTimeItemGroups,
-                        isSignedIn: appState.isSignedIn,
-                      ),
+                      onWillPop: () async {
+                        _onCloseButtonPressed();
+                        return false;
+                      },
                       child: screenWidth > _tabletLayoutWidth
-                          ? _buildTabletLayout(state, appState)
-                          : _buildMobileLayout(state, appState),
+                          ? _buildTabletLayout()
+                          : _buildMobileLayout(),
                     );
                   },
                 );
@@ -221,7 +209,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildMobileLayout(ExamOverviewState state, AppState appState) {
+  Widget _buildMobileLayout() {
     const horizontalPadding = 24.0;
     return Stack(
       children: [
@@ -234,11 +222,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 12),
-                _buildCloseButton(
-                  lapTimeItemGroups: state.lapTimeItemGroups,
-                  isUsingExample: state.isUsingExampleLapTimeItemGroups,
-                  isSignedIn: appState.isSignedIn,
-                ),
+                _buildCloseButton(),
                 const SizedBox(height: 16),
                 _buildTitle(),
                 const SizedBox(height: 40),
@@ -246,13 +230,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 const SizedBox(height: 20),
                 _buildExamTimeCard(),
                 const SizedBox(height: 20),
-                _buildLapTimeCard(
-                  lapTimeItemGroups: state.lapTimeItemGroups,
-                  isUsingExample: state.isUsingExampleLapTimeItemGroups,
-                  isLapTimeAvailable:
-                      appState.productBenefit.isLapTimeAvailable,
-                  useLapTime: getIt.get<AppCubit>().useLapTime,
-                ),
+                _buildLapTimeCard(),
                 const SizedBox(height: 120),
               ],
             ),
@@ -276,18 +254,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 ],
               ),
             ),
-            child: _buildBottomButton(
-              lapTimeItemGroups: state.lapTimeItemGroups,
-              isUsingExample: state.isUsingExampleLapTimeItemGroups,
-              isSignedIn: appState.isSignedIn,
-            ),
+            child: _buildBottomButton(),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTabletLayout(ExamOverviewState state, AppState appState) {
+  Widget _buildTabletLayout() {
     const horizontalPadding = 60.0;
     return Stack(
       children: [
@@ -319,13 +293,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     ],
                   ),
                   const SizedBox(height: 28),
-                  _buildLapTimeCard(
-                    lapTimeItemGroups: state.lapTimeItemGroups,
-                    isUsingExample: state.isUsingExampleLapTimeItemGroups,
-                    isLapTimeAvailable:
-                        appState.productBenefit.isLapTimeAvailable,
-                    useLapTime: getIt.get<AppCubit>().useLapTime,
-                  ),
+                  _buildLapTimeCard(),
                   const SizedBox(height: 120),
                 ],
               ),
@@ -350,41 +318,25 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 ],
               ),
             ),
-            child: _buildBottomButton(
-              lapTimeItemGroups: state.lapTimeItemGroups,
-              isUsingExample: state.isUsingExampleLapTimeItemGroups,
-              isSignedIn: appState.isSignedIn,
-            ),
+            child: _buildBottomButton(),
           ),
         ),
         Positioned(
           top: 12,
           right: 20,
-          child: _buildCloseButton(
-            lapTimeItemGroups: state.lapTimeItemGroups,
-            isUsingExample: state.isUsingExampleLapTimeItemGroups,
-            isSignedIn: appState.isSignedIn,
-          ),
+          child: _buildCloseButton(),
         ),
       ],
     );
   }
 
-  Widget _buildCloseButton({
-    required List<LapTimeItemGroup> lapTimeItemGroups,
-    required bool isUsingExample,
-    required bool isSignedIn,
-  }) {
+  Widget _buildCloseButton() {
     return Container(
       alignment: Alignment.centerRight,
       child: IconButton(
         splashRadius: 20,
         icon: const Icon(Icons.close),
-        onPressed: () => _onCloseButtonPressed(
-          lapTimeItemGroups: lapTimeItemGroups,
-          isUsingExample: isUsingExample,
-          isSignedIn: isSignedIn,
-        ),
+        onPressed: () => _onCloseButtonPressed(),
       ),
     );
   }
@@ -529,12 +481,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildLapTimeCard({
-    required List<LapTimeItemGroup> lapTimeItemGroups,
-    required bool isUsingExample,
-    required bool isLapTimeAvailable,
-    required bool useLapTime,
-  }) {
+  Widget _buildLapTimeCard() {
+    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final isUsingExample =
+        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
+    final isLapTimeAvailable =
+        _appCubit.state.productBenefit.isLapTimeAvailable;
+    final useLapTime = _appCubit.useLapTime;
+
     return CustomCard(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -593,9 +547,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
               children: [
                 Column(
                   children: [
-                    _buildLapTimeTimeline(
-                      lapTimeItemGroups: lapTimeItemGroups,
-                    ),
+                    _buildLapTimeTimeline(),
                     const SizedBox(height: 8),
                     const Divider(
                       color: Colors.grey,
@@ -655,9 +607,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildLapTimeTimeline({
-    required List<LapTimeItemGroup> lapTimeItemGroups,
-  }) {
+  Widget _buildLapTimeTimeline() {
+    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
     final startTime = lapTimeItemGroups.first.startTime;
     final endTime = widget.examDetail.exams.last.examEndTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;
@@ -776,11 +727,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildBottomButton({
-    required List<LapTimeItemGroup> lapTimeItemGroups,
-    required bool isUsingExample,
-    required bool isSignedIn,
-  }) {
+  Widget _buildBottomButton() {
     return Material(
       color: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.circular(100),
@@ -788,11 +735,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       elevation: 10,
       shadowColor: Colors.black.withAlpha(180),
       child: InkWell(
-        onTap: () => _onBottomButtonPressed(
-          lapTimeItemGroups: lapTimeItemGroups,
-          isUsingExample: isUsingExample,
-          isSignedIn: isSignedIn,
-        ),
+        onTap: () => _onBottomButtonPressed(),
         splashColor: Colors.transparent,
         highlightColor: Colors.grey.withAlpha(60),
         child: Container(
