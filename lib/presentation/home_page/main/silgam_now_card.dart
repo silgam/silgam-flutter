@@ -11,7 +11,7 @@ class _SilgamNowCardState extends State<_SilgamNowCard> {
   Timer? _updateTimer;
   StreamSubscription? _onlineDevicesCountSubscription;
   StreamSubscription? _minOnlineDevicesShowingCountSubscription;
-  int _onlineDevicesCount = 0;
+  int? _onlineDevicesCount;
   int? _minOnlineDevicesShowingCount;
 
   @override
@@ -21,14 +21,19 @@ class _SilgamNowCardState extends State<_SilgamNowCard> {
         .ref('stats/onlineDevicesCount')
         .onValue
         .listen((event) {
-      _onlineDevicesCount = int.tryParse(event.snapshot.value.toString()) ?? 0;
+      final previousOnlineDevicesCount = _onlineDevicesCount;
+      _onlineDevicesCount = int.tryParse(event.snapshot.value.toString());
+      if (previousOnlineDevicesCount == null) setState(() {});
     });
     _minOnlineDevicesShowingCountSubscription = FirebaseDatabase.instance
         .ref('stats/minOnlineDevicesShowingCount')
         .onValue
         .listen((event) {
+      final previousMinOnlineDevicesShowingCount =
+          _minOnlineDevicesShowingCount;
       _minOnlineDevicesShowingCount =
           int.tryParse(event.snapshot.value.toString());
+      if (previousMinOnlineDevicesShowingCount == null) setState(() {});
     });
     _updateTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (mounted) setState(() {});
@@ -48,11 +53,15 @@ class _SilgamNowCardState extends State<_SilgamNowCard> {
     return BlocBuilder<AppCubit, AppState>(
       buildWhen: (previous, current) => previous.isOffline != current.isOffline,
       builder: (context, appState) {
+        final onlineDevicesCount = _onlineDevicesCount;
+        final minOnlineDevicesShowingCount = _minOnlineDevicesShowingCount;
         if (appState.isOffline ||
-            _minOnlineDevicesShowingCount == null ||
-            _onlineDevicesCount < _minOnlineDevicesShowingCount!) {
+            onlineDevicesCount == null ||
+            minOnlineDevicesShowingCount == null ||
+            onlineDevicesCount < minOnlineDevicesShowingCount) {
           return const SizedBox.shrink();
         }
+
         return CustomCard(
           isThin: true,
           margin: const EdgeInsets.symmetric(vertical: 6),
