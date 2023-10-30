@@ -68,6 +68,7 @@ class _SilgamNowCardState extends State<_SilgamNowCard> {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           child: IntrinsicHeight(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(width: 2),
                 Row(
@@ -78,6 +79,7 @@ class _SilgamNowCardState extends State<_SilgamNowCard> {
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w900,
+                        fontSize: 14,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -86,6 +88,7 @@ class _SilgamNowCardState extends State<_SilgamNowCard> {
                       style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.w900,
+                        fontSize: 14,
                         shadows: [
                           Shadow(
                             color: Colors.red.withOpacity(0.2),
@@ -111,30 +114,30 @@ class _SilgamNowCardState extends State<_SilgamNowCard> {
                     ),
                   ],
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 2),
                 const VerticalDivider(),
-                const SizedBox(width: 6),
+                const SizedBox(width: 2),
                 Flexible(
                   child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
                       style: const TextStyle(
                         height: 1.2,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w700,
                         color: Colors.black,
                         fontSize: 13,
+                        fontFamily: 'NanumSquare',
                       ),
                       children: [
-                        const TextSpan(text: '지금 '),
                         TextSpan(
                           text: '$_onlineDevicesCount명',
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
-                        const TextSpan(text: ' 이 실감과 함께 공부하고 있어요 🔥'),
+                        const TextSpan(text: '이 실감과 공부하고 있어요 🔥'),
                       ],
                     ),
                   ),
