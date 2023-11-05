@@ -1035,7 +1035,7 @@ packages:
     description:
       path: just_audio
       ref: "fix/memory-leak"
-      resolved-ref: "01ee08a68d16382f26c3f9bb0cc0c5a702d4e7fc"
+      resolved-ref: aaff56c51209bb03bd8b33e4779590be2c68eecc
       url: "https://github.com/silgam/just_audio"
     source: git
     version: "0.9.20"
