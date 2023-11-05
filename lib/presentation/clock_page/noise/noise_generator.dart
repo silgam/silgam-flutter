@@ -23,12 +23,13 @@ class NoiseGenerator {
 
   void start() {
     playWhiteNoiseIfEnabled();
-    _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (_) async {
       ClockState clockState = clockCubit.state;
       if (!clockState.isRunning) return;
       RelativeTimeType currentRelativeTime =
           clockState.currentBreakpoint.announcement.time.type;
-      noiseSettingState.noiseLevels.forEach((id, level) {
+      for (final MapEntry(key: id, value: level)
+          in noiseSettingState.noiseLevels.entries) {
         double levelMultiple = 1;
         int delay = 0;
         // 시험지 넘기는 소리 예외 사항
@@ -64,9 +65,9 @@ class NoiseGenerator {
           }
         }
         if (_calculateProbability(level * levelMultiple)) {
-          noisePlayer.playNoise(noiseId: id, delayMillis: delay);
+          await noisePlayer.playNoise(noiseId: id, delayMillis: delay);
         }
-      });
+      }
     });
   }
 
