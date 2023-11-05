@@ -146,6 +146,7 @@ Future<void> showMarketingInfoReceivingConsentDialog(
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 32),
             const Text(
@@ -156,9 +157,9 @@ Future<void> showMarketingInfoReceivingConsentDialog(
                 fontWeight: FontWeight.w900,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             const Text(
-              '실감의 상품 소개, 이벤트 등 유용한 정보들을 푸시알림으로 받아보실 수 있어요.',
+              '실감의 이벤트, 할인 정보 등 유용한 정보들을 푸시알림으로 받아보실 수 있어요.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
@@ -191,73 +192,61 @@ Future<void> showMarketingInfoReceivingConsentDialog(
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      AnalyticsManager.logEvent(
-                        name:
-                            '[MarketingInfoReceivingConsentDialog] Close button tapped',
-                      );
-                      await changeMarketingInfoReceivingConsentStatus(
-                        context,
-                        false,
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.grey.shade600,
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                    ),
-                    child: Text(
-                      '괜찮아요',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+            OutlinedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                AnalyticsManager.logEvent(
+                  name:
+                      '[MarketingInfoReceivingConsentDialog] Receive button tapped',
+                );
+                await changeMarketingInfoReceivingConsentStatus(
+                  context,
+                  true,
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                side: BorderSide.none,
+                shape: const StadiumBorder(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      AnalyticsManager.logEvent(
-                        name:
-                            '[MarketingInfoReceivingConsentDialog] Receive button tapped',
-                      );
-                      await changeMarketingInfoReceivingConsentStatus(
-                        context,
-                        true,
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      side: BorderSide.none,
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                    ),
-                    child: const Text(
-                      '받을게요',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+              ),
+              child: const Text(
+                '좋아요!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
                 ),
-              ],
+              ),
             ),
-            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                AnalyticsManager.logEvent(
+                  name:
+                      '[MarketingInfoReceivingConsentDialog] Close button tapped',
+                );
+                await changeMarketingInfoReceivingConsentStatus(
+                  context,
+                  false,
+                );
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade600,
+                visualDensity: VisualDensity.compact,
+                splashFactory: NoSplash.splashFactory,
+                shape: const StadiumBorder(),
+              ),
+              child: Text(
+                '괜찮아요',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
           ],
         ),
       ),

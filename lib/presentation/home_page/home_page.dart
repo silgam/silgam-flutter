@@ -174,16 +174,16 @@ class _HomePageState extends State<HomePage> {
     final me = context.read<AppCubit>().state.me;
     if (me == null) return;
 
-    if (me.isMarketingInfoReceivingConsented == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (isMarketingInfoReceivingConsentDialogShowing) return;
-        isMarketingInfoReceivingConsentDialogShowing = true;
-        await Future.delayed(const Duration(seconds: 1));
-        if (!mounted) return;
-        await showMarketingInfoReceivingConsentDialog(context);
-        isMarketingInfoReceivingConsentDialogShowing = false;
-      });
-    }
+    // if (me.isMarketingInfoReceivingConsented == null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (isMarketingInfoReceivingConsentDialogShowing) return;
+      isMarketingInfoReceivingConsentDialogShowing = true;
+      await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return;
+      await showMarketingInfoReceivingConsentDialog(context);
+      isMarketingInfoReceivingConsentDialogShowing = false;
+    });
+    // }
   }
 
   void _onAddExamRecordButtonPressed() async {
