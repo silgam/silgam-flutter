@@ -1,5 +1,7 @@
 # 실전 감각, 실감
 
+[![Codemagic build status](https://api.codemagic.io/apps/6346f044e6fd87e7c797bf8e/6346f044e6fd87e7c797bf8d/status_badge.svg)](https://codemagic.io/apps/6346f044e6fd87e7c797bf8e/6346f044e6fd87e7c797bf8d/latest_build)
+
 실제 수능장에서의 느낌 그대로! 실감과 함께 실전감각을 키우세요.
 
 [<img src="markdown_assets/download_google_play.png" height="50"/>](https://play.google.com/store/apps/details?id=com.seunghyun.silgam)
