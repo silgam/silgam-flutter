@@ -21,6 +21,7 @@ import '../my_page/my_page.dart';
 import '../noise_setting/noise_setting_page.dart';
 import '../notification_setting_page/notification_setting_page.dart';
 import '../offline_guide_page/offline_guide_page.dart';
+import '../onboarding_page/onboarding_page.dart';
 import '../purchase_page/purchase_page.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
@@ -54,6 +55,7 @@ class SilgamApp extends StatelessWidget {
             title: '실감',
             initialRoute: HomePage.routeName,
             routes: {
+              OnboardingPage.routeName: (_) => OnboardingPage(),
               HomePage.routeName: (_) => const HomePage(),
               LoginPage.routeName: (_) => const LoginPage(),
               NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
