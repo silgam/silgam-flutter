@@ -8,4 +8,28 @@ part 'onboarding_state.dart';
 @injectable
 class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit() : super(const OnboardingState());
+
+  void next() {
+    OnboardingStep nextStep;
+    switch (state.step) {
+      case OnboardingStep.welcome:
+        nextStep = OnboardingStep.joinPath;
+        break;
+      case OnboardingStep.joinPath:
+        nextStep = OnboardingStep.finished;
+        break;
+      case OnboardingStep.finished:
+        nextStep = OnboardingStep.finished;
+        break;
+    }
+    emit(state.copyWith(
+      step: nextStep,
+    ));
+  }
+
+  void skip() {
+    emit(state.copyWith(
+      step: OnboardingStep.finished,
+    ));
+  }
 }

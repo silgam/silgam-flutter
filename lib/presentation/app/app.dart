@@ -56,7 +56,6 @@ class SilgamApp extends StatelessWidget {
             initialRoute: HomePage.routeName,
             routes: {
               OnboardingPage.routeName: (_) => OnboardingPage(),
-              HomePage.routeName: (_) => const HomePage(),
               LoginPage.routeName: (_) => const LoginPage(),
               NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
               MyPage.routeName: (_) => const MyPage(),
@@ -69,6 +68,19 @@ class SilgamApp extends StatelessWidget {
             },
             onGenerateRoute: (settings) {
               switch (settings.name) {
+                case HomePage.routeName:
+                  return PageRouteBuilder(
+                    settings: settings,
+                    pageBuilder: (_, __, ___) => const HomePage(),
+                    transitionDuration: const Duration(milliseconds: 700),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                  );
                 case ClockPage.routeName:
                   final args = settings.arguments as ClockPageArguments;
                   return MaterialPageRoute(
