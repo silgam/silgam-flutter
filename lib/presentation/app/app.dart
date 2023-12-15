@@ -53,7 +53,7 @@ class SilgamApp extends StatelessWidget {
           Subject.subjectNameMap = customSubjectNameMap;
           return MaterialApp(
             title: '실감',
-            initialRoute: HomePage.routeName,
+            initialRoute: OnboardingPage.routeName,
             routes: {
               OnboardingPage.routeName: (_) => OnboardingPage(),
               LoginPage.routeName: (_) => const LoginPage(),
