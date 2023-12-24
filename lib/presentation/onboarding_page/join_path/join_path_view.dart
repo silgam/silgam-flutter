@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../util/injection.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class JoinPathView extends StatefulWidget {
-  const JoinPathView(
-    this._cubit, {
-    super.key,
-  });
+  JoinPathView({super.key});
 
-  final OnboardingCubit _cubit;
+  final OnboardingCubit _cubit = getIt.get();
 
   @override
   State<JoinPathView> createState() => _JoinPathViewState();

@@ -28,9 +28,9 @@ class OnboardingPage extends StatelessWidget {
         builder: (context, state) {
           switch (state.step) {
             case OnboardingStep.welcome:
-              return WelcomeView(_cubit);
+              return WelcomeView();
             case OnboardingStep.joinPath:
-              return JoinPathView(_cubit);
+              return JoinPathView();
             case OnboardingStep.finished:
               return Container();
           }

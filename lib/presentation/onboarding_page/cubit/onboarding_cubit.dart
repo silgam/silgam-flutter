@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 part 'onboarding_cubit.freezed.dart';
 part 'onboarding_state.dart';
 
-@injectable
+@singleton
 class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit() : super(const OnboardingState());
 

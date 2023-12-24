@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../util/injection.dart';
 import '../../../util/string_util.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class WelcomeView extends StatelessWidget {
-  const WelcomeView(
-    this._cubit, {
-    super.key,
-  });
+  WelcomeView({super.key});
 
-  final OnboardingCubit _cubit;
+  final OnboardingCubit _cubit = getIt.get();
 
   @override
   Widget build(BuildContext context) {
