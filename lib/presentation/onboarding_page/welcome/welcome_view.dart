@@ -38,7 +38,7 @@ class WelcomeView extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    keepWord('수능 실전 감각 연습, 오답노트, 성적관리까지 모두 실감에서 한 번에 관리해보세요'),
+                    keepWord('수능 실전 감각 연습, 오답노트, 성적관리까지 모두 실감과 함께 해보세요'),
                     textAlign: TextAlign.right,
                     style: const TextStyle(
                       fontSize: 18,
@@ -52,7 +52,7 @@ class WelcomeView extends StatelessWidget {
                   ),
                   _buildButton(
                     onTap: _cubit.next,
-                    text: '실감 처음 써봐요!',
+                    text: '실감을 처음 써봐요!',
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   const SizedBox(height: 8),
@@ -65,7 +65,7 @@ class WelcomeView extends StatelessWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: const Text(
-                      '아니요, 써본 적 있어요',
+                      '실감을 써본 적이 있어요',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
