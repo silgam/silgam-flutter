@@ -10,7 +10,7 @@ import 'welcome/welcome_view.dart';
 class OnboardingPage extends StatelessWidget {
   OnboardingPage({super.key});
 
-  static const routeName = '/onboarding';
+  static const routeName = 'onboarding';
   final OnboardingCubit _cubit = getIt.get();
 
   @override
