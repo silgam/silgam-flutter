@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../util/string_util.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class WelcomeView extends StatelessWidget {
@@ -13,55 +14,72 @@ class WelcomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                const Spacer(),
-                const Text(
-                  '환영합니다',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/landing_background.png',
+            fit: BoxFit.cover,
+            alignment: const Alignment(-0.5, 0),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Spacer(),
+                  const Text(
+                    '👋 반가워요',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  '수능 실전 감각 연습, 오답노트, 성적관리까지 모두 실감에서 한 번에 관리해보세요',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    height: 1.3,
+                  const SizedBox(height: 12),
+                  Text(
+                    keepWord('수능 실전 감각 연습, 오답노트, 성적관리까지 모두 실감에서 한 번에 관리해보세요'),
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      height: 1.3,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Text(
-                  '실감이 처음이신가요?',
-                  style: TextStyle(
-                    color: Colors.grey.shade900,
-                    fontWeight: FontWeight.w700,
+                  const Divider(
+                    height: 60,
+                    color: Colors.white38,
                   ),
-                ),
-                const SizedBox(height: 20),
-                _buildButton(
-                  onTap: _cubit.next,
-                  text: '네! 처음이에요',
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                const SizedBox(height: 4),
-                TextButton(
-                  onPressed: _cubit.skip,
-                  style: TextButton.styleFrom(
-                    splashFactory: NoSplash.splashFactory,
+                  _buildButton(
+                    onTap: _cubit.next,
+                    text: '실감 처음 써봐요!',
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  child: const Text('아니요, 써본 적 있어요'),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: _cubit.skip,
+                    style: TextButton.styleFrom(
+                      splashFactory: NoSplash.splashFactory,
+                      foregroundColor: Colors.white,
+                      shape: const StadiumBorder(),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text(
+                      '아니요, 써본 적 있어요',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
