@@ -26,14 +26,23 @@ class OnboardingPage extends StatelessWidget {
         buildWhen: (previous, current) =>
             current.step != OnboardingStep.finished,
         builder: (context, state) {
+          Widget child;
           switch (state.step) {
             case OnboardingStep.welcome:
-              return WelcomeView();
+              child = WelcomeView(
+                key: const ValueKey(OnboardingStep.welcome),
+              );
             case OnboardingStep.joinPath:
-              return JoinPathView();
+              child = const JoinPathView(
+                key: ValueKey(OnboardingStep.joinPath),
+              );
             case OnboardingStep.finished:
-              return Container();
+              child = Container();
           }
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: child,
+          );
         },
       ),
     );
