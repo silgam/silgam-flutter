@@ -33,7 +33,11 @@ import 'cubit/iap_cubit.dart';
 const double cardCornerRadius = 14;
 
 class SilgamApp extends StatelessWidget {
-  const SilgamApp({Key? key}) : super(key: key);
+  const SilgamApp({Key? key, required String initialRoute})
+      : _initialRoute = initialRoute,
+        super(key: key);
+
+  final String _initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +57,7 @@ class SilgamApp extends StatelessWidget {
           Subject.subjectNameMap = customSubjectNameMap;
           return MaterialApp(
             title: '실감',
-            initialRoute: OnboardingPage.routeName,
+            initialRoute: _initialRoute,
             routes: {
               OnboardingPage.routeName: (_) => OnboardingPage(),
               LoginPage.routeName: (_) => const LoginPage(),

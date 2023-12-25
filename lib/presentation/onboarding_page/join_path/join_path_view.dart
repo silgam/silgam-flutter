@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../util/injection.dart';
 import '../../app/app.dart';
@@ -74,71 +75,59 @@ class _JoinPathViewState extends State<JoinPathView> {
           ),
         ),
         const SizedBox(height: 20),
-        Wrap(
-          spacing: 8,
-          runSpacing: 10,
-          alignment: WrapAlignment.center,
-          children: [
-            _buildJoinPathChip(
-              text: '인스타그램',
-              onSelected: (a) {},
-              selected: true,
-            ),
-            _buildJoinPathChip(
-              text: '페이스북',
-              onSelected: (a) {},
-            ),
-            _buildJoinPathChip(
-              text: '친구 추천',
-              onSelected: (a) {},
-            ),
-            _buildJoinPathChip(
-              text: '기타',
-              onSelected: (a) {},
-            ),
-            _buildJoinPathChip(
-              text: '기타',
-              onSelected: (a) {},
-            ),
-            _buildJoinPathChip(
-              text: '기타',
-              onSelected: (a) {},
-            ),
-            TextField(
-              onTapOutside: (event) =>
-                  FocusManager.instance.primaryFocus?.unfocus(),
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-                height: 1.3,
-              ),
-              decoration: InputDecoration(
-                hintText: '기타',
-                fillColor: Colors.white,
-                filled: true,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(100),
-                  borderSide: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
+        BlocBuilder<OnboardingCubit, OnboardingState>(
+          builder: (context, state) {
+            return Wrap(
+              spacing: 8,
+              runSpacing: 10,
+              alignment: WrapAlignment.center,
+              children: [
+                ...state.joinPaths.map(
+                  (joinPath) => _buildJoinPathChip(
+                    text: joinPath.text,
+                    onSelected: (selected) =>
+                        _cubit.onJoinPathClicked(joinPath),
+                    selected:
+                        _cubit.state.selectedJoinPathIds.contains(joinPath.id),
                   ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(100),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).primaryColor,
-                    width: 1,
+                TextField(
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                    height: 1.3,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '기타',
+                    fillColor: Colors.white,
+                    filled: true,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 1,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ],
     );
