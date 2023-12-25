@@ -11,7 +11,7 @@ import 'dto/auth_dto.dart';
 
 @lazySingleton
 class AuthRepository {
-  AuthRepository(this._authApi);
+  const AuthRepository(this._authApi);
 
   final AuthApi _authApi;
 

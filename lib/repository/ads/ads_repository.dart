@@ -11,7 +11,7 @@ import 'ads_api.dart';
 
 @lazySingleton
 class AdsRepository {
-  AdsRepository(this._adsApi);
+  const AdsRepository(this._adsApi);
 
   final AdsApi _adsApi;
 
