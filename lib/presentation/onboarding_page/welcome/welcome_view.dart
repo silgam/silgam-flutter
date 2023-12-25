@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../util/injection.dart';
 import '../../../util/string_util.dart';
+import '../../app/app.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class WelcomeView extends StatelessWidget {
@@ -11,73 +12,78 @@ class WelcomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            'assets/landing_background.png',
-            fit: BoxFit.cover,
-            alignment: const Alignment(-0.5, 0),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Spacer(),
-                  const Text(
-                    '👋 반가워요',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    keepWord('수능 실전 감각 연습, 오답노트, 성적관리까지 모두 실감과 함께 해보세요'),
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      height: 1.3,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Divider(
-                    height: 60,
-                    color: Colors.white38,
-                  ),
-                  _buildButton(
-                    onTap: _cubit.next,
-                    text: '실감을 처음 써봐요!',
-                    backgroundColor: Theme.of(context).primaryColor,
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: _cubit.skip,
-                    style: TextButton.styleFrom(
-                      splashFactory: NoSplash.splashFactory,
-                      foregroundColor: Colors.white,
-                      shape: const StadiumBorder(),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      '실감을 써본 적이 있어요',
+    return AnnotatedRegion(
+      value: darkSystemUiOverlayStyle.copyWith(
+        systemNavigationBarColor: Colors.black,
+      ),
+      child: Scaffold(
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/landing_background.png',
+              fit: BoxFit.cover,
+              alignment: const Alignment(-0.5, 0),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Spacer(),
+                    const Text(
+                      '👋 반가워요',
+                      textAlign: TextAlign.right,
                       style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.w900,
                         color: Colors.white,
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                ],
+                    const SizedBox(height: 12),
+                    Text(
+                      keepWord('수능 실전 감각 연습, 오답노트, 성적관리까지 모두 실감과 함께 해보세요'),
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        height: 1.3,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Divider(
+                      height: 60,
+                      color: Colors.white38,
+                    ),
+                    _buildButton(
+                      onTap: _cubit.next,
+                      text: '실감을 처음 써봐요!',
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: _cubit.skip,
+                      style: TextButton.styleFrom(
+                        splashFactory: NoSplash.splashFactory,
+                        foregroundColor: Colors.white,
+                        shape: const StadiumBorder(),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text(
+                        '실감을 써본 적이 있어요',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

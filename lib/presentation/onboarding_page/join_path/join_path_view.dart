@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../util/injection.dart';
+import '../../app/app.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class JoinPathView extends StatefulWidget {
@@ -15,31 +16,35 @@ class _JoinPathViewState extends State<JoinPathView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 40,
+    return AnnotatedRegion(
+      value: defaultSystemUiOverlayStyle,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 40,
+                    ),
+                    child: _buildScrollableSection(),
                   ),
-                  child: _buildScrollableSection(),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _buildButton(
-                onTap: _cubit.next,
-                text: '시작하기',
-                backgroundColor: Theme.of(context).primaryColor,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: _buildButton(
+                  onTap: _cubit.next,
+                  text: '시작하기',
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+            ],
+          ),
         ),
       ),
     );
