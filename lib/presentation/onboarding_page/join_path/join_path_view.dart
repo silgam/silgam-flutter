@@ -4,74 +4,138 @@ import '../../../util/injection.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class JoinPathView extends StatefulWidget {
-  JoinPathView({super.key});
-
-  final OnboardingCubit _cubit = getIt.get();
+  const JoinPathView({super.key});
 
   @override
   State<JoinPathView> createState() => _JoinPathViewState();
 }
 
 class _JoinPathViewState extends State<JoinPathView> {
+  final OnboardingCubit _cubit = getIt.get();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              const Spacer(),
-              const Text(
-                '실감을 어떻게 알게 되었나요?',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
+        child: Column(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 40,
+                  ),
+                  child: _buildScrollableSection(),
                 ),
               ),
-              const SizedBox(height: 28),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                children: [
-                  _buildJoinPathChip(
-                    text: '인스타그램',
-                    onSelected: (a) {},
-                    selected: true,
-                  ),
-                  _buildJoinPathChip(
-                    text: '페이스북',
-                    onSelected: (a) {},
-                  ),
-                  _buildJoinPathChip(
-                    text: '친구 추천',
-                    onSelected: (a) {},
-                  ),
-                  _buildJoinPathChip(
-                    text: '기타',
-                    onSelected: (a) {},
-                  ),
-                  _buildJoinPathChip(
-                    text: '기타',
-                    onSelected: (a) {},
-                  ),
-                  _buildJoinPathChip(
-                    text: '기타',
-                    onSelected: (a) {},
-                  ),
-                ],
-              ),
-              const Spacer(),
-              _buildButton(
-                onTap: () {},
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: _buildButton(
+                onTap: _cubit.next,
                 text: '시작하기',
                 backgroundColor: Theme.of(context).primaryColor,
-              )
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildScrollableSection() {
+    return Column(
+      children: [
+        const Text(
+          '🤔',
+          style: TextStyle(
+            fontSize: 72,
+          ),
+        ),
+        const Text(
+          '실감을 어떻게 알게 되었나요?',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 60),
+        const Text(
+          '복수 선택 가능',
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Wrap(
+          spacing: 8,
+          runSpacing: 10,
+          alignment: WrapAlignment.center,
+          children: [
+            _buildJoinPathChip(
+              text: '인스타그램',
+              onSelected: (a) {},
+              selected: true,
+            ),
+            _buildJoinPathChip(
+              text: '페이스북',
+              onSelected: (a) {},
+            ),
+            _buildJoinPathChip(
+              text: '친구 추천',
+              onSelected: (a) {},
+            ),
+            _buildJoinPathChip(
+              text: '기타',
+              onSelected: (a) {},
+            ),
+            _buildJoinPathChip(
+              text: '기타',
+              onSelected: (a) {},
+            ),
+            _buildJoinPathChip(
+              text: '기타',
+              onSelected: (a) {},
+            ),
+            TextField(
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+                height: 1.3,
+              ),
+              decoration: InputDecoration(
+                hintText: '기타',
+                fillColor: Colors.white,
+                filled: true,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 1,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -81,13 +145,6 @@ class _JoinPathViewState extends State<JoinPathView> {
     bool selected = false,
   }) {
     return FilterChip(
-      label: Text(
-        text,
-        style: TextStyle(
-          color: selected ? Colors.white : Colors.black,
-          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-        ),
-      ),
       selected: selected,
       onSelected: onSelected,
       elevation: 0,
@@ -95,6 +152,18 @@ class _JoinPathViewState extends State<JoinPathView> {
       showCheckmark: false,
       selectedColor: Theme.of(context).primaryColor,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      backgroundColor: Colors.white,
+      side: BorderSide(
+        color: selected ? Colors.transparent : Colors.grey.shade300,
+        width: 1,
+      ),
+      label: Text(
+        text,
+        style: TextStyle(
+          color: selected ? Colors.white : Colors.black,
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+        ),
+      ),
     );
   }
 
