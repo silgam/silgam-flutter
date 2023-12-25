@@ -40,7 +40,7 @@ class OnboardingPage extends StatelessWidget {
               child = Container();
           }
           return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 400),
             child: child,
           );
         },

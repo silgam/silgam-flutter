@@ -72,7 +72,7 @@ class SilgamApp extends StatelessWidget {
                   return PageRouteBuilder(
                     settings: settings,
                     pageBuilder: (_, __, ___) => const HomePage(),
-                    transitionDuration: const Duration(milliseconds: 700),
+                    transitionDuration: const Duration(milliseconds: 800),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       return FadeTransition(
