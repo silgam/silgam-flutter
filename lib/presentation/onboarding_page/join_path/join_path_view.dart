@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../model/join_path.dart';
 import '../../../util/injection.dart';
 import '../../app/app.dart';
 import '../cubit/onboarding_cubit.dart';
@@ -52,84 +54,124 @@ class _JoinPathViewState extends State<JoinPathView> {
   }
 
   Widget _buildScrollableSection() {
+    return BlocBuilder<OnboardingCubit, OnboardingState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              '🤔',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 72,
+              ),
+            ),
+            const Text(
+              '실감을 어떻게 알게 되었나요?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 60),
+            const Text(
+              '복수 선택 가능',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ...state.joinPaths
+                .groupListsBy((path) => path.sectionTitle)
+                .entries
+                .map(
+                  (entry) => _buildJoinPathSection(
+                    title: entry.key,
+                    joinPaths: entry.value,
+                  ),
+                ),
+            _buildJoinPathSectionTitle('그 외'),
+            TextField(
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+                height: 1.3,
+              ),
+              decoration: InputDecoration(
+                hintText: '기타',
+                fillColor: Colors.white,
+                filled: true,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 1,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildJoinPathSection({
+    required String title,
+    required List<JoinPath> joinPaths,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '🤔',
-          style: TextStyle(
-            fontSize: 72,
-          ),
+        _buildJoinPathSectionTitle(title),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...joinPaths.map(
+              (joinPath) => _buildJoinPathChip(
+                text: joinPath.text,
+                onSelected: (selected) => _cubit.onJoinPathClicked(joinPath),
+                selected:
+                    _cubit.state.selectedJoinPathIds.contains(joinPath.id),
+              ),
+            ),
+          ],
         ),
-        const Text(
-          '실감을 어떻게 알게 되었나요?',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(height: 60),
-        const Text(
-          '복수 선택 가능',
-          style: TextStyle(
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 20),
-        BlocBuilder<OnboardingCubit, OnboardingState>(
-          builder: (context, state) {
-            return Wrap(
-              spacing: 8,
-              runSpacing: 10,
-              alignment: WrapAlignment.center,
-              children: [
-                ...state.joinPaths.map(
-                  (joinPath) => _buildJoinPathChip(
-                    text: joinPath.text,
-                    onSelected: (selected) =>
-                        _cubit.onJoinPathClicked(joinPath),
-                    selected:
-                        _cubit.state.selectedJoinPathIds.contains(joinPath.id),
-                  ),
-                ),
-                TextField(
-                  onTapOutside: (event) =>
-                      FocusManager.instance.primaryFocus?.unfocus(),
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                    height: 1.3,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '기타',
-                    fillColor: Colors.white,
-                    filled: true,
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 1,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+        const SizedBox(height: 32),
       ],
+    );
+  }
+
+  Widget _buildJoinPathSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          color: Colors.grey.shade900,
+          height: 1.3,
+        ),
+      ),
     );
   }
 
