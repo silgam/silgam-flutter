@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_env.dart';
 import 'firebase_options.dart';
@@ -27,22 +28,25 @@ void main() async {
   KakaoSdk.init(nativeAppKey: AppEnv.kakaoNativeAppKey);
 
   await configureDependencies();
-  final [dynamic initialRoute, ...] = await Future.wait([
-    initializeInitialRoute(),
+  await Future.wait([
     initializeFirebase(),
     if (!kIsWeb && !isAdmobDisabled) MobileAds.instance.initialize(),
     initializeAudioSession(),
   ]);
+  final initialRoute = await initializeInitialRoute();
 
   runApp(SilgamApp(initialRoute: initialRoute));
 }
 
 Future<String> initializeInitialRoute() async {
+  final SharedPreferences sharedPreferences = getIt.get();
+  final isOnboardingFinished =
+      sharedPreferences.getBool(PreferenceKey.isOnboardingFinished) ?? false;
+  if (isOnboardingFinished) return HomePage.routeName;
+
   final isOnboardingInitialized =
       await getIt.get<OnboardingCubit>().initialize();
-  if (isOnboardingInitialized) {
-    return OnboardingPage.routeName;
-  }
+  if (isOnboardingInitialized) return OnboardingPage.routeName;
   return HomePage.routeName;
 }
 

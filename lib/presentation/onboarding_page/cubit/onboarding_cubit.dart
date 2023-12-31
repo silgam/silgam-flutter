@@ -4,18 +4,33 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/join_path.dart';
 import '../../../repository/onboarding/onboarding_repository.dart';
+import '../../../util/const.dart';
 
 part 'onboarding_cubit.freezed.dart';
 part 'onboarding_state.dart';
 
 @lazySingleton
 class OnboardingCubit extends Cubit<OnboardingState> {
-  OnboardingCubit(this._onboardingRepository) : super(const OnboardingState());
+  OnboardingCubit(this._onboardingRepository, this._sharedPreferences)
+      : super(const OnboardingState());
 
   final OnboardingRepository _onboardingRepository;
+  final SharedPreferences _sharedPreferences;
+
+  @override
+  void onChange(Change<OnboardingState> change) async {
+    super.onChange(change);
+    if (change.nextState.step == OnboardingStep.finished) {
+      await _sharedPreferences.setBool(
+        PreferenceKey.isOnboardingFinished,
+        true,
+      );
+    }
+  }
 
   Future<bool> initialize() async {
     try {
@@ -29,7 +44,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         joinPaths: joinPaths,
       ));
       return true;
-    } on TimeoutException {
+    } catch (e) {
       log('initialize timeout', name: 'OnboardingCubit.initialize');
       return false;
     }
