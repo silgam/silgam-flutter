@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/join_path.dart';
 import '../../../repository/onboarding/onboarding_repository.dart';
+import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 
 part 'onboarding_cubit.freezed.dart';
@@ -66,6 +67,12 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     emit(state.copyWith(
       step: nextStep,
     ));
+    AnalyticsManager.logEvent(
+      name: '[Onboarding] Next',
+      properties: {
+        'next_step': nextStep.toString(),
+      },
+    );
   }
 
   void skip() {
@@ -77,6 +84,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       joinPathIds: [],
       otherJoinPath: null,
     );
+    AnalyticsManager.logEvent(name: '[Onboarding] Skip join path');
   }
 
   void submitJoinPath({required String otherJoinPath}) {
@@ -87,6 +95,13 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       isSkipped: false,
       joinPathIds: state.selectedJoinPathIds,
       otherJoinPath: otherJoinPath,
+    );
+    AnalyticsManager.logEvent(
+      name: '[Onboarding] Submit join path',
+      properties: {
+        'joinPathIds': state.selectedJoinPathIds,
+        'otherJoinPath': otherJoinPath,
+      },
     );
   }
 
