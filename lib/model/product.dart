@@ -42,7 +42,7 @@ class ProductBenefit with _$ProductBenefit {
   static const ProductBenefit initial = ProductBenefit(
     isAdsRemoved: false,
     isStatisticAvailable: false,
-    examRecordLimit: 30,
+    examRecordLimit: 20,
     availableNoiseIds: [0, 2, 3, 10, 12],
     isCustomSubjectNameAvailable: false,
     isLapTimeAvailable: false,
