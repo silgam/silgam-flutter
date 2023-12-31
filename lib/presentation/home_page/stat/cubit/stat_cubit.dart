@@ -29,18 +29,22 @@ class StatCubit extends Cubit<StatState> {
         ? _recordListCubit.state.records
         : exampleRecords;
     recordsToShow = recordsToShow.sortedBy((record) => record.examStartedTime);
+    final dateRange = DateTimeRange(
+      start: state.isDateRangeSet
+          ? state.dateRange.start
+          : state.getDefaultStartDate(records: recordsToShow),
+      end: state.isDateRangeSet
+          ? state.dateRange.end
+          : state.getDefaultEndDate(records: recordsToShow),
+    );
 
     emit(state.copyWith(
       originalRecords: recordsToShow,
-      records: _getFilteredRecords(originalRecords: recordsToShow),
-      dateRange: DateTimeRange(
-        start: state.isDateRangeSet
-            ? state.dateRange.start
-            : state.getDefaultStartDate(records: recordsToShow),
-        end: state.isDateRangeSet
-            ? state.dateRange.end
-            : state.getDefaultEndDate(records: recordsToShow),
+      records: _getFilteredRecords(
+        originalRecords: recordsToShow,
+        dateRange: dateRange,
       ),
+      dateRange: dateRange,
     ));
   }
 

@@ -29,16 +29,18 @@ class StatState with _$StatState {
     records ??= originalRecords;
     return (records.isEmpty
             ? DateTime.now().subtract(const Duration(days: 365))
-            : records.first.examStartedTime)
+            : records.sortedBy((r) => r.examStartedTime).first.examStartedTime)
         .toDate();
   }
 
   DateTime getDefaultEndDate({List<ExamRecord>? records}) {
     records ??= originalRecords;
+    final lastTime =
+        records.sortedBy((r) => r.examStartedTime).last.examStartedTime;
     return (records.isEmpty
             ? DateTime.now()
-            : records.last.examStartedTime.isAfter(DateTime.now())
-                ? records.last.examStartedTime
+            : lastTime.isAfter(DateTime.now())
+                ? lastTime
                 : DateTime.now())
         .toDate();
   }
