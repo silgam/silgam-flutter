@@ -16,6 +16,12 @@ class JoinPathView extends StatefulWidget {
 
 class _JoinPathViewState extends State<JoinPathView> {
   final OnboardingCubit _cubit = getIt.get();
+  final TextEditingController _otherJoinPathController =
+      TextEditingController();
+
+  void _onNextClick() {
+    _cubit.submitJoinPath(otherJoinPath: _otherJoinPathController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +46,7 @@ class _JoinPathViewState extends State<JoinPathView> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: _buildButton(
-                  onTap: _cubit.next,
+                  onTap: _onNextClick,
                   text: '시작하기',
                   backgroundColor: Theme.of(context).primaryColor,
                 ),
@@ -74,7 +80,7 @@ class _JoinPathViewState extends State<JoinPathView> {
                 fontWeight: FontWeight.w900,
               ),
             ),
-            const SizedBox(height: 60),
+            const SizedBox(height: 40),
             const Text(
               '복수 선택 가능',
               textAlign: TextAlign.center,
@@ -92,8 +98,9 @@ class _JoinPathViewState extends State<JoinPathView> {
                     joinPaths: entry.value,
                   ),
                 ),
-            _buildJoinPathSectionTitle('그 외'),
+            _buildJoinPathSectionTitle('그 외 경로'),
             TextField(
+              controller: _otherJoinPathController,
               onTapOutside: (event) =>
                   FocusManager.instance.primaryFocus?.unfocus(),
               style: const TextStyle(

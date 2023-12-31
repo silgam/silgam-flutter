@@ -13,7 +13,7 @@ abstract class OnboardingApi {
   @factoryMethod
   factory OnboardingApi(Dio dio) = _OnboardingApi;
 
-  @GET('/onboarding/join_paths')
+  @GET('/join_paths')
   Future<List<JoinPath>> getAllJoinPaths();
 
   @POST('/onboarding/join_paths')

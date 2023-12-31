@@ -57,6 +57,22 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     emit(state.copyWith(
       step: OnboardingStep.finished,
     ));
+    _onboardingRepository.submitJoinPaths(
+      isSkipped: true,
+      joinPathIds: [],
+      otherJoinPath: null,
+    );
+  }
+
+  void submitJoinPath({required String otherJoinPath}) {
+    emit(state.copyWith(
+      step: OnboardingStep.finished,
+    ));
+    _onboardingRepository.submitJoinPaths(
+      isSkipped: false,
+      joinPathIds: state.selectedJoinPathIds,
+      otherJoinPath: otherJoinPath,
+    );
   }
 
   void onJoinPathClicked(JoinPath joinPath) {
