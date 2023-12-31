@@ -12,7 +12,7 @@ import 'feedback_api.dart';
 
 @lazySingleton
 class FeedbackRepository {
-  FeedbackRepository(this._feedbackApi);
+  const FeedbackRepository(this._feedbackApi);
 
   final FeedbackApi _feedbackApi;
 

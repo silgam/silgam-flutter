@@ -10,7 +10,7 @@ import 'dday_api.dart';
 
 @lazySingleton
 class DDayRepository {
-  DDayRepository(this._ddayApi);
+  const DDayRepository(this._ddayApi);
 
   final DDayApi _ddayApi;
 

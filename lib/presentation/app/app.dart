@@ -21,6 +21,7 @@ import '../my_page/my_page.dart';
 import '../noise_setting/noise_setting_page.dart';
 import '../notification_setting_page/notification_setting_page.dart';
 import '../offline_guide_page/offline_guide_page.dart';
+import '../onboarding_page/onboarding_page.dart';
 import '../purchase_page/purchase_page.dart';
 import '../record_detail_page/record_detail_page.dart';
 import '../review_problem_detail_page/review_problem_detail_page.dart';
@@ -32,7 +33,11 @@ import 'cubit/iap_cubit.dart';
 const double cardCornerRadius = 14;
 
 class SilgamApp extends StatelessWidget {
-  const SilgamApp({Key? key}) : super(key: key);
+  const SilgamApp({Key? key, required String initialRoute})
+      : _initialRoute = initialRoute,
+        super(key: key);
+
+  final String _initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +57,9 @@ class SilgamApp extends StatelessWidget {
           Subject.subjectNameMap = customSubjectNameMap;
           return MaterialApp(
             title: '실감',
-            initialRoute: HomePage.routeName,
+            initialRoute: _initialRoute,
             routes: {
-              HomePage.routeName: (_) => const HomePage(),
+              OnboardingPage.routeName: (_) => OnboardingPage(),
               LoginPage.routeName: (_) => const LoginPage(),
               NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
               MyPage.routeName: (_) => const MyPage(),
@@ -67,6 +72,19 @@ class SilgamApp extends StatelessWidget {
             },
             onGenerateRoute: (settings) {
               switch (settings.name) {
+                case HomePage.routeName:
+                  return PageRouteBuilder(
+                    settings: settings,
+                    pageBuilder: (_, __, ___) => const HomePage(),
+                    transitionDuration: const Duration(milliseconds: 800),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                  );
                 case ClockPage.routeName:
                   final args = settings.arguments as ClockPageArguments;
                   return MaterialPageRoute(

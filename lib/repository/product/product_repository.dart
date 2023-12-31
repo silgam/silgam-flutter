@@ -14,7 +14,7 @@ import 'product_api.dart';
 
 @lazySingleton
 class ProductRepository {
-  ProductRepository(this._productApi);
+  const ProductRepository(this._productApi);
 
   final ProductApi _productApi;
 
