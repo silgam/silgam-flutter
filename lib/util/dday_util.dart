@@ -1,5 +1,5 @@
 import '../model/dday.dart';
-import '../presentation/home_page/main/main_view.dart';
+import '../presentation/home/main/main_view.dart';
 
 class DDayUtil {
   DDayUtil(this._dDays);

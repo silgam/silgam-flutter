@@ -14,10 +14,10 @@ import '../common/ad_tile.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
-import '../edit_record_page/edit_record_page.dart';
-import '../home_page/record_list/cubit/record_list_cubit.dart';
-import '../review_problem_detail_page/review_problem_detail_page.dart';
-import '../save_image_page/save_image_page.dart';
+import '../edit_record/edit_record_page.dart';
+import '../home/record_list/cubit/record_list_cubit.dart';
+import '../review_problem_detail/review_problem_detail_page.dart';
+import '../save_image/save_image_page.dart';
 
 class RecordDetailPage extends StatefulWidget {
   static const routeName = '/record_detail';

@@ -5,7 +5,7 @@ import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
-import '../edit_record_page/edit_record_page.dart';
+import '../edit_record/edit_record_page.dart';
 import 'cubit/home_cubit.dart';
 import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';

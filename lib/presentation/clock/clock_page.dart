@@ -16,7 +16,7 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/bullet_text.dart';
 import '../common/empty_scroll_behavior.dart';
-import '../exam_overview_page/exam_overview_page.dart';
+import '../exam_overview/exam_overview_page.dart';
 import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
 import 'wrist_watch.dart';

@@ -9,9 +9,9 @@ import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/subtitle.dart';
-import '../home_page/settings/setting_tile.dart';
-import '../home_page/settings/settings_view.dart';
-import '../purchase_page/purchase_page.dart';
+import '../home/settings/setting_tile.dart';
+import '../home/settings/settings_view.dart';
+import '../purchase/purchase_page.dart';
 import 'cubit/noise_setting_cubit.dart';
 
 class NoiseSettingPage extends StatefulWidget {

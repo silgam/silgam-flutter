@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
-import '../home_page/home_page.dart';
+import '../home/home_page.dart';
 
 class ScaffoldBody extends StatelessWidget {
   final String title;

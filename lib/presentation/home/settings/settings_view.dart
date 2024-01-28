@@ -21,12 +21,12 @@ import '../../common/login_button.dart';
 import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/subtitle.dart';
-import '../../customize_subject_name_page/customize_subject_name_page.dart';
-import '../../login_page/login_page.dart';
-import '../../my_page/my_page.dart';
+import '../../customize_subject_name/customize_subject_name_page.dart';
+import '../../login/login_page.dart';
+import '../../my/my_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
-import '../../notification_setting_page/notification_setting_page.dart';
-import '../../offline_guide_page/offline_guide_page.dart';
+import '../../notification_setting/notification_setting_page.dart';
+import '../../offline/offline_guide_page.dart';
 import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {

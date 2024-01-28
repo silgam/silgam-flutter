@@ -12,7 +12,7 @@ import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
-import '../purchase_page/purchase_page.dart';
+import '../purchase/purchase_page.dart';
 
 void showExamRecordLimitInfoDialog(BuildContext context) {
   showDialog(

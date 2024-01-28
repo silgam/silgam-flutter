@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../model/product.dart';
 import '../app/cubit/iap_cubit.dart';
-import '../purchase_page/purchase_page.dart';
+import '../purchase/purchase_page.dart';
 import 'custom_card.dart';
 
 Widget buildPurchaseButtonOr({

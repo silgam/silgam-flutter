@@ -5,7 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/dialog.dart';
-import '../home_page/settings/settings_view.dart';
+import '../home/settings/settings_view.dart';
 
 class NotificationSettingPage extends StatelessWidget {
   const NotificationSettingPage({super.key});

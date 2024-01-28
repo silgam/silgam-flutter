@@ -16,7 +16,7 @@ import '../../../util/cache_manager.dart';
 import '../../../util/connectivity_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
-import '../../home_page/main/cubit/main_cubit.dart';
+import '../../home/main/cubit/main_cubit.dart';
 import 'iap_cubit.dart';
 
 part 'app_cubit.freezed.dart';

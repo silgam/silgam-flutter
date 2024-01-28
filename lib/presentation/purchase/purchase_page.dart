@@ -11,8 +11,8 @@ import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/custom_menu_bar.dart';
-import '../home_page/cubit/home_cubit.dart';
-import '../home_page/settings/settings_view.dart';
+import '../home/cubit/home_cubit.dart';
+import '../home/settings/settings_view.dart';
 import 'cubit/purchase_cubit.dart';
 
 class PurchasePage extends StatefulWidget {

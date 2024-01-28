@@ -15,11 +15,11 @@ import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
-import '../clock_page/timeline.dart';
+import '../clock/timeline.dart';
 import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
-import '../edit_record_page/edit_record_page.dart';
-import '../login_page/login_page.dart';
+import '../edit_record/edit_record_page.dart';
+import '../login/login_page.dart';
 import 'cubit/exam_overview_cubit.dart';
 
 part 'exam_overview_messages.dart';
