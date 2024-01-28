@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
-import '../../repository/exam_record_repository.dart';
+import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';

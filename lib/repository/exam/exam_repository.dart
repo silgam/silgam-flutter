@@ -1,8 +1,8 @@
-import '../model/announcement.dart';
-import '../model/exam.dart';
-import '../model/relative_time.dart';
-import '../model/subject.dart';
-import '../util/date_time_extension.dart';
+import '../../model/announcement.dart';
+import '../../model/exam.dart';
+import '../../model/relative_time.dart';
+import '../../model/subject.dart';
+import '../../util/date_time_extension.dart';
 
 List<Exam> get defaultExams {
   return [

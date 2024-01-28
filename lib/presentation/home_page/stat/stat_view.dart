@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 
 import '../../../model/exam_record.dart';
 import '../../../model/subject.dart';
-import '../../../repository/exam_repository.dart';
+import '../../../repository/exam/exam_repository.dart';
 import '../../../util/const.dart';
 import '../../../util/date_time_extension.dart';
 import '../../../util/injection.dart';

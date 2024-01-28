@@ -8,7 +8,7 @@ import '../../model/exam.dart';
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../model/subject.dart';
-import '../../repository/exam_record_repository.dart';
+import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';

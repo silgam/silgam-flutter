@@ -15,7 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
-import '../../../repository/exam_repository.dart';
+import '../../../repository/exam/exam_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../repository/exam_repository.dart';
+import '../repository/exam/exam_repository.dart';
 
 enum Subject {
   @JsonValue('language')

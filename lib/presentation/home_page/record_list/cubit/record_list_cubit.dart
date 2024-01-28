@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../model/exam_record.dart';
 import '../../../../model/subject.dart';
-import '../../../../repository/exam_record_repository.dart';
+import '../../../../repository/exam_record/exam_record_repository.dart';
 import '../../../../util/analytics_manager.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../record_list_view.dart';

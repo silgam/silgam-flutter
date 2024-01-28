@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
-import '../model/exam_record.dart';
+import '../../model/exam_record.dart';
 
 @lazySingleton
 class ExamRecordRepository {

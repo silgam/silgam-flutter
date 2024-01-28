@@ -11,7 +11,7 @@ import 'package:just_audio/just_audio.dart';
 import '../../../model/exam.dart';
 import '../../../model/lap_time.dart';
 import '../../../model/relative_time.dart';
-import '../../../repository/noise_repository.dart';
+import '../../../repository/noise/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../noise_setting/cubit/noise_setting_cubit.dart';

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:just_audio/just_audio.dart';
 
-import '../../../repository/noise_repository.dart';
+import '../../../repository/noise/noise_repository.dart';
 
 abstract class NoisePlayer {
   void playWhiteNoise();

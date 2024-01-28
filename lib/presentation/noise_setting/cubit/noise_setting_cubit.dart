@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../repository/noise_repository.dart';
+import '../../../repository/noise/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 
