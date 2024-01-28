@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
 import '../../model/subject.dart';
+import '../../util/color_extension.dart';
 
 class SubjectFilterChip extends StatelessWidget {
-  const SubjectFilterChip({
+  SubjectFilterChip({
     super.key,
     required this.subject,
     required this.isSelected,
     required this.onSelected,
-  });
+  }) : _darkColor = Color(subject.firstColor).darken(0.1);
 
   final Subject subject;
   final bool isSelected;
   final Function() onSelected;
+  final Color _darkColor;
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +27,14 @@ class SubjectFilterChip extends StatelessWidget {
           label: Text(
             subject.subjectName,
             style: TextStyle(
-              color: isSelected ? Colors.white : Color(subject.secondColor),
+              color: isSelected ? Colors.white : _darkColor,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             ),
           ),
           onSelected: (_) => onSelected(),
           selected: false,
           side: BorderSide(
-            color: Color(subject.secondColor),
+            color: _darkColor,
             width: 0.4,
           ),
           backgroundColor:
