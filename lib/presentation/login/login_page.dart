@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
                 _isPagePopped = true;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('${appState.me!.displayName}님 반갑습니다!'),
+                  content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
                 ));
                 AnalyticsManager.logEvent(
                   name: '[LoginPage] Login',
