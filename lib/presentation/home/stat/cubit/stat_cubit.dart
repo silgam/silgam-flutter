@@ -165,7 +165,7 @@ class StatCubit extends Cubit<StatState> {
         )
         .toList();
     final Map<Subject, List<ExamRecord>> filteredRecords =
-        records.groupListsBy((record) => record.subject)
+        records.groupListsBy((record) => record.exam.subject)
           ..removeWhere(
             (subject, records) =>
                 records.isEmpty ||

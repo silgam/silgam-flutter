@@ -150,14 +150,14 @@ class RecordListCubit extends Cubit<RecordListState> {
     selectedSubjects ??= state.selectedSubjects;
 
     return originalRecords.where(
-      (exam) {
+      (record) {
         if (searchQuery!.isEmpty) return true;
-        return exam.title.contains(searchQuery) ||
-            exam.feedback.contains(searchQuery);
+        return record.title.contains(searchQuery) ||
+            record.feedback.contains(searchQuery);
       },
-    ).where((exam) {
+    ).where((record) {
       if (selectedSubjects!.isEmpty) return true;
-      return selectedSubjects.contains(exam.subject);
+      return selectedSubjects.contains(record.exam.subject);
     }).toList()
       ..sort((a, b) {
         switch (sortType!) {

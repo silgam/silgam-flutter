@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'exam.dart';
 import 'problem.dart';
 import 'subject.dart';
 
@@ -14,7 +15,11 @@ class ExamRecord with _$ExamRecord {
     required final String id,
     required final String userId,
     required final String title,
-    required final Subject subject,
+    @JsonKey(
+      name: 'subject',
+      toJson: Exam.toJson,
+    )
+    required final Exam exam,
     required final DateTime examStartedTime,
     final int? examDurationMinutes,
     final int? score,

@@ -1,12 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../repository/exam/exam_repository.dart';
 import '../util/date_time_extension.dart';
 import 'announcement.dart';
 import 'subject.dart';
 
 part 'exam.freezed.dart';
 
-@freezed
+@Freezed(toJson: false, fromJson: false)
 class Exam with _$Exam {
   const Exam._();
 
@@ -20,6 +21,11 @@ class Exam with _$Exam {
     required int perfectScore,
     required List<Announcement> announcements,
   }) = _Exam;
+
+  factory Exam.fromJson(Subject subject) =>
+      defaultExams.firstWhere((element) => element.subject == subject);
+
+  static String toJson(Exam exam) => exam.subject.name;
 
   DateTime get examEndTime =>
       examStartTime.add(Duration(minutes: examDuration));

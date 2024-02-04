@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import '../../model/exam.dart';
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
-import '../../model/subject.dart';
+import '../../repository/exam/exam_repository.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
@@ -54,7 +54,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
 
-  Subject _selectedSubject = Subject.language;
+  Exam _selectedExam = defaultExams.first;
   DateTime _examStartedTime = DateTime.now();
   bool _isEditingMode = false;
   bool _isSaving = false;
@@ -96,7 +96,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Edit finished',
       properties: {
-        'subject': _selectedSubject.subjectName,
+        'subject': _selectedExam.subject.name,
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.arguments.inputExam != null,
       },
@@ -112,13 +112,13 @@ class _EditRecordPageState extends State<EditRecordPage> {
         examFinishedTime.difference(_examStartedTime).inMinutes.toString();
 
     final exam = widget.arguments.inputExam;
-    _selectedSubject = exam?.subject ?? _selectedSubject;
+    _selectedExam = exam ?? _selectedExam;
     _feedbackEditingController.text = widget.arguments.prefillFeedback ?? '';
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
     title = recordToEdit.title;
-    _selectedSubject = recordToEdit.subject;
+    _selectedExam = recordToEdit.exam;
     _examStartedTime = recordToEdit.examStartedTime;
     _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
     _gradeEditingController.text = recordToEdit.grade?.toString() ?? '';
@@ -322,12 +322,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton(
                       borderRadius: BorderRadius.circular(6),
-                      value: _selectedSubject,
+                      value: _selectedExam,
                       onChanged: _onSelectedSubjectChanged,
-                      items: Subject.values.map((subject) {
+                      items: defaultExams.map((exam) {
                         return DropdownMenuItem(
-                          value: subject,
-                          child: Text(subject.subjectName),
+                          value: exam,
+                          child: Text(exam.examName),
                         );
                       }).toList(),
                     ),
@@ -685,11 +685,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
-  void _onSelectedSubjectChanged(Subject? newSubject) {
+  void _onSelectedSubjectChanged(Exam? newExam) {
     setState(() {
-      _selectedSubject = newSubject ?? Subject.language;
+      _selectedExam = newExam ?? defaultExams.first;
       _examDurationEditingController.text =
-          _selectedSubject.defaultExamDuration.toString();
+          _selectedExam.examDuration.toString();
     });
   }
 
@@ -802,7 +802,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Cancel button tapped',
       properties: {
-        'subject': _selectedSubject.subjectName,
+        'subject': _selectedExam.subject.name,
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.arguments.inputExam != null,
       },
@@ -836,7 +836,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
       userId: userId,
       title: title,
-      subject: _selectedSubject,
+      exam: _selectedExam,
       examStartedTime: _examStartedTime,
       examDurationMinutes: int.tryParse(_examDurationEditingController.text),
       score: int.tryParse(_scoreEditingController.text),
@@ -879,7 +879,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Exam record saved',
       properties: {
-        'subject': _selectedSubject.subjectName,
+        'subject': _selectedExam.subject.name,
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.arguments.inputExam != null,
       },

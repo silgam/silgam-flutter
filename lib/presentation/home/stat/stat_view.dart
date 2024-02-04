@@ -486,8 +486,8 @@ class _StatViewState extends State<StatView> {
         spots: [
           ...dateToRecordsMap.entries
               .mapIndexed((index, entry) {
-                final record =
-                    entry.value.where((record) => record.subject == subject);
+                final record = entry.value
+                    .where((record) => record.exam.subject == subject);
                 return record.isEmpty
                     ? null
                     : FlSpot(
@@ -536,7 +536,7 @@ class _StatViewState extends State<StatView> {
             final records =
                 dateToRecordsMap.entries.elementAt(touchedSpot.x.toInt()).value;
             final record =
-                records.firstWhere((record) => record.subject == subject);
+                records.firstWhere((record) => record.exam.subject == subject);
             final value = touchedSpot.y.toInt() * examValueType.reverseMultiple;
             return LineTooltipItem(
               record.title,
