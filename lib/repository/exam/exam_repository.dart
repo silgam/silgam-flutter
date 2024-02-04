@@ -155,10 +155,10 @@ List<Exam> get defaultExams {
     ),
     Exam(
       subject: Subject.investigation,
-      examName: '탐구', // 예외
+      examName: Subject.investigation.subjectName,
       examNumber: 4,
       examStartTime: DateTimeBuilder.fromHourMinute(15, 35),
-      examDuration: 62,
+      examDuration: 30,
       numberOfQuestions: 20,
       perfectScore: 50,
       announcements: [
@@ -187,9 +187,25 @@ List<Exam> get defaultExams {
           time: const RelativeTime.afterStart(minutes: 30),
           fileName: '029_4_finish_first.mp3',
         ),
+      ],
+    ),
+    Exam(
+      subject: Subject.investigation2,
+      examName: Subject.investigation2.subjectName,
+      examNumber: 4,
+      examStartTime: DateTimeBuilder.fromHourMinute(16, 7),
+      examDuration: 30,
+      numberOfQuestions: 20,
+      perfectScore: 50,
+      announcements: [
+        Announcement(
+          title: '종료령 (${Subject.investigation.subjectName})',
+          time: const RelativeTime.beforeStart(minutes: 2),
+          fileName: '029_4_finish_first.mp3',
+        ),
         Announcement(
           title: '본령 (${Subject.investigation2.subjectName})',
-          time: const RelativeTime.afterStart(minutes: 32),
+          time: const RelativeTime.afterStart(minutes: 0),
           fileName: '030_4_start_second.mp3',
         ),
         Announcement(
