@@ -201,40 +201,35 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Widget _buildExamTitle(Exam exam) {
-    final children = <Widget>[];
-
-    if (exam.examNumber != null) {
-      children.add(Container(
-        margin: const EdgeInsets.only(bottom: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(1000)),
-          border: Border.all(color: Colors.white),
-        ),
-        child: Text(
-          '${exam.examNumber}교시',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ));
-      children.add(const SizedBox(height: 4));
-    }
-
-    children.add(Text(
-      exam.examName,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-      ),
-    ));
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: children,
+      children: <Widget>[
+        Container(
+          margin: const EdgeInsets.only(bottom: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(1000)),
+            border: Border.all(color: Colors.white),
+          ),
+          child: Text(
+            '${exam.examNumber}교시',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          exam.examName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 

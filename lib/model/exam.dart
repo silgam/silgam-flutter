@@ -13,7 +13,7 @@ class Exam with _$Exam {
   const factory Exam({
     required Subject subject,
     required String examName,
-    int? examNumber,
+    required int examNumber,
     required DateTime examStartTime,
     required int examDuration,
     required int numberOfQuestions,
