@@ -20,10 +20,12 @@ class Exam with _$Exam {
     required int perfectScore,
   }) = _Exam;
 
-  factory Exam.fromJson(Subject subject) =>
-      defaultExams.firstWhere((element) => element.subject == subject);
+  factory Exam.fromJson(String id) =>
+      defaultExams.firstWhere((element) => element.id == id);
 
-  static String toJson(Exam exam) => exam.subject.name;
+  static String toJson(Exam exam) => exam.id;
+
+  String get id => subject.name;
 
   DateTime get examEndTime =>
       examStartTime.add(Duration(minutes: examDuration));
