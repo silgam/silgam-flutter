@@ -15,7 +15,7 @@ class Breakpoint {
   static List<Breakpoint> createBreakpointsFromExam(Exam exam) {
     final breakpoints = <Breakpoint>[];
 
-    for (var announcement in exam.announcements) {
+    for (final announcement in exam.subject.defaultAnnouncements) {
       final DateTime breakpointTime = announcement.time
           .calculateBreakpointTime(exam.examStartTime, exam.examEndTime);
       breakpoints.add(Breakpoint(

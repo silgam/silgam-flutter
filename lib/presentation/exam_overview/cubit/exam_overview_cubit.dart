@@ -41,7 +41,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   }) {
     final List<LapTimeItemGroup> lapTimeItemGroups = [];
     for (final exam in exams) {
-      for (final announcement in exam.announcements) {
+      for (final announcement in exam.subject.defaultAnnouncements) {
         if (announcement.title.contains('예비령')) {
           lapTimeItemGroups.add(LapTimeItemGroup(
             title: announcement.title,
@@ -104,7 +104,8 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   void _updateLapTimeItemGroupsUsingExample() {
     final firstExam = _examDetail.exams.first;
     final exampleLapTimeItemGroups = getExampleLapTimeGroups(
-      startTime: firstExam.announcements.first.time.calculateBreakpointTime(
+      startTime: firstExam.subject.defaultAnnouncements.first.time
+          .calculateBreakpointTime(
         firstExam.examStartTime,
         firstExam.examEndTime,
       ),

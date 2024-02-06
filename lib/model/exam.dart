@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../repository/exam/exam_repository.dart';
 import '../util/date_time_extension.dart';
-import 'announcement.dart';
 import 'subject.dart';
 
 part 'exam.freezed.dart';
@@ -19,7 +18,6 @@ class Exam with _$Exam {
     required int examDuration,
     required int numberOfQuestions,
     required int perfectScore,
-    required List<Announcement> announcements,
   }) = _Exam;
 
   factory Exam.fromJson(Subject subject) =>
