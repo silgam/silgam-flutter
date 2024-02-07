@@ -205,8 +205,9 @@ class _SaveImagePageState extends State<SaveImagePage> {
                   children: [
                     Text(
                       widget.examRecord.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
+                        color: Colors.grey.shade800,
                         fontSize: 13,
                       ),
                     ),
@@ -374,6 +375,7 @@ class _InfoBox extends StatelessWidget {
       style: TextStyle(
         fontSize: longText ? 12 : 14,
         fontWeight: longText ? FontWeight.w500 : FontWeight.w500,
+        color: Colors.grey.shade800,
       ),
       decoration: InputDecoration(
         isCollapsed: true,
