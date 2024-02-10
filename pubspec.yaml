@@ -76,6 +76,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   firebase_database: ^10.2.7
+  visibility_detector: ^0.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
