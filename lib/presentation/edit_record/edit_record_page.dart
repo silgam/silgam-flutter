@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -165,24 +163,19 @@ class _EditRecordPageState extends State<EditRecordPage> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom,
+            child: Container(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.grey.shade100,
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                      top: BorderSide(
-                        color: Colors.grey.shade100,
-                      ),
-                    ),
-                  ),
-                  child: _buildBottomButtons(),
                 ),
               ),
+              child: _buildBottomButtons(),
             ),
           ),
         ],
