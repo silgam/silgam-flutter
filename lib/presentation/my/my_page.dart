@@ -141,7 +141,7 @@ class MyPage extends StatelessWidget {
 
                                 return Container(
                                   margin: const EdgeInsets.symmetric(
-                                    horizontal: 32,
+                                    horizontal: 24,
                                   ),
                                   constraints: const BoxConstraints(
                                     maxWidth: _cardMaxWidth,
