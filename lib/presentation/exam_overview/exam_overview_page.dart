@@ -19,7 +19,6 @@ import '../clock/timeline.dart';
 import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
 import '../edit_record/edit_record_page.dart';
-import '../home/home_page.dart';
 import '../login/login_page.dart';
 import 'cubit/exam_overview_cubit.dart';
 
@@ -762,8 +761,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              HomePage.backgroundColor.withOpacity(0),
-              HomePage.backgroundColor,
+              SilgamApp.backgroundColor.withOpacity(0),
+              SilgamApp.backgroundColor,
             ],
           ),
         ),

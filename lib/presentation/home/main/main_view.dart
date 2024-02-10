@@ -19,6 +19,7 @@ import '../../../repository/exam/exam_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
+import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../app/cubit/iap_cubit.dart';
 import '../../clock/clock_page.dart';
@@ -32,7 +33,6 @@ import '../../offline/offline_guide_page.dart';
 import '../../purchase/purchase_page.dart';
 import '../../timetable/timetable_page.dart';
 import '../cubit/home_cubit.dart';
-import '../home_page.dart';
 import '../record_list/record_list_view.dart';
 import 'cubit/main_cubit.dart';
 
@@ -227,8 +227,8 @@ class _MainViewState extends State<MainView> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        HomePage.backgroundColor,
-                        HomePage.backgroundColor.withAlpha(0)
+                        SilgamApp.backgroundColor,
+                        SilgamApp.backgroundColor.withAlpha(0)
                       ],
                     ),
                   ),

@@ -11,11 +11,11 @@ import '../../model/subject.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
-import '../home/home_page.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../record_detail/record_detail_page.dart';
 import 'continuous_number_field.dart';
@@ -963,9 +963,9 @@ class _HorizontalFadingRow extends StatelessWidget {
                       1,
                     ],
                     colors: [
-                      HomePage.backgroundColor,
-                      HomePage.backgroundColor.withAlpha(0),
-                      HomePage.backgroundColor.withAlpha(0),
+                      SilgamApp.backgroundColor,
+                      SilgamApp.backgroundColor.withAlpha(0),
+                      SilgamApp.backgroundColor.withAlpha(0),
                     ],
                   ),
                 ),
@@ -981,8 +981,8 @@ class _HorizontalFadingRow extends StatelessWidget {
                       1,
                     ],
                     colors: [
-                      HomePage.backgroundColor,
-                      HomePage.backgroundColor.withAlpha(0),
+                      SilgamApp.backgroundColor,
+                      SilgamApp.backgroundColor.withAlpha(0),
                     ],
                   ),
                 ),

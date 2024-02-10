@@ -9,13 +9,13 @@ import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record/edit_record_page.dart';
-import '../home/home_page.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../review_problem_detail/review_problem_detail_page.dart';
 import '../save_image/save_image_page.dart';
@@ -91,8 +91,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            HomePage.backgroundColor,
-                            HomePage.backgroundColor.withAlpha(0),
+                            SilgamApp.backgroundColor,
+                            SilgamApp.backgroundColor.withAlpha(0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
