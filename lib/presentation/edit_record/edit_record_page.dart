@@ -141,12 +141,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          body: SafeArea(
-            child: ProgressOverlay(
-              isProgressing: _isSaving,
-              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-              child: _buildBody(),
-            ),
+          body: ProgressOverlay(
+            isProgressing: _isSaving,
+            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+            child: _buildBody(),
           ),
         ),
       ),
@@ -159,9 +157,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: _buildForm(),
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: _buildForm(),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -169,12 +169,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                  ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white,
                     border: Border(
                       top: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 0.5,
+                        color: Colors.grey.shade100,
                       ),
                     ),
                   ),
