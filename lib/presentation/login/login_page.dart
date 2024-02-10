@@ -99,13 +99,6 @@ class _LoginPageState extends State<LoginPage> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(40),
-            offset: const Offset(0, 3),
-            blurRadius: 10,
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -139,6 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                 assetName: 'assets/google_icon.svg',
                 provider: '구글',
                 color: Colors.white,
+                borderColor: Colors.grey.shade200,
               ),
               const SizedBox(height: 12),
               _LoginButton(
@@ -206,6 +200,7 @@ class _LoginPageState extends State<LoginPage> {
 class _LoginButton extends StatelessWidget {
   final String assetName, provider;
   final Color color;
+  final Color borderColor;
   final bool lightText;
   final GestureTapCallback onTap;
 
@@ -216,7 +211,9 @@ class _LoginButton extends StatelessWidget {
     required this.provider,
     required this.color,
     this.lightText = false,
-  }) : super(key: key);
+    Color? borderColor,
+  })  : borderColor = borderColor ?? color,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -225,13 +222,10 @@ class _LoginButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(4),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(28),
-            offset: const Offset(1, 2),
-            blurRadius: 6,
-          ),
-        ],
+        border: Border.all(
+          color: borderColor,
+          width: 1,
+        ),
       ),
       child: Material(
         type: MaterialType.transparency,

@@ -19,6 +19,7 @@ import '../clock/timeline.dart';
 import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
 import '../edit_record/edit_record_page.dart';
+import '../home/home_page.dart';
 import '../login/login_page.dart';
 import 'cubit/exam_overview_cubit.dart';
 
@@ -702,8 +703,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       color: Color(subject.firstColor),
       borderRadius: BorderRadius.circular(100),
       clipBehavior: Clip.antiAlias,
-      elevation: 10,
-      shadowColor: Colors.black.withAlpha(180),
       child: InkWell(
         onTap: () => _onBottomButtonPressed(subject),
         splashColor: Colors.transparent,
@@ -763,8 +762,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.grey.shade50.withOpacity(0),
-              Colors.grey.shade50,
+              HomePage.backgroundColor.withOpacity(0),
+              HomePage.backgroundColor,
             ],
           ),
         ),

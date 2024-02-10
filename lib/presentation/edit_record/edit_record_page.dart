@@ -15,6 +15,7 @@ import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
+import '../home/home_page.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../record_detail/record_detail_page.dart';
 import 'continuous_number_field.dart';
@@ -962,9 +963,9 @@ class _HorizontalFadingRow extends StatelessWidget {
                       1,
                     ],
                     colors: [
-                      Colors.grey.shade50,
-                      Colors.grey.shade50.withAlpha(0),
-                      Colors.grey.shade50.withAlpha(0),
+                      HomePage.backgroundColor,
+                      HomePage.backgroundColor.withAlpha(0),
+                      HomePage.backgroundColor.withAlpha(0),
                     ],
                   ),
                 ),
@@ -980,8 +981,8 @@ class _HorizontalFadingRow extends StatelessWidget {
                       1,
                     ],
                     colors: [
-                      Colors.grey.shade50,
-                      Colors.grey.shade50.withAlpha(0),
+                      HomePage.backgroundColor,
+                      HomePage.backgroundColor.withAlpha(0),
                     ],
                   ),
                 ),

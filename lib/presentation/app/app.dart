@@ -140,6 +140,7 @@ class SilgamApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: indigoSwatch,
               fontFamily: 'NanumSquare',
+              scaffoldBackgroundColor: HomePage.backgroundColor,
               sliderTheme: SliderTheme.of(context).copyWith(
                 trackHeight: 3,
                 trackShape: const RectangularSliderTrackShape(),

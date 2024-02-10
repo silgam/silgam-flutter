@@ -90,21 +90,14 @@ class _ExamStartCardState extends State<_ExamStartCard>
         Ink(
           width: 100,
           height: 100,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               colors: [
                 Color(0xFF1E2A7C),
                 Color(0xFF283593),
               ],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(16),
-                offset: const Offset(0, 2),
-                blurRadius: 10,
-              ),
-            ],
           ),
           child: InkWell(
             onTap: () => _onExamStartTap(exam),
@@ -209,21 +202,14 @@ class _ExamStartCardState extends State<_ExamStartCard>
         Ink(
           width: 100,
           height: 100,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               colors: [
                 Color(0xFF1E2A7C),
                 Color(0xFF283593),
               ],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(16),
-                offset: const Offset(0, 2),
-                blurRadius: 10,
-              ),
-            ],
           ),
           child: InkWell(
             onTap: _onAllSubjectExamStartTap,

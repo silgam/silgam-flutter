@@ -32,6 +32,7 @@ import '../../offline/offline_guide_page.dart';
 import '../../purchase/purchase_page.dart';
 import '../../timetable/timetable_page.dart';
 import '../cubit/home_cubit.dart';
+import '../home_page.dart';
 import '../record_list/record_list_view.dart';
 import 'cubit/main_cubit.dart';
 
@@ -226,8 +227,8 @@ class _MainViewState extends State<MainView> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.grey.shade50,
-                        Colors.grey.shade50.withAlpha(0)
+                        HomePage.backgroundColor,
+                        HomePage.backgroundColor.withAlpha(0)
                       ],
                     ),
                   ),

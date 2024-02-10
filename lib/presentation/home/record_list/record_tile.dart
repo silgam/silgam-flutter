@@ -22,12 +22,7 @@ class RecordTileState extends State<RecordTile> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(blurRadius: 8, color: Colors.grey.shade200),
-        ],
-      ),
+      color: Colors.white,
       child: Stack(
         children: [
           Positioned.fill(

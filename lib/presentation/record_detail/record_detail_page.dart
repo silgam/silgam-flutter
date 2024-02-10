@@ -15,6 +15,7 @@ import '../common/custom_menu_bar.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record/edit_record_page.dart';
+import '../home/home_page.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../review_problem_detail/review_problem_detail_page.dart';
 import '../save_image/save_image_page.dart';
@@ -90,8 +91,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.grey.shade50,
-                            Colors.grey.shade50.withAlpha(0),
+                            HomePage.backgroundColor,
+                            HomePage.backgroundColor.withAlpha(0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
