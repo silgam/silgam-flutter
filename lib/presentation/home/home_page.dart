@@ -101,6 +101,8 @@ class _HomePageState extends State<HomePage> {
                         previous.isOffline != current.isOffline,
                     builder: (context, appState) {
                       return SafeArea(
+                        left: false,
+                        right: false,
                         bottom: appState.isOffline,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
