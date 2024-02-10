@@ -179,7 +179,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -199,6 +199,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               GridView.extent(
                 maxCrossAxisExtent: 400,
                 childAspectRatio: 1.5,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
@@ -243,7 +245,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           style: TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: 12,
-            color: Colors.grey.shade600,
+            color: Colors.grey.shade700,
           ),
         ),
         Center(
@@ -327,7 +329,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     return Text(
       text,
       style: TextStyle(
-        color: Colors.grey.shade600,
+        color: Colors.grey.shade700,
         fontWeight: FontWeight.w300,
       ),
     );

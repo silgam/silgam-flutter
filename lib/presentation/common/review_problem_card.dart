@@ -27,12 +27,11 @@ class ReviewProblemCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        margin: const EdgeInsets.all(4),
+        margin: const EdgeInsets.all(0),
         elevation: 0,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 0.5, color: Colors.grey.shade300),
-          borderRadius: const BorderRadius.all(Radius.circular(6)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
