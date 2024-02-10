@@ -518,9 +518,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
         _buildSubTitle('복습할 문제'),
         const SizedBox(height: 2),
         GridView.extent(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           maxCrossAxisExtent: 400,
           childAspectRatio: 1.5,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           children: [
@@ -597,11 +599,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return GestureDetector(
       onTap: _onReviewProblemAddCardTapped,
       child: Card(
-        margin: const EdgeInsets.all(4),
+        margin: const EdgeInsets.all(0),
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 0.5, color: Colors.grey.shade300),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
