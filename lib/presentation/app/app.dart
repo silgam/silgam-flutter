@@ -37,6 +37,7 @@ class SilgamApp extends StatelessWidget {
       : _initialRoute = initialRoute,
         super(key: key);
 
+  static const backgroundColor = Color.fromARGB(255, 245, 246, 247);
   final String _initialRoute;
 
   @override
@@ -140,6 +141,7 @@ class SilgamApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: indigoSwatch,
               fontFamily: 'NanumSquare',
+              scaffoldBackgroundColor: SilgamApp.backgroundColor,
               sliderTheme: SliderTheme.of(context).copyWith(
                 trackHeight: 3,
                 trackShape: const RectangularSliderTrackShape(),

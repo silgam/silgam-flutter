@@ -26,7 +26,6 @@ class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   static const routeName = '/';
-  static final backgroundColor = Colors.grey[50];
   static final views = {
     MainView.title: HomePageView(
       viewBuilder: () => const MainView(),
@@ -87,7 +86,7 @@ class _HomePageState extends State<HomePage> {
               return WillPopScope(
                 onWillPop: _cubit.onBackButtonPressed,
                 child: Scaffold(
-                  backgroundColor: HomePage.backgroundColor,
+                  backgroundColor: SilgamApp.backgroundColor,
                   body: SafeArea(
                     child: IndexedStack(
                       alignment: Alignment.center,
@@ -102,13 +101,20 @@ class _HomePageState extends State<HomePage> {
                         previous.isOffline != current.isOffline,
                     builder: (context, appState) {
                       return SafeArea(
+                        left: false,
+                        right: false,
                         bottom: appState.isOffline,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: Colors.grey.shade100,
+                            ),
                             BottomNavigationBar(
-                              elevation: 4,
+                              elevation: 0,
                               backgroundColor: Colors.white,
                               unselectedItemColor: Colors.grey,
                               showUnselectedLabels: false,

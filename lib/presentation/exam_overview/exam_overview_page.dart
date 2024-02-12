@@ -696,8 +696,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       color: Color(exam.color),
       borderRadius: BorderRadius.circular(100),
       clipBehavior: Clip.antiAlias,
-      elevation: 10,
-      shadowColor: Colors.black.withAlpha(180),
       child: InkWell(
         onTap: () => _onBottomButtonPressed(exam),
         splashColor: Colors.transparent,
@@ -751,8 +749,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.grey.shade50.withOpacity(0),
-              Colors.grey.shade50,
+              SilgamApp.backgroundColor.withOpacity(0),
+              SilgamApp.backgroundColor,
             ],
           ),
         ),

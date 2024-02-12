@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../model/problem.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 
 class EditReviewProblemDialog extends StatefulWidget {
@@ -53,7 +54,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       contentPadding: EdgeInsets.zero,
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: SilgamApp.backgroundColor,
       content: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(

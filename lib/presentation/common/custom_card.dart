@@ -30,13 +30,6 @@ class CustomCard extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(isThin ? 100 : cardCornerRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(20),
-            offset: const Offset(0, 2),
-            blurRadius: 10,
-          ),
-        ],
       ),
       child: Material(
         color: backgroundColor,

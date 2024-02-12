@@ -2,7 +2,7 @@ name: silgam
 description: Silgam
 
 publish_to: 'none'
-version: 1.4.5+83
+version: 1.5.1+85
 
 environment:
   sdk: ^3.0.0
@@ -76,6 +76,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   firebase_database: ^10.2.7
+  visibility_detector: ^0.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

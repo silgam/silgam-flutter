@@ -9,6 +9,7 @@ import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
 import '../common/custom_menu_bar.dart';
@@ -90,8 +91,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.grey.shade50,
-                            Colors.grey.shade50.withAlpha(0),
+                            SilgamApp.backgroundColor,
+                            SilgamApp.backgroundColor.withAlpha(0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -178,7 +179,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -198,6 +199,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               GridView.extent(
                 maxCrossAxisExtent: 400,
                 childAspectRatio: 1.5,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
@@ -242,7 +245,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           style: TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: 12,
-            color: Colors.grey.shade600,
+            color: Colors.grey.shade700,
           ),
         ),
         Center(
@@ -326,7 +329,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     return Text(
       text,
       style: TextStyle(
-        color: Colors.grey.shade600,
+        color: Colors.grey.shade700,
         fontWeight: FontWeight.w300,
       ),
     );

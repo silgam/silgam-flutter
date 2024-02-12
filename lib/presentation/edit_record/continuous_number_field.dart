@@ -34,7 +34,7 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
       onKeyEvent: _onKeyEvent,
       child: TextField(
         controller: _editingController,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        keyboardType: const TextInputType.numberWithOptions(signed: true),
         textInputAction: TextInputAction.next,
         onEditingComplete: () {
           // Required, prevent hiding keyboard

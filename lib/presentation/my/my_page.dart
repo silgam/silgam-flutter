@@ -47,21 +47,7 @@ class MyPage extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     children: [
                       Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: HSLColor.fromColor(
-                                      Theme.of(context).primaryColor)
-                                  .withLightness(0.3)
-                                  .toColor(),
-                            ),
-                            BoxShadow(
-                              color: Theme.of(context).primaryColor,
-                              blurRadius: 10,
-                              spreadRadius: -5,
-                            ),
-                          ],
-                        ),
+                        color: Theme.of(context).primaryColor,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 32,
                           vertical: 40,
@@ -155,7 +141,7 @@ class MyPage extends StatelessWidget {
 
                                 return Container(
                                   margin: const EdgeInsets.symmetric(
-                                    horizontal: 32,
+                                    horizontal: 24,
                                   ),
                                   constraints: const BoxConstraints(
                                     maxWidth: _cardMaxWidth,
@@ -216,13 +202,6 @@ class MyPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 5,
-          ),
-        ],
       ),
       child: IntrinsicHeight(
         child: Row(

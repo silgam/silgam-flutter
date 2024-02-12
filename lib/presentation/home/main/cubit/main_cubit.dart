@@ -7,6 +7,7 @@ import '../../../../model/ads.dart';
 import '../../../../model/dday.dart';
 import '../../../../repository/ads/ads_repository.dart';
 import '../../../../repository/dday/dday_repository.dart';
+import '../../../../util/analytics_manager.dart';
 import '../../../../util/api_failure.dart';
 import '../../../../util/cache_manager.dart';
 import '../../../../util/dday_util.dart';
@@ -49,6 +50,7 @@ class MainCubit extends Cubit<MainState> {
     await _cacheManager.setAds(ads);
     emit(state.copyWith(
       ads: _getAdsToShow(ads ?? []),
+      adsShownLoggedMap: {},
     ));
   }
 
@@ -80,5 +82,23 @@ class MainCubit extends Cubit<MainState> {
 
   List<DDayItem> getDDayItemsToShow(List<DDay> dDays) {
     return DDayUtil(dDays).getItemsToShow(DateTime.now());
+  }
+
+  void onAdsShown(int index, Ads ads) {
+    if (state.adsShownLoggedMap[index] == true) return;
+    emit(state.copyWith(
+      adsShownLoggedMap: {...state.adsShownLoggedMap, index: true},
+    ));
+
+    AnalyticsManager.logEvent(
+      name: '[HomePage-main] Silgam ads shown',
+      properties: {
+        'title': ads.title,
+        'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
+        'actionData': ads.actions.map((e) => e.data).join(', '),
+        'priority': ads.priority,
+        'order': index + 1,
+      },
+    );
   }
 }

@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
@@ -19,6 +20,7 @@ import '../../../repository/exam/exam_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
+import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../app/cubit/iap_cubit.dart';
 import '../../clock/clock_page.dart';
@@ -226,8 +228,8 @@ class _MainViewState extends State<MainView> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.grey.shade50,
-                        Colors.grey.shade50.withAlpha(0)
+                        SilgamApp.backgroundColor,
+                        SilgamApp.backgroundColor.withAlpha(0)
                       ],
                     ),
                   ),

@@ -14,6 +14,13 @@ class AdsCard extends StatefulWidget {
 
 class _AdsCardState extends State<AdsCard> {
   int _currentPageIndex = 0;
+  final MainCubit _mainCubit = getIt.get();
+
+  @override
+  void initState() {
+    super.initState();
+    _onPageChanged(0, null);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +38,22 @@ class _AdsCardState extends State<AdsCard> {
               onPageChanged: _onPageChanged,
             ),
             items: [
-              for (Ads ads in widget.ads)
-                GestureDetector(
-                  onTap: () => _onAdsTap(ads),
-                  child: CachedNetworkImage(
-                    imageUrl: ads.imagePath,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => Center(
-                      child: Icon(
-                        Icons.image,
-                        size: 32,
-                        color: Colors.grey.shade300,
+              for (final (index, ads) in widget.ads.indexed)
+                VisibilityDetector(
+                  key: Key('$index ${ads.imagePath}'),
+                  onVisibilityChanged: (info) =>
+                      _onVisibilityChanged(index, info),
+                  child: GestureDetector(
+                    onTap: () => _onAdsTap(ads, index),
+                    child: CachedNetworkImage(
+                      imageUrl: ads.imagePath,
+                      fit: BoxFit.cover,
+                      errorWidget: (_, __, ___) => Center(
+                        child: Icon(
+                          Icons.image,
+                          size: 32,
+                          color: Colors.grey.shade300,
+                        ),
                       ),
                     ),
                   ),
@@ -68,11 +80,23 @@ class _AdsCardState extends State<AdsCard> {
   }
 
   void _onPageChanged(int index, _) {
+    VisibilityDetectorController.instance.notifyNow();
     _currentPageIndex = index;
     setState(() {});
   }
 
-  void _onAdsTap(Ads ads) {
+  void _onAdsTap(Ads ads, int index) {
+    AnalyticsManager.logEvent(
+      name: '[HomePage-main] Silgam ads tapped',
+      properties: {
+        'title': ads.title,
+        'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
+        'actionData': ads.actions.map((e) => e.data).join(', '),
+        'priority': ads.priority,
+        'order': index + 1,
+      },
+    );
+
     for (final action in ads.actions) {
       switch (action.intent) {
         case AdsIntent.openUrl:
@@ -104,15 +128,12 @@ class _AdsCardState extends State<AdsCard> {
           break;
       }
     }
+  }
 
-    AnalyticsManager.logEvent(
-      name: '[HomePage-main] Silgam ads tapped',
-      properties: {
-        'title': ads.title,
-        'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
-        'actionData': ads.actions.map((e) => e.data).join(', '),
-        'priority': ads.priority,
-      },
-    );
+  void _onVisibilityChanged(int index, VisibilityInfo info) {
+    if (info.visibleFraction > 0.5) {
+      Ads ads = widget.ads[index];
+      _mainCubit.onAdsShown(index, ads);
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -84,6 +85,7 @@ class AppCubit extends Cubit<AppState> {
     updateProductBenefit();
 
     await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
   }
 
   void updateProductBenefit() {

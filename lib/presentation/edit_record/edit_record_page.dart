@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +9,7 @@ import '../../repository/exam/exam_repository.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
@@ -140,12 +139,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          body: SafeArea(
-            child: ProgressOverlay(
-              isProgressing: _isSaving,
-              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-              child: _buildBody(),
-            ),
+          body: ProgressOverlay(
+            isProgressing: _isSaving,
+            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+            child: _buildBody(),
           ),
         ),
       ),
@@ -158,28 +155,27 @@ class _EditRecordPageState extends State<EditRecordPage> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: _buildForm(),
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: _buildForm(),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.8),
-                    border: Border(
-                      top: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 0.5,
-                      ),
-                    ),
+            child: Container(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.grey.shade100,
                   ),
-                  child: _buildBottomButtons(),
                 ),
               ),
+              child: _buildBottomButtons(),
             ),
           ),
         ],
@@ -522,9 +518,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
         _buildSubTitle('복습할 문제'),
         const SizedBox(height: 2),
         GridView.extent(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           maxCrossAxisExtent: 400,
           childAspectRatio: 1.5,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           children: [
@@ -601,11 +599,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return GestureDetector(
       onTap: _onReviewProblemAddCardTapped,
       child: Card(
-        margin: const EdgeInsets.all(4),
+        margin: const EdgeInsets.all(0),
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 0.5, color: Colors.grey.shade300),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -962,9 +959,9 @@ class _HorizontalFadingRow extends StatelessWidget {
                       1,
                     ],
                     colors: [
-                      Colors.grey.shade50,
-                      Colors.grey.shade50.withAlpha(0),
-                      Colors.grey.shade50.withAlpha(0),
+                      SilgamApp.backgroundColor,
+                      SilgamApp.backgroundColor.withAlpha(0),
+                      SilgamApp.backgroundColor.withAlpha(0),
                     ],
                   ),
                 ),
@@ -980,8 +977,8 @@ class _HorizontalFadingRow extends StatelessWidget {
                       1,
                     ],
                     colors: [
-                      Colors.grey.shade50,
-                      Colors.grey.shade50.withAlpha(0),
+                      SilgamApp.backgroundColor,
+                      SilgamApp.backgroundColor.withAlpha(0),
                     ],
                   ),
                 ),
