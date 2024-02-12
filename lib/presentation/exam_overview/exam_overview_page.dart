@@ -56,9 +56,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   );
 
   final Set<Exam> _recordedExams = {};
+  List<Exam> get _exams => widget.examDetail.exams;
 
   void _onCloseButtonPressed() {
-    if (_recordedExams.length == widget.examDetail.exams.length) {
+    if (_recordedExams.length == _exams.length) {
       Navigator.pop(context);
       return;
     }
@@ -335,7 +336,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: widget.examDetail.exams
+            children: _exams
                 .map(
                   (exam) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -573,7 +574,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildLapTimeTimeline() {
     final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
     final startTime = lapTimeItemGroups.first.startTime;
-    final endTime = widget.examDetail.exams.last.examEndTime;
+    final endTime = _exams.last.examEndTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;
 
     final markerPositions = lapTimeItemGroups
@@ -757,7 +758,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: widget.examDetail.exams
+          children: _exams
               .map((exam) => Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: _buildBottomButton(exam)))
