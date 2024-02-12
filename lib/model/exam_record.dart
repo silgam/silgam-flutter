@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'exam.dart';
 import 'problem.dart';
-import 'subject.dart';
 
 part 'exam_record.freezed.dart';
 part 'exam_record.g.dart';

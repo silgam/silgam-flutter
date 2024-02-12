@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../model/exam.dart';
 import '../../../../model/exam_record.dart';
-import '../../../../model/subject.dart';
 import '../../../../util/analytics_manager.dart';
 import '../../../../util/date_time_extension.dart';
 import '../../../../util/injection.dart';
@@ -70,34 +70,35 @@ class StatCubit extends Cubit<StatState> {
     ));
   }
 
-  void onSubjectFilterButtonTapped(Subject subject) {
-    final selectedSubjects = [...state.selectedSubjects];
-    if (selectedSubjects.contains(subject)) {
-      selectedSubjects.remove(subject);
+  void onExamFilterButtonTapped(Exam exam) {
+    final selectedExams = [...state.selectedExams];
+    if (selectedExams.contains(exam)) {
+      selectedExams.remove(exam);
     } else {
-      selectedSubjects.add(subject);
+      selectedExams.add(exam);
     }
     emit(state.copyWith(
-      selectedSubjects: selectedSubjects,
-      records: _getFilteredRecords(selectedSubjects: selectedSubjects),
+      selectedExams: selectedExams,
+      records: _getFilteredRecords(selectedExams: selectedExams),
     ));
 
     AnalyticsManager.logEvent(
-      name: '[HomePage-stat] Subject filter button tapped',
+      name: '[HomePage-stat] Exam filter button tapped',
       properties: {
-        'subject': subject.subjectName,
-        'selected': state.selectedSubjects.contains(subject),
+        'subject': exam.subject.subjectName,
+        'examId': exam.id,
+        'selected': state.selectedExams.contains(exam),
       },
     );
   }
 
   void onFilterResetButtonTapped() {
     emit(state.copyWith(
-      selectedSubjects: [],
+      selectedExams: [],
       isDateRangeSet: false,
       dateRange: state.defaultDateRange,
       records: _getFilteredRecords(
-        selectedSubjects: [],
+        selectedExams: [],
         dateRange: state.defaultDateRange,
       ),
     ));
@@ -138,15 +139,15 @@ class StatCubit extends Cubit<StatState> {
     );
   }
 
-  Map<Subject, List<ExamRecord>> _getFilteredRecords({
+  Map<Exam, List<ExamRecord>> _getFilteredRecords({
     List<ExamRecord>? originalRecords,
     String? searchQuery,
-    List<Subject>? selectedSubjects,
+    List<Exam>? selectedExams,
     DateTimeRange? dateRange,
   }) {
     originalRecords ??= state.originalRecords;
     searchQuery ??= state.searchQuery;
-    selectedSubjects ??= state.selectedSubjects;
+    selectedExams ??= state.selectedExams;
     dateRange ??= state.dateRange;
 
     var records = [...originalRecords];
@@ -164,13 +165,12 @@ class StatCubit extends Cubit<StatState> {
               ),
         )
         .toList();
-    final Map<Subject, List<ExamRecord>> filteredRecords =
-        records.groupListsBy((record) => record.exam.subject)
+    final Map<Exam, List<ExamRecord>> filteredRecords =
+        records.groupListsBy((record) => record.exam)
           ..removeWhere(
-            (subject, records) =>
+            (exam, records) =>
                 records.isEmpty ||
-                (selectedSubjects!.isNotEmpty &&
-                    !selectedSubjects.contains(subject)),
+                (selectedExams!.isNotEmpty && !selectedExams.contains(exam)),
           );
     return filteredRecords;
   }

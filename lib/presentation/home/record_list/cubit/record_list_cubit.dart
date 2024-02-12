@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../model/exam.dart';
 import '../../../../model/exam_record.dart';
-import '../../../../model/subject.dart';
 import '../../../../repository/exam_record/exam_record_repository.dart';
 import '../../../../util/analytics_manager.dart';
 import '../../../app/cubit/app_cubit.dart';
@@ -106,33 +106,36 @@ class RecordListCubit extends Cubit<RecordListState> {
     );
   }
 
-  void onSubjectFilterButtonTapped(Subject subject) {
-    final selectedSubjects = [...state.selectedSubjects];
-    if (selectedSubjects.contains(subject)) {
-      selectedSubjects.remove(subject);
+  void onExamFilterButtonTapped(Exam exam) {
+    final selectedExams = [...state.selectedExams];
+    if (selectedExams.contains(exam)) {
+      selectedExams.remove(exam);
     } else {
-      selectedSubjects.add(subject);
+      selectedExams.add(exam);
     }
-    final records =
-        _getFilteredAndSortedRecords(selectedSubjects: selectedSubjects);
-    emit(state.copyWith(selectedSubjects: selectedSubjects, records: records));
+    final records = _getFilteredAndSortedRecords(selectedExams: selectedExams);
+    emit(state.copyWith(selectedExams: selectedExams, records: records));
 
     AnalyticsManager.logEvent(
-      name: '[HomePage-list] Subject filter button tapped',
+      name: '[HomePage-list] Exam filter button tapped',
       properties: {
-        'subject': subject.subjectName,
-        'selected': state.selectedSubjects.contains(subject),
+        'subject': exam.subject.subjectName,
+        'examId': exam.id,
+        'selected': state.selectedExams.contains(exam),
       },
     );
   }
 
   void onFilterResetButtonTapped() {
     final records = _getFilteredAndSortedRecords(
-        sortType: RecordSortType.dateDesc, selectedSubjects: []);
+      sortType: RecordSortType.dateDesc,
+      selectedExams: [],
+    );
     emit(state.copyWith(
-        sortType: RecordSortType.dateDesc,
-        selectedSubjects: [],
-        records: records));
+      sortType: RecordSortType.dateDesc,
+      selectedExams: [],
+      records: records,
+    ));
 
     AnalyticsManager.logEvent(
         name: '[HomePage-list] Filter reset button tapped');
@@ -142,12 +145,12 @@ class RecordListCubit extends Cubit<RecordListState> {
     List<ExamRecord>? originalRecords,
     String? searchQuery,
     RecordSortType? sortType,
-    List<Subject>? selectedSubjects,
+    List<Exam>? selectedExams,
   }) {
     originalRecords ??= state.originalRecords;
     searchQuery ??= state.searchQuery;
     sortType ??= state.sortType;
-    selectedSubjects ??= state.selectedSubjects;
+    selectedExams ??= state.selectedExams;
 
     return originalRecords.where(
       (record) {
@@ -156,8 +159,8 @@ class RecordListCubit extends Cubit<RecordListState> {
             record.feedback.contains(searchQuery);
       },
     ).where((record) {
-      if (selectedSubjects!.isEmpty) return true;
-      return selectedSubjects.contains(record.exam.subject);
+      if (selectedExams!.isEmpty) return true;
+      return selectedExams.contains(record.exam);
     }).toList()
       ..sort((a, b) {
         switch (sortType!) {
