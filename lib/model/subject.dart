@@ -244,15 +244,8 @@ enum Subject {
 
   int get defaultExamDuration {
     final defaultExam = defaultExams.firstWhere((exam) {
-      if (this == Subject.investigation2) {
-        return exam.subject == Subject.investigation;
-      }
       return exam.subject == this;
     });
-    if (this == Subject.investigation || this == Subject.investigation2) {
-      return 30;
-    } else {
-      return defaultExam.examDuration;
-    }
+    return defaultExam.examDuration;
   }
 }

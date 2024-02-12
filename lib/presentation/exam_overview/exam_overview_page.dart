@@ -7,9 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
 import '../../model/lap_time.dart';
-import '../../model/subject.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
@@ -55,13 +55,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.2,
   );
 
-  final Set<Subject> _recordedSubjects = {};
+  final Set<Exam> _recordedExams = {};
 
   void _onCloseButtonPressed() {
-    final subject = widget.examDetail.exams.first.subject;
-    if ((subject == Subject.investigation && _recordedSubjects.length == 2) ||
-        (subject != Subject.investigation &&
-            _recordedSubjects.contains(subject))) {
+    if (_recordedExams.length == widget.examDetail.exams.length) {
       Navigator.pop(context);
       return;
     }
@@ -150,7 +147,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  void _onBottomButtonPressed(Subject subject) {
+  void _onBottomButtonPressed(Exam exam) {
     final isSignedIn = _appCubit.state.isSignedIn;
     final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
     final isUsingExample =
@@ -158,7 +155,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
     if (isSignedIn) {
       final arguments = EditRecordPageArguments(
-        inputExam: widget.examDetail.exams.first.copyWith(subject: subject),
+        inputExam: exam,
         examStartedTime: widget.examDetail.examStartedTime,
         examFinishedTime: widget.examDetail.examFinishedTime,
         prefillFeedback: (lapTimeItemGroups.isItemsEmpty || isUsingExample)
@@ -170,7 +167,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         EditRecordPage.routeName,
         arguments: arguments,
       );
-      _recordedSubjects.add(subject);
+      _recordedExams.add(exam);
     } else {
       Navigator.pushNamed(
         context,
@@ -327,10 +324,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildSubjectCard() {
-    var subjects = widget.examDetail.exams.map((e) => e.subject).toList();
-    if (subjects.contains(Subject.investigation)) {
-      subjects = [Subject.investigation, Subject.investigation2];
-    }
     return CustomCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
@@ -342,14 +335,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: subjects
+            children: widget.examDetail.exams
                 .map(
-                  (subject) => Padding(
+                  (exam) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      subject.subjectName,
+                      exam.examName,
                       style: _contentTextStyle.copyWith(
-                        color: Color(subject.firstColor),
+                        color: Color(exam.subject.firstColor),
                       ),
                     ),
                   ),
@@ -697,15 +690,15 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildBottomButton(Subject subject) {
+  Widget _buildBottomButton(Exam exam) {
     return Material(
-      color: Color(subject.firstColor),
+      color: Color(exam.subject.firstColor),
       borderRadius: BorderRadius.circular(100),
       clipBehavior: Clip.antiAlias,
       elevation: 10,
       shadowColor: Colors.black.withAlpha(180),
       child: InkWell(
-        onTap: () => _onBottomButtonPressed(subject),
+        onTap: () => _onBottomButtonPressed(exam),
         splashColor: Colors.transparent,
         highlightColor: Colors.grey.withAlpha(60),
         child: Container(
@@ -718,7 +711,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             alignment: Alignment.center,
             children: [
               Text(
-                '${subject.subjectName} 기록하기',
+                '${exam.examName} 기록하기',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontWeight: FontWeight.w900,
@@ -744,12 +737,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildBottomButtons({
     required double horizontalPadding,
   }) {
-    final exam = widget.examDetail.exams.first;
-    var subjects = [exam.subject];
-    if (subjects.contains(Subject.investigation)) {
-      subjects = [Subject.investigation, Subject.investigation2];
-    }
-
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -770,10 +757,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: subjects
-              .map((subject) => Padding(
+          children: widget.examDetail.exams
+              .map((exam) => Padding(
                   padding: const EdgeInsets.only(top: 4),
-                  child: _buildBottomButton(subject)))
+                  child: _buildBottomButton(exam)))
               .toList(),
         ),
       ),
