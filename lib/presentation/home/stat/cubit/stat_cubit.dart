@@ -26,7 +26,7 @@ class StatCubit extends Cubit<StatState> {
 
   void onOriginalRecordsUpdated() {
     var recordsToShow = _appCubit.state.productBenefit.isStatisticAvailable
-        ? _recordListCubit.state.records
+        ? _recordListCubit.state.originalRecords
         : exampleRecords;
     recordsToShow = recordsToShow.sortedBy((record) => record.examStartedTime);
     final dateRange = DateTimeRange(
