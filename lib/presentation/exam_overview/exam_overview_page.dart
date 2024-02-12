@@ -342,7 +342,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     child: Text(
                       exam.examName,
                       style: _contentTextStyle.copyWith(
-                        color: Color(exam.subject.firstColor),
+                        color: Color(exam.color),
                       ),
                     ),
                   ),
@@ -692,7 +692,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   Widget _buildBottomButton(Exam exam) {
     return Material(
-      color: Color(exam.subject.firstColor),
+      color: Color(exam.color),
       borderRadius: BorderRadius.circular(100),
       clipBehavior: Clip.antiAlias,
       elevation: 10,

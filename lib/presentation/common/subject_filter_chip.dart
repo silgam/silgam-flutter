@@ -9,7 +9,7 @@ class ExamFilterChip extends StatelessWidget {
     required this.exam,
     required this.isSelected,
     required this.onSelected,
-  }) : _darkColor = Color(exam.subject.firstColor).darken(0.1);
+  }) : _darkColor = Color(exam.color).darken(0.1);
 
   final Exam exam;
   final bool isSelected;
@@ -37,8 +37,7 @@ class ExamFilterChip extends StatelessWidget {
             color: _darkColor,
             width: 0.4,
           ),
-          backgroundColor:
-              Color(exam.subject.firstColor).withAlpha(isSelected ? 255 : 10),
+          backgroundColor: Color(exam.color).withAlpha(isSelected ? 255 : 10),
           pressElevation: 0,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),

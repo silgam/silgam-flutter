@@ -12,6 +12,7 @@ List<Exam> get defaultExams {
       examDuration: 80,
       numberOfQuestions: 45,
       perfectScore: 100,
+      color: 0xFF55B99E,
     ),
     Exam(
       subject: Subject.math,
@@ -21,6 +22,7 @@ List<Exam> get defaultExams {
       examDuration: 100,
       numberOfQuestions: 30,
       perfectScore: 100,
+      color: 0xFFE05FA9,
     ),
     Exam(
       subject: Subject.english,
@@ -30,6 +32,7 @@ List<Exam> get defaultExams {
       examDuration: 70,
       numberOfQuestions: 45,
       perfectScore: 100,
+      color: 0xFF0098C3,
     ),
     Exam(
       subject: Subject.history,
@@ -39,6 +42,7 @@ List<Exam> get defaultExams {
       examDuration: 30,
       numberOfQuestions: 20,
       perfectScore: 50,
+      color: 0xFF714925,
     ),
     Exam(
       subject: Subject.investigation,
@@ -48,6 +52,7 @@ List<Exam> get defaultExams {
       examDuration: 30,
       numberOfQuestions: 20,
       perfectScore: 50,
+      color: 0xFF7B4DB9,
     ),
     Exam(
       subject: Subject.investigation2,
@@ -57,6 +62,7 @@ List<Exam> get defaultExams {
       examDuration: 30,
       numberOfQuestions: 20,
       perfectScore: 50,
+      color: 0xFF3331A3,
     ),
     Exam(
       subject: Subject.secondLanguage,
@@ -66,6 +72,7 @@ List<Exam> get defaultExams {
       examDuration: 40,
       numberOfQuestions: 30,
       perfectScore: 50,
+      color: 0xFFF39328,
     ),
   ];
 }

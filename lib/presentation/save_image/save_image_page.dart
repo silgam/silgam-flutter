@@ -214,7 +214,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
                     Text(
                       widget.examRecord.exam.examName,
                       style: TextStyle(
-                        color: Color(widget.examRecord.exam.subject.firstColor),
+                        color: Color(widget.examRecord.exam.color),
                         fontSize: 9,
                       ),
                     ),

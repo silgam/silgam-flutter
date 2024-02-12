@@ -7,7 +7,6 @@ import 'relative_time.dart';
 enum Subject {
   @JsonValue('language')
   language(
-    firstColor: 0xFF55B99E,
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -38,7 +37,6 @@ enum Subject {
   ),
   @JsonValue('math')
   math(
-    firstColor: 0xFFE05FA9,
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -69,7 +67,6 @@ enum Subject {
   ),
   @JsonValue('english')
   english(
-    firstColor: 0xFF0098C3,
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -103,7 +100,6 @@ enum Subject {
   ),
   @JsonValue('history')
   history(
-    firstColor: 0xFF714925,
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -134,7 +130,6 @@ enum Subject {
   ),
   @JsonValue('investigation')
   investigation(
-    firstColor: 0xFF7B4DB9,
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -165,7 +160,6 @@ enum Subject {
   ),
   @JsonValue('investigation2')
   investigation2(
-    firstColor: 0xFF3331A3,
     defaultAnnouncements: [
       Announcement(
         title: '종료령',
@@ -191,7 +185,6 @@ enum Subject {
   ),
   @JsonValue('secondLanguage')
   secondLanguage(
-    firstColor: 0xFFF39328,
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -222,7 +215,6 @@ enum Subject {
   );
 
   const Subject({
-    required this.firstColor,
     required this.defaultAnnouncements,
   });
 
@@ -237,7 +229,6 @@ enum Subject {
   };
   static Map<Subject, String> subjectNameMap = defaultSubjectNameMap;
 
-  final int firstColor;
   final List<Announcement> defaultAnnouncements;
 
   String get subjectName => subjectNameMap[this] ?? '';

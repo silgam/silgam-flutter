@@ -263,7 +263,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               Text(
                 _record.exam.examName,
                 style: TextStyle(
-                  color: Color(_record.exam.subject.firstColor),
+                  color: Color(_record.exam.color),
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
                 ),

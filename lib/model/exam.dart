@@ -18,6 +18,7 @@ class Exam with _$Exam {
     required int examDuration,
     required int numberOfQuestions,
     required int perfectScore,
+    required int color,
   }) = _Exam;
 
   factory Exam.fromJson(String id) =>

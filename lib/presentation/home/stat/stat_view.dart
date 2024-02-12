@@ -447,7 +447,7 @@ class _StatViewState extends State<StatView> {
 
     final lineBarsData = recordsMap.entries.map((entry) {
       final exam = entry.key;
-      final color = Color(exam.subject.firstColor);
+      final color = Color(exam.color);
       return LineChartBarData(
         color: color,
         barWidth: 4,
@@ -542,7 +542,7 @@ class _StatViewState extends State<StatView> {
                 TextSpan(
                   text: '  ${exam.subject.subjectName}',
                   style: TextStyle(
-                    color: Color(exam.subject.firstColor),
+                    color: Color(exam.color),
                     fontWeight: FontWeight.normal,
                     fontSize: 12,
                     height: 1,
@@ -702,7 +702,7 @@ class _StatViewState extends State<StatView> {
                 final ratio = value / totalValue;
                 final isTouched = touchedIndex == index;
                 return PieChartSectionData(
-                  color: Color(exam.subject.firstColor),
+                  color: Color(exam.color),
                   value: value.toDouble() * (isTouched ? 3 : 1),
                   showTitle: false,
                   radius: (constraints.maxWidth / 2) * (isTouched ? 1.05 : 1),
