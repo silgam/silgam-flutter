@@ -212,7 +212,7 @@ class _ClockPageState extends State<ClockPage> {
             border: Border.all(color: Colors.white),
           ),
           child: Text(
-            '${exam.examNumber}교시',
+            '${exam.number}교시',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -222,7 +222,7 @@ class _ClockPageState extends State<ClockPage> {
         ),
         const SizedBox(height: 4),
         Text(
-          exam.examName,
+          exam.name,
           style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
@@ -537,7 +537,7 @@ class _ClockPageState extends State<ClockPage> {
       name: '[ClockPage] Finish exam',
       properties: {
         'exam_name': widget.exams.toExamNamesString(),
-        'exam_names': widget.exams.map((e) => e.examName).toList(),
+        'exam_names': widget.exams.map((e) => e.name).toList(),
         'subject_names': widget.exams.map((e) => e.subject.name).toList(),
         'is_exam_finished': _cubit.state.isFinished,
       },

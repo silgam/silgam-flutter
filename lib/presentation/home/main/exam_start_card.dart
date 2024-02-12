@@ -47,7 +47,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
                     // const Tab(text: '전과목'),
-                    for (Exam exam in defaultExams) Tab(text: exam.examName),
+                    for (Exam exam in defaultExams) Tab(text: exam.name),
                   ],
                 ),
               ],
@@ -74,8 +74,8 @@ class _ExamStartCardState extends State<_ExamStartCard>
               _buildInfo(
                 iconData: Icons.schedule,
                 title: '시험 시간',
-                content: exam.getExamTimeString(),
-                badgeText: '${exam.examDuration}분',
+                content: exam.getPeriodString(),
+                badgeText: '${exam.durationMinutes}분',
               ),
               const SizedBox(height: 16),
               _buildInfo(

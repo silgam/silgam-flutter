@@ -323,7 +323,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                       items: defaultExams.map((exam) {
                         return DropdownMenuItem(
                           value: exam,
-                          child: Text(exam.examName),
+                          child: Text(exam.name),
                         );
                       }).toList(),
                     ),
@@ -686,7 +686,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     setState(() {
       _selectedExam = newExam ?? defaultExams.first;
       _examDurationEditingController.text =
-          _selectedExam.examDuration.toString();
+          _selectedExam.durationMinutes.toString();
     });
   }
 

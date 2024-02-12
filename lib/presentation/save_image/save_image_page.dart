@@ -213,7 +213,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      widget.examRecord.exam.examName,
+                      widget.examRecord.exam.name,
                       style: TextStyle(
                         color: Color(widget.examRecord.exam.color),
                         fontSize: 9,

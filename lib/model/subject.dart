@@ -237,6 +237,6 @@ enum Subject {
     final defaultExam = defaultExams.firstWhere((exam) {
       return exam.subject == this;
     });
-    return defaultExam.examDuration;
+    return defaultExam.durationMinutes;
   }
 }

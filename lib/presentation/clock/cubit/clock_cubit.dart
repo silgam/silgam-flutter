@@ -90,7 +90,7 @@ class ClockCubit extends Cubit<ClockState> {
       name: '[ClockPage] Start exam',
       properties: {
         'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
+        'exam_names': state.exams.map((e) => e.name).toList(),
         'subject_names': state.exams.map((e) => e.subject.name).toList(),
       },
     );
@@ -111,7 +111,7 @@ class ClockCubit extends Cubit<ClockState> {
       name: '[ClockPage] Substract 30 seconds',
       properties: {
         'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
+        'exam_names': state.exams.map((e) => e.name).toList(),
         'subject_names': state.exams.map((e) => e.subject.name).toList(),
         'current_time': state.currentTime.toString(),
       },
@@ -127,7 +127,7 @@ class ClockCubit extends Cubit<ClockState> {
       name: '[ClockPage] Add 30 seconds',
       properties: {
         'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
+        'exam_names': state.exams.map((e) => e.name).toList(),
         'subject_names': state.exams.map((e) => e.subject.name).toList(),
         'current_time': state.currentTime.toString(),
       },
@@ -152,7 +152,7 @@ class ClockCubit extends Cubit<ClockState> {
       name: '[ClockPage] Play/Pause Button Pressed',
       properties: {
         'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
+        'exam_names': state.exams.map((e) => e.name).toList(),
         'subject_names': state.exams.map((e) => e.subject.name).toList(),
         'current_time': state.currentTime.toString(),
         'running': state.isRunning,
@@ -175,7 +175,7 @@ class ClockCubit extends Cubit<ClockState> {
       name: '[ClockPage] Lap Time Button Pressed',
       properties: {
         'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
+        'exam_names': state.exams.map((e) => e.name).toList(),
         'subject_names': state.exams.map((e) => e.subject.name).toList(),
         'current_time': state.currentTime.toString(),
         'lap_times': state.lapTimes.toString(),

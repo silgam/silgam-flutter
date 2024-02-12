@@ -46,8 +46,8 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
           lapTimeItemGroups.add(LapTimeItemGroup(
             title: announcement.title,
             startTime: announcement.time.calculateBreakpointTime(
-              exam.examStartTime,
-              exam.examEndTime,
+              exam.startTime,
+              exam.endTime,
             ),
             lapTimeItems: [],
           ));
@@ -55,8 +55,8 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
           lapTimeItemGroups.add(LapTimeItemGroup(
             title: announcement.title,
             startTime: announcement.time.calculateBreakpointTime(
-              exam.examStartTime,
-              exam.examEndTime,
+              exam.startTime,
+              exam.endTime,
             ),
             lapTimeItems: [],
           ));
@@ -106,8 +106,8 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     final exampleLapTimeItemGroups = getExampleLapTimeGroups(
       startTime: firstExam.subject.defaultAnnouncements.first.time
           .calculateBreakpointTime(
-        firstExam.examStartTime,
-        firstExam.examEndTime,
+        firstExam.startTime,
+        firstExam.endTime,
       ),
     );
 

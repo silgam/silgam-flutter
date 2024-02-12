@@ -25,7 +25,7 @@ class ExamFilterChip extends StatelessWidget {
         child: FilterChip(
           key: ValueKey('${exam.id} $isSelected'),
           label: Text(
-            exam.examName,
+            exam.name,
             style: TextStyle(
               color: isSelected ? Colors.white : _darkColor,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,

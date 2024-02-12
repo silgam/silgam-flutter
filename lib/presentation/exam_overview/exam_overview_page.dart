@@ -341,7 +341,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   (exam) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      exam.examName,
+                      exam.name,
                       style: _contentTextStyle.copyWith(
                         color: Color(exam.color),
                       ),
@@ -574,7 +574,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildLapTimeTimeline() {
     final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
     final startTime = lapTimeItemGroups.first.startTime;
-    final endTime = _exams.last.examEndTime;
+    final endTime = _exams.last.endTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;
 
     final markerPositions = lapTimeItemGroups
@@ -710,7 +710,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             alignment: Alignment.center,
             children: [
               Text(
-                '${exam.examName} 기록하기',
+                '${exam.name} 기록하기',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontWeight: FontWeight.w900,

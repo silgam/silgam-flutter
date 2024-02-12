@@ -12,10 +12,10 @@ class Exam with _$Exam {
 
   const factory Exam({
     required Subject subject,
-    required String examName,
-    required int examNumber,
-    required DateTime examStartTime,
-    required int examDuration,
+    required String name,
+    required int number,
+    required DateTime startTime,
+    required int durationMinutes,
     required int numberOfQuestions,
     required int perfectScore,
     required int color,
@@ -28,25 +28,23 @@ class Exam with _$Exam {
 
   String get id => subject.name;
 
-  DateTime get examEndTime =>
-      examStartTime.add(Duration(minutes: examDuration));
+  DateTime get endTime => startTime.add(Duration(minutes: durationMinutes));
 
-  String getExamTimeString() {
-    final examEndTime = examStartTime.add(Duration(minutes: examDuration));
-    final startHour = '${examStartTime.hour12}시 ';
+  String getPeriodString() {
+    final startHour = '${startTime.hour12}시 ';
     final String startMinute;
-    if (examStartTime.minute == 0) {
+    if (startTime.minute == 0) {
       startMinute = '';
     } else {
-      startMinute = '${examStartTime.minute}분 ';
+      startMinute = '${startTime.minute}분 ';
     }
 
-    final endHour = '${examEndTime.hour12}시 ';
+    final endHour = '${endTime.hour12}시 ';
     final String endMinute;
-    if (examEndTime.minute == 0) {
+    if (endTime.minute == 0) {
       endMinute = '';
     } else {
-      endMinute = '${examEndTime.minute}분 ';
+      endMinute = '${endTime.minute}분 ';
     }
 
     return '$startHour$startMinute~ $endHour$endMinute';
@@ -55,6 +53,6 @@ class Exam with _$Exam {
 
 extension ExamListExtension on List<Exam> {
   String toExamNamesString() {
-    return map((e) => e.examName).join(', ');
+    return map((e) => e.name).join(', ');
   }
 }
