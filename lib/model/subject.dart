@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../repository/exam/exam_repository.dart';
 import 'announcement.dart';
 import 'relative_time.dart';
 
@@ -228,13 +227,6 @@ enum Subject {
 
   final String defaultName;
   final List<Announcement> defaultAnnouncements;
-
-  int get defaultExamDuration {
-    final defaultExam = defaultExams.firstWhere((exam) {
-      return exam.subject == this;
-    });
-    return defaultExam.durationMinutes;
-  }
 }
 
 final defaultSubjectNameMap = {
