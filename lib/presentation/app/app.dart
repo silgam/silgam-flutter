@@ -57,7 +57,8 @@ class SilgamApp extends StatelessWidget {
         selector: (state) => state.customSubjectNameMap,
         builder: (context, customSubjectNameMap) {
           for (final exam in defaultExams) {
-            exam.name = customSubjectNameMap?[exam.subject] ?? exam.name;
+            exam.name =
+                customSubjectNameMap?[exam.subject] ?? exam.subject.defaultName;
           }
           return MaterialApp(
             title: '실감',
