@@ -69,10 +69,9 @@ class CustomizeSubjectNamePage extends StatelessWidget {
                   horizontal: 24,
                   vertical: 16,
                 ),
-                itemCount: state.subjectNameMap.length,
+                itemCount: Subject.values.length,
                 itemBuilder: (context, index) {
-                  final subject =
-                      Subject.defaultSubjectNameMap.keys.elementAt(index);
+                  final subject = Subject.values[index];
                   return TextField(
                     controller: textControllerMap[subject],
                     maxLength: 10,
@@ -93,7 +92,7 @@ class CustomizeSubjectNamePage extends StatelessWidget {
                         ),
                       ),
                       hintText: '과목 이름을 입력하세요',
-                      labelText: Subject.defaultSubjectNameMap[subject],
+                      labelText: subject.defaultName,
                     ),
                   );
                 },

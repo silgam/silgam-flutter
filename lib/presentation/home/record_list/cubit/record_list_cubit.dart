@@ -119,7 +119,7 @@ class RecordListCubit extends Cubit<RecordListState> {
     AnalyticsManager.logEvent(
       name: '[HomePage-list] Exam filter button tapped',
       properties: {
-        'subject': exam.subject.subjectName,
+        'subject': exam.subject.name,
         'examId': exam.id,
         'selected': state.selectedExams.contains(exam),
       },

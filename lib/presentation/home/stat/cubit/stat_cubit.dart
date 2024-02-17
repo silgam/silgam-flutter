@@ -85,7 +85,7 @@ class StatCubit extends Cubit<StatState> {
     AnalyticsManager.logEvent(
       name: '[HomePage-stat] Exam filter button tapped',
       properties: {
-        'subject': exam.subject.subjectName,
+        'subject': exam.subject.name,
         'examId': exam.id,
         'selected': state.selectedExams.contains(exam),
       },

@@ -7,6 +7,7 @@ import 'relative_time.dart';
 enum Subject {
   @JsonValue('language')
   language(
+    defaultName: '국어',
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -37,6 +38,7 @@ enum Subject {
   ),
   @JsonValue('math')
   math(
+    defaultName: '수학',
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -67,6 +69,7 @@ enum Subject {
   ),
   @JsonValue('english')
   english(
+    defaultName: '영어',
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -100,6 +103,7 @@ enum Subject {
   ),
   @JsonValue('history')
   history(
+    defaultName: '한국사',
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -130,6 +134,7 @@ enum Subject {
   ),
   @JsonValue('investigation')
   investigation(
+    defaultName: '탐구1',
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -160,6 +165,7 @@ enum Subject {
   ),
   @JsonValue('investigation2')
   investigation2(
+    defaultName: '탐구2',
     defaultAnnouncements: [
       Announcement(
         title: '종료령',
@@ -185,6 +191,7 @@ enum Subject {
   ),
   @JsonValue('secondLanguage')
   secondLanguage(
+    defaultName: '제2외국어/한문',
     defaultAnnouncements: [
       Announcement(
         title: '예비령',
@@ -215,23 +222,12 @@ enum Subject {
   );
 
   const Subject({
+    required this.defaultName,
     required this.defaultAnnouncements,
   });
 
-  static const Map<Subject, String> defaultSubjectNameMap = {
-    Subject.language: '국어',
-    Subject.math: '수학',
-    Subject.english: '영어',
-    Subject.history: '한국사',
-    Subject.investigation: '탐구1',
-    Subject.investigation2: '탐구2',
-    Subject.secondLanguage: '제2외국어/한문',
-  };
-  static Map<Subject, String> subjectNameMap = defaultSubjectNameMap;
-
+  final String defaultName;
   final List<Announcement> defaultAnnouncements;
-
-  String get subjectName => subjectNameMap[this] ?? '';
 
   int get defaultExamDuration {
     final defaultExam = defaultExams.firstWhere((exam) {
@@ -240,3 +236,7 @@ enum Subject {
     return defaultExam.durationMinutes;
   }
 }
+
+final defaultSubjectNameMap = {
+  for (final subject in Subject.values) subject: subject.defaultName,
+};

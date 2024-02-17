@@ -540,7 +540,7 @@ class _StatViewState extends State<StatView> {
                   style: const TextStyle(fontWeight: FontWeight.normal),
                 ),
                 TextSpan(
-                  text: '  ${exam.subject.subjectName}',
+                  text: '  ${exam.name}',
                   style: TextStyle(
                     color: Color(exam.color),
                     fontWeight: FontWeight.normal,
@@ -717,7 +717,7 @@ class _StatViewState extends State<StatView> {
                           children: [
                             if (isTouched || ratio >= 0.1)
                               Text(
-                                exam.subject.subjectName,
+                                exam.name,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,

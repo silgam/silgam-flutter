@@ -6,19 +6,24 @@ import 'subject.dart';
 
 part 'exam.freezed.dart';
 
-@Freezed(toJson: false, fromJson: false)
+@Freezed(
+  toJson: false,
+  fromJson: false,
+  addImplicitFinal: false,
+  equal: false,
+)
 class Exam with _$Exam {
   const Exam._();
 
-  const factory Exam({
-    required Subject subject,
+  factory Exam({
+    required final Subject subject,
     required String name,
-    required int number,
-    required DateTime startTime,
-    required int durationMinutes,
-    required int numberOfQuestions,
-    required int perfectScore,
-    required int color,
+    required final int number,
+    required final DateTime startTime,
+    required final int durationMinutes,
+    required final int numberOfQuestions,
+    required final int perfectScore,
+    required final int color,
   }) = _Exam;
 
   factory Exam.fromJson(String id) =>
