@@ -14,10 +14,7 @@ class ExamRecord with _$ExamRecord {
     required final String id,
     required final String userId,
     required final String title,
-    @JsonKey(
-      name: 'subject',
-      toJson: Exam.toJson,
-    )
+    @JsonKey(name: 'subject', toJson: Exam.toId, fromJson: Exam.fromId)
     required final Exam exam,
     required final DateTime examStartedTime,
     final int? examDurationMinutes,

@@ -5,10 +5,9 @@ import '../util/date_time_extension.dart';
 import 'subject.dart';
 
 part 'exam.freezed.dart';
+part 'exam.g.dart';
 
 @Freezed(
-  toJson: false,
-  fromJson: false,
   addImplicitFinal: false,
   equal: false,
 )
@@ -28,10 +27,12 @@ class Exam with _$Exam {
 
   String get id => subject.name;
 
-  factory Exam.fromJson(String id) =>
+  factory Exam.fromJson(Map<String, dynamic> json) => _$ExamFromJson(json);
+
+  factory Exam.fromId(String id) =>
       defaultExams.firstWhere((element) => element.id == id);
 
-  static String toJson(Exam exam) => exam.id;
+  static String toId(Exam exam) => exam.id;
 
   DateTime get endTime => startTime.add(Duration(minutes: durationMinutes));
 

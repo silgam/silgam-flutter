@@ -19,7 +19,8 @@ class Timetable with _$Timetable {
 @freezed
 class TimetableItem with _$TimetableItem {
   const factory TimetableItem({
-    @JsonKey(name: 'examId', toJson: Exam.toJson) required Exam exam,
+    @JsonKey(name: 'examId', toJson: Exam.toId, fromJson: Exam.fromId)
+    required Exam exam,
     required int breakMinutesAfter,
   }) = _TimetableItem;
 
