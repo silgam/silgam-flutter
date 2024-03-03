@@ -26,12 +26,12 @@ class Exam with _$Exam {
     required final int color,
   }) = _Exam;
 
+  String get id => subject.name;
+
   factory Exam.fromJson(String id) =>
       defaultExams.firstWhere((element) => element.id == id);
 
   static String toJson(Exam exam) => exam.id;
-
-  String get id => subject.name;
 
   DateTime get endTime => startTime.add(Duration(minutes: durationMinutes));
 
