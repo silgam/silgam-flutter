@@ -93,7 +93,7 @@ class SilgamApp extends StatelessWidget {
                 case ClockPage.routeName:
                   final args = settings.arguments as ClockPageArguments;
                   return MaterialPageRoute(
-                    builder: (_) => ClockPage(exams: args.exams),
+                    builder: (_) => ClockPage(timetable: args.timetable),
                     settings: settings,
                   );
                 case EditRecordPage.routeName:

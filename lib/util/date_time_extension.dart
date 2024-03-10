@@ -19,6 +19,26 @@ extension DateTimeUtil on DateTime {
   bool isSameOrAfter(DateTime other) {
     return isAfter(other) || isAtSameMomentAs(other);
   }
+
+  String toPeriodString(DateTime endTime) {
+    final startHour = '$hour12시 ';
+    final String startMinute;
+    if (minute == 0) {
+      startMinute = '';
+    } else {
+      startMinute = '$minute분 ';
+    }
+
+    final endHour = '${endTime.hour12}시 ';
+    final String endMinute;
+    if (endTime.minute == 0) {
+      endMinute = '';
+    } else {
+      endMinute = '${endTime.minute}분 ';
+    }
+
+    return '$startHour$startMinute~ $endHour$endMinute';
+  }
 }
 
 extension DurationExtension on Duration {

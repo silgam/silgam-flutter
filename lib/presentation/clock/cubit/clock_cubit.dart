@@ -11,6 +11,7 @@ import 'package:just_audio/just_audio.dart';
 import '../../../model/exam.dart';
 import '../../../model/lap_time.dart';
 import '../../../model/relative_time.dart';
+import '../../../model/timetable.dart';
 import '../../../repository/noise/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -27,14 +28,14 @@ const _announcementsAssetPath = 'assets/announcements';
 @injectable
 class ClockCubit extends Cubit<ClockState> {
   ClockCubit(
-    @factoryParam List<Exam> exams,
+    @factoryParam Timetable timetable,
     this._appCubit,
     this._noiseSettingCubit,
   ) : super(ClockState(
           currentTime: DateTime.now(),
           examStartedTime: DateTime.now(),
           pageOpenedTime: DateTime.now(),
-          exams: exams,
+          timetable: timetable,
         )) {
     _initialize();
   }
@@ -47,8 +48,8 @@ class ClockCubit extends Cubit<ClockState> {
   NoiseGenerator? _noiseGenerator;
 
   void _initialize() {
-    final breakpoints = state.exams
-        .map((e) => Breakpoint.createBreakpointsFromExam(e))
+    final breakpoints = state.timetable.items
+        .map((item) => Breakpoint.createBreakpointsFromExam(item.exam))
         .flattened
         .toList();
     emit(state.copyWith(
@@ -89,9 +90,8 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Start exam',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.name).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        'exam_names': state.timetable.toExamNamesString(),
+        'subject_names': state.timetable.toSubjectNamesString(),
       },
     );
   }
@@ -110,9 +110,8 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Substract 30 seconds',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.name).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        'exam_names': state.timetable.toExamNamesString(),
+        'subject_names': state.timetable.toSubjectNamesString(),
         'current_time': state.currentTime.toString(),
       },
     );
@@ -126,9 +125,8 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Add 30 seconds',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.name).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        'exam_names': state.timetable.toExamNamesString(),
+        'subject_names': state.timetable.toSubjectNamesString(),
         'current_time': state.currentTime.toString(),
       },
     );
@@ -151,9 +149,8 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Play/Pause Button Pressed',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.name).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        'exam_names': state.timetable.toExamNamesString(),
+        'subject_names': state.timetable.toSubjectNamesString(),
         'current_time': state.currentTime.toString(),
         'running': state.isRunning,
       },
@@ -174,9 +171,8 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Lap Time Button Pressed',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.name).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        'exam_names': state.timetable.toExamNamesString(),
+        'subject_names': state.timetable.toSubjectNamesString(),
         'current_time': state.currentTime.toString(),
         'lap_times': state.lapTimes.toString(),
       },
@@ -212,7 +208,7 @@ class ClockCubit extends Cubit<ClockState> {
             breakpoint.announcement.time ==
             const RelativeTime.afterFinish(minutes: 0))
         .length
-        .clamp(0, state.exams.length - 1);
+        .clamp(0, state.timetable.items.length - 1);
 
     emit(state.copyWith(
       currentBreakpointIndex: index,

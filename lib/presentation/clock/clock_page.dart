@@ -8,6 +8,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
+import '../../model/timetable.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
@@ -23,11 +24,11 @@ import 'wrist_watch.dart';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
-  final List<Exam> exams;
+  final Timetable timetable;
 
   const ClockPage({
     Key? key,
-    required this.exams,
+    required this.timetable,
   }) : super(key: key);
 
   @override
@@ -36,7 +37,7 @@ class ClockPage extends StatefulWidget {
 
 class _ClockPageState extends State<ClockPage> {
   final AppCubit _appCubit = getIt.get();
-  late final ClockCubit _cubit = getIt.get(param1: widget.exams);
+  late final ClockCubit _cubit = getIt.get(param1: widget.timetable);
 
   final TransformationController _clockTransformController =
       TransformationController();
@@ -519,7 +520,7 @@ class _ClockPageState extends State<ClockPage> {
 
     final arguments = ExamOverviewPageArguments(
       examDetail: ExamDetail(
-        exams: _cubit.state.exams,
+        exams: _cubit.state.timetable.exams,
         examStartedTime: _cubit.state.examStartedTime,
         examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
         pageOpenedTime: _cubit.state.pageOpenedTime,
@@ -536,9 +537,8 @@ class _ClockPageState extends State<ClockPage> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
       properties: {
-        'exam_name': widget.exams.toExamNamesString(),
-        'exam_names': widget.exams.map((e) => e.name).toList(),
-        'subject_names': widget.exams.map((e) => e.subject.name).toList(),
+        'exam_names': _cubit.state.timetable.toExamNamesString(),
+        'subject_names': _cubit.state.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
       },
     );
@@ -604,7 +604,7 @@ class _ClockPageState extends State<ClockPage> {
 }
 
 class ClockPageArguments {
-  final List<Exam> exams;
+  final Timetable timetable;
 
-  ClockPageArguments(this.exams);
+  ClockPageArguments(this.timetable);
 }

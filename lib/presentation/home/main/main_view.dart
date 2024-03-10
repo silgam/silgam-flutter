@@ -16,9 +16,13 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../model/ads.dart';
 import '../../../model/exam.dart';
+import '../../../model/timetable.dart';
 import '../../../repository/exam/exam_repository.dart';
+import '../../../repository/timetable/timetable_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
+import '../../../util/date_time_extension.dart';
+import '../../../util/duration_extension.dart';
 import '../../../util/injection.dart';
 import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';

@@ -10,7 +10,7 @@ class ClockState with _$ClockState {
     @Default(true) bool isRunning,
     @Default([]) List<Breakpoint> breakpoints,
     @Default(0) int currentBreakpointIndex,
-    @Default([]) List<Exam> exams,
+    required Timetable timetable,
     @Default(0) int currentExamIndex,
     required DateTime currentTime,
     required DateTime examStartedTime,
@@ -20,7 +20,7 @@ class ClockState with _$ClockState {
   }) = _ClockState;
 
   Breakpoint get currentBreakpoint => breakpoints[currentBreakpointIndex];
-  Exam get currentExam => exams[currentExamIndex];
+  Exam get currentExam => timetable.items[currentExamIndex].exam;
 
   bool get isFinished => currentBreakpointIndex >= breakpoints.length - 1;
 }

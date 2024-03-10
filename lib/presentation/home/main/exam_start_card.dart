@@ -16,7 +16,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
     initialIndex: 0,
     vsync: this,
   )..addListener(_onTapSelected);
-  Exam? _selectedExam = defaultExams[0];
+  Timetable? _selectedTimetable = defaultTimetables.first;
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +54,15 @@ class _ExamStartCardState extends State<_ExamStartCard>
             ),
           ),
           const SizedBox(height: 32),
-          if (_selectedExam != null) _buildExamLayout(_selectedExam!),
-          if (_selectedExam == null) _buildAllSubjectExamLayout(),
+          if (_selectedTimetable != null) _buildExamLayout(_selectedTimetable!),
+          if (_selectedTimetable == null) _buildAllSubjectExamLayout(),
           const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildExamLayout(Exam exam) {
+  Widget _buildExamLayout(Timetable timetable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -73,16 +73,23 @@ class _ExamStartCardState extends State<_ExamStartCard>
             children: [
               _buildInfo(
                 iconData: Icons.schedule,
-                title: '시험 시간',
-                content: exam.getPeriodString(),
-                badgeText: '${exam.durationMinutes}분',
+                title: timetable.items.length > 1 ? '총 시간' : '시험 시간',
+                content: timetable.startTime.toPeriodString(timetable.endTime),
+                badgeText: timetable.duration.toKoreanString(),
               ),
               const SizedBox(height: 16),
-              _buildInfo(
-                iconData: Icons.text_snippet_outlined,
-                title: '문제 수 / 만점',
-                content: '${exam.numberOfQuestions}문제 / ${exam.perfectScore}점',
-              ),
+              timetable.items.length > 1
+                  ? _buildInfo(
+                      iconData: Icons.text_snippet_outlined,
+                      title: '과목',
+                      content: timetable.toExamNamesString(),
+                    )
+                  : _buildInfo(
+                      iconData: Icons.text_snippet_outlined,
+                      title: '문제 수 / 만점',
+                      content:
+                          '${timetable.items.first.exam.numberOfQuestions}문제 / ${timetable.items.first.exam.perfectScore}점',
+                    ),
             ],
           ),
         ),
@@ -100,7 +107,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
             ),
           ),
           child: InkWell(
-            onTap: () => _onExamStartTap(exam),
+            onTap: () => _onExamStartTap(timetable),
             splashColor: Colors.transparent,
             highlightColor: Colors.grey.withAlpha(60),
             borderRadius: BorderRadius.circular(100),
@@ -236,19 +243,19 @@ class _ExamStartCardState extends State<_ExamStartCard>
 
   void _onTapSelected() async {
     final index = _subjectController.index;
-    Exam exam = defaultExams[index];
-    if (_selectedExam != exam) {
+    Timetable timetable = defaultTimetables[index];
+    if (_selectedTimetable != timetable) {
       setState(() {
-        _selectedExam = exam;
+        _selectedTimetable = timetable;
       });
     }
   }
 
-  void _onExamStartTap(Exam exam) async {
+  void _onExamStartTap(Timetable timetable) async {
     await Navigator.pushNamed(
       context,
       ClockPage.routeName,
-      arguments: ClockPageArguments([exam]),
+      arguments: ClockPageArguments(timetable),
     );
     if (mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
