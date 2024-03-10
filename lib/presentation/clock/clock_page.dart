@@ -537,6 +537,7 @@ class _ClockPageState extends State<ClockPage> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
       properties: {
+        'timetable_name': _cubit.state.timetable.name,
         'exam_names': _cubit.state.timetable.toExamNamesString(),
         'subject_names': _cubit.state.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,

@@ -47,6 +47,12 @@ class ClockCubit extends Cubit<ClockState> {
   Timer? _timer;
   NoiseGenerator? _noiseGenerator;
 
+  get defaultLogProperties => {
+        'timetable_name': state.timetable.name,
+        'exam_names': state.timetable.toExamNamesString(),
+        'subject_names': state.timetable.toSubjectNamesString(),
+      };
+
   void _initialize() {
     final breakpoints = state.timetable.items
         .map((item) => Breakpoint.createBreakpointsFromExam(item.exam))
@@ -89,10 +95,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
     AnalyticsManager.logEvent(
       name: '[ClockPage] Start exam',
-      properties: {
-        'exam_names': state.timetable.toExamNamesString(),
-        'subject_names': state.timetable.toSubjectNamesString(),
-      },
+      properties: defaultLogProperties,
     );
   }
 
@@ -110,8 +113,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Substract 30 seconds',
       properties: {
-        'exam_names': state.timetable.toExamNamesString(),
-        'subject_names': state.timetable.toSubjectNamesString(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
       },
     );
@@ -125,8 +127,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Add 30 seconds',
       properties: {
-        'exam_names': state.timetable.toExamNamesString(),
-        'subject_names': state.timetable.toSubjectNamesString(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
       },
     );
@@ -149,8 +150,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Play/Pause Button Pressed',
       properties: {
-        'exam_names': state.timetable.toExamNamesString(),
-        'subject_names': state.timetable.toSubjectNamesString(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
         'running': state.isRunning,
       },
@@ -171,8 +171,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Lap Time Button Pressed',
       properties: {
-        'exam_names': state.timetable.toExamNamesString(),
-        'subject_names': state.timetable.toSubjectNamesString(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
         'lap_times': state.lapTimes.toString(),
       },
