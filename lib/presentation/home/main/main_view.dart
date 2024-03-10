@@ -15,9 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../model/ads.dart';
-import '../../../model/exam.dart';
 import '../../../model/timetable.dart';
-import '../../../repository/exam/exam_repository.dart';
 import '../../../repository/timetable/timetable_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
