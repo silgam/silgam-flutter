@@ -11,8 +11,10 @@ class _TimetableStartCard extends StatefulWidget {
 
 class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
+  final timetables = defaultTimetables;
+
   late final TabController _tabController = TabController(
-    length: defaultExams.length,
+    length: timetables.length,
     initialIndex: 0,
     vsync: this,
   )..addListener(_onTapSelected);
@@ -47,7 +49,8 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
                     // const Tab(text: '전과목'),
-                    for (Exam exam in defaultExams) Tab(text: exam.name),
+                    for (Timetable timetable in timetables)
+                      Tab(text: timetable.name),
                   ],
                 ),
               ],

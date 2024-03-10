@@ -10,7 +10,8 @@ class Timetable with _$Timetable {
   const Timetable._();
 
   const factory Timetable({
-    required final DateTime startTime,
+    required String name,
+    required DateTime startTime,
     required List<TimetableItem> items,
   }) = _Timetable;
 
