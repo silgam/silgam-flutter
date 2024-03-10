@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../repository/exam/exam_repository.dart';
 import 'announcement.dart';
+import 'exam.dart';
 import 'relative_time.dart';
 
 enum Subject {
@@ -227,6 +229,9 @@ enum Subject {
 
   final String defaultName;
   final List<Announcement> defaultAnnouncements;
+
+  Exam get defaultExam =>
+      defaultExams.firstWhere((exam) => exam.subject == this);
 }
 
 final defaultSubjectNameMap = {
