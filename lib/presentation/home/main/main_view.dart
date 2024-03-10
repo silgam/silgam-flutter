@@ -44,8 +44,8 @@ import 'cubit/main_cubit.dart';
 part 'ads_card.dart';
 part 'button_card.dart';
 part 'd_days_card.dart';
-part 'exam_start_card.dart';
 part 'silgam_now_card.dart';
+part 'timetable_start_card.dart';
 part 'welcome_messages.dart';
 
 class MainView extends StatefulWidget {
@@ -132,7 +132,7 @@ class _MainViewState extends State<MainView> {
                       children: [
                         _buildDDaysCard(),
                         const _SilgamNowCard(),
-                        const _ExamStartCard(),
+                        const _TimetableStartCard(),
                       ],
                     ),
                   )
@@ -167,7 +167,7 @@ class _MainViewState extends State<MainView> {
               _buildAdsCard(),
               _buildDDaysCard(),
               const _SilgamNowCard(),
-              const _ExamStartCard(),
+              const _TimetableStartCard(),
               _buildLoginCard(),
               _buildNoiseSettingCard(),
               _buildRecordCard(),

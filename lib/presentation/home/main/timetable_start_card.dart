@@ -1,17 +1,17 @@
 part of 'main_view.dart';
 
-class _ExamStartCard extends StatefulWidget {
-  const _ExamStartCard({
+class _TimetableStartCard extends StatefulWidget {
+  const _TimetableStartCard({
     Key? key,
   }) : super(key: key);
 
   @override
-  _ExamStartCardState createState() => _ExamStartCardState();
+  _TimetableStartCardState createState() => _TimetableStartCardState();
 }
 
-class _ExamStartCardState extends State<_ExamStartCard>
+class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
-  late final TabController _subjectController = TabController(
+  late final TabController _tabController = TabController(
     length: defaultExams.length,
     initialIndex: 0,
     vsync: this,
@@ -36,7 +36,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                   color: disabledColor,
                 ),
                 TabBar(
-                  controller: _subjectController,
+                  controller: _tabController,
                   isScrollable: true,
                   overlayColor: MaterialStateProperty.all(Colors.transparent),
                   labelColor: Theme.of(context).primaryColor,
@@ -54,7 +54,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
             ),
           ),
           const SizedBox(height: 32),
-          if (_selectedTimetable != null) _buildExamLayout(_selectedTimetable!),
+          if (_selectedTimetable != null) _buildTabLayout(_selectedTimetable!),
           if (_selectedTimetable == null) _buildAllSubjectExamLayout(),
           const SizedBox(height: 32),
         ],
@@ -62,7 +62,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
     );
   }
 
-  Widget _buildExamLayout(Timetable timetable) {
+  Widget _buildTabLayout(Timetable timetable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -107,7 +107,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
             ),
           ),
           child: InkWell(
-            onTap: () => _onExamStartTap(timetable),
+            onTap: () => _onTimetableStartTap(timetable),
             splashColor: Colors.transparent,
             highlightColor: Colors.grey.withAlpha(60),
             borderRadius: BorderRadius.circular(100),
@@ -242,7 +242,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
   }
 
   void _onTapSelected() async {
-    final index = _subjectController.index;
+    final index = _tabController.index;
     Timetable timetable = defaultTimetables[index];
     if (_selectedTimetable != timetable) {
       setState(() {
@@ -251,7 +251,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
     }
   }
 
-  void _onExamStartTap(Timetable timetable) async {
+  void _onTimetableStartTap(Timetable timetable) async {
     await Navigator.pushNamed(
       context,
       ClockPage.routeName,
@@ -269,6 +269,6 @@ class _ExamStartCardState extends State<_ExamStartCard>
   @override
   void dispose() {
     super.dispose();
-    _subjectController.dispose();
+    _tabController.dispose();
   }
 }
