@@ -4,6 +4,48 @@ import '../../model/announcement.dart';
 import '../../model/exam.dart';
 import '../../model/timetable.dart';
 
+class BreakpointGroup {
+  final Exam exam;
+  final List<Breakpoint> breakpoints;
+
+  BreakpointGroup({
+    required this.exam,
+    required this.breakpoints,
+  });
+
+  static List<BreakpointGroup> createBreakpointGroupsFromTimetable(
+    Timetable timetable,
+  ) {
+    final breakpointGroups = <BreakpointGroup>[];
+
+    timetable.items.forEachIndexed((index, currentItem) {
+      final itemStartTime = index == 0
+          ? timetable.startTime
+          : breakpointGroups.last.breakpoints.last.time.add(
+              Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
+            );
+      final examStartTime = itemStartTime.add(
+        Duration(minutes: currentItem.exam.subject.minutesBeforeExamStart),
+      );
+
+      final currentItemBreakpoints = Breakpoint._createBreakpointsFromExam(
+        currentItem.exam,
+        examStartTime,
+      );
+      if (breakpointGroups.lastOrNull?.breakpoints.lastOrNull?.time ==
+          currentItemBreakpoints.firstOrNull?.time) {
+        currentItemBreakpoints.removeAt(0);
+      }
+      breakpointGroups.add(BreakpointGroup(
+        exam: currentItem.exam,
+        breakpoints: currentItemBreakpoints,
+      ));
+    });
+
+    return breakpointGroups;
+  }
+}
+
 class Breakpoint {
   final String title;
   final DateTime time;
@@ -14,33 +56,6 @@ class Breakpoint {
     required this.time,
     required this.announcement,
   });
-
-  static List<Breakpoint> createBreakpointsFromTimetable(Timetable timetable) {
-    final breakpoints = <Breakpoint>[];
-
-    timetable.items.forEachIndexed((index, currentItem) {
-      final itemStartTime = index == 0
-          ? timetable.startTime
-          : breakpoints.last.time.add(
-              Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
-            );
-      final examStartTime = itemStartTime.add(
-        Duration(minutes: currentItem.exam.subject.minutesBeforeExamStart),
-      );
-
-      final currentItemBreakpoints = _createBreakpointsFromExam(
-        currentItem.exam,
-        examStartTime,
-      );
-      if (breakpoints.lastOrNull?.time ==
-          currentItemBreakpoints.firstOrNull?.time) {
-        currentItemBreakpoints.removeAt(0);
-      }
-      breakpoints.addAll(currentItemBreakpoints);
-    });
-
-    return breakpoints;
-  }
 
   static List<Breakpoint> _createBreakpointsFromExam(
     Exam exam,

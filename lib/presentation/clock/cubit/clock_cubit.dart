@@ -53,12 +53,12 @@ class ClockCubit extends Cubit<ClockState> {
       };
 
   void _initialize() {
-    final breakpoints =
-        Breakpoint.createBreakpointsFromTimetable(state.timetable);
+    final breakpointGroups =
+        BreakpointGroup.createBreakpointGroupsFromTimetable(state.timetable);
 
     emit(state.copyWith(
-      breakpoints: breakpoints,
-      currentTime: breakpoints[0].time,
+      breakpointGroups: breakpointGroups,
+      currentTime: breakpointGroups.first.breakpoints.first.time,
     ));
 
     if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
