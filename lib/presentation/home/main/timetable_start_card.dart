@@ -18,7 +18,14 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
     initialIndex: 0,
     vsync: this,
   )..addListener(_onTapSelected);
-  Timetable? _selectedTimetable = defaultTimetables.first;
+
+  Timetable? _selectedTimetable;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTimetable = timetables.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +253,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
 
   void _onTapSelected() async {
     final index = _tabController.index;
-    Timetable timetable = defaultTimetables[index];
+    Timetable timetable = timetables[index];
     if (_selectedTimetable != timetable) {
       setState(() {
         _selectedTimetable = timetable;
