@@ -24,7 +24,7 @@ class Timetable with _$Timetable {
       const Duration(),
       (previousValue, item) =>
           previousValue +
-          Duration(minutes: item.exam.durationMinutes) +
+          Duration(minutes: item.exam.timetableDurationMinutes) +
           Duration(minutes: item.breakMinutesAfter));
 
   DateTime get endTime => startTime.add(duration);

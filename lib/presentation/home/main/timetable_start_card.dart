@@ -81,12 +81,22 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfo(
-                iconData: Icons.schedule,
-                title: timetable.items.length > 1 ? '총 시간' : '시험 시간',
-                content: timetable.startTime.toPeriodString(timetable.endTime),
-                badgeText: timetable.duration.toKoreanString(),
-              ),
+              timetable.items.length > 1
+                  ? _buildInfo(
+                      iconData: Icons.schedule,
+                      title: '총 시간',
+                      content:
+                          timetable.startTime.toPeriodString(timetable.endTime),
+                      badgeText: timetable.duration.toKoreanString(),
+                    )
+                  : _buildInfo(
+                      iconData: Icons.schedule,
+                      title: '시험 시간',
+                      content: timetable.items.first.exam.startTime
+                          .toPeriodString(timetable.items.first.exam.endTime),
+                      badgeText:
+                          '${timetable.items.first.exam.durationMinutes}분',
+                    ),
               const SizedBox(height: 16),
               timetable.items.length > 1
                   ? _buildInfo(

@@ -232,6 +232,26 @@ enum Subject {
 
   Exam get defaultExam =>
       defaultExams.firstWhere((exam) => exam.subject == this);
+
+  int get minutesBeforeExamStart {
+    final firstAnnouncement = defaultAnnouncements.firstOrNull;
+
+    if (firstAnnouncement != null &&
+        firstAnnouncement.time.type == RelativeTimeType.beforeStart) {
+      return firstAnnouncement.time.minutes;
+    }
+    return 0;
+  }
+
+  int get minutesAfterExamFinish {
+    final lastAnnouncement = defaultAnnouncements.lastOrNull;
+
+    if (lastAnnouncement != null &&
+        lastAnnouncement.time.type == RelativeTimeType.afterFinish) {
+      return lastAnnouncement.time.minutes;
+    }
+    return 0;
+  }
 }
 
 final defaultSubjectNameMap = {

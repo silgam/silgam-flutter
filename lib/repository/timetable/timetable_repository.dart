@@ -5,7 +5,7 @@ import '../exam/exam_repository.dart';
 final List<Timetable> defaultTimetables = [
   ...defaultExams.map((exam) => Timetable(
         name: exam.name,
-        startTime: exam.startTime,
+        startTime: exam.timetableStartTime,
         items: [
           TimetableItem(exam: exam),
         ],
@@ -14,7 +14,7 @@ final List<Timetable> defaultTimetables = [
     defaultExams.indexWhere((exam) => exam.subject == Subject.investigation),
     Timetable(
       name: '탐구 연속',
-      startTime: Subject.investigation.defaultExam.startTime,
+      startTime: Subject.investigation.defaultExam.timetableStartTime,
       items: [
         TimetableItem(exam: Subject.investigation.defaultExam),
         TimetableItem(exam: Subject.investigation2.defaultExam),

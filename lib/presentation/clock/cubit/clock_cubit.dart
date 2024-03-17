@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -54,10 +53,9 @@ class ClockCubit extends Cubit<ClockState> {
       };
 
   void _initialize() {
-    final breakpoints = state.timetable.items
-        .map((item) => Breakpoint.createBreakpointsFromExam(item.exam))
-        .flattened
-        .toList();
+    final breakpoints =
+        Breakpoint.createBreakpointsFromTimetable(state.timetable);
+
     emit(state.copyWith(
       breakpoints: breakpoints,
       currentTime: breakpoints[0].time,

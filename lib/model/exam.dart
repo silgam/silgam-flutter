@@ -34,4 +34,12 @@ class Exam with _$Exam {
   static String toId(Exam exam) => exam.id;
 
   DateTime get endTime => startTime.add(Duration(minutes: durationMinutes));
+
+  DateTime get timetableStartTime =>
+      startTime.subtract(Duration(minutes: subject.minutesBeforeExamStart));
+
+  int get timetableDurationMinutes =>
+      durationMinutes +
+      subject.minutesBeforeExamStart +
+      subject.minutesAfterExamFinish;
 }
