@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -266,7 +267,7 @@ class _ClockPageState extends State<ClockPage> {
   List<Widget> _buildTimelineTiles(Axis orientation) {
     final state = _cubit.state;
     final tiles = <Widget>[];
-    state.breakpoints.asMap().forEach((index, breakpoint) {
+    state.breakpoints.forEachIndexed((index, breakpoint) {
       bool disabled = false;
       if (index > state.currentBreakpointIndex) disabled = true;
 
