@@ -100,7 +100,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
               const SizedBox(height: 16),
               timetable.items.length > 1
                   ? _buildInfo(
-                      iconData: Icons.text_snippet_outlined,
+                      iconData: Icons.style,
                       title: '과목',
                       content: timetable.toExamNamesString(),
                     )
