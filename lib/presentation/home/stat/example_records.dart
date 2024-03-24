@@ -1,13 +1,13 @@
 import '../../../model/exam_record.dart';
-import '../../../model/subject.dart';
+import '../../../repository/exam/exam_repository.dart';
 
 const exampleUserId = 'exampleUserId';
 final now = DateTime.now();
 final exampleRecords = <ExamRecord>[
   ExamRecord(
     id: 'exampleRecord1',
-    subject: Subject.language,
-    examDurationMinutes: Subject.language.defaultExamDuration,
+    exam: defaultExams[0],
+    examDurationMinutes: defaultExams[0].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 21)),
     score: 70,
     userId: exampleUserId,
@@ -19,8 +19,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord2',
-    subject: Subject.language,
-    examDurationMinutes: Subject.language.defaultExamDuration,
+    exam: defaultExams[0],
+    examDurationMinutes: defaultExams[0].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 14)),
     score: 82,
     userId: exampleUserId,
@@ -32,8 +32,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord3',
-    subject: Subject.language,
-    examDurationMinutes: Subject.language.defaultExamDuration,
+    exam: defaultExams[0],
+    examDurationMinutes: defaultExams[0].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 7)),
     score: 78,
     userId: exampleUserId,
@@ -45,8 +45,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord4',
-    subject: Subject.language,
-    examDurationMinutes: Subject.language.defaultExamDuration,
+    exam: defaultExams[0],
+    examDurationMinutes: defaultExams[0].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 0)),
     score: 85,
     userId: exampleUserId,
@@ -58,8 +58,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord5',
-    subject: Subject.language,
-    examDurationMinutes: Subject.language.defaultExamDuration,
+    exam: defaultExams[0],
+    examDurationMinutes: defaultExams[0].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -7)),
     score: 89,
     userId: exampleUserId,
@@ -71,8 +71,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord6',
-    subject: Subject.language,
-    examDurationMinutes: Subject.language.defaultExamDuration,
+    exam: defaultExams[0],
+    examDurationMinutes: defaultExams[0].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -14)),
     score: 82,
     userId: exampleUserId,
@@ -84,8 +84,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord7',
-    subject: Subject.language,
-    examDurationMinutes: Subject.language.defaultExamDuration,
+    exam: defaultExams[0],
+    examDurationMinutes: defaultExams[0].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -21)),
     score: 95,
     userId: exampleUserId,
@@ -97,8 +97,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord8',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 21)),
     score: 80,
     userId: exampleUserId,
@@ -110,8 +110,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord9',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 17)),
     score: 80,
     userId: exampleUserId,
@@ -123,8 +123,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord10',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 14)),
     score: 88,
     userId: exampleUserId,
@@ -136,8 +136,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord11',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 10)),
     score: 84,
     userId: exampleUserId,
@@ -149,8 +149,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord12',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 7)),
     score: 80,
     userId: exampleUserId,
@@ -162,8 +162,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord13',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 3)),
     score: 84,
     userId: exampleUserId,
@@ -175,8 +175,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord14',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 0)),
     score: 92,
     userId: exampleUserId,
@@ -188,8 +188,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord15',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -4)),
     score: 88,
     userId: exampleUserId,
@@ -201,8 +201,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord16',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -7)),
     score: 84,
     userId: exampleUserId,
@@ -214,8 +214,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord17',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -11)),
     score: 86,
     userId: exampleUserId,
@@ -227,8 +227,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord18',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -14)),
     score: 89,
     userId: exampleUserId,
@@ -240,8 +240,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord19',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -18)),
     score: 92,
     userId: exampleUserId,
@@ -253,8 +253,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord20',
-    subject: Subject.math,
-    examDurationMinutes: Subject.math.defaultExamDuration,
+    exam: defaultExams[1],
+    examDurationMinutes: defaultExams[1].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -21)),
     score: 84,
     userId: exampleUserId,
@@ -266,8 +266,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord21',
-    subject: Subject.investigation,
-    examDurationMinutes: Subject.investigation.defaultExamDuration,
+    exam: defaultExams[4],
+    examDurationMinutes: defaultExams[4].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 21)),
     score: 42,
     userId: exampleUserId,
@@ -279,8 +279,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord22',
-    subject: Subject.investigation,
-    examDurationMinutes: Subject.investigation.defaultExamDuration,
+    exam: defaultExams[4],
+    examDurationMinutes: defaultExams[4].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: 10)),
     score: 39,
     userId: exampleUserId,
@@ -292,8 +292,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord23',
-    subject: Subject.investigation,
-    examDurationMinutes: Subject.investigation.defaultExamDuration,
+    exam: defaultExams[4],
+    examDurationMinutes: defaultExams[4].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -10)),
     score: 47,
     userId: exampleUserId,
@@ -305,8 +305,8 @@ final exampleRecords = <ExamRecord>[
   ),
   ExamRecord(
     id: 'exampleRecord24',
-    subject: Subject.investigation,
-    examDurationMinutes: Subject.investigation.defaultExamDuration,
+    exam: defaultExams[4],
+    examDurationMinutes: defaultExams[4].durationMinutes,
     examStartedTime: now.subtract(const Duration(days: -21)),
     score: 45,
     userId: exampleUserId,

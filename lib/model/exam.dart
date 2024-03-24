@@ -1,53 +1,45 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../util/date_time_extension.dart';
-import 'announcement.dart';
+import '../repository/exam/exam_repository.dart';
 import 'subject.dart';
 
 part 'exam.freezed.dart';
+part 'exam.g.dart';
 
-@freezed
+@Freezed(
+  addImplicitFinal: false,
+  equal: false,
+)
 class Exam with _$Exam {
   const Exam._();
 
-  const factory Exam({
-    required Subject subject,
-    required String examName,
-    int? examNumber,
-    required DateTime examStartTime,
-    required int examDuration,
-    required int numberOfQuestions,
-    required int perfectScore,
-    required List<Announcement> announcements,
+  factory Exam({
+    required final Subject subject,
+    required String name,
+    required final int number,
+    required final DateTime startTime,
+    required final int durationMinutes,
+    required final int numberOfQuestions,
+    required final int perfectScore,
+    required final int color,
   }) = _Exam;
 
-  DateTime get examEndTime =>
-      examStartTime.add(Duration(minutes: examDuration));
+  String get id => subject.name;
 
-  String getExamTimeString() {
-    final examEndTime = examStartTime.add(Duration(minutes: examDuration));
-    final startHour = '${examStartTime.hour12}시 ';
-    final String startMinute;
-    if (examStartTime.minute == 0) {
-      startMinute = '';
-    } else {
-      startMinute = '${examStartTime.minute}분 ';
-    }
+  factory Exam.fromJson(Map<String, dynamic> json) => _$ExamFromJson(json);
 
-    final endHour = '${examEndTime.hour12}시 ';
-    final String endMinute;
-    if (examEndTime.minute == 0) {
-      endMinute = '';
-    } else {
-      endMinute = '${examEndTime.minute}분 ';
-    }
+  factory Exam.fromId(String id) =>
+      defaultExams.firstWhere((element) => element.id == id);
 
-    return '$startHour$startMinute~ $endHour$endMinute';
-  }
-}
+  static String toId(Exam exam) => exam.id;
 
-extension ExamListExtension on List<Exam> {
-  String toExamNamesString() {
-    return map((e) => e.examName).join(', ');
-  }
+  DateTime get endTime => startTime.add(Duration(minutes: durationMinutes));
+
+  DateTime get timetableStartTime =>
+      startTime.subtract(Duration(minutes: subject.minutesBeforeExamStart));
+
+  int get timetableDurationMinutes =>
+      durationMinutes +
+      subject.minutesBeforeExamStart +
+      subject.minutesAfterExamFinish;
 }

@@ -264,9 +264,9 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               ),
               const SizedBox(width: 6),
               Text(
-                _record.subject.subjectName,
+                _record.exam.name,
                 style: TextStyle(
-                  color: Color(_record.subject.firstColor),
+                  color: Color(_record.exam.color),
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
                 ),

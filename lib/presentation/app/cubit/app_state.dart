@@ -14,11 +14,10 @@ class AppState with _$AppState {
   bool get isSignedIn => me != null;
   bool get isNotSignedIn => me == null;
 
-  Map<Subject, String> get customSubjectNameMap {
-    final me = this.me;
-    if (me != null && productBenefit.isCustomSubjectNameAvailable) {
-      return me.customSubjectNameMap ?? Subject.defaultSubjectNameMap;
+  Map<Subject, String>? get customSubjectNameMap {
+    if (productBenefit.isCustomSubjectNameAvailable) {
+      return me?.customSubjectNameMap;
     }
-    return Subject.defaultSubjectNameMap;
+    return null;
   }
 }

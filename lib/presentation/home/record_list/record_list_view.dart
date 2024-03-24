@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../model/exam.dart';
 import '../../../model/exam_record.dart';
-import '../../../model/subject.dart';
+import '../../../repository/exam/exam_repository.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/dialog.dart';
@@ -144,12 +145,12 @@ class _RecordListViewState extends State<RecordListView> {
                         indent: 6,
                         endIndent: 6,
                       ),
-                      for (Subject subject in Subject.values)
-                        SubjectFilterChip(
-                          subject: subject,
-                          isSelected: state.selectedSubjects.contains(subject),
+                      for (Exam exam in defaultExams)
+                        ExamFilterChip(
+                          exam: exam,
+                          isSelected: state.selectedExams.contains(exam),
                           onSelected: () =>
-                              _cubit.onSubjectFilterButtonTapped(subject),
+                              _cubit.onExamFilterButtonTapped(exam),
                         ),
                       SizedBox(width: horizontalPadding),
                     ],

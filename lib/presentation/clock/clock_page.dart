@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
+import '../../model/timetable.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
@@ -23,11 +25,11 @@ import 'wrist_watch.dart';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
-  final List<Exam> exams;
+  final Timetable timetable;
 
   const ClockPage({
     Key? key,
-    required this.exams,
+    required this.timetable,
   }) : super(key: key);
 
   @override
@@ -36,7 +38,7 @@ class ClockPage extends StatefulWidget {
 
 class _ClockPageState extends State<ClockPage> {
   final AppCubit _appCubit = getIt.get();
-  late final ClockCubit _cubit = getIt.get(param1: widget.exams);
+  late final ClockCubit _cubit = getIt.get(param1: widget.timetable);
 
   final TransformationController _clockTransformController =
       TransformationController();
@@ -201,40 +203,35 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Widget _buildExamTitle(Exam exam) {
-    final children = <Widget>[];
-
-    if (exam.examNumber != null) {
-      children.add(Container(
-        margin: const EdgeInsets.only(bottom: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(1000)),
-          border: Border.all(color: Colors.white),
-        ),
-        child: Text(
-          '${exam.examNumber}교시',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ));
-      children.add(const SizedBox(height: 4));
-    }
-
-    children.add(Text(
-      exam.examName,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-      ),
-    ));
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: children,
+      children: <Widget>[
+        Container(
+          margin: const EdgeInsets.only(bottom: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(1000)),
+            border: Border.all(color: Colors.white),
+          ),
+          child: Text(
+            '${exam.number}교시',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          exam.name,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 
@@ -270,7 +267,7 @@ class _ClockPageState extends State<ClockPage> {
   List<Widget> _buildTimelineTiles(Axis orientation) {
     final state = _cubit.state;
     final tiles = <Widget>[];
-    state.breakpoints.asMap().forEach((index, breakpoint) {
+    state.breakpoints.forEachIndexed((index, breakpoint) {
       bool disabled = false;
       if (index > state.currentBreakpointIndex) disabled = true;
 
@@ -524,7 +521,7 @@ class _ClockPageState extends State<ClockPage> {
 
     final arguments = ExamOverviewPageArguments(
       examDetail: ExamDetail(
-        exams: _cubit.state.exams,
+        exams: _cubit.state.timetable.exams,
         examStartedTime: _cubit.state.examStartedTime,
         examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
         pageOpenedTime: _cubit.state.pageOpenedTime,
@@ -541,9 +538,9 @@ class _ClockPageState extends State<ClockPage> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
       properties: {
-        'exam_name': widget.exams.toExamNamesString(),
-        'exam_names': widget.exams.map((e) => e.examName).toList(),
-        'subject_names': widget.exams.map((e) => e.subject.name).toList(),
+        'timetable_name': _cubit.state.timetable.name,
+        'exam_names': _cubit.state.timetable.toExamNamesString(),
+        'subject_names': _cubit.state.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
       },
     );
@@ -609,7 +606,7 @@ class _ClockPageState extends State<ClockPage> {
 }
 
 class ClockPageArguments {
-  final List<Exam> exams;
+  final Timetable timetable;
 
-  ClockPageArguments(this.exams);
+  ClockPageArguments(this.timetable);
 }

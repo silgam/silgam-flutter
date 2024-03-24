@@ -1,5 +1,50 @@
+import 'package:collection/collection.dart';
+
 import '../../model/announcement.dart';
 import '../../model/exam.dart';
+import '../../model/timetable.dart';
+
+class BreakpointGroup {
+  final Exam exam;
+  final List<Breakpoint> breakpoints;
+
+  BreakpointGroup({
+    required this.exam,
+    required this.breakpoints,
+  });
+
+  static List<BreakpointGroup> createBreakpointGroupsFromTimetable(
+    Timetable timetable,
+  ) {
+    final breakpointGroups = <BreakpointGroup>[];
+
+    timetable.items.forEachIndexed((index, currentItem) {
+      final itemStartTime = index == 0
+          ? timetable.startTime
+          : breakpointGroups.last.breakpoints.last.time.add(
+              Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
+            );
+      final examStartTime = itemStartTime.add(
+        Duration(minutes: currentItem.exam.subject.minutesBeforeExamStart),
+      );
+
+      final currentItemBreakpoints = Breakpoint._createBreakpointsFromExam(
+        currentItem.exam,
+        examStartTime,
+      );
+      if (breakpointGroups.lastOrNull?.breakpoints.lastOrNull?.time ==
+          currentItemBreakpoints.firstOrNull?.time) {
+        breakpointGroups.lastOrNull?.breakpoints.removeLast();
+      }
+      breakpointGroups.add(BreakpointGroup(
+        exam: currentItem.exam,
+        breakpoints: currentItemBreakpoints,
+      ));
+    });
+
+    return breakpointGroups;
+  }
+}
 
 class Breakpoint {
   final String title;
@@ -12,12 +57,18 @@ class Breakpoint {
     required this.announcement,
   });
 
-  static List<Breakpoint> createBreakpointsFromExam(Exam exam) {
+  static List<Breakpoint> _createBreakpointsFromExam(
+    Exam exam,
+    DateTime examStartTime,
+  ) {
     final breakpoints = <Breakpoint>[];
 
-    for (var announcement in exam.announcements) {
-      final DateTime breakpointTime = announcement.time
-          .calculateBreakpointTime(exam.examStartTime, exam.examEndTime);
+    for (final announcement in exam.subject.defaultAnnouncements) {
+      final DateTime breakpointTime = announcement.time.calculateBreakpointTime(
+        examStartTime,
+        examStartTime.add(Duration(minutes: exam.durationMinutes)),
+      );
+
       breakpoints.add(Breakpoint(
         title: announcement.title,
         time: breakpointTime,
@@ -25,7 +76,6 @@ class Breakpoint {
       ));
     }
 
-    breakpoints.sort((a, b) => a.time.compareTo(b.time));
     return breakpoints;
   }
 }

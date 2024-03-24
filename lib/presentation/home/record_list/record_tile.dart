@@ -85,9 +85,9 @@ class RecordTileState extends State<RecordTile> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    widget.record.subject.subjectName,
+                    widget.record.exam.name,
                     style: TextStyle(
-                      color: Color(widget.record.subject.firstColor),
+                      color: Color(widget.record.exam.color),
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
                     ),
