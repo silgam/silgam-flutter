@@ -34,7 +34,7 @@ class BreakpointGroup {
       );
       if (breakpointGroups.lastOrNull?.breakpoints.lastOrNull?.time ==
           currentItemBreakpoints.firstOrNull?.time) {
-        currentItemBreakpoints.removeAt(0);
+        breakpointGroups.lastOrNull?.breakpoints.removeLast();
       }
       breakpointGroups.add(BreakpointGroup(
         exam: currentItem.exam,

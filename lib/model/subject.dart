@@ -169,7 +169,7 @@ enum Subject {
     defaultName: '탐구2',
     defaultAnnouncements: [
       Announcement(
-        title: '종료령',
+        title: '시험지 교체',
         time: RelativeTime.beforeStart(minutes: 2),
         fileName: '029_4_finish_first.mp3',
       ),
