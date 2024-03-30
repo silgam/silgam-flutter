@@ -20,7 +20,7 @@ class ClockState with _$ClockState {
   }) = _ClockState;
 
   Breakpoint get currentBreakpoint => breakpoints[currentBreakpointIndex];
-  Exam get currentExam => timetable.items[currentExamIndex].exam;
+  Exam get currentExam => currentBreakpoint.exam;
 
   bool get isFinished => currentBreakpointIndex >= breakpoints.length - 1;
 }
