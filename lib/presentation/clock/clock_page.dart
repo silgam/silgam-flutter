@@ -250,12 +250,16 @@ class _ClockPageState extends State<ClockPage> {
       child: ScrollConfiguration(
         behavior: EmptyScrollBehavior(),
         child: SingleChildScrollView(
+          clipBehavior: Clip.none,
           controller: _timelineController,
           padding: padding,
           scrollDirection: direction,
           physics: const ClampingScrollPhysics(),
           child: Flex(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: direction == Axis.horizontal
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.center,
             direction: direction,
             children: _buildTimelineTiles(direction),
           ),
@@ -264,7 +268,7 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  List<Widget> _buildTimelineTiles(Axis orientation) {
+  List<Widget> _buildTimelineTiles(Axis direction) {
     final state = _cubit.state;
     final tiles = <Widget>[];
     state.breakpoints.forEachIndexed((index, breakpoint) {
@@ -277,8 +281,11 @@ class _ClockPageState extends State<ClockPage> {
       tiles.add(TimelineTile(
         key: _timelineTileKeys[index],
         onTap: () => _cubit.onBreakpointTap(index),
+        examName: breakpoint.isFirstInExam ? breakpoint.exam.name : null,
         time: time,
         title: breakpoint.title,
+        color: Color(breakpoint.exam.color),
+        direction: direction,
         disabled: disabled,
       ));
 
@@ -310,7 +317,7 @@ class _ClockPageState extends State<ClockPage> {
       tiles.add(TimelineConnector(
         duration.inMinutes,
         progress,
-        direction: orientation,
+        direction: direction,
         markerPositions: markerPositions,
         key: _timelineConnectorKeys[index],
       ));
