@@ -27,18 +27,18 @@ const _announcementsAssetPath = 'assets/announcements';
 @injectable
 class ClockCubit extends Cubit<ClockState> {
   ClockCubit(
-    @factoryParam Timetable timetable,
+    @factoryParam this._timetable,
     this._appCubit,
     this._noiseSettingCubit,
   ) : super(ClockState(
           currentTime: DateTime.now(),
           examStartedTime: DateTime.now(),
           pageOpenedTime: DateTime.now(),
-          timetable: timetable,
         )) {
     _initialize();
   }
 
+  final Timetable _timetable;
   final AppCubit _appCubit;
   final NoiseSettingCubit _noiseSettingCubit;
 
@@ -47,17 +47,16 @@ class ClockCubit extends Cubit<ClockState> {
   NoiseGenerator? _noiseGenerator;
 
   get defaultLogProperties => {
-        'timetable_name': state.timetable.name,
-        'exam_names': state.timetable.toExamNamesString(),
-        'subject_names': state.timetable.toSubjectNamesString(),
+        'timetable_name': _timetable.name,
+        'exam_names': _timetable.toExamNamesString(),
+        'subject_names': _timetable.toSubjectNamesString(),
       };
 
   void _initialize() {
-    final breakpoints =
-        Breakpoint.createBreakpointsFromTimetable(state.timetable);
+    final breakpoints = Breakpoint.createBreakpointsFromTimetable(_timetable);
 
     emit(state.copyWith(
-      breakpoints: Breakpoint.createBreakpointsFromTimetable(state.timetable),
+      breakpoints: Breakpoint.createBreakpointsFromTimetable(_timetable),
       currentTime: breakpoints.first.time,
     ));
 
@@ -205,7 +204,7 @@ class ClockCubit extends Cubit<ClockState> {
             breakpoint.announcement.time ==
             const RelativeTime.afterFinish(minutes: 0))
         .length
-        .clamp(0, state.timetable.items.length - 1);
+        .clamp(0, _timetable.items.length - 1);
 
     emit(state.copyWith(
       currentBreakpointIndex: index,

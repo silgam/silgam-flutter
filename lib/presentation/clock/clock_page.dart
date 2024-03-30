@@ -521,7 +521,7 @@ class _ClockPageState extends State<ClockPage> {
 
     final arguments = ExamOverviewPageArguments(
       examDetail: ExamDetail(
-        exams: _cubit.state.timetable.exams,
+        exams: widget.timetable.exams,
         examStartedTime: _cubit.state.examStartedTime,
         examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
         pageOpenedTime: _cubit.state.pageOpenedTime,
@@ -538,9 +538,9 @@ class _ClockPageState extends State<ClockPage> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
       properties: {
-        'timetable_name': _cubit.state.timetable.name,
-        'exam_names': _cubit.state.timetable.toExamNamesString(),
-        'subject_names': _cubit.state.timetable.toSubjectNamesString(),
+        'timetable_name': widget.timetable.name,
+        'exam_names': widget.timetable.toExamNamesString(),
+        'subject_names': widget.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
       },
     );

@@ -10,7 +10,6 @@ class ClockState with _$ClockState {
     @Default(true) bool isRunning,
     @Default([]) List<Breakpoint> breakpoints,
     @Default(0) int currentBreakpointIndex,
-    required Timetable timetable,
     @Default(0) int currentExamIndex,
     required DateTime currentTime,
     required DateTime examStartedTime,
