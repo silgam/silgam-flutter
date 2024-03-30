@@ -8,7 +8,7 @@ class ClockState with _$ClockState {
     @Default(false) bool isStarted,
     @Default(true) bool isUiVisible,
     @Default(true) bool isRunning,
-    @Default([]) List<BreakpointGroup> breakpointGroups,
+    @Default([]) List<Breakpoint> breakpoints,
     @Default(0) int currentBreakpointIndex,
     required Timetable timetable,
     @Default(0) int currentExamIndex,
@@ -19,8 +19,6 @@ class ClockState with _$ClockState {
     @Default([]) List<LapTime> lapTimes,
   }) = _ClockState;
 
-  List<Breakpoint> get breakpoints =>
-      breakpointGroups.expand((e) => e.breakpoints).toList();
   Breakpoint get currentBreakpoint => breakpoints[currentBreakpointIndex];
   Exam get currentExam => timetable.items[currentExamIndex].exam;
 

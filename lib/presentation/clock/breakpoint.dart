@@ -4,24 +4,30 @@ import '../../model/announcement.dart';
 import '../../model/exam.dart';
 import '../../model/timetable.dart';
 
-class BreakpointGroup {
+class Breakpoint {
+  final String title;
+  final DateTime time;
+  final Announcement announcement;
   final Exam exam;
-  final List<Breakpoint> breakpoints;
+  final bool isFirstInExam;
 
-  BreakpointGroup({
+  Breakpoint({
+    required this.title,
+    required this.time,
+    required this.announcement,
     required this.exam,
-    required this.breakpoints,
+    required this.isFirstInExam,
   });
 
-  static List<BreakpointGroup> createBreakpointGroupsFromTimetable(
+  static List<Breakpoint> createBreakpointsFromTimetable(
     Timetable timetable,
   ) {
-    final breakpointGroups = <BreakpointGroup>[];
+    final breakpoints = <Breakpoint>[];
 
     timetable.items.forEachIndexed((index, currentItem) {
       final itemStartTime = index == 0
           ? timetable.startTime
-          : breakpointGroups.last.breakpoints.last.time.add(
+          : breakpoints.last.time.add(
               Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
             );
       final examStartTime = itemStartTime.add(
@@ -32,30 +38,15 @@ class BreakpointGroup {
         currentItem.exam,
         examStartTime,
       );
-      if (breakpointGroups.lastOrNull?.breakpoints.lastOrNull?.time ==
+      if (breakpoints.lastOrNull?.time ==
           currentItemBreakpoints.firstOrNull?.time) {
-        breakpointGroups.lastOrNull?.breakpoints.removeLast();
+        breakpoints.removeLast();
       }
-      breakpointGroups.add(BreakpointGroup(
-        exam: currentItem.exam,
-        breakpoints: currentItemBreakpoints,
-      ));
+      breakpoints.addAll(currentItemBreakpoints);
     });
 
-    return breakpointGroups;
+    return breakpoints;
   }
-}
-
-class Breakpoint {
-  final String title;
-  final DateTime time;
-  final Announcement announcement;
-
-  Breakpoint({
-    required this.title,
-    required this.time,
-    required this.announcement,
-  });
 
   static List<Breakpoint> _createBreakpointsFromExam(
     Exam exam,
@@ -73,6 +64,8 @@ class Breakpoint {
         title: announcement.title,
         time: breakpointTime,
         announcement: announcement,
+        exam: exam,
+        isFirstInExam: breakpoints.isEmpty,
       ));
     }
 
