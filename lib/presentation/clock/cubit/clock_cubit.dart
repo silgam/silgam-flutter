@@ -198,17 +198,8 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void _moveBreakpoint({required int index, bool adjustTime = true}) {
-    final nextExamIndex = state.breakpoints
-        .take(index + 1)
-        .where((breakpoint) =>
-            breakpoint.announcement.time ==
-            const RelativeTime.afterFinish(minutes: 0))
-        .length
-        .clamp(0, _timetable.items.length - 1);
-
     emit(state.copyWith(
       currentBreakpointIndex: index,
-      currentExamIndex: nextExamIndex,
     ));
     _saveExamStartedTimeIfNeeded();
     _saveExamFinishedTimeIfNeeded();
