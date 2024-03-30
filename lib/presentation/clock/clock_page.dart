@@ -281,7 +281,9 @@ class _ClockPageState extends State<ClockPage> {
       tiles.add(TimelineTile(
         key: _timelineTileKeys[index],
         onTap: () => _cubit.onBreakpointTap(index),
-        examName: breakpoint.isFirstInExam ? breakpoint.exam.name : null,
+        examName: widget.timetable.items.length > 1 && breakpoint.isFirstInExam
+            ? breakpoint.exam.name
+            : null,
         time: time,
         title: breakpoint.title,
         color: Color(breakpoint.exam.color),
