@@ -7,8 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
+import '../../model/relative_time.dart';
 import '../../model/timetable.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
@@ -171,7 +171,7 @@ class _ClockPageState extends State<ClockPage> {
           child: Visibility(
             visible: isUiVisible,
             maintainState: true,
-            child: _buildExamTitle(_cubit.state.currentExam),
+            child: _buildExamTitle(),
           ),
         ),
         const WristWatchContainer(),
@@ -202,7 +202,28 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildExamTitle(Exam exam) {
+  Widget _buildExamTitle() {
+    final isLastBreakpoint = _cubit.state.currentBreakpointIndex ==
+        _cubit.state.breakpoints.length - 1;
+
+    final String badge;
+    final String title;
+    if (isLastBreakpoint) {
+      badge = '시험 종료';
+      title = _cubit.state.currentBreakpoint.title;
+    } else {
+      if (_cubit.state.currentBreakpoint.announcement.time.type ==
+          RelativeTimeType.afterFinish) {
+        final nextBreakpoint =
+            _cubit.state.breakpoints[_cubit.state.currentBreakpointIndex + 1];
+        badge = '${nextBreakpoint.exam.number}교시 전';
+        title = '쉬는 시간';
+      } else {
+        badge = '${_cubit.state.currentExam.number}교시';
+        title = _cubit.state.currentBreakpoint.title;
+      }
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -214,7 +235,7 @@ class _ClockPageState extends State<ClockPage> {
             border: Border.all(color: Colors.white),
           ),
           child: Text(
-            '${exam.number}교시',
+            badge,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -224,7 +245,7 @@ class _ClockPageState extends State<ClockPage> {
         ),
         const SizedBox(height: 4),
         Text(
-          exam.name,
+          title,
           style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
