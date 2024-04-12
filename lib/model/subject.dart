@@ -26,7 +26,7 @@ enum Subject {
         fileName: '005_1_start.mp3',
       ),
       Announcement(
-        title: '10분 전',
+        title: '종료 10분 전',
         time: RelativeTime.beforeFinish(minutes: 10),
         fileName: '006_1_10min_left.mp3',
       ),
@@ -57,7 +57,7 @@ enum Subject {
         fileName: '011_2_start.mp3',
       ),
       Announcement(
-        title: '10분 전',
+        title: '종료 10분 전',
         time: RelativeTime.beforeFinish(minutes: 10),
         fileName: '012_2_10min_left.mp3',
       ),
@@ -91,7 +91,7 @@ enum Subject {
         time: RelativeTime.afterStart(minutes: 23),
       ),
       Announcement(
-        title: '10분 전',
+        title: '종료 10분 전',
         time: RelativeTime.beforeFinish(minutes: 10),
         fileName: '017_3_10min_left.mp3',
       ),
@@ -122,7 +122,7 @@ enum Subject {
         fileName: '022_4_start.mp3',
       ),
       Announcement(
-        title: '5분 전',
+        title: '종료 5분 전',
         time: RelativeTime.beforeFinish(minutes: 5),
         fileName: '023_4_5min_left.mp3',
       ),
@@ -153,7 +153,7 @@ enum Subject {
         fileName: '027_4_start_first.mp3',
       ),
       Announcement(
-        title: '5분 전',
+        title: '종료 5분 전',
         time: RelativeTime.afterStart(minutes: 25),
         fileName: '028_4_5min_left_first.mp3',
       ),
@@ -179,7 +179,7 @@ enum Subject {
         fileName: '030_4_start_second.mp3',
       ),
       Announcement(
-        title: '5분 전',
+        title: '종료 5분 전',
         time: RelativeTime.beforeFinish(minutes: 5),
         fileName: '031_4_5min_left_second.mp3',
       ),
@@ -210,7 +210,7 @@ enum Subject {
         fileName: '036_5_start.mp3',
       ),
       Announcement(
-        title: '10분 전',
+        title: '종료 10분 전',
         time: RelativeTime.beforeFinish(minutes: 10),
         fileName: '037_5_10min_left.mp3',
       ),
