@@ -35,12 +35,12 @@ import 'cubit/iap_cubit.dart';
 const double cardCornerRadius = 14;
 
 class SilgamApp extends StatelessWidget {
-  const SilgamApp({Key? key, required String initialRoute})
+  const SilgamApp({Key? key, required String? initialRoute})
       : _initialRoute = initialRoute,
         super(key: key);
 
   static const backgroundColor = Color.fromARGB(255, 245, 246, 247);
-  final String _initialRoute;
+  final String? _initialRoute;
 
   @override
   Widget build(BuildContext context) {

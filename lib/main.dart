@@ -15,7 +15,6 @@ import 'firebase_options.dart';
 import 'presentation/app/app.dart';
 import 'presentation/app/cubit/app_cubit.dart';
 import 'presentation/app/cubit/iap_cubit.dart';
-import 'presentation/home/home_page.dart';
 import 'presentation/home/main/cubit/main_cubit.dart';
 import 'presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'presentation/onboarding/onboarding_page.dart';
@@ -38,16 +37,16 @@ void main() async {
   runApp(SilgamApp(initialRoute: initialRoute));
 }
 
-Future<String> initializeInitialRoute() async {
+Future<String?> initializeInitialRoute() async {
   final SharedPreferences sharedPreferences = getIt.get();
   final isOnboardingFinished =
       sharedPreferences.getBool(PreferenceKey.isOnboardingFinished) ?? false;
-  if (isOnboardingFinished) return HomePage.routeName;
+  if (isOnboardingFinished) return null;
 
   final isOnboardingInitialized =
       await getIt.get<OnboardingCubit>().initialize();
   if (isOnboardingInitialized) return OnboardingPage.routeName;
-  return HomePage.routeName;
+  return null;
 }
 
 Future<void> initializeFirebase() async {
