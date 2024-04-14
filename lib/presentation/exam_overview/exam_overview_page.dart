@@ -58,6 +58,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   final Set<Exam> _recordedExams = {};
   List<Exam> get _exams => widget.examDetail.exams;
 
+  final _randomTitle =
+      _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
+
   void _onCloseButtonPressed() {
     if (_recordedExams.length == _exams.length) {
       Navigator.pop(context);
@@ -314,7 +317,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
       child: Text(
-        _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)],
+        _randomTitle,
         style: const TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w900,

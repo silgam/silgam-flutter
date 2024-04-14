@@ -57,6 +57,9 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
+  final _randomWelcomeMessage =
+      _welcomeMessages[Random().nextInt(_welcomeMessages.length)];
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -272,7 +275,7 @@ class _MainViewState extends State<MainView> {
 
   Widget _buildWelcomMessage({bool isTablet = false}) {
     return Text(
-      _welcomeMessages[Random().nextInt(_welcomeMessages.length)],
+      _randomWelcomeMessage,
       style: TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: isTablet ? 16 : 13,
