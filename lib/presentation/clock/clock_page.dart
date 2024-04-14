@@ -13,7 +13,6 @@ import '../../model/timetable.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
-import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/bullet_text.dart';
@@ -298,7 +297,7 @@ class _ClockPageState extends State<ClockPage> {
 
       // Tile
       final time =
-          '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
+          '${breakpoint.time.hour}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
       tiles.add(TimelineTile(
         key: _timelineTileKeys[index],
         onTap: () => _cubit.onBreakpointTap(index),

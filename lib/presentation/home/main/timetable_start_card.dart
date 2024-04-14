@@ -86,14 +86,14 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
                       iconData: Icons.schedule,
                       title: '총 시간',
                       content:
-                          timetable.startTime.toPeriodString(timetable.endTime),
+                          '${DateFormat.Hm().format(timetable.startTime)} ~ ${DateFormat.Hm().format(timetable.endTime)}',
                       badgeText: timetable.duration.toKoreanString(),
                     )
                   : _buildInfo(
                       iconData: Icons.schedule,
                       title: '시험 시간',
-                      content: timetable.items.first.exam.startTime
-                          .toPeriodString(timetable.items.first.exam.endTime),
+                      content:
+                          '${DateFormat.Hm().format(timetable.items.first.exam.startTime)} ~ ${DateFormat.Hm().format(timetable.items.first.exam.endTime)}',
                       badgeText:
                           '${timetable.items.first.exam.durationMinutes}분',
                     ),
