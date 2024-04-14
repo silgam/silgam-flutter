@@ -37,7 +37,7 @@ class ConnectivityManger {
     _sessionId = const Uuid().v1();
     final db = FirebaseDatabase.instance;
     _realtimeDatabaseListener =
-        db.ref('.info/connected').onValue.listen((event) {
+        db.ref('.info/connected').onValue.skip(1).listen((event) {
       final connected = event.snapshot.value == true;
       log(
         'Realtime database connected: $connected',
