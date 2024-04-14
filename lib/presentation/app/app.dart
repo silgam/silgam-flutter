@@ -23,6 +23,7 @@ import '../noise_setting/noise_setting_page.dart';
 import '../notification_setting/notification_setting_page.dart';
 import '../offline/offline_guide_page.dart';
 import '../onboarding/onboarding_page.dart';
+import '../products/silgampass/silgampass_page.dart';
 import '../purchase/purchase_page.dart';
 import '../record_detail/record_detail_page.dart';
 import '../review_problem_detail/review_problem_detail_page.dart';
@@ -74,6 +75,7 @@ class SilgamApp extends StatelessWidget {
               CustomizeSubjectNamePage.routeName: (_) =>
                   CustomizeSubjectNamePage(),
               OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
+              SilgampassPage.routeName: (_) => const SilgampassPage(),
             },
             onGenerateRoute: (settings) {
               switch (settings.name) {
