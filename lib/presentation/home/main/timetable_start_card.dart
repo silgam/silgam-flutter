@@ -11,7 +11,7 @@ class _TimetableStartCard extends StatefulWidget {
 
 class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
-  final timetables = defaultTimetables;
+  get timetables => defaultTimetables;
 
   late final TabController _tabController = TabController(
     length: timetables.length,

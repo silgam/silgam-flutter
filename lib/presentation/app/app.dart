@@ -9,6 +9,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import '../../model/subject.dart';
 import '../../repository/exam/exam_repository.dart';
+import '../../repository/timetable/timetable_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../clock/clock_page.dart';
@@ -61,6 +62,8 @@ class SilgamApp extends StatelessWidget {
             exam.name =
                 customSubjectNameMap?[exam.subject] ?? exam.subject.defaultName;
           }
+          defaultTimetables = getDefaultTimetables();
+
           return MaterialApp(
             title: '실감',
             initialRoute: _initialRoute,
