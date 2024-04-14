@@ -20,6 +20,11 @@ class InitialRouteHandler extends StatelessWidget {
         Navigator.of(context).pushReplacementNamed(route);
       }
     });
-    return Container();
+
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }
