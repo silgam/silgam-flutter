@@ -213,9 +213,12 @@ class _ClockPageState extends State<ClockPage> {
     } else {
       if (_cubit.state.currentBreakpoint.announcement.time.type ==
           RelativeTimeType.afterFinish) {
-        final nextBreakpoint =
-            _cubit.state.breakpoints[_cubit.state.currentBreakpointIndex + 1];
-        badge = '${nextBreakpoint.exam.number}교시 전';
+        final currentNumber = _cubit.state.currentExam.number;
+        final nextNumber = _cubit.state
+            .breakpoints[_cubit.state.currentBreakpointIndex + 1].exam.number;
+        badge = currentNumber == nextNumber
+            ? '$currentNumber교시'
+            : '$nextNumber교시 전';
         title = '쉬는 시간';
       } else {
         badge = '${_cubit.state.currentExam.number}교시';
