@@ -5,70 +5,104 @@ import '../common/timeline_marker.dart';
 
 class TimelineTile extends StatelessWidget {
   final GestureTapCallback onTap;
+  final String? examName;
   final String time;
   final String title;
+  final Color color;
+  final Axis direction;
   final bool disabled;
 
   const TimelineTile({
     Key? key,
     required this.onTap,
+    required this.examName,
     required this.time,
     required this.title,
+    required this.color,
+    required this.direction,
     required this.disabled,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: _onTap,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.white12,
-      borderRadius: BorderRadius.circular(4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              time,
-              style: TextStyle(
-                color: _getTimelineColor(disabled),
-                fontWeight: FontWeight.w300,
-                fontSize: 12,
+    final String bigText;
+    String? smallText;
+    final allMatches = RegExp(r"\(([^)]+)\)").allMatches(title);
+    if (allMatches.isEmpty) {
+      bigText = title;
+    } else {
+      final splitIndex = allMatches.last.start;
+      bigText = title.substring(0, splitIndex).trim();
+      smallText = title.substring(splitIndex).trim();
+    }
+
+    return Transform.translate(
+      offset:
+          Offset(0, smallText != null && direction == Axis.horizontal ? 10 : 0),
+      child: InkWell(
+        onTap: _onTap,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.white12,
+        borderRadius: BorderRadius.circular(4),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (examName != null)
+                Opacity(
+                  opacity: disabled ? 0.5 : 1.0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      examName ?? '',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              if (examName != null) const SizedBox(height: 8),
+              Text(
+                time,
+                style: TextStyle(
+                  color: _getTimelineColor(disabled),
+                  fontWeight: FontWeight.w300,
+                  fontSize: 12,
+                ),
               ),
-            ),
-            const SizedBox(height: 1),
-            Column(children: _buildTitleTexts()),
-          ],
+              const SizedBox(height: 1),
+              Text(
+                bigText,
+                style: TextStyle(
+                  color: _getTimelineColor(disabled),
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16,
+                ),
+              ),
+              if (smallText != null)
+                Text(
+                  smallText,
+                  style: TextStyle(
+                    color: _getTimelineColor(disabled),
+                    fontWeight: FontWeight.w100,
+                    fontSize: 10,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  List<Text> _buildTitleTexts() {
-    final texts = <Text>[];
-    final regex = RegExp(r"\(([^)]+)\)");
-    final allMatches = regex.allMatches(title);
-    final defaultTextStyle = TextStyle(
-      color: _getTimelineColor(disabled),
-      fontWeight: FontWeight.w300,
-      fontSize: 16,
-    );
-    final smallTextStyle = TextStyle(
-      color: _getTimelineColor(disabled),
-      fontWeight: FontWeight.w100,
-      fontSize: 10,
-    );
-    if (allMatches.isEmpty) {
-      texts.add(Text(title, style: defaultTextStyle));
-    } else {
-      final splitIndex = allMatches.last.start;
-      texts.add(
-          Text(title.substring(0, splitIndex).trim(), style: defaultTextStyle));
-      texts
-          .add(Text(title.substring(splitIndex).trim(), style: smallTextStyle));
-    }
-    return texts;
   }
 
   void _onTap() {

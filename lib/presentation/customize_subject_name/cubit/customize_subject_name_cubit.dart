@@ -65,7 +65,8 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
 
   void _initialize() {
     emit(state.copyWith(
-      subjectNameMap: _appCubit.state.customSubjectNameMap,
+      subjectNameMap:
+          _appCubit.state.me?.customSubjectNameMap ?? defaultSubjectNameMap,
     ));
   }
 }

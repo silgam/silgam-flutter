@@ -6,10 +6,10 @@ class StatState with _$StatState {
 
   const factory StatState({
     @Default([]) List<ExamRecord> originalRecords,
-    @Default({}) Map<Subject, List<ExamRecord>> records,
+    @Default({}) Map<Exam, List<ExamRecord>> records,
     @Default(false) bool isLoading,
     @Default('') String searchQuery,
-    @Default([]) List<Subject> selectedSubjects,
+    @Default([]) List<Exam> selectedExams,
     @Default(false) bool isDateRangeSet,
     required DateTimeRange dateRange,
     required ExamValueType selectedExamValueType,

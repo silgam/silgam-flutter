@@ -4,14 +4,6 @@ extension DateTimeBuilder on DateTime {
 }
 
 extension DateTimeUtil on DateTime {
-  int get hour12 {
-    if (hour > 12) {
-      return hour - 12;
-    } else {
-      return hour;
-    }
-  }
-
   DateTime toDate() {
     return DateTime(year, month, day);
   }

@@ -1,17 +1,18 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
+import '../../model/relative_time.dart';
+import '../../model/timetable.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/android_audio_manager.dart';
 import '../../util/const.dart';
-import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/bullet_text.dart';
@@ -23,11 +24,11 @@ import 'wrist_watch.dart';
 
 class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
-  final List<Exam> exams;
+  final Timetable timetable;
 
   const ClockPage({
     Key? key,
-    required this.exams,
+    required this.timetable,
   }) : super(key: key);
 
   @override
@@ -36,7 +37,7 @@ class ClockPage extends StatefulWidget {
 
 class _ClockPageState extends State<ClockPage> {
   final AppCubit _appCubit = getIt.get();
-  late final ClockCubit _cubit = getIt.get(param1: widget.exams);
+  late final ClockCubit _cubit = getIt.get(param1: widget.timetable);
 
   final TransformationController _clockTransformController =
       TransformationController();
@@ -169,7 +170,7 @@ class _ClockPageState extends State<ClockPage> {
           child: Visibility(
             visible: isUiVisible,
             maintainState: true,
-            child: _buildExamTitle(_cubit.state.currentExam),
+            child: _buildExamTitle(),
           ),
         ),
         const WristWatchContainer(),
@@ -200,41 +201,60 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Widget _buildExamTitle(Exam exam) {
-    final children = <Widget>[];
+  Widget _buildExamTitle() {
+    final isLastBreakpoint = _cubit.state.currentBreakpointIndex ==
+        _cubit.state.breakpoints.length - 1;
 
-    if (exam.examNumber != null) {
-      children.add(Container(
-        margin: const EdgeInsets.only(bottom: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(1000)),
-          border: Border.all(color: Colors.white),
-        ),
-        child: Text(
-          '${exam.examNumber}교시',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ));
-      children.add(const SizedBox(height: 4));
+    final String badge;
+    final String title;
+    if (isLastBreakpoint) {
+      badge = '시험 종료';
+      title = _cubit.state.currentBreakpoint.title;
+    } else {
+      if (_cubit.state.currentBreakpoint.announcement.time.type ==
+          RelativeTimeType.afterFinish) {
+        final currentNumber = _cubit.state.currentExam.number;
+        final nextNumber = _cubit.state
+            .breakpoints[_cubit.state.currentBreakpointIndex + 1].exam.number;
+        badge = currentNumber == nextNumber
+            ? '$currentNumber교시'
+            : '$nextNumber교시 전';
+        title = '쉬는 시간';
+      } else {
+        badge = '${_cubit.state.currentExam.number}교시';
+        title = _cubit.state.currentBreakpoint.title;
+      }
     }
-
-    children.add(Text(
-      exam.examName,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-      ),
-    ));
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: children,
+      children: <Widget>[
+        Container(
+          margin: const EdgeInsets.only(bottom: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(1000)),
+            border: Border.all(color: Colors.white),
+          ),
+          child: Text(
+            badge,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 
@@ -253,12 +273,16 @@ class _ClockPageState extends State<ClockPage> {
       child: ScrollConfiguration(
         behavior: EmptyScrollBehavior(),
         child: SingleChildScrollView(
+          clipBehavior: Clip.none,
           controller: _timelineController,
           padding: padding,
           scrollDirection: direction,
           physics: const ClampingScrollPhysics(),
           child: Flex(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: direction == Axis.horizontal
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.center,
             direction: direction,
             children: _buildTimelineTiles(direction),
           ),
@@ -267,21 +291,26 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  List<Widget> _buildTimelineTiles(Axis orientation) {
+  List<Widget> _buildTimelineTiles(Axis direction) {
     final state = _cubit.state;
     final tiles = <Widget>[];
-    state.breakpoints.asMap().forEach((index, breakpoint) {
+    state.breakpoints.forEachIndexed((index, breakpoint) {
       bool disabled = false;
       if (index > state.currentBreakpointIndex) disabled = true;
 
       // Tile
       final time =
-          '${breakpoint.time.hour12}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
+          '${breakpoint.time.hour}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
       tiles.add(TimelineTile(
         key: _timelineTileKeys[index],
         onTap: () => _cubit.onBreakpointTap(index),
+        examName: widget.timetable.items.length > 1 && breakpoint.isFirstInExam
+            ? breakpoint.exam.name
+            : null,
         time: time,
         title: breakpoint.title,
+        color: Color(breakpoint.exam.color),
+        direction: direction,
         disabled: disabled,
       ));
 
@@ -313,7 +342,7 @@ class _ClockPageState extends State<ClockPage> {
       tiles.add(TimelineConnector(
         duration.inMinutes,
         progress,
-        direction: orientation,
+        direction: direction,
         markerPositions: markerPositions,
         key: _timelineConnectorKeys[index],
       ));
@@ -524,7 +553,7 @@ class _ClockPageState extends State<ClockPage> {
 
     final arguments = ExamOverviewPageArguments(
       examDetail: ExamDetail(
-        exams: _cubit.state.exams,
+        exams: widget.timetable.exams,
         examStartedTime: _cubit.state.examStartedTime,
         examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
         pageOpenedTime: _cubit.state.pageOpenedTime,
@@ -541,9 +570,9 @@ class _ClockPageState extends State<ClockPage> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
       properties: {
-        'exam_name': widget.exams.toExamNamesString(),
-        'exam_names': widget.exams.map((e) => e.examName).toList(),
-        'subject_names': widget.exams.map((e) => e.subject.name).toList(),
+        'timetable_name': widget.timetable.name,
+        'exam_names': widget.timetable.toExamNamesString(),
+        'subject_names': widget.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
       },
     );
@@ -609,7 +638,7 @@ class _ClockPageState extends State<ClockPage> {
 }
 
 class ClockPageArguments {
-  final List<Exam> exams;
+  final Timetable timetable;
 
-  ClockPageArguments(this.exams);
+  ClockPageArguments(this.timetable);
 }

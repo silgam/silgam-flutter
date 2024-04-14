@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '../../model/subject.dart';
+import '../../repository/exam/exam_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../clock/clock_page.dart';
@@ -52,10 +53,13 @@ class SilgamApp extends StatelessWidget {
           value: getIt.get<IapCubit>(),
         ),
       ],
-      child: BlocSelector<AppCubit, AppState, Map<Subject, String>>(
+      child: BlocSelector<AppCubit, AppState, Map<Subject, String>?>(
         selector: (state) => state.customSubjectNameMap,
         builder: (context, customSubjectNameMap) {
-          Subject.subjectNameMap = customSubjectNameMap;
+          for (final exam in defaultExams) {
+            exam.name =
+                customSubjectNameMap?[exam.subject] ?? exam.subject.defaultName;
+          }
           return MaterialApp(
             title: '실감',
             initialRoute: _initialRoute,
@@ -89,7 +93,7 @@ class SilgamApp extends StatelessWidget {
                 case ClockPage.routeName:
                   final args = settings.arguments as ClockPageArguments;
                   return MaterialPageRoute(
-                    builder: (_) => ClockPage(exams: args.exams),
+                    builder: (_) => ClockPage(timetable: args.timetable),
                     settings: settings,
                   );
                 case EditRecordPage.routeName:

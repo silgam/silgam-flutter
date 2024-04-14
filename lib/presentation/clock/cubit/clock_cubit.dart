@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -11,6 +10,7 @@ import 'package:just_audio/just_audio.dart';
 import '../../../model/exam.dart';
 import '../../../model/lap_time.dart';
 import '../../../model/relative_time.dart';
+import '../../../model/timetable.dart';
 import '../../../repository/noise/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -27,18 +27,18 @@ const _announcementsAssetPath = 'assets/announcements';
 @injectable
 class ClockCubit extends Cubit<ClockState> {
   ClockCubit(
-    @factoryParam List<Exam> exams,
+    @factoryParam this._timetable,
     this._appCubit,
     this._noiseSettingCubit,
   ) : super(ClockState(
           currentTime: DateTime.now(),
           examStartedTime: DateTime.now(),
           pageOpenedTime: DateTime.now(),
-          exams: exams,
         )) {
     _initialize();
   }
 
+  final Timetable _timetable;
   final AppCubit _appCubit;
   final NoiseSettingCubit _noiseSettingCubit;
 
@@ -46,14 +46,18 @@ class ClockCubit extends Cubit<ClockState> {
   Timer? _timer;
   NoiseGenerator? _noiseGenerator;
 
+  get defaultLogProperties => {
+        'timetable_name': _timetable.name,
+        'exam_names': _timetable.toExamNamesString(),
+        'subject_names': _timetable.toSubjectNamesString(),
+      };
+
   void _initialize() {
-    final breakpoints = state.exams
-        .map((e) => Breakpoint.createBreakpointsFromExam(e))
-        .flattened
-        .toList();
+    final breakpoints = Breakpoint.createBreakpointsFromTimetable(_timetable);
+
     emit(state.copyWith(
-      breakpoints: breakpoints,
-      currentTime: breakpoints[0].time,
+      breakpoints: Breakpoint.createBreakpointsFromTimetable(_timetable),
+      currentTime: breakpoints.first.time,
     ));
 
     if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
@@ -88,11 +92,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
     AnalyticsManager.logEvent(
       name: '[ClockPage] Start exam',
-      properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
-      },
+      properties: defaultLogProperties,
     );
   }
 
@@ -110,9 +110,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Substract 30 seconds',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
       },
     );
@@ -126,9 +124,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Add 30 seconds',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
       },
     );
@@ -151,9 +147,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Play/Pause Button Pressed',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
         'running': state.isRunning,
       },
@@ -174,9 +168,7 @@ class ClockCubit extends Cubit<ClockState> {
     AnalyticsManager.logEvent(
       name: '[ClockPage] Lap Time Button Pressed',
       properties: {
-        'exam_name': state.exams.toExamNamesString(),
-        'exam_names': state.exams.map((e) => e.examName).toList(),
-        'subject_names': state.exams.map((e) => e.subject.name).toList(),
+        ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
         'lap_times': state.lapTimes.toString(),
       },
@@ -206,17 +198,8 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void _moveBreakpoint({required int index, bool adjustTime = true}) {
-    final nextExamIndex = state.breakpoints
-        .take(index + 1)
-        .where((breakpoint) =>
-            breakpoint.announcement.time ==
-            const RelativeTime.afterFinish(minutes: 0))
-        .length
-        .clamp(0, state.exams.length - 1);
-
     emit(state.copyWith(
       currentBreakpointIndex: index,
-      currentExamIndex: nextExamIndex,
     ));
     _saveExamStartedTimeIfNeeded();
     _saveExamFinishedTimeIfNeeded();

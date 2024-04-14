@@ -8,8 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:intl/intl.dart';
 
+import '../../../model/exam.dart';
 import '../../../model/exam_record.dart';
-import '../../../model/subject.dart';
 import '../../../repository/exam/exam_repository.dart';
 import '../../../util/const.dart';
 import '../../../util/date_time_extension.dart';
@@ -135,18 +135,18 @@ class _StatViewState extends State<StatView> {
                         _buildFilterChips(
                           isDateRangeSet: state.isDateRangeSet,
                           dateRange: state.dateRange,
-                          selectedSubjects: state.selectedSubjects,
+                          selectedExams: state.selectedExams,
                         ),
                         screenWidth > tabletScreenWidth
                             ? _buildTabletLayout(
                                 filteredRecords: state.records,
-                                selectedSubjects: state.selectedSubjects,
+                                selectedExams: state.selectedExams,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
                               )
                             : _buildMobileLayout(
                                 filteredRecords: state.records,
-                                selectedSubjects: state.selectedSubjects,
+                                selectedExams: state.selectedExams,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
                               ),
@@ -167,8 +167,8 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildTabletLayout({
-    required Map<Subject, List<ExamRecord>> filteredRecords,
-    required List<Subject> selectedSubjects,
+    required Map<Exam, List<ExamRecord>> filteredRecords,
+    required List<Exam> selectedExams,
     required ExamValueType selectedExamValueType,
   }) {
     return SliverList(
@@ -184,7 +184,7 @@ class _StatViewState extends State<StatView> {
                   _buildValueGraphsCard(
                     filteredRecords: filteredRecords,
                     examValueType: selectedExamValueType,
-                    selectedSubjects: selectedSubjects,
+                    selectedExams: selectedExams,
                   ),
                   _buildTotalExamDurationInfoCard(
                     filteredRecords: filteredRecords,
@@ -215,8 +215,8 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildMobileLayout({
-    required Map<Subject, List<ExamRecord>> filteredRecords,
-    required List<Subject> selectedSubjects,
+    required Map<Exam, List<ExamRecord>> filteredRecords,
+    required List<Exam> selectedExams,
     required ExamValueType selectedExamValueType,
   }) {
     return SliverList(
@@ -225,7 +225,7 @@ class _StatViewState extends State<StatView> {
         _buildValueGraphsCard(
           filteredRecords: filteredRecords,
           examValueType: selectedExamValueType,
-          selectedSubjects: selectedSubjects,
+          selectedExams: selectedExams,
         ),
         IntrinsicHeight(
           child: Row(
@@ -254,7 +254,7 @@ class _StatViewState extends State<StatView> {
   Widget _buildFilterChips({
     required bool isDateRangeSet,
     required DateTimeRange dateRange,
-    required List<Subject> selectedSubjects,
+    required List<Exam> selectedExams,
   }) {
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
@@ -297,12 +297,11 @@ class _StatViewState extends State<StatView> {
                       tooltip: '기간 설정',
                     ),
                     const SizedBox(width: 6),
-                    for (Subject subject in Subject.values)
-                      SubjectFilterChip(
-                        subject: subject,
-                        isSelected: selectedSubjects.contains(subject),
-                        onSelected: () =>
-                            _cubit.onSubjectFilterButtonTapped(subject),
+                    for (Exam exam in defaultExams)
+                      ExamFilterChip(
+                        exam: exam,
+                        isSelected: selectedExams.contains(exam),
+                        onSelected: () => _cubit.onExamFilterButtonTapped(exam),
                       ),
                     SizedBox(width: horizontalPadding),
                   ],
@@ -316,20 +315,12 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildValueGraphsCard({
-    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required Map<Exam, List<ExamRecord>> filteredRecords,
     required ExamValueType examValueType,
-    required List<Subject> selectedSubjects,
+    required List<Exam> selectedExams,
   }) {
-    final isAllPerfectScoresSame = 1 ==
-        selectedSubjects
-            .map((subject) => defaultExams
-                .firstWhereOrNull((exam) =>
-                    (exam.subject == subject) ||
-                    (exam.subject == Subject.investigation &&
-                        subject == Subject.investigation2))
-                ?.perfectScore)
-            .toSet()
-            .length;
+    final isAllPerfectScoresSame =
+        1 == selectedExams.map((exam) => exam.perfectScore).toSet().length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
         .whereNotNull()
@@ -367,8 +358,8 @@ class _StatViewState extends State<StatView> {
             child: _buildValueGraphs(
               examValueType: examValueType,
               recordsMap: filteredRecords.map(
-                (subject, records) => MapEntry(
-                  subject,
+                (exam, records) => MapEntry(
+                  exam,
                   records
                       .where((record) => examValueType.getValue(record) != null)
                       .sortedBy((record) => record.examStartedTime),
@@ -419,7 +410,7 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildValueGraphs({
-    required Map<Subject, List<ExamRecord>> recordsMap,
+    required Map<Exam, List<ExamRecord>> recordsMap,
     required ExamValueType examValueType,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -455,8 +446,8 @@ class _StatViewState extends State<StatView> {
     final maxLength = dateToRecordsMap.length;
 
     final lineBarsData = recordsMap.entries.map((entry) {
-      final subject = entry.key;
-      final color = Color(subject.firstColor);
+      final exam = entry.key;
+      final color = Color(exam.color);
       return LineChartBarData(
         color: color,
         barWidth: 4,
@@ -487,7 +478,7 @@ class _StatViewState extends State<StatView> {
           ...dateToRecordsMap.entries
               .mapIndexed((index, entry) {
                 final record =
-                    entry.value.where((record) => record.subject == subject);
+                    entry.value.where((record) => record.exam == exam);
                 return record.isEmpty
                     ? null
                     : FlSpot(
@@ -532,11 +523,10 @@ class _StatViewState extends State<StatView> {
         tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         getTooltipItems: (touchedSpots) {
           return touchedSpots.map((touchedSpot) {
-            final subject = recordsMap.keys.toList()[touchedSpot.barIndex];
+            final exam = recordsMap.keys.toList()[touchedSpot.barIndex];
             final records =
                 dateToRecordsMap.entries.elementAt(touchedSpot.x.toInt()).value;
-            final record =
-                records.firstWhere((record) => record.subject == subject);
+            final record = records.firstWhere((record) => record.exam == exam);
             final value = touchedSpot.y.toInt() * examValueType.reverseMultiple;
             return LineTooltipItem(
               record.title,
@@ -550,9 +540,9 @@ class _StatViewState extends State<StatView> {
                   style: const TextStyle(fontWeight: FontWeight.normal),
                 ),
                 TextSpan(
-                  text: '  ${subject.subjectName}',
+                  text: '  ${exam.name}',
                   style: TextStyle(
-                    color: Color(subject.firstColor),
+                    color: Color(exam.color),
                     fontWeight: FontWeight.normal,
                     fontSize: 12,
                     height: 1,
@@ -661,7 +651,7 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildPieChartCard({
-    required final Map<Subject, List<ExamRecord>> filteredRecords,
+    required final Map<Exam, List<ExamRecord>> filteredRecords,
   }) {
     return CustomCard(
       clipBehavior: Clip.none,
@@ -690,7 +680,7 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildPieChart({
-    required final Map<Subject, List<ExamRecord>> filteredRecords,
+    required final Map<Exam, List<ExamRecord>> filteredRecords,
   }) {
     final totalValue = filteredRecords.values.flattened.length;
 
@@ -706,13 +696,13 @@ class _StatViewState extends State<StatView> {
               sectionsSpace: 0,
               centerSpaceRadius: 0,
               sections: filteredRecords.entries.mapIndexed((index, entry) {
-                final subject = entry.key;
+                final exam = entry.key;
                 final records = entry.value;
                 final value = records.length;
                 final ratio = value / totalValue;
                 final isTouched = touchedIndex == index;
                 return PieChartSectionData(
-                  color: Color(subject.firstColor),
+                  color: Color(exam.color),
                   value: value.toDouble() * (isTouched ? 3 : 1),
                   showTitle: false,
                   radius: (constraints.maxWidth / 2) * (isTouched ? 1.05 : 1),
@@ -727,7 +717,7 @@ class _StatViewState extends State<StatView> {
                           children: [
                             if (isTouched || ratio >= 0.1)
                               Text(
-                                subject.subjectName,
+                                exam.name,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -773,7 +763,7 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildHeatmapChartCard({
-    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required Map<Exam, List<ExamRecord>> filteredRecords,
     required bool expandHeight,
   }) {
     return CustomCard(
@@ -805,7 +795,7 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildHeatmapChart({
-    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required Map<Exam, List<ExamRecord>> filteredRecords,
   }) {
     final datasets = filteredRecords.values.flattened
         .groupListsBy((record) => record.examStartedTime.toDate())
@@ -872,7 +862,7 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildTotalExamDurationInfoCard({
-    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required Map<Exam, List<ExamRecord>> filteredRecords,
   }) {
     return _buildInfoCard(
       title: '지금까지 모의고사를 푼 시간',
@@ -886,7 +876,7 @@ class _StatViewState extends State<StatView> {
   }
 
   Widget _buildTotalExamCountInfoCard({
-    required Map<Subject, List<ExamRecord>> filteredRecords,
+    required Map<Exam, List<ExamRecord>> filteredRecords,
   }) {
     return _buildInfoCard(
       title: '지금까지 푼 모의고사 개수',

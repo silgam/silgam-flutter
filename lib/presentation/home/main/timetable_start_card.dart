@@ -1,22 +1,31 @@
 part of 'main_view.dart';
 
-class _ExamStartCard extends StatefulWidget {
-  const _ExamStartCard({
+class _TimetableStartCard extends StatefulWidget {
+  const _TimetableStartCard({
     Key? key,
   }) : super(key: key);
 
   @override
-  _ExamStartCardState createState() => _ExamStartCardState();
+  _TimetableStartCardState createState() => _TimetableStartCardState();
 }
 
-class _ExamStartCardState extends State<_ExamStartCard>
+class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
-  late final TabController _subjectController = TabController(
-    length: defaultExams.length,
+  final timetables = defaultTimetables;
+
+  late final TabController _tabController = TabController(
+    length: timetables.length,
     initialIndex: 0,
     vsync: this,
   )..addListener(_onTapSelected);
-  Exam? _selectedExam = defaultExams[0];
+
+  Timetable? _selectedTimetable;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTimetable = timetables.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +45,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
                   color: disabledColor,
                 ),
                 TabBar(
-                  controller: _subjectController,
+                  controller: _tabController,
                   isScrollable: true,
                   overlayColor: MaterialStateProperty.all(Colors.transparent),
                   labelColor: Theme.of(context).primaryColor,
@@ -47,22 +56,23 @@ class _ExamStartCardState extends State<_ExamStartCard>
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
                     // const Tab(text: '전과목'),
-                    for (Exam exam in defaultExams) Tab(text: exam.examName),
+                    for (Timetable timetable in timetables)
+                      Tab(text: timetable.name),
                   ],
                 ),
               ],
             ),
           ),
           const SizedBox(height: 32),
-          if (_selectedExam != null) _buildExamLayout(_selectedExam!),
-          if (_selectedExam == null) _buildAllSubjectExamLayout(),
+          if (_selectedTimetable != null) _buildTabLayout(_selectedTimetable!),
+          if (_selectedTimetable == null) _buildAllSubjectExamLayout(),
           const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildExamLayout(Exam exam) {
+  Widget _buildTabLayout(Timetable timetable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -71,18 +81,35 @@ class _ExamStartCardState extends State<_ExamStartCard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfo(
-                iconData: Icons.schedule,
-                title: '시험 시간',
-                content: exam.getExamTimeString(),
-                badgeText: '${exam.examDuration}분',
-              ),
+              timetable.items.length > 1
+                  ? _buildInfo(
+                      iconData: Icons.schedule,
+                      title: '총 시간',
+                      content:
+                          '${DateFormat.Hm().format(timetable.startTime)} ~ ${DateFormat.Hm().format(timetable.endTime)}',
+                      badgeText: timetable.duration.toKoreanString(),
+                    )
+                  : _buildInfo(
+                      iconData: Icons.schedule,
+                      title: '시험 시간',
+                      content:
+                          '${DateFormat.Hm().format(timetable.items.first.exam.startTime)} ~ ${DateFormat.Hm().format(timetable.items.first.exam.endTime)}',
+                      badgeText:
+                          '${timetable.items.first.exam.durationMinutes}분',
+                    ),
               const SizedBox(height: 16),
-              _buildInfo(
-                iconData: Icons.text_snippet_outlined,
-                title: '문제 수 / 만점',
-                content: '${exam.numberOfQuestions}문제 / ${exam.perfectScore}점',
-              ),
+              timetable.items.length > 1
+                  ? _buildInfo(
+                      iconData: Icons.style,
+                      title: '과목',
+                      content: timetable.toExamNamesString(),
+                    )
+                  : _buildInfo(
+                      iconData: Icons.text_snippet_outlined,
+                      title: '문제 수 / 만점',
+                      content:
+                          '${timetable.items.first.exam.numberOfQuestions}문제 / ${timetable.items.first.exam.perfectScore}점',
+                    ),
             ],
           ),
         ),
@@ -100,7 +127,7 @@ class _ExamStartCardState extends State<_ExamStartCard>
             ),
           ),
           child: InkWell(
-            onTap: () => _onExamStartTap(exam),
+            onTap: () => _onTimetableStartTap(timetable),
             splashColor: Colors.transparent,
             highlightColor: Colors.grey.withAlpha(60),
             borderRadius: BorderRadius.circular(100),
@@ -235,20 +262,20 @@ class _ExamStartCardState extends State<_ExamStartCard>
   }
 
   void _onTapSelected() async {
-    final index = _subjectController.index;
-    Exam exam = defaultExams[index];
-    if (_selectedExam != exam) {
+    final index = _tabController.index;
+    Timetable timetable = timetables[index];
+    if (_selectedTimetable != timetable) {
       setState(() {
-        _selectedExam = exam;
+        _selectedTimetable = timetable;
       });
     }
   }
 
-  void _onExamStartTap(Exam exam) async {
+  void _onTimetableStartTap(Timetable timetable) async {
     await Navigator.pushNamed(
       context,
       ClockPage.routeName,
-      arguments: ClockPageArguments([exam]),
+      arguments: ClockPageArguments(timetable),
     );
     if (mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
@@ -262,6 +289,6 @@ class _ExamStartCardState extends State<_ExamStartCard>
   @override
   void dispose() {
     super.dispose();
-    _subjectController.dispose();
+    _tabController.dispose();
   }
 }
