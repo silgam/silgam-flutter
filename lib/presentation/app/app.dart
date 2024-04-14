@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +35,7 @@ import '../save_image/save_image_page.dart';
 import '../timetable/timetable_page.dart';
 import 'cubit/app_cubit.dart';
 import 'cubit/iap_cubit.dart';
+import 'initial_route_handler.dart';
 
 const double cardCornerRadius = 14;
 
@@ -67,6 +71,20 @@ class SilgamApp extends StatelessWidget {
           return MaterialApp(
             title: '실감',
             initialRoute: _initialRoute,
+
+            // Android에서 App links로 실행될 때 initial route가 http를 포함한 형태로 오는 문제가 있음
+            onGenerateInitialRoutes: Platform.isAndroid &&
+                    PlatformDispatcher.instance.defaultRouteName
+                        .contains('silgam.app')
+                ? (initialRoute) {
+                    return [
+                      MaterialPageRoute(
+                        builder: (context) => InitialRouteHandler(initialRoute),
+                      ),
+                    ];
+                  }
+                : null,
+
             routes: {
               OnboardingPage.routeName: (_) => OnboardingPage(),
               LoginPage.routeName: (_) => const LoginPage(),
