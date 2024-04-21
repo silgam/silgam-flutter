@@ -944,46 +944,48 @@ class _HorizontalFadingRow extends StatelessWidget {
           ),
         ),
         Positioned.fill(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 20,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    stops: const [
-                      0.1,
-                      0.6,
-                      1,
-                    ],
-                    colors: [
-                      SilgamApp.backgroundColor,
-                      SilgamApp.backgroundColor.withAlpha(0),
-                      SilgamApp.backgroundColor.withAlpha(0),
-                    ],
+          child: IgnorePointer(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 20,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      stops: const [
+                        0.1,
+                        0.6,
+                        1,
+                      ],
+                      colors: [
+                        SilgamApp.backgroundColor,
+                        SilgamApp.backgroundColor.withAlpha(0),
+                        SilgamApp.backgroundColor.withAlpha(0),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                width: 40,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerRight,
-                    end: Alignment.centerLeft,
-                    stops: const [
-                      0.1,
-                      1,
-                    ],
-                    colors: [
-                      SilgamApp.backgroundColor,
-                      SilgamApp.backgroundColor.withAlpha(0),
-                    ],
+                Container(
+                  width: 40,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerRight,
+                      end: Alignment.centerLeft,
+                      stops: const [
+                        0.1,
+                        1,
+                      ],
+                      colors: [
+                        SilgamApp.backgroundColor,
+                        SilgamApp.backgroundColor.withAlpha(0),
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ],
