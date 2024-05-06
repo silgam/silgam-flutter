@@ -92,7 +92,7 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
     text = text.replaceAll('.', '');
     text = text.replaceAll(',', '');
     int inputNumber = int.tryParse(text) ?? -1;
-    if (inputNumber == -1) return;
+    if (inputNumber <= 0) return;
     widget.onSubmit(inputNumber);
   }
 
