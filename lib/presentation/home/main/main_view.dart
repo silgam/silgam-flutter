@@ -28,6 +28,7 @@ import '../../clock/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import '../../common/dialog.dart';
+import '../../custom_subject_list/custom_subject_list_page.dart';
 import '../../edit_record/edit_record_page.dart';
 import '../../login/login_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
@@ -120,6 +121,7 @@ class _MainViewState extends State<MainView> {
                       children: [
                         _buildAdsCard(),
                         _buildLoginCard(),
+                        _buildCustomSubjectCard(),
                         _buildNoiseSettingCard(),
                         _buildRecordCard(),
                         _buildSendFeedbackCard(),
@@ -169,6 +171,7 @@ class _MainViewState extends State<MainView> {
               const _SilgamNowCard(),
               const _TimetableStartCard(),
               _buildLoginCard(),
+              _buildCustomSubjectCard(),
               _buildNoiseSettingCard(),
               _buildRecordCard(),
               _buildSendFeedbackCard(),
@@ -323,6 +326,16 @@ class _MainViewState extends State<MainView> {
           return const SizedBox.shrink();
         }
       },
+    );
+  }
+
+  Widget _buildCustomSubjectCard() {
+    return _ButtonCard(
+      onTap: () {
+        Navigator.pushNamed(context, CustomSubjectListPage.routeName);
+      },
+      iconData: Icons.palette,
+      title: '나만의 과목 만들기',
     );
   }
 
