@@ -17,8 +17,8 @@ import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../clock/clock_page.dart';
 import '../common/progress_overlay.dart';
-import '../custom_subject_edit/custom_subject_edit_page.dart';
-import '../custom_subject_list/custom_subject_list_page.dart';
+import '../custom_exam_edit/custom_exam_edit_page.dart';
+import '../custom_exam_list/custom_exam_list_page.dart';
 import '../customize_subject_name/customize_subject_name_page.dart';
 import '../edit_record/edit_record_page.dart';
 import '../exam_overview/exam_overview_page.dart';
@@ -99,10 +99,8 @@ class SilgamApp extends StatelessWidget {
                   CustomizeSubjectNamePage(),
               OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
               SilgampassPage.routeName: (_) => const SilgampassPage(),
-              CustomSubjectListPage.routeName: (_) =>
-                  const CustomSubjectListPage(),
-              CustomSubjectEditPage.routeName: (_) =>
-                  const CustomSubjectEditPage(),
+              CustomExamListPage.routeName: (_) => const CustomExamListPage(),
+              CustomExamEditPage.routeName: (_) => const CustomExamEditPage(),
             },
             onGenerateRoute: (settings) {
               switch (settings.name) {
