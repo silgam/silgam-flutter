@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:silgam/presentation/custom_exam_list/custom_exam_list_page.dart';
 
 class CustomExamEditPage extends StatefulWidget {
@@ -12,7 +14,12 @@ class CustomExamEditPage extends StatefulWidget {
 }
 
 class _CustomExamEditPageState extends State<CustomExamEditPage> {
-  final _formKey = GlobalKey<FormState>();
+  static const _subjectNameFieldName = 'subjectName';
+  static const _durationFieldName = 'duration';
+  static const _numberOfQuestionsFieldName = 'numberOfQuestions';
+  static const _perfectScoreFieldName = 'perfectScore';
+
+  final _formKey = GlobalKey<FormBuilderState>();
   bool _isChanged = false;
 
   late final defaultInputDecoration = InputDecoration(
@@ -107,58 +114,25 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     );
   }
 
-  Widget _buildNumberInput({
-    required String label,
-    required String suffix,
-    required int maxLength,
-    required double inputWidth,
-    required FormFieldValidator validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildLabel(label),
-        SizedBox(
-          width: inputWidth,
-          child: TextFormField(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            textInputAction: TextInputAction.next,
-            keyboardType: TextInputType.number,
-            validator: validator,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(maxLength),
-            ],
-            decoration: defaultInputDecoration.copyWith(
-              suffixText: suffix,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
   Widget _buildForm() {
-    return Form(
+    return FormBuilder(
       key: _formKey,
       onWillPop: _onWillPop,
       onChanged: () {
         _isChanged = true;
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
         children: [
           const SizedBox(height: 28),
           _buildLabel('과목 이름'),
-          TextFormField(
+          FormBuilderTextField(
+            name: _subjectNameFieldName,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             textInputAction: TextInputAction.next,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '과목 이름을 입력해주세요.';
-              }
-              return null;
-            },
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(errorText: '과목 이름을 입력해주세요.'),
+              FormBuilderValidators.maxLength(20, errorText: '20자 이하로 입력해주세요.'),
+            ]),
             decoration: defaultInputDecoration.copyWith(
               hintText: '실감 하프 모의고사',
             ),
@@ -168,62 +142,93 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
             ),
           ),
           const SizedBox(height: 20),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLabel('시험 시작 시간'),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                          width: 0.5,
-                        ),
-                      ),
-                      child: const Text(
-                        // DateFormat.jm('ko_KR').format(_examStartedTime),
-                        '오전 10:00',
-                        style: TextStyle(
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+          _buildLabel('시험 시작 시간'),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
               ),
-              _buildNumberInput(
-                label: '시험 시간',
-                suffix: '분',
-                maxLength: 3,
-                inputWidth: 75,
-                validator: (value) => null,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: Colors.grey.shade300,
+                  width: 0.5,
+                ),
               ),
-              _buildNumberInput(
-                label: '문제 수',
-                suffix: '문제',
-                maxLength: 3,
-                inputWidth: 90,
-                validator: (value) => null,
+              child: const Text(
+                // DateFormat.jm('ko_KR').format(_examStartedTime),
+                '오전 10:00',
+                style: TextStyle(
+                  fontSize: 17,
+                ),
               ),
-              _buildNumberInput(
-                label: '만점',
-                suffix: '점',
-                maxLength: 3,
-                inputWidth: 75,
-                validator: (value) => null,
-              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildLabel('시험 시간'),
+          FormBuilderTextField(
+            name: _durationFieldName,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.number,
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(errorText: '시험 시간을 입력해주세요.'),
+              FormBuilderValidators.numeric(errorText: '숫자만 입력해주세요.'),
+              FormBuilderValidators.min(1, errorText: '1 이상 입력해주세요.'),
+              FormBuilderValidators.max(300, errorText: '300 이하로 입력해주세요.'),
+            ]),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
             ],
+            decoration: defaultInputDecoration.copyWith(
+              suffixText: '분',
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildLabel('문제 수'),
+          FormBuilderTextField(
+            name: _numberOfQuestionsFieldName,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.number,
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(errorText: '문제 수를 입력해주세요.'),
+              FormBuilderValidators.numeric(errorText: '숫자만 입력해주세요.'),
+              FormBuilderValidators.min(1, errorText: '1 이상 입력해주세요.'),
+              FormBuilderValidators.max(300, errorText: '300 이하로 입력해주세요.'),
+            ]),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
+            decoration: defaultInputDecoration.copyWith(
+              suffixText: '문제',
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildLabel('만점'),
+          FormBuilderTextField(
+            name: _perfectScoreFieldName,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.number,
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(errorText: '만점을 입력해주세요.'),
+              FormBuilderValidators.numeric(errorText: '숫자만 입력해주세요.'),
+              FormBuilderValidators.min(1, errorText: '1 이상 입력해주세요.'),
+              FormBuilderValidators.max(999, errorText: '999 이하로 입력해주세요.'),
+            ]),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
+            decoration: defaultInputDecoration.copyWith(
+              suffixText: '점',
+            ),
           ),
         ],
       ),
