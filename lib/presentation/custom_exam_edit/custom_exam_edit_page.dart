@@ -106,6 +106,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           SnackBar(
             behavior: SnackBarBehavior.floating,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 60),
+            duration: const Duration(seconds: 2),
             content: Text(firstErrorMessage),
           ),
         );
