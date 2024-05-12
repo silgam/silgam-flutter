@@ -77,6 +77,8 @@ dependencies:
     sdk: flutter
   firebase_database: ^10.2.7
   visibility_detector: ^0.3.3
+  flutter_form_builder: 9.1.1
+  form_builder_validators: ^9.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
