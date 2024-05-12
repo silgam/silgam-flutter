@@ -889,7 +889,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(
-        name: '${EditRecordPage.routeName}/exit_without_saving_dialog',
+        name: '${EditRecordPage.routeName}/exit_confirm_dialog',
       ),
       builder: (context) {
         return AlertDialog(
