@@ -12,7 +12,6 @@ import '../../../model/product.dart';
 import '../../../model/subject.dart';
 import '../../../model/user.dart';
 import '../../../repository/user/user_repository.dart';
-import '../../../util/api_failure.dart';
 import '../../../util/cache_manager.dart';
 import '../../../util/connectivity_manager.dart';
 import '../../../util/const.dart';
@@ -69,7 +68,7 @@ class AppCubit extends Cubit<AppState> {
     updateProductBenefit();
 
     final getMeResult = await _userRepository.getMe();
-    if (getMeResult.tryGetError()?.type == ApiFailureType.noNetwork) return;
+    if (getMeResult.isError()) return;
 
     User? me = getMeResult.tryGetSuccess();
     await _cacheManager.setMe(me);
