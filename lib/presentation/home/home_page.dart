@@ -6,6 +6,7 @@ import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../edit_record/edit_record_page.dart';
+import '../offline/offline_guide_page.dart';
 import 'cubit/home_cubit.dart';
 import 'main/main_view.dart';
 import 'record_list/record_list_view.dart';
@@ -130,19 +131,25 @@ class _HomePageState extends State<HomePage> {
                             ),
                             !appState.isOffline
                                 ? const SizedBox.shrink()
-                                : Container(
-                                    color: Theme.of(context).primaryColor,
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    child: const Text(
-                                      '오프라인 상태에선 일부 기능만 사용 가능해요.',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        height: 1.2,
-                                        color: Colors.white,
+                                : InkWell(
+                                    onTap: _onOfflineMessageTap,
+                                    splashColor: Colors.transparent,
+                                    child: Ink(
+                                      color: Theme.of(context).primaryColor,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        child: const Text(
+                                          '오프라인 상태에선 일부 기능만 사용 가능해요.',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            height: 1.2,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -199,5 +206,9 @@ class _HomePageState extends State<HomePage> {
       EditRecordPage.routeName,
       arguments: args,
     );
+  }
+
+  void _onOfflineMessageTap() {
+    Navigator.pushNamed(context, OfflineGuidePage.routeName);
   }
 }
