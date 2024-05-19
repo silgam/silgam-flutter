@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:silgam/presentation/custom_exam_list/custom_exam_list_page.dart';
+
+import '../../model/subject.dart';
+import '../custom_exam_list/custom_exam_list_page.dart';
 
 class CustomExamEditPage extends StatefulWidget {
   static const routeName = '${CustomExamListPage.routeName}/edit';
@@ -15,6 +17,7 @@ class CustomExamEditPage extends StatefulWidget {
 
 class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _subjectNameFieldName = 'subjectName';
+  static const _baseSubjectFieldName = 'baseSubject';
   static const _durationFieldName = 'duration';
   static const _numberOfQuestionsFieldName = 'numberOfQuestions';
   static const _perfectScoreFieldName = 'perfectScore';
@@ -169,6 +172,19 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
+          ),
+          const SizedBox(height: 20),
+          _buildLabel('기본 과목'),
+          FormBuilderDropdown(
+            name: _baseSubjectFieldName,
+            initialValue: Subject.values.first,
+            items: Subject.values
+                .map((subject) => DropdownMenuItem(
+                      value: subject,
+                      child: Text(subject.defaultExam.name),
+                    ))
+                .toList(),
+            decoration: defaultInputDecoration,
           ),
           const SizedBox(height: 20),
           Wrap(
