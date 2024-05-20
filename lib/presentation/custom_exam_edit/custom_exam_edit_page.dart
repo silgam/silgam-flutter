@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/subject.dart';
+import '../../util/date_time_extension.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 
 class CustomExamEditPage extends StatefulWidget {
@@ -18,6 +20,7 @@ class CustomExamEditPage extends StatefulWidget {
 class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _subjectNameFieldName = 'subjectName';
   static const _baseSubjectFieldName = 'baseSubject';
+  static const _startTimeFieldName = 'startTime';
   static const _durationFieldName = 'duration';
   static const _numberOfQuestionsFieldName = 'numberOfQuestions';
   static const _perfectScoreFieldName = 'perfectScore';
@@ -193,26 +196,26 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
             children: [
               _buildFieldWithLabel(
                 label: '시험 시작 시간',
-                field: GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                        width: 0.5,
-                      ),
-                    ),
-                    child: const Text(
-                      // DateFormat.jm('ko_KR').format(_examStartedTime),
-                      '오전 10:00',
-                      style: TextStyle(
-                        fontSize: 17,
+                fieldWidth: 108,
+                field: FormBuilderField<TimeOfDay>(
+                  name: _startTimeFieldName,
+                  builder: (field) => GestureDetector(
+                    onTap: () async {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: field.value ?? TimeOfDay.now(),
+                      );
+                      if (time == null) return;
+                      field.didChange(time);
+                    },
+                    child: InputDecorator(
+                      decoration: defaultInputDecoration,
+                      child: Text(
+                        DateFormat.jm('ko_KR').format(
+                            field.value?.toDateTime() ?? DateTime.now()),
+                        style: const TextStyle(
+                          fontSize: 17,
+                        ),
                       ),
                     ),
                   ),
