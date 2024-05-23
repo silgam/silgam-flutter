@@ -4,7 +4,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
-import '../../model/subject.dart';
+import '../../model/exam.dart';
+import '../../repository/exam/exam_repository.dart';
 import '../../util/date_time_extension.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 
@@ -19,7 +20,7 @@ class CustomExamEditPage extends StatefulWidget {
 
 class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _subjectNameFieldName = 'subjectName';
-  static const _baseSubjectFieldName = 'baseSubject';
+  static const _baseExamFieldName = 'baseExam';
   static const _startTimeFieldName = 'startTime';
   static const _durationFieldName = 'duration';
   static const _numberOfQuestionsFieldName = 'numberOfQuestions';
@@ -178,13 +179,13 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           ),
           const SizedBox(height: 20),
           _buildLabel('기본 과목'),
-          FormBuilderDropdown(
-            name: _baseSubjectFieldName,
-            initialValue: Subject.values.first,
-            items: Subject.values
-                .map((subject) => DropdownMenuItem(
-                      value: subject,
-                      child: Text(subject.defaultExam.name),
+          FormBuilderDropdown<Exam>(
+            name: _baseExamFieldName,
+            initialValue: defaultExams.first,
+            items: defaultExams
+                .map((exam) => DropdownMenuItem(
+                      value: exam,
+                      child: Text(exam.name),
                     ))
                 .toList(),
             decoration: defaultInputDecoration,
