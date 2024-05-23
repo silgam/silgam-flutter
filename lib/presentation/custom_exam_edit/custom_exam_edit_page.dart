@@ -26,6 +26,16 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _numberOfQuestionsFieldName = 'numberOfQuestions';
   static const _perfectScoreFieldName = 'perfectScore';
 
+  final _baseExamInitialValue = defaultExams.first;
+  late final _startTimeInitialValue =
+      TimeOfDay.fromDateTime(_baseExamInitialValue.startTime);
+  late final _durationInitialValue =
+      _baseExamInitialValue.durationMinutes.toString();
+  late final _numberOfQuestionsInitialValue =
+      _baseExamInitialValue.numberOfQuestions.toString();
+  late final _perfectScoreInitialValue =
+      _baseExamInitialValue.perfectScore.toString();
+
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isChanged = false;
 
@@ -120,6 +130,19 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     }
   }
 
+  void _onDefaultExamChanged(Exam? exam) {
+    if (exam == null) return;
+
+    _formKey.currentState?.fields[_startTimeFieldName]
+        ?.didChange(TimeOfDay.fromDateTime(exam.startTime));
+    _formKey.currentState?.fields[_durationFieldName]
+        ?.didChange(exam.durationMinutes.toString());
+    _formKey.currentState?.fields[_numberOfQuestionsFieldName]
+        ?.didChange(exam.numberOfQuestions.toString());
+    _formKey.currentState?.fields[_perfectScoreFieldName]
+        ?.didChange(exam.perfectScore.toString());
+  }
+
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -181,7 +204,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           _buildLabel('기본 과목'),
           FormBuilderDropdown<Exam>(
             name: _baseExamFieldName,
-            initialValue: defaultExams.first,
+            initialValue: _baseExamInitialValue,
             items: defaultExams
                 .map((exam) => DropdownMenuItem(
                       value: exam,
@@ -189,6 +212,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     ))
                 .toList(),
             decoration: defaultInputDecoration,
+            onChanged: _onDefaultExamChanged,
           ),
           const SizedBox(height: 20),
           Wrap(
@@ -200,6 +224,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                 fieldWidth: 108,
                 field: FormBuilderField<TimeOfDay>(
                   name: _startTimeFieldName,
+                  initialValue: _startTimeInitialValue,
                   builder: (field) => GestureDetector(
                     onTap: () async {
                       final time = await showTimePicker(
@@ -227,6 +252,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                 fieldWidth: 75,
                 field: FormBuilderTextField(
                   name: _durationFieldName,
+                  initialValue: _durationInitialValue,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
@@ -254,6 +280,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                 fieldWidth: 90,
                 field: FormBuilderTextField(
                   name: _numberOfQuestionsFieldName,
+                  initialValue: _numberOfQuestionsInitialValue,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
@@ -281,6 +308,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                 fieldWidth: 75,
                 field: FormBuilderTextField(
                   name: _perfectScoreFieldName,
+                  initialValue: _perfectScoreInitialValue,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
