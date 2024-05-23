@@ -888,7 +888,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
   Future<bool> _onBackPressed() async {
     showDialog(
       context: context,
-      routeSettings: const RouteSettings(name: 'finish_exam_dialog'),
+      routeSettings: const RouteSettings(
+        name: '${EditRecordPage.routeName}/exit_confirm_dialog',
+      ),
       builder: (context) {
         return AlertDialog(
           title: const Text(

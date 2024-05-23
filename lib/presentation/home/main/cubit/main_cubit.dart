@@ -8,7 +8,6 @@ import '../../../../model/dday.dart';
 import '../../../../repository/ads/ads_repository.dart';
 import '../../../../repository/dday/dday_repository.dart';
 import '../../../../util/analytics_manager.dart';
-import '../../../../util/api_failure.dart';
 import '../../../../util/cache_manager.dart';
 import '../../../../util/dday_util.dart';
 import '../../../app/cubit/app_cubit.dart';
@@ -44,7 +43,7 @@ class MainCubit extends Cubit<MainState> {
     ));
 
     final getAdsResult = await _adsRepository.getAllAds();
-    if (getAdsResult.tryGetError()?.type == ApiFailureType.noNetwork) return;
+    if (getAdsResult.isError()) return;
 
     List<Ads>? ads = getAdsResult.tryGetSuccess();
     await _cacheManager.setAds(ads);
@@ -61,7 +60,7 @@ class MainCubit extends Cubit<MainState> {
     ));
 
     final getDDaysResult = await _dDayRepository.getAllDDays();
-    if (getDDaysResult.tryGetError()?.type == ApiFailureType.noNetwork) return;
+    if (getDDaysResult.isError()) return;
 
     List<DDay>? dDays = getDDaysResult.tryGetSuccess();
     await _cacheManager.setDDays(dDays);

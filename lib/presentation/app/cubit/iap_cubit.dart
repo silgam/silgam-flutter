@@ -15,7 +15,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
 import '../../../util/analytics_manager.dart';
-import '../../../util/api_failure.dart';
 import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -373,9 +372,7 @@ class IapCubit extends Cubit<IapState> {
     await _onProductsChange(cachedProducts ?? []);
 
     final getProductsResult = await _productRepository.getAllProducts();
-    if (getProductsResult.tryGetError()?.type == ApiFailureType.noNetwork) {
-      return;
-    }
+    if (getProductsResult.isError()) return;
 
     List<Product>? products = getProductsResult.tryGetSuccess();
     _cacheManager.setProducts(products);
