@@ -121,7 +121,7 @@ class _MainViewState extends State<MainView> {
                       children: [
                         _buildAdsCard(),
                         _buildLoginCard(),
-                        _buildCustomSubjectCard(),
+                        _buildCustomExamCard(),
                         _buildNoiseSettingCard(),
                         _buildRecordCard(),
                         _buildSendFeedbackCard(),
@@ -171,7 +171,7 @@ class _MainViewState extends State<MainView> {
               const _SilgamNowCard(),
               const _TimetableStartCard(),
               _buildLoginCard(),
-              _buildCustomSubjectCard(),
+              _buildCustomExamCard(),
               _buildNoiseSettingCard(),
               _buildRecordCard(),
               _buildSendFeedbackCard(),
@@ -329,7 +329,7 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildCustomSubjectCard() {
+  Widget _buildCustomExamCard() {
     return _ButtonCard(
       onTap: () {
         Navigator.pushNamed(context, CustomExamListPage.routeName);
