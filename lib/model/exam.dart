@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../repository/exam/exam_repository.dart';
+import '../util/date_time_extension.dart';
 import 'subject.dart';
 
 part 'exam.freezed.dart';
@@ -19,6 +20,7 @@ class Exam with _$Exam {
     required final Subject subject,
     required String name,
     required final int number,
+    @JsonKey(fromJson: timeFromJson, toJson: timeToJson)
     required final DateTime startTime,
     required final int durationMinutes,
     required final int numberOfQuestions,
@@ -43,4 +45,14 @@ class Exam with _$Exam {
       durationMinutes +
       subject.minutesBeforeExamStart +
       subject.minutesAfterExamFinish;
+}
+
+DateTime timeFromJson(String json) {
+  final parts = json.split(':');
+  return DateTimeBuilder.fromHourMinute(
+      int.parse(parts[0]), int.parse(parts[1]));
+}
+
+String timeToJson(DateTime dateTime) {
+  return '${dateTime.hour}:${dateTime.minute}';
 }
