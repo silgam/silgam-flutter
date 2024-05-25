@@ -94,8 +94,8 @@ class _SettingsViewState extends State<SettingsView> {
       const SettingDivider(),
       SettingTile(
         onTap: _onCustomizeSubjectNameButtonTap,
-        title: '과목 이름 설정',
-        description: '탐구과목 등 과목의 이름을 직접 설정할 수 있어요.',
+        title: '기본 과목 이름 설정',
+        description: '국어, 수학, 탐구 등 기본 과목의 이름을 바꿀 수 있어요.',
         showArrow: true,
       ),
       const SettingDivider(),
