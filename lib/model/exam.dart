@@ -24,6 +24,7 @@ class Exam with _$Exam {
     required final int numberOfQuestions,
     required final int perfectScore,
     required final int color,
+    final DateTime? createdAt,
   }) = _Exam;
 
   factory Exam.fromJson(Map<String, dynamic> json) => _$ExamFromJson(json);
