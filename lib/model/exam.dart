@@ -14,6 +14,8 @@ class Exam with _$Exam {
   const Exam._();
 
   factory Exam({
+    required final String id,
+    final String? userId,
     required final Subject subject,
     required String name,
     required final int number,
@@ -23,8 +25,6 @@ class Exam with _$Exam {
     required final int perfectScore,
     required final int color,
   }) = _Exam;
-
-  String get id => subject.name;
 
   factory Exam.fromJson(Map<String, dynamic> json) => _$ExamFromJson(json);
 
