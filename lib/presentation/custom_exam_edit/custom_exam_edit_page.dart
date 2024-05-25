@@ -19,7 +19,7 @@ class CustomExamEditPage extends StatefulWidget {
 }
 
 class _CustomExamEditPageState extends State<CustomExamEditPage> {
-  static const _subjectNameFieldName = 'subjectName';
+  static const _examNameFieldName = 'examName';
   static const _baseExamFieldName = 'baseExam';
   static const _startTimeFieldName = 'startTime';
   static const _durationFieldName = 'duration';
@@ -185,7 +185,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         children: [
           _buildLabel('과목 이름'),
           FormBuilderTextField(
-            name: _subjectNameFieldName,
+            name: _examNameFieldName,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             textInputAction: TextInputAction.next,
             validator: FormBuilderValidators.compose([
