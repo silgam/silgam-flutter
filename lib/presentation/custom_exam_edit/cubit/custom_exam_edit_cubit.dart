@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../model/exam.dart';
 import '../../../repository/exam/exam_repository.dart';
@@ -10,6 +11,7 @@ import '../../app/cubit/app_cubit.dart';
 part 'custom_exam_edit_cubit.freezed.dart';
 part 'custom_exam_edit_state.dart';
 
+@injectable
 class CustomExamEditCubit extends Cubit<CustomExamEditState> {
   CustomExamEditCubit(this._examRepository, this._appCubit)
       : super(const CustomExamEditState.initial());
