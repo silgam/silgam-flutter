@@ -16,7 +16,7 @@ class CustomExamListPage extends StatefulWidget {
 }
 
 class _CustomExamListPageState extends State<CustomExamListPage> {
-  void _onTabCustomExamItem(Exam exam) {
+  void _onExamItemTab(Exam exam) {
     Navigator.pushNamed(context, CustomExamEditPage.routeName);
   }
 
@@ -45,7 +45,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
       child: InkWell(
-        onTap: () => _onTabCustomExamItem(exam),
+        onTap: () => _onExamItemTab(exam),
         splashColor: Colors.transparent,
         child: Ink(
           color: Colors.white,
