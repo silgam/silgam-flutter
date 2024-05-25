@@ -7,7 +7,9 @@ import 'package:intl/intl.dart';
 import '../../model/exam.dart';
 import '../../repository/exam/exam_repository.dart';
 import '../../util/date_time_extension.dart';
+import '../../util/injection.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
+import 'cubit/custom_exam_edit_cubit.dart';
 
 class CustomExamEditPage extends StatefulWidget {
   static const routeName = '${CustomExamListPage.routeName}/edit';
@@ -25,6 +27,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _durationFieldName = 'duration';
   static const _numberOfQuestionsFieldName = 'numberOfQuestions';
   static const _perfectScoreFieldName = 'perfectScore';
+
+  final CustomExamEditCubit _customExamEditCubit = getIt.get();
 
   final _baseExamInitialValue = defaultExams.first;
   late final _startTimeInitialValue =
@@ -111,10 +115,19 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   }
 
   void _onSaveButtonPressed() {
-    if (_formKey.currentState?.validate() ?? false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('valid')),
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      final values = _formKey.currentState?.value;
+      if (values == null) return;
+
+      _customExamEditCubit.save(
+        examName: values[_examNameFieldName],
+        baseExam: values[_baseExamFieldName],
+        startTime: values[_startTimeFieldName],
+        duration: int.parse(values[_durationFieldName]),
+        numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
+        perfectScore: int.parse(values[_perfectScoreFieldName]),
       );
+      Navigator.pop(context);
     } else {
       final firstErrorMessage =
           _formKey.currentState?.errors.entries.first.value;
