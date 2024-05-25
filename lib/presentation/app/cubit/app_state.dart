@@ -9,6 +9,7 @@ class AppState with _$AppState {
     @Default(ProductBenefit.initial) ProductBenefit productBenefit,
     @Default(ProductBenefit.initial) ProductBenefit freeProductBenefit,
     @Default(false) bool isOffline,
+    @Default([]) List<Exam> customExams,
   }) = _AppState;
 
   bool get isSignedIn => me != null;
