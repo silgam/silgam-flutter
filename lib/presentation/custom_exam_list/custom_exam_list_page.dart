@@ -20,6 +20,10 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
     Navigator.pushNamed(context, CustomExamEditPage.routeName);
   }
 
+  void _onAddExamButtonPressed() {
+    Navigator.pushNamed(context, CustomExamEditPage.routeName);
+  }
+
   Widget _buildExamInfoWidget(IconData iconData, String text) {
     return Row(
       children: [
@@ -106,8 +110,15 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const CustomMenuBar(
+            CustomMenuBar(
               title: '나만의 과목 만들기',
+              actionButtons: [
+                ActionButton(
+                  onPressed: _onAddExamButtonPressed,
+                  icon: const Icon(Icons.add),
+                  tooltip: '과목 만들기',
+                ),
+              ],
             ),
             Expanded(
               child: ListView(
@@ -116,6 +127,11 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
             )
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onAddExamButtonPressed,
+        tooltip: '과목 만들기',
+        child: const Icon(Icons.add),
       ),
     );
   }
