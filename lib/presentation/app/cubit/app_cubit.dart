@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../model/exam.dart';
 import '../../../model/product.dart';
 import '../../../model/subject.dart';
+import '../../../model/timetable.dart';
 import '../../../model/user.dart';
 import '../../../repository/exam/exam_repository.dart';
 import '../../../repository/user/user_repository.dart';

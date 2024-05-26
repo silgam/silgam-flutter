@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,7 +17,6 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../model/ads.dart';
 import '../../../model/timetable.dart';
-import '../../../repository/timetable/timetable_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/duration_extension.dart';
@@ -134,7 +134,7 @@ class _MainViewState extends State<MainView> {
                       children: [
                         _buildDDaysCard(),
                         const _SilgamNowCard(),
-                        const _TimetableStartCard(),
+                        _buildTimetableStartCard(),
                       ],
                     ),
                   )
@@ -169,7 +169,7 @@ class _MainViewState extends State<MainView> {
               _buildAdsCard(),
               _buildDDaysCard(),
               const _SilgamNowCard(),
-              const _TimetableStartCard(),
+              _buildTimetableStartCard(),
               _buildLoginCard(),
               _buildCustomExamCard(),
               _buildNoiseSettingCard(),
@@ -306,6 +306,16 @@ class _MainViewState extends State<MainView> {
         } else {
           return const SizedBox.shrink();
         }
+      },
+    );
+  }
+
+  Widget _buildTimetableStartCard() {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) =>
+          listEquals(previous.allTimetables, current.allTimetables),
+      builder: (context, state) {
+        return _TimetableStartCard(timetables: state.allTimetables);
       },
     );
   }

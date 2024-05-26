@@ -23,4 +23,29 @@ class AppState with _$AppState {
   }
 
   List<Exam> get allExams => [...customExams, ...defaultExams];
+
+  List<Timetable> get allTimetables {
+    final allExams = this.allExams;
+
+    return [
+      ...allExams.map((exam) => Timetable(
+            name: exam.name,
+            startTime: exam.timetableStartTime,
+            items: [
+              TimetableItem(exam: exam),
+            ],
+          )),
+    ]..insert(
+        allExams
+            .lastIndexWhere((exam) => exam.subject == Subject.investigation),
+        Timetable(
+          name: '탐구 연속',
+          startTime: Subject.investigation.defaultExam.timetableStartTime,
+          items: [
+            TimetableItem(exam: Subject.investigation.defaultExam),
+            TimetableItem(exam: Subject.investigation2.defaultExam),
+          ],
+        ),
+      );
+  }
 }

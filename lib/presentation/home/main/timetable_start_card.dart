@@ -3,7 +3,10 @@ part of 'main_view.dart';
 class _TimetableStartCard extends StatefulWidget {
   const _TimetableStartCard({
     Key? key,
+    required this.timetables,
   }) : super(key: key);
+
+  final List<Timetable> timetables;
 
   @override
   _TimetableStartCardState createState() => _TimetableStartCardState();
@@ -11,10 +14,8 @@ class _TimetableStartCard extends StatefulWidget {
 
 class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
-  get timetables => defaultTimetables;
-
   late final TabController _tabController = TabController(
-    length: timetables.length,
+    length: widget.timetables.length,
     initialIndex: 0,
     vsync: this,
   )..addListener(_onTapSelected);
@@ -24,7 +25,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   @override
   void initState() {
     super.initState();
-    _selectedTimetable = timetables.first;
+    _selectedTimetable = widget.timetables.first;
   }
 
   @override
@@ -56,7 +57,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
                     // const Tab(text: '전과목'),
-                    for (Timetable timetable in timetables)
+                    for (Timetable timetable in widget.timetables)
                       Tab(text: timetable.name),
                   ],
                 ),
@@ -263,7 +264,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
 
   void _onTapSelected() async {
     final index = _tabController.index;
-    Timetable timetable = timetables[index];
+    Timetable timetable = widget.timetables[index];
     if (_selectedTimetable != timetable) {
       setState(() {
         _selectedTimetable = timetable;
