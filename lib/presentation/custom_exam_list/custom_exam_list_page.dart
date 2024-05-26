@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
-import '../../repository/exam/exam_repository.dart';
+import '../app/cubit/app_cubit.dart';
 import '../common/custom_menu_bar.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
 
@@ -141,11 +143,17 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
           children: [
             const CustomMenuBar(title: '나만의 과목 만들기'),
             Expanded(
-              child: ListView(
-                children: [
-                  ...defaultExams.map(_buildCustomExamItem),
-                  _buildAddExamButton(),
-                ],
+              child: BlocBuilder<AppCubit, AppState>(
+                buildWhen: (previous, current) =>
+                    listEquals(previous.customExams, current.customExams),
+                builder: (context, state) {
+                  return ListView(
+                    children: [
+                      ...state.customExams.map(_buildCustomExamItem),
+                      _buildAddExamButton(),
+                    ],
+                  );
+                },
               ),
             )
           ],
