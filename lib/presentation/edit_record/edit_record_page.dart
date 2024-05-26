@@ -75,7 +75,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _checkIfRecordLimitExceeded();
     });
 
-    _onSelectedSubjectChanged(null);
+    _onSelectedExamChanged(null);
     final recordToEdit = widget.arguments.recordToEdit;
     if (recordToEdit == null) {
       _isEditingMode = false;
@@ -319,7 +319,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                     child: DropdownButton(
                       borderRadius: BorderRadius.circular(6),
                       value: _selectedExam,
-                      onChanged: _onSelectedSubjectChanged,
+                      onChanged: _onSelectedExamChanged,
                       items: defaultExams.map((exam) {
                         return DropdownMenuItem(
                           value: exam,
@@ -682,7 +682,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
-  void _onSelectedSubjectChanged(Exam? newExam) {
+  void _onSelectedExamChanged(Exam? newExam) {
     setState(() {
       _selectedExam = newExam ?? defaultExams.first;
       _examDurationEditingController.text =
