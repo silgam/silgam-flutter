@@ -107,21 +107,22 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   void onExamFilterButtonTapped(Exam exam) {
-    final selectedExams = [...state.selectedExams];
-    if (selectedExams.contains(exam)) {
-      selectedExams.remove(exam);
+    final selectedExamIds = [...state.selectedExamIds];
+    if (selectedExamIds.contains(exam.id)) {
+      selectedExamIds.remove(exam.id);
     } else {
-      selectedExams.add(exam);
+      selectedExamIds.add(exam.id);
     }
-    final records = _getFilteredAndSortedRecords(selectedExams: selectedExams);
-    emit(state.copyWith(selectedExams: selectedExams, records: records));
+    final records =
+        _getFilteredAndSortedRecords(selectedExamIds: selectedExamIds);
+    emit(state.copyWith(selectedExamIds: selectedExamIds, records: records));
 
     AnalyticsManager.logEvent(
       name: '[HomePage-list] Exam filter button tapped',
       properties: {
         'subject': exam.subject.name,
         'examId': exam.id,
-        'selected': state.selectedExams.contains(exam),
+        'selected': state.selectedExamIds.contains(exam.id),
       },
     );
   }
@@ -129,11 +130,11 @@ class RecordListCubit extends Cubit<RecordListState> {
   void onFilterResetButtonTapped() {
     final records = _getFilteredAndSortedRecords(
       sortType: RecordSortType.dateDesc,
-      selectedExams: [],
+      selectedExamIds: [],
     );
     emit(state.copyWith(
       sortType: RecordSortType.dateDesc,
-      selectedExams: [],
+      selectedExamIds: [],
       records: records,
     ));
 
@@ -145,12 +146,12 @@ class RecordListCubit extends Cubit<RecordListState> {
     List<ExamRecord>? originalRecords,
     String? searchQuery,
     RecordSortType? sortType,
-    List<Exam>? selectedExams,
+    List<String>? selectedExamIds,
   }) {
     originalRecords ??= state.originalRecords;
     searchQuery ??= state.searchQuery;
     sortType ??= state.sortType;
-    selectedExams ??= state.selectedExams;
+    selectedExamIds ??= state.selectedExamIds;
 
     return originalRecords.where(
       (record) {
@@ -159,8 +160,8 @@ class RecordListCubit extends Cubit<RecordListState> {
             record.feedback.contains(searchQuery);
       },
     ).where((record) {
-      if (selectedExams!.isEmpty) return true;
-      return selectedExams.contains(record.exam);
+      if (selectedExamIds!.isEmpty) return true;
+      return selectedExamIds.contains(record.exam.id);
     }).toList()
       ..sort((a, b) {
         switch (sortType!) {

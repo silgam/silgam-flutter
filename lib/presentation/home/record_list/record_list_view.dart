@@ -148,7 +148,7 @@ class _RecordListViewState extends State<RecordListView> {
                       for (Exam exam in appState.allExams)
                         ExamFilterChip(
                           exam: exam,
-                          isSelected: state.selectedExams.contains(exam),
+                          isSelected: state.selectedExamIds.contains(exam.id),
                           onSelected: () =>
                               _cubit.onExamFilterButtonTapped(exam),
                         ),

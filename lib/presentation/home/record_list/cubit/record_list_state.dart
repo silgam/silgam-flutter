@@ -10,7 +10,7 @@ class RecordListState with _$RecordListState {
     @Default([]) List<ExamRecord> records,
     @Default('') String searchQuery,
     @Default(RecordSortType.dateDesc) RecordSortType sortType,
-    @Default([]) List<Exam> selectedExams,
+    @Default([]) List<String> selectedExamIds,
   }) = _RecordListState;
 
   factory RecordListState.initial() {
