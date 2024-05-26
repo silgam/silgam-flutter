@@ -135,18 +135,18 @@ class _StatViewState extends State<StatView> {
                           isDateRangeSet: state.isDateRangeSet,
                           dateRange: state.dateRange,
                           exams: appState.allExams,
-                          selectedExams: state.selectedExams,
+                          selectedExamIds: state.selectedExamIds,
                         ),
                         screenWidth > tabletScreenWidth
                             ? _buildTabletLayout(
                                 filteredRecords: state.records,
-                                selectedExams: state.selectedExams,
+                                selectedExamIds: state.selectedExamIds,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
                               )
                             : _buildMobileLayout(
                                 filteredRecords: state.records,
-                                selectedExams: state.selectedExams,
+                                selectedExamIds: state.selectedExamIds,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
                               ),
@@ -168,7 +168,7 @@ class _StatViewState extends State<StatView> {
 
   Widget _buildTabletLayout({
     required Map<Exam, List<ExamRecord>> filteredRecords,
-    required List<Exam> selectedExams,
+    required List<String> selectedExamIds,
     required ExamValueType selectedExamValueType,
   }) {
     return SliverList(
@@ -184,7 +184,7 @@ class _StatViewState extends State<StatView> {
                   _buildValueGraphsCard(
                     filteredRecords: filteredRecords,
                     examValueType: selectedExamValueType,
-                    selectedExams: selectedExams,
+                    selectedExamIds: selectedExamIds,
                   ),
                   _buildTotalExamDurationInfoCard(
                     filteredRecords: filteredRecords,
@@ -216,7 +216,7 @@ class _StatViewState extends State<StatView> {
 
   Widget _buildMobileLayout({
     required Map<Exam, List<ExamRecord>> filteredRecords,
-    required List<Exam> selectedExams,
+    required List<String> selectedExamIds,
     required ExamValueType selectedExamValueType,
   }) {
     return SliverList(
@@ -225,7 +225,7 @@ class _StatViewState extends State<StatView> {
         _buildValueGraphsCard(
           filteredRecords: filteredRecords,
           examValueType: selectedExamValueType,
-          selectedExams: selectedExams,
+          selectedExamIds: selectedExamIds,
         ),
         IntrinsicHeight(
           child: Row(
@@ -255,7 +255,7 @@ class _StatViewState extends State<StatView> {
     required bool isDateRangeSet,
     required DateTimeRange dateRange,
     required List<Exam> exams,
-    required List<Exam> selectedExams,
+    required List<String> selectedExamIds,
   }) {
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
@@ -301,7 +301,7 @@ class _StatViewState extends State<StatView> {
                     for (Exam exam in exams)
                       ExamFilterChip(
                         exam: exam,
-                        isSelected: selectedExams.contains(exam),
+                        isSelected: selectedExamIds.contains(exam.id),
                         onSelected: () => _cubit.onExamFilterButtonTapped(exam),
                       ),
                     SizedBox(width: horizontalPadding),
@@ -318,10 +318,10 @@ class _StatViewState extends State<StatView> {
   Widget _buildValueGraphsCard({
     required Map<Exam, List<ExamRecord>> filteredRecords,
     required ExamValueType examValueType,
-    required List<Exam> selectedExams,
+    required List<String> selectedExamIds,
   }) {
-    final isAllPerfectScoresSame =
-        1 == selectedExams.map((exam) => exam.perfectScore).toSet().length;
+    final isAllPerfectScoresSame = 1 ==
+        filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
         .whereNotNull()

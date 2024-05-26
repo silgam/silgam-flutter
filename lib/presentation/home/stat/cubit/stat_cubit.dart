@@ -73,15 +73,15 @@ class StatCubit extends Cubit<StatState> {
   }
 
   void onExamFilterButtonTapped(Exam exam) {
-    final selectedExams = [...state.selectedExams];
-    if (selectedExams.contains(exam)) {
-      selectedExams.remove(exam);
+    final selectedExamIds = [...state.selectedExamIds];
+    if (selectedExamIds.contains(exam.id)) {
+      selectedExamIds.remove(exam.id);
     } else {
-      selectedExams.add(exam);
+      selectedExamIds.add(exam.id);
     }
     emit(state.copyWith(
-      selectedExams: selectedExams,
-      records: _getFilteredRecords(selectedExams: selectedExams),
+      selectedExamIds: selectedExamIds,
+      records: _getFilteredRecords(selectedExamIds: selectedExamIds),
     ));
 
     AnalyticsManager.logEvent(
@@ -89,18 +89,18 @@ class StatCubit extends Cubit<StatState> {
       properties: {
         'subject': exam.subject.name,
         'examId': exam.id,
-        'selected': state.selectedExams.contains(exam),
+        'selected': state.selectedExamIds.contains(exam.id),
       },
     );
   }
 
   void onFilterResetButtonTapped() {
     emit(state.copyWith(
-      selectedExams: [],
+      selectedExamIds: [],
       isDateRangeSet: false,
       dateRange: state.defaultDateRange,
       records: _getFilteredRecords(
-        selectedExams: [],
+        selectedExamIds: [],
         dateRange: state.defaultDateRange,
       ),
     ));
@@ -144,12 +144,12 @@ class StatCubit extends Cubit<StatState> {
   Map<Exam, List<ExamRecord>> _getFilteredRecords({
     List<ExamRecord>? originalRecords,
     String? searchQuery,
-    List<Exam>? selectedExams,
+    List<String>? selectedExamIds,
     DateTimeRange? dateRange,
   }) {
     originalRecords ??= state.originalRecords;
     searchQuery ??= state.searchQuery;
-    selectedExams ??= state.selectedExams;
+    selectedExamIds ??= state.selectedExamIds;
     dateRange ??= state.dateRange;
 
     var records = [...originalRecords];
@@ -167,13 +167,13 @@ class StatCubit extends Cubit<StatState> {
               ),
         )
         .toList();
-    final Map<Exam, List<ExamRecord>> filteredRecords =
-        records.groupListsBy((record) => record.exam)
-          ..removeWhere(
-            (exam, records) =>
-                records.isEmpty ||
-                (selectedExams!.isNotEmpty && !selectedExams.contains(exam)),
-          );
+    final Map<Exam, List<ExamRecord>> filteredRecords = records
+        .groupListsBy((record) => record.exam)
+      ..removeWhere(
+        (exam, records) =>
+            records.isEmpty ||
+            (selectedExamIds!.isNotEmpty && !selectedExamIds.contains(exam.id)),
+      );
     return filteredRecords;
   }
 }
