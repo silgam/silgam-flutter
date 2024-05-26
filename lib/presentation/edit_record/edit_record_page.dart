@@ -64,6 +64,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
       .toSet()
       .toList();
 
+  Map<String, dynamic> get _defaultLogProperties => {
+        'exam_name': _selectedExam.name,
+        'exam_id': _selectedExam.id,
+        'subject': _selectedExam.subject.name,
+        'is_editing_mode': _isEditingMode,
+        'input_exam_existed': widget.arguments.inputExam != null,
+      };
+
   @override
   void initState() {
     if (_appCubit.state.isNotSignedIn) {
@@ -94,11 +102,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     super.dispose();
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Edit finished',
-      properties: {
-        'subject': _selectedExam.subject.name,
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.arguments.inputExam != null,
-      },
+      properties: _defaultLogProperties,
     );
   }
 
@@ -798,11 +802,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     _onBackPressed();
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Cancel button tapped',
-      properties: {
-        'subject': _selectedExam.subject.name,
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.arguments.inputExam != null,
-      },
+      properties: _defaultLogProperties,
     );
   }
 
@@ -875,11 +875,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Exam record saved',
-      properties: {
-        'subject': _selectedExam.subject.name,
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.arguments.inputExam != null,
-      },
+      properties: _defaultLogProperties,
     );
 
     return record;
