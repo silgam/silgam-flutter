@@ -37,7 +37,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
 
-  late final List<Exam> _exams = _appCubit.state.allExams;
+  late final List<Exam> _exams = _appCubit.state.getAllExams();
 
   String title = '';
   final TextEditingController _examDurationEditingController =

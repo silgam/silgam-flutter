@@ -313,9 +313,9 @@ class _MainViewState extends State<MainView> {
   Widget _buildTimetableStartCard() {
     return BlocBuilder<AppCubit, AppState>(
       buildWhen: (previous, current) =>
-          !listEquals(previous.allTimetables, current.allTimetables),
+          !listEquals(previous.getAllTimetables(), current.getAllTimetables()),
       builder: (context, state) {
-        return _TimetableStartCard(timetables: state.allTimetables);
+        return _TimetableStartCard(timetables: state.getAllTimetables());
       },
     );
   }

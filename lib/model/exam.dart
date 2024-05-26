@@ -32,7 +32,9 @@ class Exam with _$Exam {
 
   factory Exam.fromId(String id) {
     final AppState appState = getIt.get<AppCubit>().state;
-    return appState.allExams.firstWhereOrNull((element) => element.id == id) ??
+    return appState
+            .getAllExams()
+            .firstWhereOrNull((element) => element.id == id) ??
         appState.getDefaultExams().first.copyWith(id: id, name: '알 수 없는 과목');
   }
 

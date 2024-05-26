@@ -134,7 +134,7 @@ class _StatViewState extends State<StatView> {
                         _buildFilterChips(
                           isDateRangeSet: state.isDateRangeSet,
                           dateRange: state.dateRange,
-                          exams: appState.allExams,
+                          exams: appState.getAllExams(),
                           selectedExamIds: state.selectedExamIds,
                         ),
                         screenWidth > tabletScreenWidth

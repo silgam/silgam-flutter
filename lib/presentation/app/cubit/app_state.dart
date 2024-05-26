@@ -112,12 +112,10 @@ class AppState with _$AppState {
     ];
   }
 
-  // TODO: 함수 형태로 바꾸기
-  List<Exam> get allExams => [...customExams, ...getDefaultExams()];
+  List<Exam> getAllExams() => [...customExams, ...getDefaultExams()];
 
-  // TODO: 함수 형태로 바꾸기
-  List<Timetable> get allTimetables {
-    final allExams = this.allExams;
+  List<Timetable> getAllTimetables() {
+    final allExams = getAllExams();
 
     final timetables = allExams
         .map((exam) => Timetable(
