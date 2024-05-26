@@ -26,6 +26,27 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
     Navigator.pushNamed(context, CustomExamEditPage.routeName);
   }
 
+  void _onHelpButtonPressed() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          '제목', // TODO
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        content: const Text(
+          '설명', // TODO
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildExamInfoWidget(IconData iconData, String text) {
     return Row(
       children: [
@@ -141,7 +162,16 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const CustomMenuBar(title: '나만의 과목 만들기'),
+            CustomMenuBar(
+              title: '나만의 과목 만들기',
+              actionButtons: [
+                ActionButton(
+                  icon: const Icon(Icons.help_outline),
+                  tooltip: '도움말',
+                  onPressed: _onHelpButtonPressed,
+                ),
+              ],
+            ),
             Expanded(
               child: BlocBuilder<AppCubit, AppState>(
                 buildWhen: (previous, current) =>
