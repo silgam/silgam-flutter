@@ -104,25 +104,48 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
     );
   }
 
+  Widget _buildAddExamButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+      child: InkWell(
+        onTap: _onAddExamButtonPressed,
+        splashColor: Colors.transparent,
+        child: Ink(
+          color: Colors.white,
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add),
+                SizedBox(width: 4),
+                Text(
+                  '과목 만들기',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            CustomMenuBar(
-              title: '나만의 과목 만들기',
-              actionButtons: [
-                ActionButton(
-                  onPressed: _onAddExamButtonPressed,
-                  icon: const Icon(Icons.add),
-                  tooltip: '과목 만들기',
-                ),
-              ],
-            ),
+            const CustomMenuBar(title: '나만의 과목 만들기'),
             Expanded(
               child: ListView(
-                children: defaultExams.map(_buildCustomExamItem).toList(),
+                children: [
+                  ...defaultExams.map(_buildCustomExamItem),
+                  _buildAddExamButton(),
+                ],
               ),
             )
           ],
