@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../../model/exam.dart';
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
-import '../../repository/exam/exam_repository.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
@@ -38,6 +37,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
 
+  late final List<Exam> _exams = _appCubit.state.allExams;
+
   String title = '';
   final TextEditingController _examDurationEditingController =
       TextEditingController();
@@ -53,7 +54,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
 
-  Exam _selectedExam = defaultExams.first;
+  late Exam _selectedExam = _exams.first;
   DateTime _examStartedTime = DateTime.now();
   bool _isEditingMode = false;
   bool _isSaving = false;
@@ -324,7 +325,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                       borderRadius: BorderRadius.circular(6),
                       value: _selectedExam,
                       onChanged: _onSelectedExamChanged,
-                      items: defaultExams.map((exam) {
+                      items: _exams.map((exam) {
                         return DropdownMenuItem(
                           value: exam,
                           child: Text(exam.name),
@@ -688,7 +689,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   void _onSelectedExamChanged(Exam? newExam) {
     setState(() {
-      _selectedExam = newExam ?? defaultExams.first;
+      _selectedExam = newExam ?? _exams.first;
       _examDurationEditingController.text =
           _selectedExam.durationMinutes.toString();
     });

@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 
 import '../../../model/exam.dart';
 import '../../../model/exam_record.dart';
-import '../../../repository/exam/exam_repository.dart';
 import '../../../util/const.dart';
 import '../../../util/date_time_extension.dart';
 import '../../../util/injection.dart';
@@ -135,6 +134,7 @@ class _StatViewState extends State<StatView> {
                         _buildFilterChips(
                           isDateRangeSet: state.isDateRangeSet,
                           dateRange: state.dateRange,
+                          exams: appState.allExams,
                           selectedExams: state.selectedExams,
                         ),
                         screenWidth > tabletScreenWidth
@@ -254,6 +254,7 @@ class _StatViewState extends State<StatView> {
   Widget _buildFilterChips({
     required bool isDateRangeSet,
     required DateTimeRange dateRange,
+    required List<Exam> exams,
     required List<Exam> selectedExams,
   }) {
     return NonPaddingChildBuilder(
@@ -297,7 +298,7 @@ class _StatViewState extends State<StatView> {
                       tooltip: '기간 설정',
                     ),
                     const SizedBox(width: 6),
-                    for (Exam exam in defaultExams)
+                    for (Exam exam in exams)
                       ExamFilterChip(
                         exam: exam,
                         isSelected: selectedExams.contains(exam),

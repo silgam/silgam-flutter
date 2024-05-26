@@ -21,4 +21,6 @@ class AppState with _$AppState {
     }
     return null;
   }
+
+  List<Exam> get allExams => [...customExams, ...defaultExams];
 }
