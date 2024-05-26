@@ -68,7 +68,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
     );
   }
 
-  Widget _buildCustomExamItem(Exam exam) {
+  Widget _buildCustomExamItem(Exam exam, List<Exam> defaultExams) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
       child: InkWell(
@@ -85,7 +85,10 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        exam.subject.defaultExam.name,
+                        defaultExams
+                            .firstWhere((defaultExam) =>
+                                defaultExam.subject == exam.subject)
+                            .name,
                         style: TextStyle(
                           color: Color(exam.color),
                           fontSize: 12,
@@ -175,11 +178,18 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
             Expanded(
               child: BlocBuilder<AppCubit, AppState>(
                 buildWhen: (previous, current) =>
-                    listEquals(previous.customExams, current.customExams),
+                    !listEquals(previous.customExams, current.customExams) ||
+                    !listEquals(
+                        previous.getDefaultExams(), current.getDefaultExams()),
                 builder: (context, state) {
                   return ListView(
                     children: [
-                      ...state.customExams.map(_buildCustomExamItem),
+                      ...state.customExams.map(
+                        (exam) => _buildCustomExamItem(
+                          exam,
+                          state.getDefaultExams(),
+                        ),
+                      ),
                       _buildAddExamButton(),
                     ],
                   );

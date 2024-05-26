@@ -5,9 +5,9 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
-import '../../repository/exam/exam_repository.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 import 'cubit/custom_exam_edit_cubit.dart';
 
@@ -29,8 +29,10 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _perfectScoreFieldName = 'perfectScore';
 
   final CustomExamEditCubit _customExamEditCubit = getIt.get();
+  final AppCubit _appCubit = getIt.get();
+  late final _defaultExams = _appCubit.state.getDefaultExams();
 
-  final _baseExamInitialValue = defaultExams.first;
+  late final _baseExamInitialValue = _defaultExams.first;
   late final _startTimeInitialValue =
       TimeOfDay.fromDateTime(_baseExamInitialValue.startTime);
   late final _durationInitialValue =
@@ -218,7 +220,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           FormBuilderDropdown<Exam>(
             name: _baseExamFieldName,
             initialValue: _baseExamInitialValue,
-            items: defaultExams
+            items: _defaultExams
                 .map((exam) => DropdownMenuItem(
                       value: exam,
                       child: Text(exam.name),
