@@ -420,6 +420,7 @@ class _SettingsViewState extends State<SettingsView> {
               Navigator.pop(context);
               try {
                 await FirebaseAuth.instance.currentUser?.delete();
+                await _appCubit.onLogout();
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'requires-recent-login') {
                   await FirebaseAuth.instance.signOut();
