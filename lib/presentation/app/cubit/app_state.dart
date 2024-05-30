@@ -133,7 +133,7 @@ class AppState with _$AppState {
         allExams.lastWhere((exam) => exam.subject == Subject.investigation2);
 
     timetables.insert(
-      allExams.lastIndexWhere((exam) => exam.subject == Subject.investigation),
+      allExams.indexWhere((exam) => exam.subject == Subject.investigation),
       Timetable(
         name: '탐구 연속',
         startTime: defaultInvestigationExam.timetableStartTime,
