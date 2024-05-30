@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
@@ -138,17 +139,22 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
         splashColor: Colors.transparent,
         child: Ink(
           color: Colors.white,
-          child: const Padding(
-            padding: EdgeInsets.symmetric(vertical: 18),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.add),
-                SizedBox(width: 4),
+                SvgPicture.asset(
+                  'assets/add.svg',
+                  width: 30,
+                  color: Colors.grey.shade800,
+                ),
                 Text(
                   '과목 만들기',
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w100,
+                    color: Colors.grey.shade800,
                   ),
                 ),
               ],
