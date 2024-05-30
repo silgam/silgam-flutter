@@ -275,10 +275,10 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     FormBuilderValidators.required(errorText: '시험 시간을 입력해주세요.'),
                     FormBuilderValidators.numeric(
                         errorText: '시험 시간은 숫자만 입력해주세요.'),
-                    FormBuilderValidators.min(1,
-                        errorText: '시험 시간을 1 이상 입력해주세요.'),
+                    FormBuilderValidators.min(5,
+                        errorText: '시험 시간을 5분 이상으로 입력해주세요.'),
                     FormBuilderValidators.max(300,
-                        errorText: '시험 시간을 300 이하로 입력해주세요.'),
+                        errorText: '시험 시간을 300분 이하로 입력해주세요.'),
                   ]),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
