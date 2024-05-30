@@ -112,7 +112,7 @@ class AppState with _$AppState {
     ];
   }
 
-  List<Exam> getAllExams() => [...customExams, ...getDefaultExams()];
+  List<Exam> getAllExams() => [...getDefaultExams(), ...customExams];
 
   List<Timetable> getAllTimetables() {
     final allExams = getAllExams();
