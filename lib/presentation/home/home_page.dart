@@ -71,12 +71,20 @@ class _HomePageState extends State<HomePage> {
   bool isMarketingInfoReceivingConsentDialogShowing = false;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     _onMeChanged();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
       child: BlocListener<AppCubit, AppState>(
-        listenWhen: (previous, current) => previous.me != current.me,
+        listenWhen: (previous, current) =>
+            (previous.me == null && current.me != null) ||
+            previous.me?.isMarketingInfoReceivingConsented !=
+                current.me?.isMarketingInfoReceivingConsented,
         listener: (context, appState) {
           _onMeChanged();
         },
