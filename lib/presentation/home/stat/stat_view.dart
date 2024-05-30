@@ -717,13 +717,17 @@ class _StatViewState extends State<StatView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (isTouched || ratio >= 0.1)
-                              Text(
-                                exam.name,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      (_titleTextStyle.fontSize ?? 14) - 2,
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 60),
+                                child: Text(
+                                  exam.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        (_titleTextStyle.fontSize ?? 14) - 2,
+                                  ),
                                 ),
                               ),
                             if (isTouched || ratio >= 0.1)
