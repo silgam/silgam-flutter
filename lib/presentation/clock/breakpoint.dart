@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 
 import '../../model/announcement.dart';
 import '../../model/exam.dart';
+import '../../model/relative_time.dart';
 import '../../model/timetable.dart';
 
 class Breakpoint {
@@ -55,6 +56,12 @@ class Breakpoint {
     final breakpoints = <Breakpoint>[];
 
     for (final announcement in exam.subject.defaultAnnouncements) {
+      if ((announcement.time.type == RelativeTimeType.afterStart ||
+              announcement.time.type == RelativeTimeType.beforeFinish) &&
+          announcement.time.minutes >= exam.durationMinutes) {
+        continue;
+      }
+
       final DateTime breakpointTime = announcement.time.calculateBreakpointTime(
         examStartTime,
         examStartTime.add(Duration(minutes: exam.durationMinutes)),
