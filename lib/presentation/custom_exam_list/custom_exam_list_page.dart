@@ -20,7 +20,13 @@ class CustomExamListPage extends StatefulWidget {
 
 class _CustomExamListPageState extends State<CustomExamListPage> {
   void _onExamItemTab(Exam exam) {
-    Navigator.pushNamed(context, CustomExamEditPage.routeName);
+    Navigator.pushNamed(
+      context,
+      CustomExamEditPage.routeName,
+      arguments: CustomExamEditPageArguments(
+        examToEdit: exam,
+      ),
+    );
   }
 
   void _onAddExamButtonPressed() {

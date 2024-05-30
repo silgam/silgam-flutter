@@ -14,7 +14,12 @@ import 'cubit/custom_exam_edit_cubit.dart';
 class CustomExamEditPage extends StatefulWidget {
   static const routeName = '${CustomExamListPage.routeName}/edit';
 
-  const CustomExamEditPage({super.key});
+  final Exam? examToEdit;
+
+  const CustomExamEditPage({
+    super.key,
+    this.examToEdit,
+  });
 
   @override
   State<CustomExamEditPage> createState() => _CustomExamEditPageState();
@@ -32,15 +37,23 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   final AppCubit _appCubit = getIt.get();
   late final _defaultExams = _appCubit.state.getDefaultExams();
 
-  late final _baseExamInitialValue = _defaultExams.first;
-  late final _startTimeInitialValue =
-      TimeOfDay.fromDateTime(_baseExamInitialValue.startTime);
+  late final _examNameInitialValue = widget.examToEdit?.name;
+  late final _baseExamInitialValue = widget.examToEdit == null
+      ? _defaultExams.first
+      : _defaultExams
+          .firstWhere((exam) => exam.subject == widget.examToEdit?.subject);
+  late final _startTimeInitialValue = widget.examToEdit == null
+      ? TimeOfDay.fromDateTime(_baseExamInitialValue.startTime)
+      : TimeOfDay.fromDateTime(widget.examToEdit!.startTime);
   late final _durationInitialValue =
-      _baseExamInitialValue.durationMinutes.toString();
+      widget.examToEdit?.durationMinutes.toString() ??
+          _baseExamInitialValue.durationMinutes.toString();
   late final _numberOfQuestionsInitialValue =
-      _baseExamInitialValue.numberOfQuestions.toString();
+      widget.examToEdit?.numberOfQuestions.toString() ??
+          _baseExamInitialValue.numberOfQuestions.toString();
   late final _perfectScoreInitialValue =
-      _baseExamInitialValue.perfectScore.toString();
+      widget.examToEdit?.perfectScore.toString() ??
+          _baseExamInitialValue.perfectScore.toString();
 
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isChanged = false;
@@ -201,6 +214,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           _buildLabel('과목 이름'),
           FormBuilderTextField(
             name: _examNameFieldName,
+            initialValue: _examNameInitialValue,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             textInputAction: TextInputAction.next,
             validator: FormBuilderValidators.compose([
@@ -418,4 +432,12 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       ),
     );
   }
+}
+
+class CustomExamEditPageArguments {
+  final Exam? examToEdit;
+
+  CustomExamEditPageArguments({
+    required this.examToEdit,
+  });
 }

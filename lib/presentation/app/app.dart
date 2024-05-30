@@ -88,7 +88,6 @@ class SilgamApp extends StatelessWidget {
           OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
           SilgampassPage.routeName: (_) => const SilgampassPage(),
           CustomExamListPage.routeName: (_) => const CustomExamListPage(),
-          CustomExamEditPage.routeName: (_) => const CustomExamEditPage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
@@ -150,6 +149,14 @@ class SilgamApp extends StatelessWidget {
               return MaterialPageRoute(
                 builder: (_) => ExamOverviewPage(
                   examDetail: args.examDetail,
+                ),
+                settings: settings,
+              );
+            case CustomExamEditPage.routeName:
+              final args = settings.arguments as CustomExamEditPageArguments?;
+              return MaterialPageRoute(
+                builder: (_) => CustomExamEditPage(
+                  examToEdit: args?.examToEdit,
                 ),
                 settings: settings,
               );
