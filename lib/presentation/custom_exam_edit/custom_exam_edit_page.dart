@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
+import '../../repository/exam/exam_repository.dart';
+import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
@@ -35,6 +38,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _numberOfQuestionsFieldName = 'numberOfQuestions';
   static const _perfectScoreFieldName = 'perfectScore';
 
+  final ExamRepository _examRepository = getIt.get();
+  final ExamRecordRepository _examRecordRepository = getIt.get();
   final CustomExamEditCubit _customExamEditCubit = getIt.get();
   final AppCubit _appCubit = getIt.get();
   late final List<Exam> _defaultExams = _appCubit.state.getDefaultExams();
@@ -179,6 +184,84 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     }
   }
 
+  void _deleteExam(Exam examToDelete) async {
+    EasyLoading.show();
+
+    final examRecordsUsing =
+        await _examRecordRepository.getMyExamRecordsByExamId(
+      _appCubit.state.me!.id,
+      examToDelete.id,
+    );
+
+    if (examRecordsUsing.isEmpty) {
+      _examRepository.deleteExam(examToDelete.id);
+      if (mounted) Navigator.pop(context, true);
+    } else {
+      if (mounted) {
+        final recordNames =
+            examRecordsUsing.map((record) => '• ${record.title}').join('\n');
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            scrollable: true,
+            title: const Text('과목을 삭제할 수 없어요!'),
+            content: Text(
+              '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('확인'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+
+    EasyLoading.dismiss();
+  }
+
+  void _onDeleteButtonPressed() async {
+    final examToDelete = _examToEdit;
+    if (examToDelete == null) return;
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${CustomExamEditPage.routeName}/delete_confirm_dialog',
+      ),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            '정말 이 과목을 삭제하실 건가요?',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          content: Text(examToDelete.name),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.grey),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _deleteExam(examToDelete);
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('삭제'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _onDefaultExamChanged(Exam? exam) {
     if (exam == null) return;
 
@@ -229,8 +312,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       onChanged: () {
         _isChanged = true;
       },
-      child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildLabel('과목 이름'),
           FormBuilderTextField(
@@ -441,9 +524,31 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           child: Column(
             children: [
               Expanded(
-                child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                  child: _buildForm(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ListView(
+                    children: [
+                      _isEditMode
+                          ? Container(
+                              alignment: Alignment.topRight,
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: TextButton(
+                                onPressed: _onDeleteButtonPressed,
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                ),
+                                child: const Text('삭제하기'),
+                              ),
+                            )
+                          : const SizedBox(height: 28),
+                      MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(textScaleFactor: 1.0),
+                        child: _buildForm(),
+                      ),
+                      const SizedBox(height: 28),
+                    ],
+                  ),
                 ),
               ),
               _buildBottomButtons(),
