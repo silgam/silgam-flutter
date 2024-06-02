@@ -14,23 +14,34 @@ class _TimetableStartCard extends StatefulWidget {
 
 class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
-  late final TabController _tabController = TabController(
-    length: widget.timetables.length,
-    initialIndex: 0,
-    vsync: this,
-  )..addListener(_onTapSelected);
-
+  TabController? _tabController;
   Timetable? _selectedTimetable;
+
+  void _updateTabController() {
+    _tabController?.removeListener(_onTapSelected);
+    _tabController?.dispose();
+    _tabController = TabController(
+      length: widget.timetables.length,
+      initialIndex: _tabController?.index ?? 0,
+      vsync: this,
+    )..addListener(_onTapSelected);
+  }
 
   @override
   void initState() {
     super.initState();
+    _updateTabController();
     _selectedTimetable = widget.timetables.first;
   }
 
   @override
+  void didUpdateWidget(covariant _TimetableStartCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateTabController();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _onTapSelected(); // 과목명 변경됐을 때 현재 탭에 적용
     Color disabledColor = Theme.of(context).primaryColor.withAlpha(80);
     TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
     return CustomCard(
@@ -263,7 +274,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   }
 
   void _onTapSelected() async {
-    final index = _tabController.index;
+    final index = _tabController?.index ?? 0;
     Timetable timetable = widget.timetables[index];
     if (_selectedTimetable != timetable) {
       setState(() {
@@ -290,6 +301,6 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   @override
   void dispose() {
     super.dispose();
-    _tabController.dispose();
+    _tabController?.dispose();
   }
 }
