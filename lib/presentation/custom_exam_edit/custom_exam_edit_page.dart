@@ -37,25 +37,26 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
 
   final CustomExamEditCubit _customExamEditCubit = getIt.get();
   final AppCubit _appCubit = getIt.get();
-  late final _defaultExams = _appCubit.state.getDefaultExams();
+  late final List<Exam> _defaultExams = _appCubit.state.getDefaultExams();
 
-  late final _examNameInitialValue = widget.examToEdit?.name;
-  late final _baseExamInitialValue = widget.examToEdit == null
+  late final Exam? _examToEdit = widget.examToEdit;
+  late final bool _isEditMode = _examToEdit != null;
+
+  late final _examNameInitialValue = _examToEdit?.name;
+  late final _baseExamInitialValue = _examToEdit == null
       ? _defaultExams.first
       : _defaultExams
-          .firstWhere((exam) => exam.subject == widget.examToEdit?.subject);
-  late final _startTimeInitialValue = widget.examToEdit == null
+          .firstWhere((exam) => exam.subject == _examToEdit?.subject);
+  late final _startTimeInitialValue = _examToEdit == null
       ? TimeOfDay.fromDateTime(_baseExamInitialValue.startTime)
-      : TimeOfDay.fromDateTime(widget.examToEdit!.startTime);
-  late final _durationInitialValue =
-      widget.examToEdit?.durationMinutes.toString() ??
-          _baseExamInitialValue.durationMinutes.toString();
+      : TimeOfDay.fromDateTime(_examToEdit!.startTime);
+  late final _durationInitialValue = _examToEdit?.durationMinutes.toString() ??
+      _baseExamInitialValue.durationMinutes.toString();
   late final _numberOfQuestionsInitialValue =
-      widget.examToEdit?.numberOfQuestions.toString() ??
+      _examToEdit?.numberOfQuestions.toString() ??
           _baseExamInitialValue.numberOfQuestions.toString();
-  late final _perfectScoreInitialValue =
-      widget.examToEdit?.perfectScore.toString() ??
-          _baseExamInitialValue.perfectScore.toString();
+  late final _perfectScoreInitialValue = _examToEdit?.perfectScore.toString() ??
+      _baseExamInitialValue.perfectScore.toString();
 
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isChanged = false;
@@ -88,8 +89,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   void initState() {
     super.initState();
 
-    if (widget.examToEdit == null &&
-        _appCubit.state.customExams.length == _maxCustomExams) {
+    if (!_isEditMode && _appCubit.state.customExams.length == _maxCustomExams) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -155,6 +155,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       if (values == null) return;
 
       _customExamEditCubit.save(
+        examToEdit: _examToEdit,
         examName: values[_examNameFieldName],
         baseExam: values[_baseExamFieldName],
         startTime: values[_startTimeFieldName],
@@ -422,7 +423,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('추가'),
+              child: Text(_isEditMode ? '수정' : '추가'),
             ),
           ),
         ],

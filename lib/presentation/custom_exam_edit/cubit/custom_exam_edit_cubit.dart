@@ -20,6 +20,7 @@ class CustomExamEditCubit extends Cubit<CustomExamEditState> {
   final AppCubit _appCubit;
 
   void save({
+    required Exam? examToEdit,
     required String examName,
     required Exam baseExam,
     required TimeOfDay startTime,
@@ -29,7 +30,7 @@ class CustomExamEditCubit extends Cubit<CustomExamEditState> {
   }) {
     final userId = _appCubit.state.me!.id;
     final newExam = Exam(
-      id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
+      id: examToEdit?.id ?? '$userId-${DateTime.now().millisecondsSinceEpoch}',
       userId: userId,
       subject: baseExam.subject,
       name: examName,
@@ -39,8 +40,13 @@ class CustomExamEditCubit extends Cubit<CustomExamEditState> {
       numberOfQuestions: numberOfQuestions,
       perfectScore: perfectScore,
       color: baseExam.color,
-      createdAt: DateTime.now(),
+      createdAt: examToEdit?.createdAt ?? DateTime.now(),
     );
-    _examRepository.addExam(newExam);
+
+    if (examToEdit == null) {
+      _examRepository.addExam(newExam);
+    } else {
+      _examRepository.updateExam(newExam);
+    }
   }
 }
