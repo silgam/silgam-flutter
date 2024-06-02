@@ -11,6 +11,8 @@ import '../app/cubit/app_cubit.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 import 'cubit/custom_exam_edit_cubit.dart';
 
+const int _maxCustomExams = 100;
+
 class CustomExamEditPage extends StatefulWidget {
   static const routeName = '${CustomExamListPage.routeName}/edit';
 
@@ -81,6 +83,24 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       borderRadius: BorderRadius.all(Radius.circular(6)),
     ),
   );
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.examToEdit == null &&
+        _appCubit.state.customExams.length == _maxCustomExams) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('과목은 최대 $_maxCustomExams개까지 만들 수 있습니다.'),
+          ),
+        );
+        Navigator.pop(context);
+      });
+      return;
+    }
+  }
 
   Future<bool> _onWillPop() async {
     if (!_isChanged) {
