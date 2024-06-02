@@ -65,10 +65,10 @@ class AppCubit extends Cubit<AppState> {
 
     FirebaseAuth.instance.userChanges().listen((user) {
       onUserChange();
-      _updateCustomExams(user?.uid);
+      updateCustomExams(userId: user?.uid);
     });
 
-    await _updateCustomExams(FirebaseAuth.instance.currentUser?.uid);
+    await updateCustomExams(userId: FirebaseAuth.instance.currentUser?.uid);
   }
 
   Future<void> onUserChange() async {
@@ -120,7 +120,9 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-  Future<void> _updateCustomExams(String? userId) async {
+  Future<void> updateCustomExams({String? userId}) async {
+    userId ??= FirebaseAuth.instance.currentUser?.uid;
+
     if (userId == null) {
       emit(state.copyWith(customExams: []));
       return;

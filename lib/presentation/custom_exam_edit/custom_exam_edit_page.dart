@@ -142,7 +142,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
         perfectScore: int.parse(values[_perfectScoreFieldName]),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } else {
       final firstErrorMessage =
           _formKey.currentState?.errors.entries.first.value;

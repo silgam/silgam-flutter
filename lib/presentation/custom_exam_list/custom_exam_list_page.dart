@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
+import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/custom_menu_bar.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
@@ -19,18 +20,27 @@ class CustomExamListPage extends StatefulWidget {
 }
 
 class _CustomExamListPageState extends State<CustomExamListPage> {
-  void _onExamItemTab(Exam exam) {
-    Navigator.pushNamed(
+  final AppCubit _appCubit = getIt.get();
+
+  void _onExamItemTab(Exam exam) async {
+    final isEdited = await Navigator.pushNamed(
       context,
       CustomExamEditPage.routeName,
       arguments: CustomExamEditPageArguments(
         examToEdit: exam,
       ),
     );
+    if (isEdited == true) {
+      await _appCubit.updateCustomExams();
+    }
   }
 
-  void _onAddExamButtonPressed() {
-    Navigator.pushNamed(context, CustomExamEditPage.routeName);
+  void _onAddExamButtonPressed() async {
+    final isAdded =
+        await Navigator.pushNamed(context, CustomExamEditPage.routeName);
+    if (isAdded == true) {
+      await _appCubit.updateCustomExams();
+    }
   }
 
   void _onHelpButtonPressed() {
@@ -194,16 +204,19 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
                     !listEquals(
                         previous.getDefaultExams(), current.getDefaultExams()),
                 builder: (context, state) {
-                  return ListView(
-                    children: [
-                      ...state.customExams.map(
-                        (exam) => _buildCustomExamItem(
-                          exam,
-                          state.getDefaultExams(),
+                  return RefreshIndicator(
+                    onRefresh: _appCubit.updateCustomExams,
+                    child: ListView(
+                      children: [
+                        ...state.customExams.map(
+                          (exam) => _buildCustomExamItem(
+                            exam,
+                            state.getDefaultExams(),
+                          ),
                         ),
-                      ),
-                      _buildAddExamButton(),
-                    ],
+                        _buildAddExamButton(),
+                      ],
+                    ),
                   );
                 },
               ),
