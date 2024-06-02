@@ -1,3 +1,22 @@
 {
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "cSpell.words": [
+    "Admob",
+    "ARGB",
+    "Autovalidate",
+    "colorsets",
+    "Cupertino",
+    "easyloading",
+    "firestore",
+    "kakao",
+    "Nanum",
+    "Retrosans",
+    "Roboto",
+    "silgam",
+    "silgampass",
+    "storekit",
+    "unfocus",
+    "wakelock"
+  ],
+  "cSpell.spellCheckOnlyWorkspaceFiles": true
 }

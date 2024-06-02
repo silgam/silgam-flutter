@@ -602,11 +602,11 @@ class _StatViewState extends State<StatView> {
             }
             final index = value.toInt();
             final key = dateToRecordsMap.keys.elementAt(index);
-            final keySplitted = key.split('.')..removeLast();
+            final keySplits = key.split('.')..removeLast();
             final isAlreadyShown =
                 dateToRecordsMap.keys.take(index).any((previousKey) {
               return (previousKey.split('.')..removeLast()).join() ==
-                  keySplitted.join();
+                  keySplits.join();
             });
             if (isAlreadyShown && meta.appliedInterval < 2) {
               return const SizedBox.shrink();
@@ -614,7 +614,7 @@ class _StatViewState extends State<StatView> {
             return Container(
               alignment: Alignment.bottomCenter,
               child: Text(
-                keySplitted.getRange(1, 3).map((e) => int.parse(e)).join('/'),
+                keySplits.getRange(1, 3).map((e) => int.parse(e)).join('/'),
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 10,
