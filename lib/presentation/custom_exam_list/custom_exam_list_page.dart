@@ -88,11 +88,11 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
   Widget _buildCustomExamItem(Exam exam, List<Exam> defaultExams) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-      child: InkWell(
-        onTap: () => _onExamItemTab(exam),
-        splashColor: Colors.transparent,
-        child: Ink(
-          color: Colors.white,
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          onTap: () => _onExamItemTab(exam),
+          splashColor: Colors.transparent,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
