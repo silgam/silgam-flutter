@@ -718,7 +718,9 @@ class _StatViewState extends State<StatView> {
                           children: [
                             if (isTouched || ratio >= 0.1)
                               ConstrainedBox(
-                                constraints: const BoxConstraints(maxWidth: 60),
+                                constraints: BoxConstraints(
+                                  maxWidth: isTouched ? double.infinity : 60,
+                                ),
                                 child: Text(
                                   exam.name,
                                   overflow: TextOverflow.ellipsis,
