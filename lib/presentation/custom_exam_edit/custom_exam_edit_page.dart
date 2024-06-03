@@ -275,15 +275,34 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         ?.didChange(exam.perfectScore.toString());
   }
 
-  Widget _buildLabel(String text) {
+  Widget _buildLabel(String text, {String? tooltip}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Colors.grey.shade500,
-          fontWeight: FontWeight.w500,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          if (tooltip != null) const SizedBox(width: 4),
+          if (tooltip != null)
+            Tooltip(
+              message: tooltip,
+              triggerMode: TooltipTriggerMode.tap,
+              margin: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              verticalOffset: 8,
+              child: Icon(
+                Icons.help_outline,
+                color: Colors.grey.shade500,
+                size: 18,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -334,7 +353,10 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
             ),
           ),
           const SizedBox(height: 20),
-          _buildLabel('기본 과목'),
+          _buildLabel(
+            '기본 과목',
+            tooltip: '시험 시뮬레이션에서 표시될 교시와 재생될 타종 소리의 기준이 되는 과목입니다.',
+          ),
           FormBuilderDropdown<Exam>(
             name: _baseExamFieldName,
             initialValue: _baseExamInitialValue,
