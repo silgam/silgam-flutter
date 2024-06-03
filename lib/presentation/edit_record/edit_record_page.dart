@@ -900,18 +900,19 @@ class _EditRecordPageState extends State<EditRecordPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text(
-                '취소',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                ),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade600,
               ),
+              child: const Text('취소'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
               child: const Text('저장하지 않고 나가기'),
             ),
           ],
