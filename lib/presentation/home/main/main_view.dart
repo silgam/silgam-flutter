@@ -28,6 +28,7 @@ import '../../clock/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import '../../common/dialog.dart';
+import '../../custom_exam_guide/custom_exam_guide_page.dart';
 import '../../custom_exam_list/custom_exam_list_page.dart';
 import '../../edit_record/edit_record_page.dart';
 import '../../login/login_page.dart';
