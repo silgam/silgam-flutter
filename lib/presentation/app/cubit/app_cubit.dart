@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -111,6 +112,12 @@ class AppCubit extends Cubit<AppState> {
 
   void updateIsOffline(bool isOffline) {
     if (state.isOffline != isOffline) {
+      if (isOffline) {
+        FirebaseFirestore.instance.disableNetwork();
+      } else {
+        FirebaseFirestore.instance.enableNetwork();
+      }
+
       emit(state.copyWith(
         isOffline: isOffline,
       ));
