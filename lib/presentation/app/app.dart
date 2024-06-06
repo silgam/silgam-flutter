@@ -16,6 +16,7 @@ import '../../util/injection.dart';
 import '../clock/clock_page.dart';
 import '../common/progress_overlay.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
+import '../custom_exam_guide/custom_exam_guide_page.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 import '../customize_subject_name/customize_subject_name_page.dart';
 import '../edit_record/edit_record_page.dart';
@@ -157,6 +158,15 @@ class SilgamApp extends StatelessWidget {
               return MaterialPageRoute(
                 builder: (_) => CustomExamEditPage(
                   examToEdit: args?.examToEdit,
+                ),
+                settings: settings,
+              );
+            case CustomExamGuidePage.routeName:
+              final args = settings.arguments as CustomExamGuideArguments?;
+              return MaterialPageRoute(
+                builder: (_) => CustomExamGuidePage(
+                  isFromCustomExamListPage:
+                      args?.isFromCustomExamListPage ?? false,
                 ),
                 settings: settings,
               );

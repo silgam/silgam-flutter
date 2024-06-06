@@ -12,6 +12,7 @@ import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
+import '../custom_exam_guide/custom_exam_guide_page.dart';
 import '../purchase/purchase_page.dart';
 
 void showExamRecordLimitInfoDialog(BuildContext context) {
@@ -120,7 +121,10 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
   );
 }
 
-void showCustomExamNotAvailableDialog(BuildContext context) {
+void showCustomExamNotAvailableDialog(
+  BuildContext context, {
+  bool isFromCustomExamListPage = false,
+}) {
   showDialog(
     context: context,
     routeSettings: const RouteSettings(
@@ -148,11 +152,12 @@ void showCustomExamNotAvailableDialog(BuildContext context) {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // TODO: 안내 페이지 추가 후 연동
-              // Navigator.of(context).pushNamed(
-              //   PurchasePage.routeName,
-              //   arguments: PurchasePageArguments(product: sellingProduct),
-              // );
+              Navigator.of(context).pushNamed(
+                CustomExamGuidePage.routeName,
+                arguments: CustomExamGuideArguments(
+                  isFromCustomExamListPage: isFromCustomExamListPage,
+                ),
+              );
             },
             child: const Text('자세히 알아보기'),
           ),

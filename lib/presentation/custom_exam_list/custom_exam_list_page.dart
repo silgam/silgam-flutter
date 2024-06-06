@@ -6,9 +6,12 @@ import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/custom_menu_bar.dart';
+import '../common/dialog.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
+import '../custom_exam_guide/custom_exam_guide_page.dart';
 
 class CustomExamListPage extends StatefulWidget {
   static const routeName = '/custom_exam';
@@ -44,24 +47,17 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
   }
 
   void _onHelpButtonPressed() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          '제목', // TODO
-          style: TextStyle(fontWeight: FontWeight.w600),
+    if (_appCubit.state.productBenefit.isCustomExamAvailable) {
+      Navigator.pushNamed(
+        context,
+        CustomExamGuidePage.routeName,
+        arguments: const CustomExamGuideArguments(
+          isFromCustomExamListPage: true,
         ),
-        content: const Text(
-          '설명', // TODO
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('확인'),
-          ),
-        ],
-      ),
-    );
+      );
+    } else {
+      showCustomExamNotAvailableDialog(context, isFromCustomExamListPage: true);
+    }
   }
 
   Widget _buildExamInfoWidget(IconData iconData, String text) {
@@ -183,51 +179,54 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            CustomMenuBar(
-              title: '나만의 과목 만들기',
-              actionButtons: [
-                ActionButton(
-                  icon: const Icon(Icons.help_outline),
-                  tooltip: '도움말',
-                  onPressed: _onHelpButtonPressed,
-                ),
-              ],
-            ),
-            Expanded(
-              child: BlocBuilder<AppCubit, AppState>(
-                buildWhen: (previous, current) =>
-                    !listEquals(previous.customExams, current.customExams) ||
-                    !listEquals(
-                        previous.getDefaultExams(), current.getDefaultExams()),
-                builder: (context, state) {
-                  return RefreshIndicator(
-                    onRefresh: _appCubit.updateCustomExams,
-                    child: ListView(
-                      children: [
-                        ...state.customExams.map(
-                          (exam) => _buildCustomExamItem(
-                            exam,
-                            state.getDefaultExams(),
-                          ),
-                        ),
-                        _buildAddExamButton(),
-                      ],
-                    ),
-                  );
-                },
+    return AnnotatedRegion(
+      value: defaultSystemUiOverlayStyle,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              CustomMenuBar(
+                title: '나만의 과목 만들기',
+                actionButtons: [
+                  ActionButton(
+                    icon: const Icon(Icons.help_outline),
+                    tooltip: '도움말',
+                    onPressed: _onHelpButtonPressed,
+                  ),
+                ],
               ),
-            )
-          ],
+              Expanded(
+                child: BlocBuilder<AppCubit, AppState>(
+                  buildWhen: (previous, current) =>
+                      !listEquals(previous.customExams, current.customExams) ||
+                      !listEquals(previous.getDefaultExams(),
+                          current.getDefaultExams()),
+                  builder: (context, state) {
+                    return RefreshIndicator(
+                      onRefresh: _appCubit.updateCustomExams,
+                      child: ListView(
+                        children: [
+                          ...state.customExams.map(
+                            (exam) => _buildCustomExamItem(
+                              exam,
+                              state.getDefaultExams(),
+                            ),
+                          ),
+                          _buildAddExamButton(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onAddExamButtonPressed,
-        tooltip: '과목 만들기',
-        child: const Icon(Icons.add),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _onAddExamButtonPressed,
+          tooltip: '과목 만들기',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
