@@ -159,7 +159,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
 
   void _onSaveButtonPressed() {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
-      if (_appCubit.state.productBenefit.isCustomExamAvailable) {
+      if (!_appCubit.state.productBenefit.isCustomExamAvailable) {
         showCustomExamNotAvailableDialog(context);
         return;
       }
