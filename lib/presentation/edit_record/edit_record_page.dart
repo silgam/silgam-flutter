@@ -299,7 +299,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           },
         ),
         const SizedBox(height: 12),
-        _buildDivder(),
+        _buildDivider(),
         const SizedBox(height: 12),
         _HorizontalFadingRow(
           children: [
@@ -577,7 +577,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildDivder() => const Divider(indent: 12, endIndent: 12);
+  Widget _buildDivider() => const Divider(indent: 12, endIndent: 12);
 
   Widget _buildNumberInputWithTitle(
     TextEditingController controller,

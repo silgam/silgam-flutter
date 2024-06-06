@@ -107,7 +107,7 @@ class _MainViewState extends State<MainView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildWelcomMessage(isTablet: true),
+              _buildWelcomeMessage(isTablet: true),
               const SizedBox(height: 8),
               const Divider(indent: 20, endIndent: 20),
               const SizedBox(height: 20),
@@ -163,7 +163,7 @@ class _MainViewState extends State<MainView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildWelcomMessage(),
+              _buildWelcomeMessage(),
               const SizedBox(height: 4),
               const Divider(indent: 20, endIndent: 20),
               _buildAdsCard(),
@@ -195,6 +195,7 @@ class _MainViewState extends State<MainView> {
         Padding(
           padding: EdgeInsets.only(left: horizontalPadding),
           child: Text(
+            // cspell:disable-next-line
             DateFormat.MMMMEEEEd('ko_KR').format(today),
             style: TextStyle(
               fontWeight: FontWeight.w900,
@@ -276,7 +277,7 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildWelcomMessage({bool isTablet = false}) {
+  Widget _buildWelcomeMessage({bool isTablet = false}) {
     return Text(
       _randomWelcomeMessage,
       style: TextStyle(
