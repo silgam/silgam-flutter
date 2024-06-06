@@ -10,7 +10,9 @@ import '../../repository/exam/exam_repository.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
+import '../common/dialog.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 import 'cubit/custom_exam_edit_cubit.dart';
 
@@ -157,6 +159,11 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
 
   void _onSaveButtonPressed() {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
+      if (_appCubit.state.productBenefit.isCustomExamAvailable) {
+        showCustomExamNotAvailableDialog(context);
+        return;
+      }
+
       final values = _formKey.currentState?.value;
       if (values == null) return;
 
@@ -541,41 +548,45 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        body: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ListView(
-                    children: [
-                      _isEditMode
-                          ? Container(
-                              alignment: Alignment.topRight,
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: TextButton(
-                                onPressed: _onDeleteButtonPressed,
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.red,
+      child: AnnotatedRegion(
+        value: defaultSystemUiOverlayStyle,
+        child: Scaffold(
+          body: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ListView(
+                      children: [
+                        _isEditMode
+                            ? Container(
+                                alignment: Alignment.topRight,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: TextButton(
+                                  onPressed: _onDeleteButtonPressed,
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                  ),
+                                  child: const Text('삭제하기'),
                                 ),
-                                child: const Text('삭제하기'),
-                              ),
-                            )
-                          : const SizedBox(height: 28),
-                      MediaQuery(
-                        data: MediaQuery.of(context)
-                            .copyWith(textScaleFactor: 1.0),
-                        child: _buildForm(),
-                      ),
-                      const SizedBox(height: 28),
-                    ],
+                              )
+                            : const SizedBox(height: 28),
+                        MediaQuery(
+                          data: MediaQuery.of(context)
+                              .copyWith(textScaleFactor: 1.0),
+                          child: _buildForm(),
+                        ),
+                        const SizedBox(height: 28),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              _buildBottomButtons(),
-            ],
+                _buildBottomButtons(),
+              ],
+            ),
           ),
         ),
       ),
