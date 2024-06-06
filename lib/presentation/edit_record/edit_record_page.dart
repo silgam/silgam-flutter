@@ -143,11 +143,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
       onWillPop: _onBackPressed,
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          body: ProgressOverlay(
-            isProgressing: _isSaving,
-            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-            child: _buildBody(),
+        child: AnnotatedRegion(
+          value: defaultSystemUiOverlayStyle,
+          child: Scaffold(
+            body: ProgressOverlay(
+              isProgressing: _isSaving,
+              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+              child: _buildBody(),
+            ),
           ),
         ),
       ),
@@ -846,6 +849,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
       reviewProblems: _reviewProblems,
       createdAt: DateTime.now().toUtc(),
     );
+
+    if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
+        record.exam.isCustomExam) {
+      showCustomExamNotAvailableDialog(context);
+      setState(() {
+        _isSaving = false;
+      });
+      return null;
+    }
 
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
