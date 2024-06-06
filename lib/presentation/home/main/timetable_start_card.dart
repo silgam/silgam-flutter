@@ -15,14 +15,20 @@ class _TimetableStartCard extends StatefulWidget {
 class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
   TabController? _tabController;
-  Timetable? _selectedTimetable;
+  int _selectedTimetableIndex = 0;
 
   void _updateTabController() {
+    if (_selectedTimetableIndex >= widget.timetables.length) {
+      setState(() {
+        _selectedTimetableIndex = 0;
+      });
+    }
+
     _tabController?.removeListener(_onTapSelected);
     _tabController?.dispose();
     _tabController = TabController(
       length: widget.timetables.length,
-      initialIndex: _tabController?.index ?? 0,
+      initialIndex: _selectedTimetableIndex,
       vsync: this,
     )..addListener(_onTapSelected);
   }
@@ -31,7 +37,6 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   void initState() {
     super.initState();
     _updateTabController();
-    _selectedTimetable = widget.timetables.first;
   }
 
   @override
@@ -74,14 +79,16 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
             ),
           ),
           const SizedBox(height: 32),
-          if (_selectedTimetable != null) _buildTabLayout(_selectedTimetable!),
+          _buildTabLayout(),
           const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildTabLayout(Timetable timetable) {
+  Widget _buildTabLayout() {
+    final timetable = widget.timetables[_selectedTimetableIndex];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -225,10 +232,9 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
 
   void _onTapSelected() async {
     final index = _tabController?.index ?? 0;
-    Timetable timetable = widget.timetables[index];
-    if (_selectedTimetable != timetable) {
+    if (_selectedTimetableIndex != index) {
       setState(() {
-        _selectedTimetable = timetable;
+        _selectedTimetableIndex = index;
       });
     }
   }
