@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../model/product.dart';
@@ -44,10 +45,25 @@ class _PurchasePageState extends State<PurchasePage> {
     ..addJavaScriptChannel(
       'FlutterWebView',
       onMessageReceived: _onWebviewMessageReceived,
-    )
-    ..loadRequest(
-      Uri.parse(widget.product.pageUrl),
     );
+
+  Future<void> _loadWebView() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    Uri uri = Uri.parse(widget.product.pageUrl);
+    uri = uri.replace(
+      queryParameters: {
+        ...uri.queryParameters,
+        'buildNumber': packageInfo.buildNumber,
+      },
+    );
+    _webViewController.loadRequest(uri);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWebView();
+  }
 
   @override
   Widget build(BuildContext context) {
