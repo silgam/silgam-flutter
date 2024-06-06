@@ -35,7 +35,6 @@ import '../../login/login_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
 import '../../offline/offline_guide_page.dart';
 import '../../purchase/purchase_page.dart';
-import '../../timetable/timetable_page.dart';
 import '../cubit/home_cubit.dart';
 import '../record_list/record_list_view.dart';
 import 'cubit/main_cubit.dart';

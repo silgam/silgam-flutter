@@ -66,18 +66,15 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
                   unselectedLabelStyle:
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
-                  tabs: [
-                    // const Tab(text: '전과목'),
-                    for (Timetable timetable in widget.timetables)
-                      Tab(text: timetable.name),
-                  ],
+                  tabs: widget.timetables
+                      .map((timetable) => Tab(text: timetable.name))
+                      .toList(),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 32),
           if (_selectedTimetable != null) _buildTabLayout(_selectedTimetable!),
-          if (_selectedTimetable == null) _buildAllSubjectExamLayout(),
           const SizedBox(height: 32),
         ],
       ),
@@ -226,53 +223,6 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
     );
   }
 
-  Widget _buildAllSubjectExamLayout() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox(width: 32),
-        const Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [],
-          ),
-        ),
-        const SizedBox(width: 20),
-        Ink(
-          width: 100,
-          height: 100,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF1E2A7C),
-                Color(0xFF283593),
-              ],
-            ),
-          ),
-          child: InkWell(
-            onTap: _onAllSubjectExamStartTap,
-            splashColor: Colors.transparent,
-            highlightColor: Colors.grey.withAlpha(60),
-            borderRadius: BorderRadius.circular(100),
-            child: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                '시험시작',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 32),
-      ],
-    );
-  }
-
   void _onTapSelected() async {
     final index = _tabController?.index ?? 0;
     Timetable timetable = widget.timetables[index];
@@ -292,10 +242,6 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
     if (isFinished == true && mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
     }
-  }
-
-  void _onAllSubjectExamStartTap() {
-    Navigator.pushNamed(context, TimetablePage.routeName);
   }
 
   @override
