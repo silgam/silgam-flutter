@@ -49,6 +49,8 @@ class Exam with _$Exam {
       durationMinutes +
       subject.minutesBeforeExamStart +
       subject.minutesAfterExamFinish;
+
+  bool get isCustomExam => userId != null;
 }
 
 DateTime timeFromJson(String json) {

@@ -284,12 +284,12 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   }
 
   void _onTimetableStartTap(Timetable timetable) async {
-    await Navigator.pushNamed(
+    final isFinished = await Navigator.pushNamed(
       context,
       ClockPage.routeName,
       arguments: ClockPageArguments(timetable),
     );
-    if (mounted) {
+    if (isFinished == true && mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
     }
   }
