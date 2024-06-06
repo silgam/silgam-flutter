@@ -257,6 +257,10 @@ class _StatViewState extends State<StatView> {
     required List<Exam> exams,
     required List<String> selectedExamIds,
   }) {
+    if (!exams.map((e) => e.id).toSet().containsAll(selectedExamIds)) {
+      _cubit.onFilterResetButtonTapped();
+    }
+
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
         return SliverToBoxAdapter(

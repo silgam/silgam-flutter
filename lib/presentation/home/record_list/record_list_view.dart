@@ -100,6 +100,11 @@ class _RecordListViewState extends State<RecordListView> {
   }
 
   Widget _buildQuerySection(RecordListState state, AppState appState) {
+    final List<Exam> allExams = appState.getAllExams();
+    if (!allExams.map((e) => e.id).toSet().containsAll(state.selectedExamIds)) {
+      _cubit.onFilterResetButtonTapped();
+    }
+
     final examRecordLimit = appState.productBenefit.examRecordLimit;
 
     return NonPaddingChildBuilder(
@@ -145,7 +150,7 @@ class _RecordListViewState extends State<RecordListView> {
                         indent: 6,
                         endIndent: 6,
                       ),
-                      for (Exam exam in appState.getAllExams())
+                      for (Exam exam in allExams)
                         ExamFilterChip(
                           exam: exam,
                           isSelected: state.selectedExamIds.contains(exam.id),
