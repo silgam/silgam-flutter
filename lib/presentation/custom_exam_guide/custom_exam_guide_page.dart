@@ -15,11 +15,13 @@ class CustomExamGuidePage extends StatefulWidget {
   const CustomExamGuidePage({
     super.key,
     required this.isFromCustomExamListPage,
+    required this.isFromPurchasePage,
   });
 
   static const routeName = '/custom_exam_guide';
 
   final bool isFromCustomExamListPage;
+  final bool isFromPurchasePage;
 
   @override
   State<CustomExamGuidePage> createState() => _CustomExamGuidePageState();
@@ -41,14 +43,18 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
       return;
     }
 
-    final sellingProduct = _iapCubit.state.sellingProduct;
-    if (sellingProduct == null) return;
+    if (widget.isFromPurchasePage) {
+      Navigator.pop(context);
+    } else {
+      final sellingProduct = _iapCubit.state.sellingProduct;
+      if (sellingProduct == null) return;
 
-    Navigator.pushNamed(
-      context,
-      PurchasePage.routeName,
-      arguments: PurchasePageArguments(product: sellingProduct),
-    );
+      Navigator.pushNamed(
+        context,
+        PurchasePage.routeName,
+        arguments: PurchasePageArguments(product: sellingProduct),
+      );
+    }
   }
 
   Widget _buildBottomButton() {
@@ -153,6 +159,10 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
 
 class CustomExamGuideArguments {
   final bool isFromCustomExamListPage;
+  final bool isFromPurchasePage;
 
-  const CustomExamGuideArguments({required this.isFromCustomExamListPage});
+  const CustomExamGuideArguments({
+    this.isFromCustomExamListPage = false,
+    this.isFromPurchasePage = false,
+  });
 }

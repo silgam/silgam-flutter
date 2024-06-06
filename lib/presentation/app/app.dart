@@ -162,11 +162,12 @@ class SilgamApp extends StatelessWidget {
                 settings: settings,
               );
             case CustomExamGuidePage.routeName:
-              final args = settings.arguments as CustomExamGuideArguments?;
+              final args = (settings.arguments as CustomExamGuideArguments?) ??
+                  const CustomExamGuideArguments();
               return MaterialPageRoute(
                 builder: (_) => CustomExamGuidePage(
-                  isFromCustomExamListPage:
-                      args?.isFromCustomExamListPage ?? false,
+                  isFromCustomExamListPage: args.isFromCustomExamListPage,
+                  isFromPurchasePage: args.isFromPurchasePage,
                 ),
                 settings: settings,
               );
