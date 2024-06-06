@@ -3,7 +3,10 @@ part of 'main_view.dart';
 class _TimetableStartCard extends StatefulWidget {
   const _TimetableStartCard({
     Key? key,
+    required this.timetables,
   }) : super(key: key);
+
+  final List<Timetable> timetables;
 
   @override
   _TimetableStartCardState createState() => _TimetableStartCardState();
@@ -11,25 +14,34 @@ class _TimetableStartCard extends StatefulWidget {
 
 class _TimetableStartCardState extends State<_TimetableStartCard>
     with TickerProviderStateMixin {
-  get timetables => defaultTimetables;
-
-  late final TabController _tabController = TabController(
-    length: timetables.length,
-    initialIndex: 0,
-    vsync: this,
-  )..addListener(_onTapSelected);
-
+  TabController? _tabController;
   Timetable? _selectedTimetable;
+
+  void _updateTabController() {
+    _tabController?.removeListener(_onTapSelected);
+    _tabController?.dispose();
+    _tabController = TabController(
+      length: widget.timetables.length,
+      initialIndex: _tabController?.index ?? 0,
+      vsync: this,
+    )..addListener(_onTapSelected);
+  }
 
   @override
   void initState() {
     super.initState();
-    _selectedTimetable = timetables.first;
+    _updateTabController();
+    _selectedTimetable = widget.timetables.first;
+  }
+
+  @override
+  void didUpdateWidget(covariant _TimetableStartCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateTabController();
   }
 
   @override
   Widget build(BuildContext context) {
-    _onTapSelected(); // 과목명 변경됐을 때 현재 탭에 적용
     Color disabledColor = Theme.of(context).primaryColor.withAlpha(80);
     TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
     return CustomCard(
@@ -56,7 +68,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: [
                     // const Tab(text: '전과목'),
-                    for (Timetable timetable in timetables)
+                    for (Timetable timetable in widget.timetables)
                       Tab(text: timetable.name),
                   ],
                 ),
@@ -262,8 +274,8 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   }
 
   void _onTapSelected() async {
-    final index = _tabController.index;
-    Timetable timetable = timetables[index];
+    final index = _tabController?.index ?? 0;
+    Timetable timetable = widget.timetables[index];
     if (_selectedTimetable != timetable) {
       setState(() {
         _selectedTimetable = timetable;
@@ -272,12 +284,12 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   }
 
   void _onTimetableStartTap(Timetable timetable) async {
-    await Navigator.pushNamed(
+    final isFinished = await Navigator.pushNamed(
       context,
       ClockPage.routeName,
       arguments: ClockPageArguments(timetable),
     );
-    if (mounted) {
+    if (isFinished == true && mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
     }
   }
@@ -289,6 +301,6 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   @override
   void dispose() {
     super.dispose();
-    _tabController.dispose();
+    _tabController?.dispose();
   }
 }

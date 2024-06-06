@@ -8,15 +8,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-import '../../model/subject.dart';
-import '../../repository/exam/exam_repository.dart';
-import '../../repository/timetable/timetable_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../clock/clock_page.dart';
 import '../common/progress_overlay.dart';
+import '../custom_exam_edit/custom_exam_edit_page.dart';
+import '../custom_exam_guide/custom_exam_guide_page.dart';
+import '../custom_exam_list/custom_exam_list_page.dart';
 import '../customize_subject_name/customize_subject_name_page.dart';
 import '../edit_record/edit_record_page.dart';
 import '../exam_overview/exam_overview_page.dart';
@@ -59,160 +60,167 @@ class SilgamApp extends StatelessWidget {
           value: getIt.get<IapCubit>(),
         ),
       ],
-      child: BlocSelector<AppCubit, AppState, Map<Subject, String>?>(
-        selector: (state) => state.customSubjectNameMap,
-        builder: (context, customSubjectNameMap) {
-          for (final exam in defaultExams) {
-            exam.name =
-                customSubjectNameMap?[exam.subject] ?? exam.subject.defaultName;
-          }
-          defaultTimetables = getDefaultTimetables();
+      child: MaterialApp(
+        title: '실감',
+        initialRoute: _initialRoute,
 
-          return MaterialApp(
-            title: '실감',
-            initialRoute: _initialRoute,
-
-            // Android에서 App links로 실행될 때 initial route가 http를 포함한 형태로 오는 문제가 있음
-            onGenerateInitialRoutes: Platform.isAndroid &&
-                    PlatformDispatcher.instance.defaultRouteName
-                        .contains('silgam.app')
-                ? (initialRoute) {
-                    return [
-                      MaterialPageRoute(
-                        builder: (context) => InitialRouteHandler(initialRoute),
-                      ),
-                    ];
-                  }
-                : null,
-
-            routes: {
-              OnboardingPage.routeName: (_) => OnboardingPage(),
-              LoginPage.routeName: (_) => const LoginPage(),
-              NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
-              MyPage.routeName: (_) => const MyPage(),
-              NotificationSettingPage.routeName: (_) =>
-                  const NotificationSettingPage(),
-              TimetablePage.routeName: (_) => const TimetablePage(),
-              CustomizeSubjectNamePage.routeName: (_) =>
-                  CustomizeSubjectNamePage(),
-              OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
-              SilgampassPage.routeName: (_) => const SilgampassPage(),
-            },
-            onGenerateRoute: (settings) {
-              switch (settings.name) {
-                case HomePage.routeName:
-                  return PageRouteBuilder(
-                    settings: settings,
-                    pageBuilder: (_, __, ___) => const HomePage(),
-                    transitionDuration: const Duration(milliseconds: 800),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: child,
-                      );
-                    },
-                  );
-                case ClockPage.routeName:
-                  final args = settings.arguments as ClockPageArguments;
-                  return MaterialPageRoute(
-                    builder: (_) => ClockPage(timetable: args.timetable),
-                    settings: settings,
-                  );
-                case EditRecordPage.routeName:
-                  final args = settings.arguments as EditRecordPageArguments;
-                  return MaterialPageRoute(
-                    builder: (_) => EditRecordPage(arguments: args),
-                    settings: settings,
-                  );
-                case RecordDetailPage.routeName:
-                  final args = settings.arguments as RecordDetailPageArguments;
-                  return MaterialPageRoute(
-                    builder: (_) => RecordDetailPage(arguments: args),
-                    settings: settings,
-                  );
-                case ReviewProblemDetailPage.routeName:
-                  final args =
-                      settings.arguments as ReviewProblemDetailPageArguments;
-                  return MaterialPageRoute(
-                    builder: (_) =>
-                        ReviewProblemDetailPage(reviewProblem: args.problem),
-                    settings: settings,
-                  );
-                case SaveImagePage.routeName:
-                  final args = settings.arguments as SaveImagePageArguments;
-                  return MaterialPageRoute(
-                    builder: (_) =>
-                        SaveImagePage(examRecord: args.recordToSave),
-                    settings: settings,
-                  );
-                case PurchasePage.routeName:
-                  final args = settings.arguments as PurchasePageArguments;
-                  return MaterialPageRoute(
-                    builder: (_) => PurchasePage(
-                      product: args.product,
-                    ),
-                    settings: settings,
-                  );
-                case ExamOverviewPage.routeName:
-                  final args = settings.arguments as ExamOverviewPageArguments;
-                  return MaterialPageRoute(
-                    builder: (_) => ExamOverviewPage(
-                      examDetail: args.examDetail,
-                    ),
-                    settings: settings,
-                  );
+        // Android에서 App links로 실행될 때 initial route가 http를 포함한 형태로 오는 문제가 있음
+        onGenerateInitialRoutes: Platform.isAndroid &&
+                PlatformDispatcher.instance.defaultRouteName
+                    .contains('silgam.app')
+            ? (initialRoute) {
+                return [
+                  MaterialPageRoute(
+                    builder: (context) => InitialRouteHandler(initialRoute),
+                  ),
+                ];
               }
-              return null;
-            },
-            theme: ThemeData(
-              primarySwatch: indigoSwatch,
-              fontFamily: 'NanumSquare',
-              scaffoldBackgroundColor: SilgamApp.backgroundColor,
-              sliderTheme: SliderTheme.of(context).copyWith(
-                trackHeight: 3,
-                trackShape: const RectangularSliderTrackShape(),
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-                overlayColor: Colors.transparent,
-                thumbShape: SliderComponentShape.noThumb,
-                showValueIndicator: ShowValueIndicator.always,
-              ),
-              textButtonTheme: TextButtonThemeData(
-                style: TextButton.styleFrom(
-                  textStyle: const TextStyle(
-                    fontFamily: 'NanumSquare',
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              outlinedButtonTheme: OutlinedButtonThemeData(
-                style: OutlinedButton.styleFrom(
-                  textStyle: const TextStyle(
-                    fontFamily: 'NanumSquare',
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            scrollBehavior: const MaterialScrollBehavior().copyWith(
-              physics: const BouncingScrollPhysics(),
-            ),
-            debugShowCheckedModeBanner: false,
-            navigatorObservers: [
-              FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-              AnalyticsRouteObserver(),
-            ],
-            builder: EasyLoading.init(),
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('ko'),
-            ],
-          );
+            : null,
+
+        routes: {
+          OnboardingPage.routeName: (_) => OnboardingPage(),
+          LoginPage.routeName: (_) => const LoginPage(),
+          NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
+          MyPage.routeName: (_) => const MyPage(),
+          NotificationSettingPage.routeName: (_) =>
+              const NotificationSettingPage(),
+          TimetablePage.routeName: (_) => const TimetablePage(),
+          CustomizeSubjectNamePage.routeName: (_) => CustomizeSubjectNamePage(),
+          OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
+          SilgampassPage.routeName: (_) => const SilgampassPage(),
+          CustomExamListPage.routeName: (_) => const CustomExamListPage(),
         },
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case HomePage.routeName:
+              return PageRouteBuilder(
+                settings: settings,
+                pageBuilder: (_, __, ___) => const HomePage(),
+                transitionDuration: const Duration(milliseconds: 800),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
+              );
+            case ClockPage.routeName:
+              final args = settings.arguments as ClockPageArguments;
+              return MaterialPageRoute(
+                builder: (_) => ClockPage(timetable: args.timetable),
+                settings: settings,
+              );
+            case EditRecordPage.routeName:
+              final args = settings.arguments as EditRecordPageArguments;
+              return MaterialPageRoute(
+                builder: (_) => EditRecordPage(arguments: args),
+                settings: settings,
+              );
+            case RecordDetailPage.routeName:
+              final args = settings.arguments as RecordDetailPageArguments;
+              return MaterialPageRoute(
+                builder: (_) => RecordDetailPage(arguments: args),
+                settings: settings,
+              );
+            case ReviewProblemDetailPage.routeName:
+              final args =
+                  settings.arguments as ReviewProblemDetailPageArguments;
+              return MaterialPageRoute(
+                builder: (_) =>
+                    ReviewProblemDetailPage(reviewProblem: args.problem),
+                settings: settings,
+              );
+            case SaveImagePage.routeName:
+              final args = settings.arguments as SaveImagePageArguments;
+              return MaterialPageRoute(
+                builder: (_) => SaveImagePage(examRecord: args.recordToSave),
+                settings: settings,
+              );
+            case PurchasePage.routeName:
+              final args = settings.arguments as PurchasePageArguments;
+              return MaterialPageRoute(
+                builder: (_) => PurchasePage(
+                  product: args.product,
+                ),
+                settings: settings,
+              );
+            case ExamOverviewPage.routeName:
+              final args = settings.arguments as ExamOverviewPageArguments;
+              return MaterialPageRoute(
+                builder: (_) => ExamOverviewPage(
+                  examDetail: args.examDetail,
+                ),
+                settings: settings,
+              );
+            case CustomExamEditPage.routeName:
+              final args = settings.arguments as CustomExamEditPageArguments?;
+              return MaterialPageRoute(
+                builder: (_) => CustomExamEditPage(
+                  examToEdit: args?.examToEdit,
+                ),
+                settings: settings,
+              );
+            case CustomExamGuidePage.routeName:
+              final args = (settings.arguments as CustomExamGuideArguments?) ??
+                  const CustomExamGuideArguments();
+              return MaterialPageRoute(
+                builder: (_) => CustomExamGuidePage(
+                  isFromCustomExamListPage: args.isFromCustomExamListPage,
+                  isFromPurchasePage: args.isFromPurchasePage,
+                ),
+                settings: settings,
+              );
+          }
+          return null;
+        },
+        theme: ThemeData(
+          primarySwatch: indigoSwatch,
+          fontFamily: 'NanumSquare',
+          scaffoldBackgroundColor: SilgamApp.backgroundColor,
+          sliderTheme: SliderTheme.of(context).copyWith(
+            trackHeight: 3,
+            trackShape: const RectangularSliderTrackShape(),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+            overlayColor: Colors.transparent,
+            thumbShape: SliderComponentShape.noThumb,
+            showValueIndicator: ShowValueIndicator.always,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              textStyle: const TextStyle(
+                fontFamily: 'NanumSquare',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              textStyle: const TextStyle(
+                fontFamily: 'NanumSquare',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          physics: const BouncingScrollPhysics(),
+        ),
+        debugShowCheckedModeBanner: false,
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          AnalyticsRouteObserver(),
+        ],
+        builder: EasyLoading.init(),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          FormBuilderLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ko'),
+        ],
       ),
     );
   }

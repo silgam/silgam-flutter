@@ -8,13 +8,17 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../model/exam.dart';
 import '../../../model/product.dart';
 import '../../../model/subject.dart';
+import '../../../model/timetable.dart';
 import '../../../model/user.dart';
+import '../../../repository/exam/exam_repository.dart';
 import '../../../repository/user/user_repository.dart';
 import '../../../util/cache_manager.dart';
 import '../../../util/connectivity_manager.dart';
 import '../../../util/const.dart';
+import '../../../util/date_time_extension.dart';
 import '../../../util/injection.dart';
 import '../../home/main/cubit/main_cubit.dart';
 import 'iap_cubit.dart';
@@ -26,12 +30,14 @@ part 'app_state.dart';
 class AppCubit extends Cubit<AppState> {
   AppCubit(
     this._userRepository,
+    this._examRepository,
     this._sharedPreferences,
     this._cacheManager,
     this._connectivityManger,
   ) : super(const AppState());
 
   final UserRepository _userRepository;
+  final ExamRepository _examRepository;
   final SharedPreferences _sharedPreferences;
   final CacheManager _cacheManager;
   final ConnectivityManger _connectivityManger;
@@ -59,7 +65,10 @@ class AppCubit extends Cubit<AppState> {
 
     FirebaseAuth.instance.userChanges().listen((user) {
       onUserChange();
+      updateCustomExams(userId: user?.uid);
     });
+
+    await updateCustomExams(userId: FirebaseAuth.instance.currentUser?.uid);
   }
 
   Future<void> onUserChange() async {
@@ -109,6 +118,18 @@ class AppCubit extends Cubit<AppState> {
       getIt.get<IapCubit>().initialize();
       getIt.get<MainCubit>().initialize();
     }
+  }
+
+  Future<void> updateCustomExams({String? userId}) async {
+    userId ??= FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      emit(state.copyWith(customExams: []));
+      return;
+    }
+
+    final customExams = await _examRepository.getMyExams(userId);
+    emit(state.copyWith(customExams: customExams));
   }
 
   Future<void> _updateFcmToken({

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../model/exam.dart';
 import '../../../model/exam_record.dart';
-import '../../../repository/exam/exam_repository.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/dialog.dart';
@@ -102,6 +101,7 @@ class _RecordListViewState extends State<RecordListView> {
 
   Widget _buildQuerySection(RecordListState state, AppState appState) {
     final examRecordLimit = appState.productBenefit.examRecordLimit;
+
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
         return SliverToBoxAdapter(
@@ -145,10 +145,10 @@ class _RecordListViewState extends State<RecordListView> {
                         indent: 6,
                         endIndent: 6,
                       ),
-                      for (Exam exam in defaultExams)
+                      for (Exam exam in appState.getAllExams())
                         ExamFilterChip(
                           exam: exam,
-                          isSelected: state.selectedExams.contains(exam),
+                          isSelected: state.selectedExamIds.contains(exam.id),
                           onSelected: () =>
                               _cubit.onExamFilterButtonTapped(exam),
                         ),

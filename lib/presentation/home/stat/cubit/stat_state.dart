@@ -9,7 +9,7 @@ class StatState with _$StatState {
     @Default({}) Map<Exam, List<ExamRecord>> records,
     @Default(false) bool isLoading,
     @Default('') String searchQuery,
-    @Default([]) List<Exam> selectedExams,
+    @Default([]) List<String> selectedExamIds,
     @Default(false) bool isDateRangeSet,
     required DateTimeRange dateRange,
     required ExamValueType selectedExamValueType,

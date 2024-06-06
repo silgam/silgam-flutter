@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 
 import '../../../model/exam.dart';
 import '../../../model/exam_record.dart';
-import '../../../repository/exam/exam_repository.dart';
 import '../../../util/const.dart';
 import '../../../util/date_time_extension.dart';
 import '../../../util/injection.dart';
@@ -135,18 +134,19 @@ class _StatViewState extends State<StatView> {
                         _buildFilterChips(
                           isDateRangeSet: state.isDateRangeSet,
                           dateRange: state.dateRange,
-                          selectedExams: state.selectedExams,
+                          exams: appState.getAllExams(),
+                          selectedExamIds: state.selectedExamIds,
                         ),
                         screenWidth > tabletScreenWidth
                             ? _buildTabletLayout(
                                 filteredRecords: state.records,
-                                selectedExams: state.selectedExams,
+                                selectedExamIds: state.selectedExamIds,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
                               )
                             : _buildMobileLayout(
                                 filteredRecords: state.records,
-                                selectedExams: state.selectedExams,
+                                selectedExamIds: state.selectedExamIds,
                                 selectedExamValueType:
                                     state.selectedExamValueType,
                               ),
@@ -168,7 +168,7 @@ class _StatViewState extends State<StatView> {
 
   Widget _buildTabletLayout({
     required Map<Exam, List<ExamRecord>> filteredRecords,
-    required List<Exam> selectedExams,
+    required List<String> selectedExamIds,
     required ExamValueType selectedExamValueType,
   }) {
     return SliverList(
@@ -184,7 +184,7 @@ class _StatViewState extends State<StatView> {
                   _buildValueGraphsCard(
                     filteredRecords: filteredRecords,
                     examValueType: selectedExamValueType,
-                    selectedExams: selectedExams,
+                    selectedExamIds: selectedExamIds,
                   ),
                   _buildTotalExamDurationInfoCard(
                     filteredRecords: filteredRecords,
@@ -216,7 +216,7 @@ class _StatViewState extends State<StatView> {
 
   Widget _buildMobileLayout({
     required Map<Exam, List<ExamRecord>> filteredRecords,
-    required List<Exam> selectedExams,
+    required List<String> selectedExamIds,
     required ExamValueType selectedExamValueType,
   }) {
     return SliverList(
@@ -225,7 +225,7 @@ class _StatViewState extends State<StatView> {
         _buildValueGraphsCard(
           filteredRecords: filteredRecords,
           examValueType: selectedExamValueType,
-          selectedExams: selectedExams,
+          selectedExamIds: selectedExamIds,
         ),
         IntrinsicHeight(
           child: Row(
@@ -254,7 +254,8 @@ class _StatViewState extends State<StatView> {
   Widget _buildFilterChips({
     required bool isDateRangeSet,
     required DateTimeRange dateRange,
-    required List<Exam> selectedExams,
+    required List<Exam> exams,
+    required List<String> selectedExamIds,
   }) {
     return NonPaddingChildBuilder(
       builder: (horizontalPadding) {
@@ -297,10 +298,10 @@ class _StatViewState extends State<StatView> {
                       tooltip: '기간 설정',
                     ),
                     const SizedBox(width: 6),
-                    for (Exam exam in defaultExams)
+                    for (Exam exam in exams)
                       ExamFilterChip(
                         exam: exam,
-                        isSelected: selectedExams.contains(exam),
+                        isSelected: selectedExamIds.contains(exam.id),
                         onSelected: () => _cubit.onExamFilterButtonTapped(exam),
                       ),
                     SizedBox(width: horizontalPadding),
@@ -317,10 +318,10 @@ class _StatViewState extends State<StatView> {
   Widget _buildValueGraphsCard({
     required Map<Exam, List<ExamRecord>> filteredRecords,
     required ExamValueType examValueType,
-    required List<Exam> selectedExams,
+    required List<String> selectedExamIds,
   }) {
-    final isAllPerfectScoresSame =
-        1 == selectedExams.map((exam) => exam.perfectScore).toSet().length;
+    final isAllPerfectScoresSame = 1 ==
+        filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
         .whereNotNull()
@@ -601,11 +602,11 @@ class _StatViewState extends State<StatView> {
             }
             final index = value.toInt();
             final key = dateToRecordsMap.keys.elementAt(index);
-            final keySplitted = key.split('.')..removeLast();
+            final keySplits = key.split('.')..removeLast();
             final isAlreadyShown =
                 dateToRecordsMap.keys.take(index).any((previousKey) {
               return (previousKey.split('.')..removeLast()).join() ==
-                  keySplitted.join();
+                  keySplits.join();
             });
             if (isAlreadyShown && meta.appliedInterval < 2) {
               return const SizedBox.shrink();
@@ -613,7 +614,7 @@ class _StatViewState extends State<StatView> {
             return Container(
               alignment: Alignment.bottomCenter,
               child: Text(
-                keySplitted.getRange(1, 3).map((e) => int.parse(e)).join('/'),
+                keySplits.getRange(1, 3).map((e) => int.parse(e)).join('/'),
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 10,
@@ -716,13 +717,19 @@ class _StatViewState extends State<StatView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (isTouched || ratio >= 0.1)
-                              Text(
-                                exam.name,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      (_titleTextStyle.fontSize ?? 14) - 2,
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: isTouched ? double.infinity : 60,
+                                ),
+                                child: Text(
+                                  exam.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        (_titleTextStyle.fontSize ?? 14) - 2,
+                                  ),
                                 ),
                               ),
                             if (isTouched || ratio >= 0.1)

@@ -24,7 +24,7 @@ class CustomizeSubjectNamePage extends StatelessWidget {
           body: SafeArea(
             child: Column(
               children: [
-                const CustomMenuBar(title: '과목 이름 설정'),
+                const CustomMenuBar(title: '기본 과목 이름 설정'),
                 Expanded(
                   child: Stack(
                     children: [

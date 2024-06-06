@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../../model/exam.dart';
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
-import '../../repository/exam/exam_repository.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
@@ -38,6 +37,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
 
+  late final List<Exam> _exams = _appCubit.state.getAllExams();
+
   String title = '';
   final TextEditingController _examDurationEditingController =
       TextEditingController();
@@ -53,7 +54,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
 
-  Exam _selectedExam = defaultExams.first;
+  late Exam _selectedExam = _exams.first;
   DateTime _examStartedTime = DateTime.now();
   bool _isEditingMode = false;
   bool _isSaving = false;
@@ -63,6 +64,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
       .map((e) => e.title)
       .toSet()
       .toList();
+
+  Map<String, dynamic> get _defaultLogProperties => {
+        'exam_name': _selectedExam.name,
+        'exam_id': _selectedExam.id,
+        'subject': _selectedExam.subject.name,
+        'is_editing_mode': _isEditingMode,
+        'input_exam_existed': widget.arguments.inputExam != null,
+      };
 
   @override
   void initState() {
@@ -75,7 +84,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _checkIfRecordLimitExceeded();
     });
 
-    _onSelectedSubjectChanged(null);
+    _onSelectedExamChanged(null);
     final recordToEdit = widget.arguments.recordToEdit;
     if (recordToEdit == null) {
       _isEditingMode = false;
@@ -94,11 +103,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     super.dispose();
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Edit finished',
-      properties: {
-        'subject': _selectedExam.subject.name,
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.arguments.inputExam != null,
-      },
+      properties: _defaultLogProperties,
     );
   }
 
@@ -138,11 +143,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
       onWillPop: _onBackPressed,
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          body: ProgressOverlay(
-            isProgressing: _isSaving,
-            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-            child: _buildBody(),
+        child: AnnotatedRegion(
+          value: defaultSystemUiOverlayStyle,
+          child: Scaffold(
+            body: ProgressOverlay(
+              isProgressing: _isSaving,
+              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+              child: _buildBody(),
+            ),
           ),
         ),
       ),
@@ -291,7 +299,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           },
         ),
         const SizedBox(height: 12),
-        _buildDivder(),
+        _buildDivider(),
         const SizedBox(height: 12),
         _HorizontalFadingRow(
           children: [
@@ -319,8 +327,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
                     child: DropdownButton(
                       borderRadius: BorderRadius.circular(6),
                       value: _selectedExam,
-                      onChanged: _onSelectedSubjectChanged,
-                      items: defaultExams.map((exam) {
+                      onChanged: _onSelectedExamChanged,
+                      items: _exams.map((exam) {
                         return DropdownMenuItem(
                           value: exam,
                           child: Text(exam.name),
@@ -569,7 +577,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildDivder() => const Divider(indent: 12, endIndent: 12);
+  Widget _buildDivider() => const Divider(indent: 12, endIndent: 12);
 
   Widget _buildNumberInputWithTitle(
     TextEditingController controller,
@@ -682,9 +690,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
-  void _onSelectedSubjectChanged(Exam? newExam) {
+  void _onSelectedExamChanged(Exam? newExam) {
     setState(() {
-      _selectedExam = newExam ?? defaultExams.first;
+      _selectedExam = newExam ?? _exams.first;
       _examDurationEditingController.text =
           _selectedExam.durationMinutes.toString();
     });
@@ -798,11 +806,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     _onBackPressed();
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Cancel button tapped',
-      properties: {
-        'subject': _selectedExam.subject.name,
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.arguments.inputExam != null,
-      },
+      properties: _defaultLogProperties,
     );
   }
 
@@ -846,6 +850,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
       createdAt: DateTime.now().toUtc(),
     );
 
+    if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
+        record.exam.isCustomExam) {
+      showCustomExamNotAvailableDialog(context);
+      setState(() {
+        _isSaving = false;
+      });
+      return null;
+    }
+
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
       record = await _recordRepository.updateExamRecord(
@@ -875,11 +888,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Exam record saved',
-      properties: {
-        'subject': _selectedExam.subject.name,
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.arguments.inputExam != null,
-      },
+      properties: _defaultLogProperties,
     );
 
     return record;
@@ -903,18 +912,19 @@ class _EditRecordPageState extends State<EditRecordPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text(
-                '취소',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                ),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade600,
               ),
+              child: const Text('취소'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
               child: const Text('저장하지 않고 나가기'),
             ),
           ],

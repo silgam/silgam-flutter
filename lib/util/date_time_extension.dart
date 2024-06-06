@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 extension DateTimeBuilder on DateTime {
   static DateTime fromHourMinute(int hour, int minute) =>
       DateTime(0, 1, 1, hour, minute);
@@ -18,5 +20,11 @@ extension DurationExtension on Duration {
     final minutes = inMinutes.toString().padLeft(2, '0');
     final seconds = (inSeconds % 60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
+  }
+}
+
+extension TimeOfDayExtension on TimeOfDay {
+  DateTime toDateTime() {
+    return DateTime(0, 1, 1, hour, minute);
   }
 }

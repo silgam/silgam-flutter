@@ -37,6 +37,19 @@ class ExamRecordRepository {
     return examRecords;
   }
 
+  Future<List<ExamRecord>> getMyExamRecordsByExamId(
+    String userId,
+    String examId,
+  ) async {
+    final querySnapshot = await _recordsRef
+        .where('userId', isEqualTo: userId)
+        .where('subject', isEqualTo: examId)
+        .get();
+    final examRecords =
+        querySnapshot.docs.map((snapshot) => snapshot.data()).toList();
+    return examRecords;
+  }
+
   Future<ExamRecord> updateExamRecord({
     required String userId,
     required ExamRecord oldRecord,

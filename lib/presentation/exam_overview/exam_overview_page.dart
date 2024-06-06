@@ -90,12 +90,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(
-                    '취소',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                    ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey.shade600,
                   ),
+                  child: const Text('취소'),
                 ),
               ],
             ),
@@ -111,6 +109,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   },
                 );
               },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
               child: const Text('나가기'),
             ),
           ],

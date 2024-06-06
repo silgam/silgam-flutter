@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,7 +17,6 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../model/ads.dart';
 import '../../../model/timetable.dart';
-import '../../../repository/timetable/timetable_repository.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/duration_extension.dart';
@@ -28,6 +28,8 @@ import '../../clock/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import '../../common/dialog.dart';
+import '../../custom_exam_guide/custom_exam_guide_page.dart';
+import '../../custom_exam_list/custom_exam_list_page.dart';
 import '../../edit_record/edit_record_page.dart';
 import '../../login/login_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
@@ -106,7 +108,7 @@ class _MainViewState extends State<MainView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildWelcomMessage(isTablet: true),
+              _buildWelcomeMessage(isTablet: true),
               const SizedBox(height: 8),
               const Divider(indent: 20, endIndent: 20),
               const SizedBox(height: 20),
@@ -120,6 +122,7 @@ class _MainViewState extends State<MainView> {
                       children: [
                         _buildAdsCard(),
                         _buildLoginCard(),
+                        _buildCustomExamCard(),
                         _buildNoiseSettingCard(),
                         _buildRecordCard(),
                         _buildSendFeedbackCard(),
@@ -132,7 +135,7 @@ class _MainViewState extends State<MainView> {
                       children: [
                         _buildDDaysCard(),
                         const _SilgamNowCard(),
-                        const _TimetableStartCard(),
+                        _buildTimetableStartCard(),
                       ],
                     ),
                   )
@@ -161,14 +164,15 @@ class _MainViewState extends State<MainView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildWelcomMessage(),
+              _buildWelcomeMessage(),
               const SizedBox(height: 4),
               const Divider(indent: 20, endIndent: 20),
               _buildAdsCard(),
               _buildDDaysCard(),
               const _SilgamNowCard(),
-              const _TimetableStartCard(),
+              _buildTimetableStartCard(),
               _buildLoginCard(),
+              _buildCustomExamCard(),
               _buildNoiseSettingCard(),
               _buildRecordCard(),
               _buildSendFeedbackCard(),
@@ -192,6 +196,7 @@ class _MainViewState extends State<MainView> {
         Padding(
           padding: EdgeInsets.only(left: horizontalPadding),
           child: Text(
+            // cspell:disable-next-line
             DateFormat.MMMMEEEEd('ko_KR').format(today),
             style: TextStyle(
               fontWeight: FontWeight.w900,
@@ -273,7 +278,7 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildWelcomMessage({bool isTablet = false}) {
+  Widget _buildWelcomeMessage({bool isTablet = false}) {
     return Text(
       _randomWelcomeMessage,
       style: TextStyle(
@@ -307,6 +312,16 @@ class _MainViewState extends State<MainView> {
     );
   }
 
+  Widget _buildTimetableStartCard() {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) =>
+          !listEquals(previous.getAllTimetables(), current.getAllTimetables()),
+      builder: (context, state) {
+        return _TimetableStartCard(timetables: state.getAllTimetables());
+      },
+    );
+  }
+
   Widget _buildLoginCard() {
     return BlocBuilder<AppCubit, AppState>(
       buildWhen: (previous, current) =>
@@ -323,6 +338,16 @@ class _MainViewState extends State<MainView> {
           return const SizedBox.shrink();
         }
       },
+    );
+  }
+
+  Widget _buildCustomExamCard() {
+    return _ButtonCard(
+      onTap: () {
+        Navigator.pushNamed(context, CustomExamListPage.routeName);
+      },
+      iconData: Icons.palette,
+      title: '나만의 과목 만들기',
     );
   }
 

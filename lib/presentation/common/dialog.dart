@@ -12,6 +12,7 @@ import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
+import '../custom_exam_guide/custom_exam_guide_page.dart';
 import '../purchase/purchase_page.dart';
 
 void showExamRecordLimitInfoDialog(BuildContext context) {
@@ -115,6 +116,52 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
             ],
           );
         },
+      );
+    },
+  );
+}
+
+void showCustomExamNotAvailableDialog(
+  BuildContext context, {
+  bool isFromCustomExamListPage = false,
+}) {
+  showDialog(
+    context: context,
+    routeSettings: const RouteSettings(
+      name: '/custom_exam_not_available_dialog',
+    ),
+    builder: (context) {
+      return AlertDialog(
+        title: const Text(
+          '나만의 과목 이용 제한 안내',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        content: const Text(
+          '나만의 과목은 실감패스 구매 후에 이용 가능해요. (자세한 내용은 안내 페이지 참고)',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey,
+            ),
+            child: const Text('확인'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(
+                CustomExamGuidePage.routeName,
+                arguments: CustomExamGuideArguments(
+                  isFromCustomExamListPage: isFromCustomExamListPage,
+                ),
+              );
+            },
+            child: const Text('자세히 알아보기'),
+          ),
+        ],
       );
     },
   );

@@ -16,6 +16,7 @@ import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/bullet_text.dart';
+import '../common/dialog.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../exam_overview/exam_overview_page.dart';
 import 'cubit/clock_cubit.dart';
@@ -53,6 +54,16 @@ class _ClockPageState extends State<ClockPage> {
   @override
   void initState() {
     super.initState();
+
+    if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
+        widget.timetable.exams.any((exam) => exam.isCustomExam)) {
+      Navigator.pop(context, false);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showCustomExamNotAvailableDialog(context);
+      });
+      return;
+    }
+
     WakelockPlus.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     AndroidAudioManager.controlMediaVolume();
@@ -560,7 +571,7 @@ class _ClockPageState extends State<ClockPage> {
         lapTimes: _cubit.state.lapTimes,
       ),
     );
-    Navigator.pop(context);
+    Navigator.pop(context, true);
     Navigator.pushNamed(
       context,
       ExamOverviewPage.routeName,

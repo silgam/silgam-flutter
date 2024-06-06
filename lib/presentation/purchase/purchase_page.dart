@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../model/product.dart';
@@ -11,6 +12,7 @@ import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/custom_menu_bar.dart';
+import '../custom_exam_guide/custom_exam_guide_page.dart';
 import '../home/cubit/home_cubit.dart';
 import '../home/settings/settings_view.dart';
 import 'cubit/purchase_cubit.dart';
@@ -44,10 +46,25 @@ class _PurchasePageState extends State<PurchasePage> {
     ..addJavaScriptChannel(
       'FlutterWebView',
       onMessageReceived: _onWebviewMessageReceived,
-    )
-    ..loadRequest(
-      Uri.parse(widget.product.pageUrl),
     );
+
+  Future<void> _loadWebView() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    Uri uri = Uri.parse(widget.product.pageUrl);
+    uri = uri.replace(
+      queryParameters: {
+        ...uri.queryParameters,
+        'buildNumber': packageInfo.buildNumber,
+      },
+    );
+    _webViewController.loadRequest(uri);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWebView();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,6 +225,16 @@ class _PurchasePageState extends State<PurchasePage> {
         break;
       case 'purchaseSectionHidden':
         _cubit.purchaseSectionHidden();
+        break;
+
+      case 'showCustomExamGuide':
+        Navigator.pushNamed(
+          context,
+          CustomExamGuidePage.routeName,
+          arguments: const CustomExamGuideArguments(
+            isFromPurchasePage: true,
+          ),
+        );
         break;
 
       case 'purchase':

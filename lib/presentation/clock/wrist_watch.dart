@@ -155,7 +155,7 @@ class AnalogClockPainter extends CustomPainter {
     '11',
     '12'
   ];
-  final DateTime _datetime;
+  final DateTime _dateTime;
   final Color dialPlateColor;
   final Color hourHandColor;
   final Color minuteHandColor;
@@ -178,7 +178,7 @@ class AnalogClockPainter extends CustomPainter {
   );
 
   AnalogClockPainter(
-    this._datetime, {
+    this._dateTime, {
     this.dialPlateColor = Colors.transparent,
     this.hourHandColor = Colors.black,
     this.minuteHandColor = Colors.black,
@@ -323,7 +323,7 @@ class AnalogClockPainter extends CustomPainter {
 
   /// draw hour hand
   void _paintHourHand(Canvas canvas, double radius, double strokeWidth) {
-    double angle = _datetime.hour % 12 + _datetime.minute / 60.0 - 3;
+    double angle = _dateTime.hour % 12 + _dateTime.minute / 60.0 - 3;
     Offset handOffset = Offset(cos(getRadians(angle * 30)) * radius,
         sin(getRadians(angle * 30)) * radius);
     final hourHandPaint = Paint()
@@ -334,7 +334,7 @@ class AnalogClockPainter extends CustomPainter {
 
   /// draw minute hand
   void _paintMinuteHand(Canvas canvas, double radius, double strokeWidth) {
-    double angle = _datetime.minute + _datetime.second / 60 - 15.0;
+    double angle = _dateTime.minute + _dateTime.second / 60 - 15.0;
     Offset handOffset = Offset(cos(getRadians(angle * 6.0)) * radius,
         sin(getRadians(angle * 6.0)) * radius);
     final hourHandPaint = Paint()
@@ -345,7 +345,7 @@ class AnalogClockPainter extends CustomPainter {
 
   /// draw second hand
   void _paintSecondHand(Canvas canvas, double radius, double strokeWidth) {
-    double angle = _datetime.second - 15.0;
+    double angle = _dateTime.second - 15.0;
     Offset handOffset = Offset(cos(getRadians(angle * 6.0)) * radius,
         sin(getRadians(angle * 6.0)) * radius);
     final hourHandPaint = Paint()
@@ -356,7 +356,7 @@ class AnalogClockPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(AnalogClockPainter oldDelegate) {
-    return _datetime != oldDelegate._datetime ||
+    return _dateTime != oldDelegate._dateTime ||
         dialPlateColor != oldDelegate.dialPlateColor ||
         hourHandColor != oldDelegate.hourHandColor ||
         minuteHandColor != oldDelegate.minuteHandColor ||

@@ -43,5 +43,6 @@ enum AdsIntent {
   openAdUrl,
   openPurchasePage,
   openOfflineGuidePage,
+  openCustomExamGuidePage,
   unknown
 }

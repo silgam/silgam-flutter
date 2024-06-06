@@ -21,6 +21,7 @@ import '../../common/login_button.dart';
 import '../../common/purchase_button.dart';
 import '../../common/scaffold_body.dart';
 import '../../common/subtitle.dart';
+import '../../custom_exam_list/custom_exam_list_page.dart';
 import '../../customize_subject_name/customize_subject_name_page.dart';
 import '../../login/login_page.dart';
 import '../../my/my_page.dart';
@@ -94,8 +95,16 @@ class _SettingsViewState extends State<SettingsView> {
       const SettingDivider(),
       SettingTile(
         onTap: _onCustomizeSubjectNameButtonTap,
-        title: '과목 이름 설정',
-        description: '탐구과목 등 과목의 이름을 직접 설정할 수 있어요.',
+        title: '기본 과목 이름 설정',
+        description: '국어, 수학, 탐구 등 기본 과목의 이름을 바꿀 수 있어요.',
+        showArrow: true,
+      ),
+      const SettingDivider(),
+      SettingTile(
+        onTap: _onCustomExamButtonTap,
+        title: '나만의 과목 만들기',
+        description:
+            '기본 과목의 이름, 응시 시간 등을 바꾼 새로운 과목을 만들 수 있어요. (하프 모의고사, 내신 시험 등 커스텀 가능)',
         showArrow: true,
       ),
       const SettingDivider(),
@@ -457,6 +466,10 @@ class _SettingsViewState extends State<SettingsView> {
 
   void _onCustomizeSubjectNameButtonTap() {
     Navigator.pushNamed(context, CustomizeSubjectNamePage.routeName);
+  }
+
+  void _onCustomExamButtonTap() {
+    Navigator.pushNamed(context, CustomExamListPage.routeName);
   }
 
   void _onOfflineGuideButtonTap() {
