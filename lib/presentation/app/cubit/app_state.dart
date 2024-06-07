@@ -127,13 +127,14 @@ class AppState with _$AppState {
             ))
         .toList();
 
-    final defaultInvestigationExam =
-        allExams.lastWhere((exam) => exam.subject == Subject.investigation);
-    final defaultInvestigation2Exam =
-        allExams.lastWhere((exam) => exam.subject == Subject.investigation2);
+    final defaultInvestigationExam = allExams.firstWhere(
+        (exam) => exam.subject == Subject.investigation && !exam.isCustomExam);
+    final defaultInvestigation2Exam = allExams.firstWhere(
+        (exam) => exam.subject == Subject.investigation2 && !exam.isCustomExam);
 
     timetables.insert(
-      allExams.indexWhere((exam) => exam.subject == Subject.investigation),
+      allExams.indexWhere((exam) =>
+          exam.subject == Subject.investigation && !exam.isCustomExam),
       Timetable(
         name: '탐구 연속',
         startTime: defaultInvestigationExam.timetableStartTime,
