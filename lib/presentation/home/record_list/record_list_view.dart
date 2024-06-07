@@ -150,7 +150,8 @@ class _RecordListViewState extends State<RecordListView> {
                         indent: 6,
                         endIndent: 6,
                       ),
-                      for (Exam exam in allExams)
+                      for (Exam exam
+                          in allExams.where((exam) => exam.name.isNotEmpty))
                         ExamFilterChip(
                           exam: exam,
                           isSelected: state.selectedExamIds.contains(exam.id),

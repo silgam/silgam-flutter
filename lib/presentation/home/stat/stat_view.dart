@@ -265,6 +265,7 @@ class _StatViewState extends State<StatView> {
       builder: (horizontalPadding) {
         return SliverToBoxAdapter(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -302,7 +303,8 @@ class _StatViewState extends State<StatView> {
                       tooltip: '기간 설정',
                     ),
                     const SizedBox(width: 6),
-                    for (Exam exam in exams)
+                    for (Exam exam
+                        in exams.where((exam) => exam.name.isNotEmpty))
                       ExamFilterChip(
                         exam: exam,
                         isSelected: selectedExamIds.contains(exam.id),
