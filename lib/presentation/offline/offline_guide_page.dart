@@ -49,7 +49,7 @@ class OfflineGuidePage extends StatelessWidget {
                           'assets/offline_guide_3.png',
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 200),
+                        const SizedBox(height: 100),
                       ],
                     ),
                   ),
