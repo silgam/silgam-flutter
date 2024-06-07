@@ -183,7 +183,7 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
   Widget build(BuildContext context) {
     return AnnotatedRegion(
       value: defaultSystemUiOverlayStyle.copyWith(
-        statusBarColor: Theme.of(context).primaryColor,
+        statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light,
       ),
