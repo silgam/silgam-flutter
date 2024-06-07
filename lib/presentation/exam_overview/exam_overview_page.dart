@@ -271,19 +271,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   const SizedBox(height: 40),
                   _buildTitle(),
                   const SizedBox(height: 32),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: _buildSubjectCard(),
-                      ),
-                      const SizedBox(width: 28),
-                      Expanded(
-                        flex: 3,
-                        child: _buildExamTimeCard(),
-                      ),
-                    ],
-                  ),
+                  _buildSubjectCard(),
+                  const SizedBox(height: 28),
+                  _buildExamTimeCard(),
                   const SizedBox(height: 28),
                   _buildLapTimeCard(),
                   const SizedBox(height: 160),
@@ -338,14 +328,15 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             style: _titleTextStyle,
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
             children: _exams
                 .map(
                   (exam) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
                       exam.name,
+                      textAlign: TextAlign.center,
                       style: _contentTextStyle.copyWith(
                         color: Color(exam.color),
                       ),
