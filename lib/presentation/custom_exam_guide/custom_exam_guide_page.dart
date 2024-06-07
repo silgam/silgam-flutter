@@ -33,6 +33,28 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
   final AppCubit _appCubit = getIt.get();
   final IapCubit _iapCubit = getIt.get();
 
+  final ScrollController _scrollController = ScrollController();
+  bool _isMenuBarTransparent = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      final isMenuBarTransparent = _scrollController.position.pixels <= 0;
+      if (isMenuBarTransparent != _isMenuBarTransparent) {
+        setState(() {
+          _isMenuBarTransparent = isMenuBarTransparent;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
   void _onBottomButtonTap() {
     if (_appCubit.state.productBenefit.isCustomExamAvailable) {
       if (widget.isFromCustomExamListPage) {
@@ -57,12 +79,68 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
     }
   }
 
+  Widget _buildGuideImages() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final padding = EdgeInsets.symmetric(
+      horizontal: max(0, (screenWidth - _maxWidth) / 2),
+    );
+
+    return Column(
+      children: [
+        Container(
+          height: MediaQuery.of(context).padding.top,
+          color: const Color(0xFF090B1E),
+        ),
+        Container(
+          padding: padding,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: const [0, 660 / 1062],
+              colors: [
+                Colors.black.withOpacity(0.8),
+                Colors.black.withOpacity(0),
+              ],
+            ),
+          ),
+          child: Image.asset(
+            'assets/custom_exam_guide_1.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+        Padding(
+          padding: padding,
+          child: Image.asset(
+            'assets/custom_exam_guide_2.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+        Padding(
+          padding: padding,
+          child: Image.asset(
+            'assets/custom_exam_guide_3.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+        Padding(
+          padding: padding,
+          child: Image.asset(
+            'assets/custom_exam_guide_4.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(height: 100),
+      ],
+    );
+  }
+
   Widget _buildBottomButton() {
     return Container(
       color: Colors.white,
       padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
+        left: 16 + MediaQuery.of(context).padding.left,
+        right: 16 + MediaQuery.of(context).padding.right,
         top: 12,
         bottom: 12 + MediaQuery.of(context).padding.bottom,
       ),
@@ -103,8 +181,6 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return AnnotatedRegion(
       value: defaultSystemUiOverlayStyle.copyWith(
         statusBarColor: Theme.of(context).primaryColor,
@@ -113,44 +189,35 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
-        body: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              const CustomMenuBar(
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: _buildGuideImages(),
+                  ),
+                ),
+                _buildBottomButton(),
+              ],
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              color: _isMenuBarTransparent
+                  ? Colors.transparent
+                  : Theme.of(context).primaryColor,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top,
+                left: MediaQuery.of(context).padding.left,
+                right: MediaQuery.of(context).padding.right,
+              ),
+              child: const CustomMenuBar(
                 title: '나만의 과목 이용 안내',
                 lightText: true,
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: max(0, (screenWidth - _maxWidth) / 2),
-                    ),
-                    // TODO: 내용 바꾸기
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/offline_guide_1.png',
-                          fit: BoxFit.contain,
-                        ),
-                        Image.asset(
-                          'assets/offline_guide_2.png',
-                          fit: BoxFit.contain,
-                        ),
-                        Image.asset(
-                          'assets/offline_guide_3.png',
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(height: 100),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              _buildBottomButton(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
