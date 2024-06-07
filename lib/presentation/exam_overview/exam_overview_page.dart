@@ -704,13 +704,16 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Text(
-                '${exam.name} 기록하기',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  fontSize: 18,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  '${exam.name} 기록하기',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
                 ),
               ),
               const Positioned(
