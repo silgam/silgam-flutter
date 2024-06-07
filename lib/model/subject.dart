@@ -152,12 +152,12 @@ enum Subject {
       ),
       Announcement(
         title: '종료 5분 전',
-        time: RelativeTime.afterStart(minutes: 25),
+        time: RelativeTime.beforeFinish(minutes: 5),
         fileName: '028_4_5min_left_first.mp3',
       ),
       Announcement(
         title: '종료령',
-        time: RelativeTime.afterStart(minutes: 30),
+        time: RelativeTime.afterFinish(minutes: 0),
         fileName: '029_4_finish_first.mp3',
       ),
     ],
