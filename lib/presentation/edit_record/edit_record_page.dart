@@ -110,10 +110,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _initializeCreateMode() {
     _examStartedTime = widget.arguments.examStartedTime ?? _examStartedTime;
 
-    final examFinishedTime =
-        widget.arguments.examFinishedTime ?? DateTime.now();
-    _examDurationEditingController.text =
-        examFinishedTime.difference(_examStartedTime).inMinutes.toString();
+    final examFinishedTime = widget.arguments.examFinishedTime;
+    if (examFinishedTime != null) {
+      _examDurationEditingController.text =
+          examFinishedTime.difference(_examStartedTime).inMinutes.toString();
+    }
 
     final exam = widget.arguments.inputExam;
     _selectedExam = exam ?? _selectedExam;
