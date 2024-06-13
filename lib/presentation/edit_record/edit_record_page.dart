@@ -702,7 +702,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     final date = await showDatePicker(
       context: context,
       initialDate: _examStartedTime,
-      firstDate: _examStartedTime.subtract(const Duration(days: 365)),
+      firstDate: _examStartedTime.subtract(const Duration(days: 4000)),
       lastDate: _examStartedTime.add(const Duration(days: 365)),
       locale: const Locale('ko'),
     );
