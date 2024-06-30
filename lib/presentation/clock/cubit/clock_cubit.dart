@@ -50,6 +50,10 @@ class ClockCubit extends Cubit<ClockState> {
         'timetable_name': _timetable.name,
         'exam_names': _timetable.toExamNamesString(),
         'subject_names': _timetable.toSubjectNamesString(),
+        'is_exam_finished': state.isFinished,
+        'exam_ids': _timetable.items.map((item) => item.exam.id).join(', '),
+        'isCustomExams':
+            _timetable.items.map((item) => item.exam.isCustomExam).join(', '),
       };
 
   void _initialize() {

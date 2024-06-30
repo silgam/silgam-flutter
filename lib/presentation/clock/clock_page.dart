@@ -585,6 +585,11 @@ class _ClockPageState extends State<ClockPage> {
         'exam_names': widget.timetable.toExamNamesString(),
         'subject_names': widget.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
+        'exam_ids':
+            widget.timetable.items.map((item) => item.exam.id).join(', '),
+        'isCustomExams': widget.timetable.items
+            .map((item) => item.exam.isCustomExam)
+            .join(', '),
       },
     );
   }
