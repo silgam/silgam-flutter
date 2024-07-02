@@ -451,7 +451,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: 0c0ae1eb722ef0c07f7801e5ded8dccd1357d6d4
   FirebaseSessions: 96e7781e545929cde06dd91088ddbb0841391b43
   FirebaseStorage: 1d4be239ea32fb3c0f3680a6f2b706d6cabe37f2
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_facebook_auth: 361ac7a57263ebf327f26089507ead0d66558ee8
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a

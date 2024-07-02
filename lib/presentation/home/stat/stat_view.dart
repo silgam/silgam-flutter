@@ -639,7 +639,7 @@ class _StatViewState extends State<StatView> {
     );
     const gridData = FlGridData(show: false);
     return MediaQuery(
-      data: const MediaQueryData(textScaleFactor: 1.0),
+      data: const MediaQueryData(textScaler: TextScaler.linear(1.0)),
       child: LineChart(
         duration: Duration.zero,
         LineChartData(
@@ -693,7 +693,7 @@ class _StatViewState extends State<StatView> {
 
     int touchedIndex = -1;
     return MediaQuery(
-      data: const MediaQueryData(textScaleFactor: 1.0),
+      data: const MediaQueryData(textScaler: TextScaler.linear(1.0)),
       child: LayoutBuilder(builder: (context, constraints) {
         return StatefulBuilder(builder: (context, setState) {
           return PieChart(
@@ -817,7 +817,7 @@ class _StatViewState extends State<StatView> {
     MapEntry<DateTime, int>? touchedData;
     Timer? dismissTimer;
     return MediaQuery(
-      data: const MediaQueryData(textScaleFactor: 1.0),
+      data: const MediaQueryData(textScaler: TextScaler.linear(1.0)),
       child: StatefulBuilder(builder: (context, setState) {
         return Column(
           children: [

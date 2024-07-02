@@ -175,6 +175,7 @@ class SilgamApp extends StatelessWidget {
           return null;
         },
         theme: ThemeData(
+          useMaterial3: false,
           primarySwatch: indigoSwatch,
           fontFamily: 'NanumSquare',
           scaffoldBackgroundColor: SilgamApp.backgroundColor,

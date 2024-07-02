@@ -84,7 +84,8 @@ class _SaveImagePageState extends State<SaveImagePage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(1)),
           child: FittedBox(
             child: Screenshot(
               controller: _screenshotController,
