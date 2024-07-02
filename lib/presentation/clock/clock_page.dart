@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -19,6 +20,8 @@ import '../common/bullet_text.dart';
 import '../common/dialog.dart';
 import '../common/empty_scroll_behavior.dart';
 import '../exam_overview/exam_overview_page.dart';
+import '../home/cubit/home_cubit.dart';
+import '../home/record_list/record_list_view.dart';
 import 'cubit/clock_cubit.dart';
 import 'timeline.dart';
 import 'wrist_watch.dart';
@@ -57,7 +60,7 @@ class _ClockPageState extends State<ClockPage> {
 
     if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
         widget.timetable.exams.any((exam) => exam.isCustomExam)) {
-      Navigator.pop(context, false);
+      Navigator.pop(context);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showCustomExamNotAvailableDialog(context);
       });
@@ -75,20 +78,20 @@ class _ClockPageState extends State<ClockPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _cubit,
-      child: WillPopScope(
-        onWillPop: _onBackPressed,
-        child: Scaffold(
-          backgroundColor: Colors.black,
-          body: SafeArea(
-            child: BlocConsumer<ClockCubit, ClockState>(
-              listenWhen: (previous, current) =>
-                  previous.currentBreakpointIndex !=
-                  current.currentBreakpointIndex,
-              listener: (context, state) {
-                _animateTimeline(state.currentBreakpointIndex);
-              },
-              builder: (context, state) {
-                return GestureDetector(
+      child: BlocConsumer<ClockCubit, ClockState>(
+        listenWhen: (previous, current) =>
+            previous.currentBreakpointIndex != current.currentBreakpointIndex,
+        listener: (context, state) {
+          _animateTimeline(state.currentBreakpointIndex);
+        },
+        builder: (context, state) {
+          return PopScope(
+            canPop: state.isFinished,
+            onPopInvoked: _onPopInvoked,
+            child: Scaffold(
+              backgroundColor: Colors.black,
+              body: SafeArea(
+                child: GestureDetector(
                   onTap: _cubit.onScreenTap,
                   onLongPress: () {
                     if (!state.isUiVisible) return;
@@ -127,7 +130,7 @@ class _ClockPageState extends State<ClockPage> {
                           ),
                           child: state.isFinished
                               ? OutlinedButton(
-                                  onPressed: _onCloseButtonPressed,
+                                  onPressed: _onFinishButtonPressed,
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     side: const BorderSide(
@@ -140,7 +143,7 @@ class _ClockPageState extends State<ClockPage> {
                               : IconButton(
                                   splashRadius: 20,
                                   icon: const Icon(Icons.close),
-                                  onPressed: _onCloseButtonPressed,
+                                  onPressed: _onFinishButtonPressed,
                                   color: Colors.white,
                                 ),
                         ),
@@ -161,11 +164,11 @@ class _ClockPageState extends State<ClockPage> {
                       if (!state.isStarted) _buildScreenOverlay(),
                     ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -513,11 +516,11 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _onCloseButtonPressed() {
-    if (_cubit.state.isFinished) {
-      _finishExam();
-      return;
-    }
+  void _onFinishButtonPressed() {
+    Navigator.maybePop(context);
+  }
+
+  void _showFinishExamDialog() {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'finish_exam_dialog'),
@@ -543,7 +546,7 @@ class _ClockPageState extends State<ClockPage> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                _finishExam();
+                Navigator.pop(context);
               },
               child: const Text('시험 종료'),
             ),
@@ -571,12 +574,15 @@ class _ClockPageState extends State<ClockPage> {
         lapTimes: _cubit.state.lapTimes,
       ),
     );
-    Navigator.pop(context, true);
-    Navigator.pushNamed(
-      context,
-      ExamOverviewPage.routeName,
-      arguments: arguments,
-    );
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushNamed(
+        context,
+        ExamOverviewPage.routeName,
+        arguments: arguments,
+      );
+    });
+
+    getIt.get<HomeCubit>().changeTabByTitle(RecordListView.title);
 
     AnalyticsManager.logEvent(
       name: '[ClockPage] Finish exam',
@@ -618,9 +624,12 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  Future<bool> _onBackPressed() async {
-    _onCloseButtonPressed();
-    return false;
+  void _onPopInvoked(bool didPop) {
+    if (didPop) {
+      _finishExam();
+    } else {
+      _showFinishExamDialog();
+    }
   }
 
   Future<void> _loadAd() async {
