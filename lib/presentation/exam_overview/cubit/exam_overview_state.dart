@@ -5,5 +5,6 @@ class ExamOverviewState with _$ExamOverviewState {
   const factory ExamOverviewState({
     @Default([]) List<LapTimeItemGroup> lapTimeItemGroups,
     @Default(false) bool isUsingExampleLapTimeItemGroups,
+    @Default({}) Set<String> recordedExamIds,
   }) = _ExamOverviewState;
 }

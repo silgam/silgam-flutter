@@ -35,6 +35,12 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     }
   }
 
+  void examRecorded(String examId) {
+    emit(state.copyWith(
+      recordedExamIds: {...state.recordedExamIds, examId},
+    ));
+  }
+
   void _updateLapTimeItemGroups({
     required List<Exam> exams,
     required List<LapTime> lapTimes,
