@@ -29,13 +29,4 @@ class HomeCubit extends Cubit<HomeState> {
     final tabIndex = HomePage.views.keys.toList().indexOf(title);
     changeTab(tabIndex);
   }
-
-  Future<bool> onBackButtonPressed() async {
-    if (state.tabIndex == defaultTabIndex) {
-      return true;
-    } else {
-      changeTab(defaultTabIndex);
-      return false;
-    }
-  }
 }
