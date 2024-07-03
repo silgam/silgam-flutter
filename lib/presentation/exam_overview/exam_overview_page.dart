@@ -55,23 +55,23 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.2,
   );
 
-  final Set<Exam> _recordedExams = {};
   List<Exam> get _exams => widget.examDetail.exams;
 
   final _randomTitle =
       _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
 
-  void _onCloseButtonPressed() {
-    if (_recordedExams.length == _exams.length) {
-      Navigator.pop(context);
-      return;
-    }
+  void _onPopInvoked(bool didPop) {
+    if (didPop) return;
+    _showExitConfirmDialog();
+  }
 
+  void _showExitConfirmDialog() {
     var content = '랩타임과 모의고사 기록을 저장하지 않고 나가시겠어요?';
     if (_examOverviewCubit.state.lapTimeItemGroups.isItemsEmpty ||
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups) {
       content = '모의고사 기록을 저장하지 않고 나가시겠어요?';
     }
+
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: '/exam_overview/close_dialog'),
@@ -172,7 +172,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         EditRecordPage.routeName,
         arguments: arguments,
       );
-      _recordedExams.add(exam);
+      _examOverviewCubit.examRecorded(exam.id);
     } else {
       Navigator.pushNamed(
         context,
@@ -202,11 +202,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 _examOverviewCubit.initialize();
                 return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
                   builder: (context, state) {
-                    return WillPopScope(
-                      onWillPop: () async {
-                        _onCloseButtonPressed();
-                        return false;
-                      },
+                    return PopScope(
+                      canPop: state.recordedExamIds.length == _exams.length,
+                      onPopInvoked: _onPopInvoked,
                       child: screenWidth > _tabletLayoutWidth
                           ? _buildTabletLayout()
                           : _buildMobileLayout(),
@@ -298,7 +296,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       child: IconButton(
         splashRadius: 20,
         icon: const Icon(Icons.close),
-        onPressed: () => _onCloseButtonPressed(),
+        onPressed: () {
+          Navigator.maybePop(context);
+        },
       ),
     );
   }

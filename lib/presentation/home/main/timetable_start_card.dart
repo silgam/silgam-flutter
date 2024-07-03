@@ -64,6 +64,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
                 TabBar(
                   controller: _tabController,
                   isScrollable: true,
+                  tabAlignment: TabAlignment.start,
                   overlayColor: MaterialStateProperty.all(Colors.transparent),
                   labelColor: Theme.of(context).primaryColor,
                   unselectedLabelColor: disabledColor,
@@ -240,14 +241,11 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   }
 
   void _onTimetableStartTap(Timetable timetable) async {
-    final isFinished = await Navigator.pushNamed(
+    Navigator.pushNamed(
       context,
       ClockPage.routeName,
       arguments: ClockPageArguments(timetable),
     );
-    if (isFinished == true && mounted) {
-      context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
-    }
   }
 
   @override

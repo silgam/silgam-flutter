@@ -92,8 +92,9 @@ class _HomePageState extends State<HomePage> {
           value: defaultSystemUiOverlayStyle,
           child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
-              return WillPopScope(
-                onWillPop: _cubit.onBackButtonPressed,
+              return PopScope(
+                canPop: state.tabIndex == HomeCubit.defaultTabIndex,
+                onPopInvoked: _onPopInvoked,
                 child: Scaffold(
                   backgroundColor: SilgamApp.backgroundColor,
                   body: SafeArea(
@@ -205,6 +206,11 @@ class _HomePageState extends State<HomePage> {
         isMarketingInfoReceivingConsentDialogShowing = false;
       });
     }
+  }
+
+  void _onPopInvoked(bool didPop) {
+    if (didPop) return;
+    _cubit.changeTab(HomeCubit.defaultTabIndex);
   }
 
   void _onAddExamRecordButtonPressed() async {

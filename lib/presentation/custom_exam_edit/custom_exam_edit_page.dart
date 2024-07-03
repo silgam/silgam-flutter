@@ -52,11 +52,10 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   late final _examNameInitialValue = _examToEdit?.name;
   late final _baseExamInitialValue = _examToEdit == null
       ? _defaultExams.first
-      : _defaultExams
-          .firstWhere((exam) => exam.subject == _examToEdit?.subject);
+      : _defaultExams.firstWhere((exam) => exam.subject == _examToEdit.subject);
   late final _startTimeInitialValue = _examToEdit == null
       ? TimeOfDay.fromDateTime(_baseExamInitialValue.startTime)
-      : TimeOfDay.fromDateTime(_examToEdit!.startTime);
+      : TimeOfDay.fromDateTime(_examToEdit.startTime);
   late final _durationInitialValue = _examToEdit?.durationMinutes.toString() ??
       _baseExamInitialValue.durationMinutes.toString();
   late final _numberOfQuestionsInitialValue =
@@ -109,10 +108,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     }
   }
 
-  Future<bool> _onWillPop() async {
-    if (!_isChanged) {
-      return true;
-    }
+  void _onPopInvoked(bool didPop) {
+    if (didPop) return;
 
     showDialog(
       context: context,
@@ -150,7 +147,6 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         );
       },
     );
-    return false;
   }
 
   void _onCancelButtonPressed() {
@@ -335,9 +331,14 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   Widget _buildForm() {
     return FormBuilder(
       key: _formKey,
-      onWillPop: _onWillPop,
+      canPop: !_isChanged,
+      onPopInvoked: _onPopInvoked,
       onChanged: () {
-        _isChanged = true;
+        if (_isChanged) return;
+
+        setState(() {
+          _isChanged = true;
+        });
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,8 +576,9 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                               )
                             : const SizedBox(height: 28),
                         MediaQuery(
-                          data: MediaQuery.of(context)
-                              .copyWith(textScaleFactor: 1.0),
+                          data: MediaQuery.of(context).copyWith(
+                            textScaler: const TextScaler.linear(1.0),
+                          ),
                           child: _buildForm(),
                         ),
                         const SizedBox(height: 28),

@@ -140,8 +140,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: _onPopInvoked,
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: AnnotatedRegion(
@@ -160,7 +161,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   Widget _buildBody() {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1.0)),
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -804,7 +806,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _onCancelPressed() {
-    _onBackPressed();
+    Navigator.maybePop(context);
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Cancel button tapped',
       properties: _defaultLogProperties,
@@ -895,7 +897,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return record;
   }
 
-  Future<bool> _onBackPressed() async {
+  void _onPopInvoked(bool didPop) {
+    if (didPop) return;
+
     showDialog(
       context: context,
       routeSettings: const RouteSettings(
@@ -932,7 +936,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
         );
       },
     );
-    return false;
   }
 }
 
