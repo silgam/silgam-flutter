@@ -21,7 +21,7 @@ class StatState with _$StatState {
         start: DateTime.now().subtract(const Duration(days: 365)),
         end: DateTime.now(),
       ),
-      selectedExamValueType: StatView.examValueTypes.first,
+      selectedExamValueType: ExamValueType.values.first,
     );
   }
 

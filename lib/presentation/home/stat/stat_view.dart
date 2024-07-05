@@ -29,37 +29,6 @@ class StatView extends StatefulWidget {
   const StatView({super.key});
 
   static const title = '통계';
-  static final examValueTypes = [
-    ExamValueType(
-      name: '점수',
-      postfix: '점',
-      getValue: (record) => record.score,
-      minValue: 0,
-      maxValue: 100,
-    ),
-    ExamValueType(
-      name: '등급',
-      postfix: '등급',
-      getValue: (record) => record.grade,
-      minValue: 9,
-      maxValue: 1,
-      reverse: true,
-    ),
-    ExamValueType(
-      name: '백분위',
-      postfix: '%',
-      getValue: (record) => record.percentile,
-      minValue: 0,
-      maxValue: 100,
-    ),
-    ExamValueType(
-      name: '표준점수',
-      postfix: '점',
-      getValue: (record) => record.standardScore,
-      minValue: 0,
-      maxValue: 150,
-    ),
-  ];
 
   @override
   State<StatView> createState() => _StatViewState();
@@ -933,7 +902,7 @@ class _StatViewState extends State<StatView> {
       onChanged: _cubit.onExamValueTypeChanged,
       alignment: Alignment.center,
       isDense: true,
-      items: StatView.examValueTypes
+      items: ExamValueType.values
           .map((valueType) => DropdownMenuItem(
                 value: valueType,
                 alignment: Alignment.center,
@@ -947,7 +916,37 @@ class _StatViewState extends State<StatView> {
   }
 }
 
-class ExamValueType {
+enum ExamValueType {
+  score(
+    name: '점수',
+    postfix: '점',
+    getValue: getScore,
+    minValue: 0,
+    maxValue: 100,
+  ),
+  grade(
+    name: '등급',
+    postfix: '등급',
+    getValue: getGrade,
+    minValue: 9,
+    maxValue: 1,
+    reverse: true,
+  ),
+  percentile(
+    name: '백분위',
+    postfix: '%',
+    getValue: getPercentile,
+    minValue: 0,
+    maxValue: 100,
+  ),
+  standardScore(
+    name: '표준점수',
+    postfix: '점',
+    getValue: getStandardScore,
+    minValue: 0,
+    maxValue: 150,
+  );
+
   const ExamValueType({
     required this.name,
     required this.postfix,
@@ -965,6 +964,11 @@ class ExamValueType {
   final bool reverse;
 
   int get reverseMultiple => reverse ? -1 : 1;
+
+  static int? getScore(ExamRecord record) => record.score;
+  static int? getGrade(ExamRecord record) => record.grade;
+  static int? getPercentile(ExamRecord record) => record.percentile;
+  static int? getStandardScore(ExamRecord record) => record.standardScore;
 }
 
 extension on Duration {
