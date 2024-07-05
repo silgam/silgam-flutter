@@ -457,7 +457,7 @@ class _StatViewState extends State<StatView> {
       final color = Color(exam.color);
       return LineChartBarData(
         color: color,
-        barWidth: 4,
+        barWidth: (4 - dateToRecordsMap.keys.length * 0.015).clamp(2, 4),
         isStrokeCapRound: true,
         isStrokeJoinRound: true,
         belowBarData: BarAreaData(
@@ -476,7 +476,8 @@ class _StatViewState extends State<StatView> {
             return FlDotCirclePainter(
               radius: 2,
               color: Colors.white,
-              strokeWidth: 2,
+              strokeWidth:
+                  (2 - dateToRecordsMap.keys.length * 0.005).clamp(1, 2),
               strokeColor: color,
             );
           },
