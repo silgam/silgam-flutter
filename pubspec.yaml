@@ -5,8 +5,8 @@ publish_to: 'none'
 version: 1.7.1+96
 
 environment:
-  sdk: 3.3.4
-  flutter: 3.19.6
+  sdk: 3.4.3
+  flutter: 3.22.2
 
 dependencies:
   flutter:
@@ -30,7 +30,7 @@ dependencies:
   flutter_facebook_auth: ^4.1.1
   sign_in_with_apple: ^4.1.0
   image_picker: ^0.8.4+11
-  intl: any
+  intl: ^0.19.0
   json_annotation: ^4.4.0
   uuid: ^3.0.6
   package_info_plus: ^4.1.0
@@ -41,7 +41,7 @@ dependencies:
   kakao_flutter_sdk: ^1.4.3
   http: ^0.13.4
   rich_text_controller: ^1.4.0
-  screenshot: ^2.1.0
+  screenshot: ^3.0.0
   path_provider: ^2.0.9
   share_plus: ^4.0.3
   image_gallery_saver: ^1.7.1
@@ -77,8 +77,8 @@ dependencies:
     sdk: flutter
   firebase_database: ^10.2.7
   visibility_detector: ^0.3.3
-  flutter_form_builder: 9.2.1
-  form_builder_validators: ^9.1.0
+  flutter_form_builder: ^9.3.0
+  form_builder_validators: ^10.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -407,13 +407,13 @@ class _ClockPageState extends State<ClockPage> {
       child: OutlinedButton(
         onPressed: _cubit.onLapTimeButtonPressed,
         style: ButtonStyle(
-          side: MaterialStateProperty.all(
+          side: WidgetStateProperty.all(
             BorderSide(
               color: Colors.grey.shade700,
               width: 1,
             ),
           ),
-          shape: MaterialStateProperty.all(
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(1000),
             ),
@@ -422,14 +422,14 @@ class _ClockPageState extends State<ClockPage> {
             horizontal: VisualDensity.minimumDensity,
             vertical: VisualDensity.minimumDensity,
           ),
-          padding: MaterialStateProperty.all(
+          padding: WidgetStateProperty.all(
             EdgeInsets.symmetric(
               horizontal: direction == Axis.vertical ? 0 : 20,
               vertical: direction == Axis.vertical ? 32 : 0,
             ),
           ),
-          foregroundColor: MaterialStateProperty.all(Colors.grey.shade700),
-          overlayColor: MaterialStateProperty.all(
+          foregroundColor: WidgetStateProperty.all(Colors.grey.shade700),
+          overlayColor: WidgetStateProperty.all(
             Colors.white.withOpacity(0.4),
           ),
         ),

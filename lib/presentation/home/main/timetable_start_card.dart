@@ -65,7 +65,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
                   controller: _tabController,
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
                   labelColor: Theme.of(context).primaryColor,
                   unselectedLabelColor: disabledColor,
                   labelStyle:
