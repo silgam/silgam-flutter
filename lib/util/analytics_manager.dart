@@ -60,7 +60,7 @@ class AnalyticsManager {
         .replaceAll(']', '')
         .replaceAll('-', '_')
         .replaceAll('/', '_');
-    Map<String, dynamic> firebaseProperties = properties.map(
+    Map<String, Object> firebaseProperties = properties.map(
       (key, value) => MapEntry(
         key.replaceAll(' ', '_'),
         value is String || value is num ? value : value.toString(),
