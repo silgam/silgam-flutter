@@ -115,9 +115,6 @@ class LoginCubit extends Cubit<LoginState> {
       await currentUser?.updateDisplayName(
           '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}');
     }
-    if (currentUser?.email == null) {
-      await currentUser?.updateEmail(appleCredential.email ?? '');
-    }
   }
 }
 
