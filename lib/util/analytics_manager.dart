@@ -54,7 +54,7 @@ class AnalyticsManager {
     log('Event Logged: $name, $properties');
     _mixpanel.track(name, properties: properties);
 
-    String firebaaseEventName = name
+    String firebaseEventName = name
         .replaceAll(' ', '_')
         .replaceAll('[', '')
         .replaceAll(']', '')
@@ -67,7 +67,7 @@ class AnalyticsManager {
       ),
     );
     await _firebaseAnalytics.logEvent(
-      name: firebaaseEventName,
+      name: firebaseEventName,
       parameters: firebaseProperties,
     );
   }
