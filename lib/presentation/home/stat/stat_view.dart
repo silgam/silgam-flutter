@@ -495,7 +495,7 @@ class _StatViewState extends State<StatView> {
       touchTooltipData: LineTouchTooltipData(
         fitInsideHorizontally: true,
         maxContentWidth: screenWidth * 0.8,
-        tooltipBgColor: Colors.white,
+        getTooltipColor: (_) => Colors.white,
         tooltipBorder: const BorderSide(color: Colors.grey),
         tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         getTooltipItems: (touchedSpots) {
