@@ -353,12 +353,15 @@ class _InfoBox extends StatelessWidget {
     if (suffixCaptured != null) {
       controller = RichTextController(
         text: content + suffixCaptured,
-        patternMatchMap: {
-          RegExp(suffixCaptured): const TextStyle(
-            fontSize: 8,
-            fontWeight: FontWeight.w300,
-          ),
-        },
+        targetMatches: [
+          MatchTargetItem(
+            regex: RegExp(suffixCaptured),
+            style: const TextStyle(
+              fontSize: 8,
+              fontWeight: FontWeight.w300,
+            ),
+          )
+        ],
         onMatch: (_) {},
       );
     }

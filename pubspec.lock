@@ -1539,10 +1539,10 @@ packages:
     dependency: "direct main"
     description:
       name: rich_text_controller
-      sha256: "2697b0313c03429ac4d924e14f16e07d16e31a234d31c46bcce9f8f8e713f05f"
+      sha256: "34750b3a688748d4b8224f84129c7ac3322a9301d272fdca8244dd6cbbfc4cae"
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.2"
+    version: "2.0.1"
   rxdart:
     dependency: transitive
     description:
