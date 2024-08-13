@@ -4,9 +4,9 @@ class AdsCard extends StatefulWidget {
   final List<Ads> ads;
 
   const AdsCard({
-    Key? key,
+    super.key,
     required this.ads,
-  }) : super(key: key);
+  });
 
   @override
   State<AdsCard> createState() => _AdsCardState();

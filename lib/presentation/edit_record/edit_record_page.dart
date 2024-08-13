@@ -24,9 +24,9 @@ class EditRecordPage extends StatefulWidget {
   final EditRecordPageArguments arguments;
 
   const EditRecordPage({
-    Key? key,
+    super.key,
     required this.arguments,
-  }) : super(key: key);
+  });
 
   @override
   State<EditRecordPage> createState() => _EditRecordPageState();

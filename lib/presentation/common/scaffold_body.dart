@@ -16,12 +16,12 @@ class ScaffoldBody extends StatelessWidget {
   final bool isRefreshing;
 
   const ScaffoldBody({
-    Key? key,
+    super.key,
     required this.title,
     required this.slivers,
     this.onRefresh,
     this.isRefreshing = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +101,7 @@ class ScaffoldBody extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             sliver: sliver,
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -119,9 +119,9 @@ class NonPaddingChildBuilder extends StatelessWidget {
   final Widget Function(double horizontalPadding) builder;
 
   const NonPaddingChildBuilder({
-    Key? key,
+    super.key,
     required this.builder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -15,14 +15,15 @@ class EditReviewProblemDialog extends StatefulWidget {
   final ReviewProblemAddModeParams? reviewProblemAddModeParams;
   final ReviewProblemEditModeParams? reviewProblemEditModeParams;
 
-  const EditReviewProblemDialog.add(this.reviewProblemAddModeParams, {Key? key})
-      : reviewProblemEditModeParams = null,
-        super(key: key);
+  const EditReviewProblemDialog.add(
+    this.reviewProblemAddModeParams, {
+    super.key,
+  }) : reviewProblemEditModeParams = null;
 
-  const EditReviewProblemDialog.edit(this.reviewProblemEditModeParams,
-      {Key? key})
-      : reviewProblemAddModeParams = null,
-        super(key: key);
+  const EditReviewProblemDialog.edit(
+    this.reviewProblemEditModeParams, {
+    super.key,
+  }) : reviewProblemAddModeParams = null;
 
   @override
   EditReviewProblemDialogState createState() => EditReviewProblemDialogState();

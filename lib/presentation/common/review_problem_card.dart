@@ -10,10 +10,10 @@ class ReviewProblemCard extends StatelessWidget {
   final GestureTapCallback? onTap;
 
   const ReviewProblemCard({
-    Key? key,
+    super.key,
     required this.problem,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -20,9 +20,9 @@ class ReviewProblemDetailPage extends StatefulWidget {
   final ReviewProblem reviewProblem;
 
   const ReviewProblemDetailPage({
-    Key? key,
+    super.key,
     required this.reviewProblem,
-  }) : super(key: key);
+  });
 
   @override
   State<ReviewProblemDetailPage> createState() =>

@@ -21,9 +21,7 @@ import 'record_tile.dart';
 class RecordListView extends StatefulWidget {
   static const title = '기록';
 
-  const RecordListView({
-    Key? key,
-  }) : super(key: key);
+  const RecordListView({super.key});
 
   @override
   State<RecordListView> createState() => _RecordListViewState();

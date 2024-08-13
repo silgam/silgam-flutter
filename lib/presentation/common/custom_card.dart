@@ -12,7 +12,7 @@ class CustomCard extends StatelessWidget {
   final double? width;
 
   const CustomCard({
-    Key? key,
+    super.key,
     required this.child,
     this.backgroundColor = Colors.white,
     this.margin,
@@ -20,7 +20,7 @@ class CustomCard extends StatelessWidget {
     this.isThin = false,
     this.clipBehavior = Clip.hardEdge,
     this.width = double.infinity,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

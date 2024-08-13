@@ -49,9 +49,7 @@ part 'welcome_messages.dart';
 class MainView extends StatefulWidget {
   static const title = '메인';
 
-  const MainView({
-    Key? key,
-  }) : super(key: key);
+  const MainView({super.key});
 
   @override
   State<MainView> createState() => _MainViewState();

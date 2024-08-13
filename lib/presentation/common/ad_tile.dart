@@ -10,10 +10,10 @@ class AdTile extends StatefulWidget {
   final EdgeInsetsGeometry? margin;
 
   const AdTile({
-    Key? key,
+    super.key,
     required this.width,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   State<AdTile> createState() => AdTileState();

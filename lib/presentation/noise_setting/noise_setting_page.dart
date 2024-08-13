@@ -17,7 +17,7 @@ import 'cubit/noise_setting_cubit.dart';
 class NoiseSettingPage extends StatefulWidget {
   static const routeName = '/noise_setting';
 
-  const NoiseSettingPage({Key? key}) : super(key: key);
+  const NoiseSettingPage({super.key});
 
   @override
   State<NoiseSettingPage> createState() => _NoiseSettingPageState();
@@ -221,12 +221,10 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
               .map((noise) => _buildNoiseSettingTile(
                     noise,
                     isLocked: false,
-                  ))
-              .toList(),
+                  )),
           ...defaultNoises
               .where((element) => !availableNoiseIds.contains(element.id))
-              .map((noise) => _buildNoiseSettingTile(noise, isLocked: true))
-              .toList(),
+              .map((noise) => _buildNoiseSettingTile(noise, isLocked: true)),
         ];
         if (MediaQuery.of(context).size.width > 600) {
           return Row(

@@ -8,9 +8,9 @@ class WristWatch extends StatelessWidget {
   final DateTime clockTime;
 
   const WristWatch({
-    Key? key,
+    super.key,
     required this.clockTime,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +41,9 @@ class WristWatchContainer extends StatelessWidget {
   final Widget? child;
 
   const WristWatchContainer({
-    Key? key,
+    super.key,
     this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +105,8 @@ class AnalogClock extends StatelessWidget {
     this.height = double.infinity,
     this.decoration = const BoxDecoration(),
     this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

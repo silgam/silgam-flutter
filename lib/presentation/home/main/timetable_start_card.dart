@@ -1,10 +1,7 @@
 part of 'main_view.dart';
 
 class _TimetableStartCard extends StatefulWidget {
-  const _TimetableStartCard({
-    Key? key,
-    required this.timetables,
-  }) : super(key: key);
+  const _TimetableStartCard({required this.timetables});
 
   final List<Timetable> timetables;
 

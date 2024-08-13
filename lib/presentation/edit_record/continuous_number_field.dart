@@ -6,10 +6,10 @@ class ContinuousNumberField extends StatefulWidget {
   final Function() onDelete;
 
   const ContinuousNumberField({
-    Key? key,
+    super.key,
     required this.onSubmit,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   State<ContinuousNumberField> createState() => _ContinuousNumberFieldState();

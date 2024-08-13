@@ -24,7 +24,7 @@ class HomePageView {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   static const routeName = '/';
   static final views = {

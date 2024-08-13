@@ -19,7 +19,7 @@ import 'cubit/login_cubit.dart';
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
 
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -205,15 +205,13 @@ class _LoginButton extends StatelessWidget {
   final GestureTapCallback onTap;
 
   const _LoginButton({
-    Key? key,
     required this.onTap,
     required this.assetName,
     required this.provider,
     required this.color,
     this.lightText = false,
     Color? borderColor,
-  })  : borderColor = borderColor ?? color,
-        super(key: key);
+  }) : borderColor = borderColor ?? color;
 
   @override
   Widget build(BuildContext context) {

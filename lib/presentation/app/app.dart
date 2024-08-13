@@ -41,9 +41,10 @@ import 'initial_route_handler.dart';
 const double cardCornerRadius = 14;
 
 class SilgamApp extends StatelessWidget {
-  const SilgamApp({Key? key, required String? initialRoute})
-      : _initialRoute = initialRoute,
-        super(key: key);
+  const SilgamApp({
+    super.key,
+    required String? initialRoute,
+  }) : _initialRoute = initialRoute;
 
   static const backgroundColor = Color.fromARGB(255, 245, 246, 247);
   final String? _initialRoute;

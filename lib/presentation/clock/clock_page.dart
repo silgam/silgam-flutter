@@ -31,9 +31,9 @@ class ClockPage extends StatefulWidget {
   final Timetable timetable;
 
   const ClockPage({
-    Key? key,
+    super.key,
     required this.timetable,
-  }) : super(key: key);
+  });
 
   @override
   State<ClockPage> createState() => _ClockPageState();

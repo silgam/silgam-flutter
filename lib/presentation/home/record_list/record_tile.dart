@@ -8,10 +8,10 @@ class RecordTile extends StatefulWidget {
   final GestureTapCallback onTileTap;
 
   const RecordTile({
-    Key? key,
+    super.key,
     required this.record,
     required this.onTileTap,
-  }) : super(key: key);
+  });
 
   @override
   State<RecordTile> createState() => RecordTileState();

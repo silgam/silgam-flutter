@@ -3,10 +3,7 @@ part of 'main_view.dart';
 class _DDaysCard extends StatelessWidget {
   final List<DDayItem> dDayItems;
 
-  const _DDaysCard({
-    Key? key,
-    required this.dDayItems,
-  }) : super(key: key);
+  const _DDaysCard({required this.dDayItems});
 
   @override
   Widget build(BuildContext context) {

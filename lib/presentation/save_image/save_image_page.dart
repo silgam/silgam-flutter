@@ -19,9 +19,9 @@ class SaveImagePage extends StatefulWidget {
   final ExamRecord examRecord;
 
   const SaveImagePage({
-    Key? key,
+    super.key,
     required this.examRecord,
-  }) : super(key: key);
+  });
 
   @override
   State<SaveImagePage> createState() => _SaveImagePageState();
@@ -339,13 +339,12 @@ class _InfoBox extends StatelessWidget {
   final bool expands;
 
   const _InfoBox({
-    Key? key,
     required this.title,
     required this.content,
     this.suffix,
     this.longText = false,
     this.expands = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -410,11 +409,10 @@ class _ChoiceChip extends StatelessWidget {
   final ValueChanged<bool> onSelected;
 
   const _ChoiceChip({
-    Key? key,
     required this.label,
     required this.selected,
     required this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

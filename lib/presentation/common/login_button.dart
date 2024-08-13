@@ -7,10 +7,10 @@ class LoginButton extends StatelessWidget {
   final String description;
 
   const LoginButton({
-    Key? key,
+    super.key,
     required this.onTap,
     this.description = '로그인하면 실감의 더 많은 기능들을 누릴 수 있어요!',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

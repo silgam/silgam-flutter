@@ -13,7 +13,7 @@ class TimelineTile extends StatelessWidget {
   final bool disabled;
 
   const TimelineTile({
-    Key? key,
+    super.key,
     required this.onTap,
     required this.examName,
     required this.time,
@@ -21,7 +21,7 @@ class TimelineTile extends StatelessWidget {
     required this.color,
     required this.direction,
     required this.disabled,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -133,8 +133,8 @@ class TimelineConnector extends StatelessWidget {
     this.unsetWidth = false,
     this.unsetHeight = false,
     this.enabledColor = Colors.white,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

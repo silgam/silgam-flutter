@@ -7,11 +7,11 @@ class OutlinedTextField extends StatelessWidget {
   final int? maxLength;
 
   const OutlinedTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.suffix,
     this.maxLength,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

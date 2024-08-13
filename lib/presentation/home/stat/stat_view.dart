@@ -452,20 +452,16 @@ class _StatViewState extends State<StatView> {
           },
         ),
         spots: [
-          ...dateToRecordsMap.entries
-              .mapIndexed((index, entry) {
-                final record =
-                    entry.value.where((record) => record.exam == exam);
-                return record.isEmpty
-                    ? null
-                    : FlSpot(
-                        index.toDouble(),
-                        examValueType.getValue(record.first)!.toDouble() *
-                            examValueType.reverseMultiple,
-                      );
-              })
-              .whereNotNull()
-              .toList(),
+          ...dateToRecordsMap.entries.mapIndexed((index, entry) {
+            final record = entry.value.where((record) => record.exam == exam);
+            return record.isEmpty
+                ? null
+                : FlSpot(
+                    index.toDouble(),
+                    examValueType.getValue(record.first)!.toDouble() *
+                        examValueType.reverseMultiple,
+                  );
+          }).whereNotNull(),
         ],
       );
     }).toList();

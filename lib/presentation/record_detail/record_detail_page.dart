@@ -25,9 +25,9 @@ class RecordDetailPage extends StatefulWidget {
   final RecordDetailPageArguments arguments;
 
   const RecordDetailPage({
-    Key? key,
+    super.key,
     required this.arguments,
-  }) : super(key: key);
+  });
 
   @override
   State<RecordDetailPage> createState() => _RecordDetailPageState();

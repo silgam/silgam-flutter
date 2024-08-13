@@ -32,7 +32,7 @@ import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {
   static const title = '설정';
-  const SettingsView({Key? key}) : super(key: key);
+  const SettingsView({super.key});
 
   @override
   State<SettingsView> createState() => _SettingsViewState();
@@ -523,9 +523,7 @@ class _SettingsViewState extends State<SettingsView> {
 }
 
 class SettingDivider extends StatelessWidget {
-  const SettingDivider({
-    Key? key,
-  }) : super(key: key);
+  const SettingDivider({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,11 +6,11 @@ class CustomMenuBar extends StatelessWidget {
   final bool lightText;
 
   const CustomMenuBar({
-    Key? key,
+    super.key,
     this.title = '',
     this.actionButtons = const [],
     this.lightText = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

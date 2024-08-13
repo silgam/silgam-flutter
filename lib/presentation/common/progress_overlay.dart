@@ -8,12 +8,12 @@ class ProgressOverlay extends StatelessWidget {
   final bool fast;
 
   const ProgressOverlay({
-    Key? key,
+    super.key,
     required this.child,
     required this.isProgressing,
     required this.description,
     this.fast = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

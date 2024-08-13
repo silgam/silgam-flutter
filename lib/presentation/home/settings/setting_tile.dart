@@ -27,7 +27,7 @@ class SettingTile extends StatefulWidget {
   final double paddingHorizontal;
 
   const SettingTile({
-    Key? key,
+    super.key,
     this.onTap,
     required this.title,
     this.description,
@@ -38,7 +38,7 @@ class SettingTile extends StatefulWidget {
     this.titleColor,
     this.showArrow = false,
     this.paddingHorizontal = 12,
-  }) : super(key: key);
+  });
 
   @override
   State<SettingTile> createState() => _SettingTileState();

@@ -7,12 +7,11 @@ class _ButtonCard extends StatelessWidget {
   final bool primary;
 
   const _ButtonCard({
-    Key? key,
     required this.onTap,
     required this.title,
     required this.iconData,
     this.primary = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
