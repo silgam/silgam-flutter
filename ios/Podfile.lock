@@ -515,7 +515,7 @@ SPEC CHECKSUMS:
   FirebaseStorage: 436c30aa46f2177ba152f268fe4452118b8a4856
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_facebook_auth: 4fa1dc3fa624284a5ddfdf9e4a2b7945b3835949
-  flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
+  flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   FMDB: 728731dd336af3936ce00f91d9d8495f5718a0e6
   Google-Mobile-Ads-SDK: 5a6d005a6cb5b5e8f4c7b69ca05cdea79c181139
