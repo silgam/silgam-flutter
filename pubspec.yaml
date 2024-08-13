@@ -30,20 +30,20 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_facebook_auth: ^7.0.1
   sign_in_with_apple: ^6.1.1
-  image_picker: ^0.8.9
+  image_picker: ^1.1.2
   intl: ^0.19.0
-  json_annotation: ^4.4.0
-  uuid: ^3.0.6
-  package_info_plus: ^4.1.0
-  in_app_review: ^2.0.4
-  url_launcher: ^6.0.20
-  crypto: ^3.0.1
-  shared_preferences: ^2.1.1
-  kakao_flutter_sdk: ^1.4.3
+  json_annotation: ^4.9.0
+  uuid: ^3.0.7
+  package_info_plus: ^8.0.2
+  in_app_review: ^2.0.9
+  url_launcher: ^6.3.0
+  crypto: ^3.0.3
+  shared_preferences: ^2.3.1
+  kakao_flutter_sdk: ^1.9.5
   http: ^1.2.2
   rich_text_controller: ^1.4.0
   screenshot: ^3.0.0
-  path_provider: ^2.0.9
+  path_provider: ^2.1.4
   share_plus: ^4.0.3
   image_gallery_saver: ^1.7.1
   carousel_slider: ^4.0.0
