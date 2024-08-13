@@ -49,7 +49,7 @@ class ProductRepository {
     );
     try {
       await _productApi.onPurchase('Bearer $authToken', request);
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log(e.toString(), name: 'ProductRepository.onPurchase');
       return Result.error(e.error as ApiFailure);
@@ -65,7 +65,7 @@ class ProductRepository {
     );
     try {
       await _productApi.startTrial('Bearer $authToken', request);
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log(e.toString(), name: 'ProductRepository.startTrial');
       return Result.error(e.error as ApiFailure);
@@ -83,7 +83,7 @@ class ProductRepository {
     );
     try {
       await _productApi.canPurchase('Bearer $authToken', request);
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log(e.toString(), name: 'ProductRepository.canPurchase');
       return Result.error(e.error as ApiFailure);

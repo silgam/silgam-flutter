@@ -77,7 +77,7 @@ class UserRepository {
       await _usersRef.doc(userId).update({
         'fcmTokens': FieldValue.arrayUnion([fcmToken]),
       });
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log('addFcmToken() failed: $e', name: 'UserRepository');
       return Result.error(e.error as ApiFailure);
@@ -92,7 +92,7 @@ class UserRepository {
       await _usersRef.doc(userId).update({
         'fcmTokens': FieldValue.arrayRemove([fcmToken]),
       });
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log('removeFcmToken() failed: $e', name: 'UserRepository');
       return Result.error(e.error as ApiFailure);
@@ -109,7 +109,7 @@ class UserRepository {
         'marketingInfoReceivingConsentUpdatedAt':
             DateTime.now().toUtc().toIso8601String(),
       });
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log('updateMarketingConsent() failed: $e', name: 'UserRepository');
       return Result.error(e.error as ApiFailure);
@@ -126,7 +126,7 @@ class UserRepository {
           (key, value) => MapEntry(key.name, value),
         )
       });
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log('updateCustomSubjectNameMap() failed: $e', name: 'UserRepository');
       return Result.error(e.error as ApiFailure);

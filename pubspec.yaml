@@ -65,15 +65,15 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   in_app_purchase_storekit: ^0.3.17+3
   flutter_easyloading: ^3.0.5
-  multiple_result: ^4.0.0
-  collection: ^1.16.0
-  webview_flutter: ^4.2.0
-  dotted_line: ^3.1.0
+  multiple_result: ^5.1.0
+  collection: ^1.18.0
+  webview_flutter: ^4.8.0
+  dotted_line: ^3.2.2
   flutter_heatmap_calendar:
     git:
       url: https://github.com/silgam/flutter_heatmap_calendar.git
   connectivity_plus: ^3.0.3
-  wakelock_plus: ^1.1.1
+  wakelock_plus: ^1.2.8
   flutter_localizations:
     sdk: flutter
   visibility_detector: ^0.3.3

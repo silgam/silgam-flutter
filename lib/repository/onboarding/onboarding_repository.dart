@@ -39,7 +39,7 @@ class OnboardingRepository {
     );
     try {
       await _onboardingApi.submitJoinPaths(request);
-      return Result.success(unit);
+      return const Result.success(unit);
     } on DioException catch (e) {
       log(e.toString(), name: 'OnboardingRepository.submitJoinPaths');
       return Result.error(e.error as ApiFailure);
