@@ -621,7 +621,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
             SvgPicture.asset(
               'assets/add.svg',
               width: 36,
-              color: Colors.grey.shade800,
+              colorFilter: ColorFilter.mode(
+                Colors.grey.shade800,
+                BlendMode.srcIn,
+              ),
             ),
             Text(
               '추가하기',

@@ -14,14 +14,14 @@ PODS:
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
-  - FBAEMKit (14.1.0):
-    - FBSDKCoreKit_Basics (= 14.1.0)
-  - FBSDKCoreKit (14.1.0):
-    - FBAEMKit (= 14.1.0)
-    - FBSDKCoreKit_Basics (= 14.1.0)
-  - FBSDKCoreKit_Basics (14.1.0)
-  - FBSDKLoginKit (14.1.0):
-    - FBSDKCoreKit (= 14.1.0)
+  - FBAEMKit (17.0.3):
+    - FBSDKCoreKit_Basics (= 17.0.3)
+  - FBSDKCoreKit (17.0.3):
+    - FBAEMKit (= 17.0.3)
+    - FBSDKCoreKit_Basics (= 17.0.3)
+  - FBSDKCoreKit_Basics (17.0.3)
+  - FBSDKLoginKit (17.0.3):
+    - FBSDKCoreKit (= 17.0.3)
   - Firebase/Analytics (10.29.0):
     - Firebase/Core
   - Firebase/Auth (10.29.0):
@@ -178,10 +178,12 @@ PODS:
     - GoogleUtilities/Environment (~> 7.12)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - Flutter (1.0.0)
-  - flutter_facebook_auth (4.4.1):
-    - FBSDKLoginKit (= 14.1.0)
+  - flutter_facebook_auth (7.0.1):
+    - FBSDKLoginKit (~> 17.0.2)
     - Flutter
   - flutter_native_splash (0.0.1):
+    - Flutter
+  - flutter_secure_storage (6.0.0):
     - Flutter
   - FMDB (2.7.12):
     - FMDB/standard (= 2.7.12)
@@ -195,8 +197,11 @@ PODS:
     - Flutter
     - Google-Mobile-Ads-SDK (~> 9.13)
   - google_sign_in_ios (0.0.1):
+    - AppAuth (>= 1.7.4)
     - Flutter
-    - GoogleSignIn (~> 6.2)
+    - FlutterMacOS
+    - GoogleSignIn (~> 7.1)
+    - GTMSessionFetcher (>= 3.4.0)
   - GoogleAppMeasurement (10.29.0):
     - GoogleAppMeasurement/AdIdSupport (= 10.29.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
@@ -221,10 +226,10 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30911.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleSignIn (6.2.4):
-    - AppAuth (~> 1.5)
-    - GTMAppAuth (~> 1.3)
-    - GTMSessionFetcher/Core (< 3.0, >= 1.1)
+  - GoogleSignIn (7.1.0):
+    - AppAuth (< 2.0, >= 1.7.3)
+    - GTMAppAuth (< 5.0, >= 4.1.1)
+    - GTMSessionFetcher/Core (~> 3.3)
   - GoogleUserMessagingPlatform (2.5.0)
   - GoogleUtilities/AppDelegateSwizzler (7.13.3):
     - GoogleUtilities/Environment
@@ -254,10 +259,14 @@ PODS:
   - GoogleUtilities/UserDefaults (7.13.3):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GTMAppAuth (1.3.1):
-    - AppAuth/Core (~> 1.6)
-    - GTMSessionFetcher/Core (< 3.0, >= 1.5)
-  - GTMSessionFetcher/Core (2.3.0)
+  - GTMAppAuth (4.1.1):
+    - AppAuth/Core (~> 1.7)
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3)
+  - GTMSessionFetcher (3.5.0):
+    - GTMSessionFetcher/Full (= 3.5.0)
+  - GTMSessionFetcher/Core (3.5.0)
+  - GTMSessionFetcher/Full (3.5.0):
+    - GTMSessionFetcher/Core
   - image_gallery_saver (1.5.0):
     - Flutter
   - image_picker_ios (0.0.1):
@@ -325,8 +334,9 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
-  - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
+  - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - in_app_purchase_storekit (from `.symlinks/plugins/in_app_purchase_storekit/darwin`)
@@ -420,10 +430,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_facebook_auth/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   google_mobile_ads:
     :path: ".symlinks/plugins/google_mobile_ads/ios"
   google_sign_in_ios:
-    :path: ".symlinks/plugins/google_sign_in_ios/ios"
+    :path: ".symlinks/plugins/google_sign_in_ios/darwin"
   image_gallery_saver:
     :path: ".symlinks/plugins/image_gallery_saver/ios"
   image_picker_ios:
@@ -467,10 +479,10 @@ SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   cloud_firestore: 8a2ff2bb050f87d0ca996866625cefbe2395a83b
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
-  FBAEMKit: a899515e45476027f73aef377b5cffadcd56ca3a
-  FBSDKCoreKit: 24f8bc8d3b5b2a8c5c656a1329492a12e8efa792
-  FBSDKCoreKit_Basics: 6e578c9bdc7aa1365dbbbde633c9ebb536bcaa98
-  FBSDKLoginKit: 787de205d524c3a4b17d527916f1d066e4361660
+  FBAEMKit: 9900b2edd99a2d21629a6277e6166f14c6215799
+  FBSDKCoreKit: 0791f8f68a8630931a4c12aa23a56cc021551596
+  FBSDKCoreKit_Basics: 46d6b472c0dd0a5a7e972c025033d1c567f54eb4
+  FBSDKLoginKit: b4a4eba1d62eb452544411824f41689adabd5bd2
   Firebase: cec914dab6fd7b1bd8ab56ea07ce4e03dd251c2d
   firebase_analytics: 04491d1ee74c8e7c2330c96afc54188a969b06ee
   firebase_auth: 8dbfcdd635cc4fb2ea213aeee8c9a979b3d3373b
@@ -502,19 +514,20 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: 20530f495084b8d840f78a100d8c5ee613375f6e
   FirebaseStorage: 436c30aa46f2177ba152f268fe4452118b8a4856
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_facebook_auth: 361ac7a57263ebf327f26089507ead0d66558ee8
+  flutter_facebook_auth: 4fa1dc3fa624284a5ddfdf9e4a2b7945b3835949
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
+  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   FMDB: 728731dd336af3936ce00f91d9d8495f5718a0e6
   Google-Mobile-Ads-SDK: 4fe6304b771f8467d29978cb790ec1e56e646946
   google_mobile_ads: 528ab4673c5b5fd36321b7e90fc585064cdbaf2b
-  google_sign_in_ios: 1256ff9d941db546373826966720b0c24804bcdd
+  google_sign_in_ios: 07375bfbf2620bc93a602c0e27160d6afc6ead38
   GoogleAppMeasurement: f9de05ee17401e3355f68e8fc8b5064d429f5918
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
-  GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
+  GoogleSignIn: d4281ab6cf21542b1cfaff85c191f230b399d2db
   GoogleUserMessagingPlatform: 6b4f48a370e77ce121d034c908cc6ee4fdafaf13
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
-  GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
-  GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
+  GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
+  GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   image_gallery_saver: 259eab68fb271cfd57d599904f7acdc7832e7ef2
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   in_app_purchase_storekit: 4fb7ee9e824b1f09107fbfbbce8c4b276366dc43

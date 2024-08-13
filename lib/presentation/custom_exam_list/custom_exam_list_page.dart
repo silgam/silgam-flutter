@@ -159,7 +159,10 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
                 SvgPicture.asset(
                   'assets/add.svg',
                   width: 30,
-                  color: Colors.grey.shade800,
+                  colorFilter: ColorFilter.mode(
+                    Colors.grey.shade800,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 Text(
                   '과목 만들기',

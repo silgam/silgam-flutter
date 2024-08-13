@@ -271,8 +271,11 @@ class _MainViewState extends State<MainView> {
       ),
       icon: SvgPicture.asset(
         'assets/sns_$snsName.svg',
-        color: Colors.grey,
         width: 20,
+        colorFilter: const ColorFilter.mode(
+          Colors.grey,
+          BlendMode.srcIn,
+        ),
       ),
     );
   }

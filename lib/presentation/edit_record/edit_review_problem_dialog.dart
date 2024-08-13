@@ -285,7 +285,10 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             onPressed: _onImageAddButtonPressed,
             icon: SvgPicture.asset(
               'assets/add.svg',
-              color: Colors.grey.shade600,
+              colorFilter: ColorFilter.mode(
+                Colors.grey.shade600,
+                BlendMode.srcIn,
+              ),
             ),
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,

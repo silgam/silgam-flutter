@@ -243,7 +243,12 @@ class _LoginButton extends StatelessWidget {
                   child: SvgPicture.asset(
                     assetName,
                     height: 24,
-                    color: lightText ? Colors.white : null,
+                    colorFilter: lightText
+                        ? const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          )
+                        : null,
                   ),
                 ),
                 Expanded(
