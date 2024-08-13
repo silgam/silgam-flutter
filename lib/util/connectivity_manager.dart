@@ -20,8 +20,8 @@ class ConnectivityManger {
   DatabaseReference? _connectedAtRef;
 
   Future<void> updateConnectivityListener() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    _onConnectivityChanged(connectivity);
+    final connectivityResults = await Connectivity().checkConnectivity();
+    _onConnectivityChanged(connectivityResults);
 
     _connectivityListener?.cancel();
     _connectivityListener =
@@ -57,9 +57,9 @@ class ConnectivityManger {
     });
   }
 
-  void _onConnectivityChanged(ConnectivityResult connectivityResult) {
-    log('Connectivity changed: $connectivityResult', name: 'AppCubit');
-    final isOffline = connectivityResult == ConnectivityResult.none;
+  void _onConnectivityChanged(List<ConnectivityResult> connectivityResults) {
+    log('Connectivity changed: $connectivityResults', name: 'AppCubit');
+    final isOffline = connectivityResults.contains(ConnectivityResult.none);
     _appCubit.updateIsOffline(isOffline);
   }
 }
