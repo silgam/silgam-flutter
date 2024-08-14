@@ -142,7 +142,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: _onPopInvoked,
+      onPopInvokedWithResult: _onPopInvokedWithResult,
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: AnnotatedRegion(
@@ -900,7 +900,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return record;
   }
 
-  void _onPopInvoked(bool didPop) {
+  void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
 
     showDialog(

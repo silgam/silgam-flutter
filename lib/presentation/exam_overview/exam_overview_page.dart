@@ -60,7 +60,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   final _randomTitle =
       _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
 
-  void _onPopInvoked(bool didPop) {
+  void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
     _showExitConfirmDialog();
   }
@@ -204,7 +204,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   builder: (context, state) {
                     return PopScope(
                       canPop: state.recordedExamIds.length == _exams.length,
-                      onPopInvoked: _onPopInvoked,
+                      onPopInvokedWithResult: _onPopInvokedWithResult,
                       child: screenWidth > _tabletLayoutWidth
                           ? _buildTabletLayout()
                           : _buildMobileLayout(),

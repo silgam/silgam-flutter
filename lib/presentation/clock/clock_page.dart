@@ -87,7 +87,7 @@ class _ClockPageState extends State<ClockPage> {
         builder: (context, state) {
           return PopScope(
             canPop: state.isFinished,
-            onPopInvoked: _onPopInvoked,
+            onPopInvokedWithResult: _onPopInvokedWithResult,
             child: Scaffold(
               backgroundColor: Colors.black,
               body: SafeArea(
@@ -624,7 +624,7 @@ class _ClockPageState extends State<ClockPage> {
     );
   }
 
-  void _onPopInvoked(bool didPop) {
+  void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) {
       _finishExam();
     } else {

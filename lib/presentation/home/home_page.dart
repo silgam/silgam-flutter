@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
             builder: (context, state) {
               return PopScope(
                 canPop: state.tabIndex == HomeCubit.defaultTabIndex,
-                onPopInvoked: _onPopInvoked,
+                onPopInvokedWithResult: _onPopInvokedWithResult,
                 child: Scaffold(
                   backgroundColor: SilgamApp.backgroundColor,
                   body: SafeArea(
@@ -208,7 +208,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _onPopInvoked(bool didPop) {
+  void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
     _cubit.changeTab(HomeCubit.defaultTabIndex);
   }
