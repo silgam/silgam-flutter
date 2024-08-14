@@ -108,7 +108,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     }
   }
 
-  void _onPopInvoked(bool didPop) {
+  void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
 
     showDialog(
@@ -332,7 +332,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     return FormBuilder(
       key: _formKey,
       canPop: !_isChanged,
-      onPopInvoked: _onPopInvoked,
+      onPopInvokedWithResult: _onPopInvokedWithResult,
       onChanged: () {
         if (_isChanged) return;
 
