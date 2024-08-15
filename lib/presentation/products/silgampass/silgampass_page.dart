@@ -16,6 +16,8 @@ class SilgampassPage extends StatelessWidget {
     final product = state.sellingProduct;
     if (product != null) {
       Future(() {
+        if (!context.mounted) return;
+
         Navigator.of(context).pushReplacementNamed(
           PurchasePage.routeName,
           arguments: PurchasePageArguments(product: product),

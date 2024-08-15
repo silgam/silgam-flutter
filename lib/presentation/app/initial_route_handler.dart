@@ -13,6 +13,8 @@ class InitialRouteHandler extends StatelessWidget {
         ? _initialRoute.split('silgam.app')[1]
         : _initialRoute;
     Future(() {
+      if (!context.mounted) return;
+
       if (route != HomePage.routeName) {
         Navigator.of(context).pushReplacementNamed(HomePage.routeName);
         Navigator.of(context).pushNamed(route);
