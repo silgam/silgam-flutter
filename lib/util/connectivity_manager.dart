@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../presentation/app/cubit/app_cubit.dart';
+import '../presentation/app/cubit/iap_cubit.dart';
 import 'injection.dart';
 
 @lazySingleton
@@ -38,6 +39,13 @@ class ConnectivityManger {
     final db = FirebaseDatabase.instance;
     _realtimeDatabaseListener =
         db.ref('.info/connected').onValue.skip(1).listen((event) {
+      // ca0acf561495e6e8647f9b60cc911c3581d6de40 커밋 이후로 iOS에서 결제 시작 직후에
+      // event.snapshot.value가 잠깐동안 false에서 true로 바뀌는 현상이 있어 결제 오류가 발생함
+      // 따라서 결제 중에는 아래의 코드 무시
+      // 슬랙: https://silgam.slack.com/archives/C04LTRHMD1R/p1724317524215279?thread_ts=1723657786.199189&cid=C04LTRHMD1R
+      final isPurchasing = getIt.get<IapCubit>().state.isLoading;
+      if (isPurchasing) return;
+
       final connected = event.snapshot.value == true;
       log(
         'Realtime database connected: $connected',
