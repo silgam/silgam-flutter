@@ -85,11 +85,7 @@ class ClockCubit extends Cubit<ClockState> {
 
   void startExam() {
     emit(state.copyWith(isStarted: true));
-    _timer = Timer.periodic(1.seconds, (_) {
-      if (state.isRunning) {
-        _onEverySecond(state.currentTime.add(1.seconds));
-      }
-    });
+    _restartTimer();
     _playAnnouncement();
     _noiseGenerator?.start();
 
@@ -209,6 +205,7 @@ class ClockCubit extends Cubit<ClockState> {
     _saveExamFinishedTimeIfNeeded();
     _announcementPlayer.pause();
     if (adjustTime) {
+      _restartTimer();
       emit(state.copyWith(currentTime: state.currentBreakpoint.time));
       _playAnnouncement();
     }
@@ -260,6 +257,15 @@ class ClockCubit extends Cubit<ClockState> {
         return;
       }
     }
+  }
+
+  void _restartTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(1.seconds, (_) {
+      if (state.isRunning) {
+        _onEverySecond(state.currentTime.add(1.seconds));
+      }
+    });
   }
 
   @override
