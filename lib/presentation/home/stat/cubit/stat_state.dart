@@ -35,14 +35,15 @@ class StatState with _$StatState {
 
   DateTime getDefaultEndDate({List<ExamRecord>? records}) {
     records ??= originalRecords;
-    final lastTime =
+    if (records.isEmpty) {
+      return DateTime.now();
+    }
+
+    final DateTime lastTime =
         records.sortedBy((r) => r.examStartedTime).last.examStartedTime;
-    return (records.isEmpty
-            ? DateTime.now()
-            : lastTime.isAfter(DateTime.now())
-                ? lastTime
-                : DateTime.now())
-        .toDate();
+    return lastTime.isAfter(DateTime.now())
+        ? lastTime.toDate()
+        : DateTime.now().toDate();
   }
 
   DateTimeRange get defaultDateRange =>
