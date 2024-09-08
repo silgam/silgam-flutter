@@ -66,13 +66,13 @@ class ClockCubit extends Cubit<ClockState> {
 
     if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
 
-    final nosieSettingState = _noiseSettingCubit.state;
-    if (nosieSettingState.selectedNoisePreset != NoisePreset.disabled) {
+    final noiseSettingState = _noiseSettingCubit.state;
+    if (noiseSettingState.selectedNoisePreset != NoisePreset.disabled) {
       final noisePlayer = NoiseAudioPlayer(
         availableNoiseIds: _appCubit.state.productBenefit.availableNoiseIds,
       );
       _noiseGenerator = NoiseGenerator(
-        noiseSettingState: nosieSettingState,
+        noiseSettingState: noiseSettingState,
         noisePlayer: noisePlayer,
         clockCubit: this,
       );
@@ -108,7 +108,7 @@ class ClockCubit extends Cubit<ClockState> {
     _onTimeChanged(newTime);
 
     AnalyticsManager.logEvent(
-      name: '[ClockPage] Substract 30 seconds',
+      name: '[ClockPage] Subtract 30 seconds',
       properties: {
         ...defaultLogProperties,
         'current_time': state.currentTime.toString(),
