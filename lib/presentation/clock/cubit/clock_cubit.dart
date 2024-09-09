@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:just_audio/just_audio.dart';
 
 import '../../../model/exam.dart';
 import '../../../model/lap_time.dart';
@@ -13,6 +11,7 @@ import '../../../model/relative_time.dart';
 import '../../../model/timetable.dart';
 import '../../../repository/noise/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
+import '../../../util/announcement_player.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../noise_setting/cubit/noise_setting_cubit.dart';
 import '../breakpoint.dart';
@@ -22,14 +21,13 @@ import '../noise/noise_player.dart';
 part 'clock_cubit.freezed.dart';
 part 'clock_state.dart';
 
-const _announcementsAssetPath = 'assets/announcements';
-
 @injectable
 class ClockCubit extends Cubit<ClockState> {
   ClockCubit(
     @factoryParam this._timetable,
     this._appCubit,
     this._noiseSettingCubit,
+    this._announcementPlayer,
   ) : super(ClockState(
           currentTime: DateTime.now(),
           examStartedTime: DateTime.now(),
@@ -41,8 +39,8 @@ class ClockCubit extends Cubit<ClockState> {
   final Timetable _timetable;
   final AppCubit _appCubit;
   final NoiseSettingCubit _noiseSettingCubit;
+  final AnnouncementPlayer _announcementPlayer;
 
-  final AudioPlayer _announcementPlayer = AudioPlayer();
   Timer? _timer;
   NoiseGenerator? _noiseGenerator;
 
@@ -63,8 +61,6 @@ class ClockCubit extends Cubit<ClockState> {
       breakpoints: Breakpoint.createBreakpointsFromTimetable(_timetable),
       currentTime: breakpoints.first.time,
     ));
-
-    if (!kIsWeb && Platform.isAndroid) _announcementPlayer.setVolume(0.4);
 
     final noiseSettingState = _noiseSettingCubit.state;
     if (noiseSettingState.selectedNoisePreset != NoisePreset.disabled) {
@@ -220,8 +216,7 @@ class ClockCubit extends Cubit<ClockState> {
       return;
     }
 
-    await _announcementPlayer
-        .setAsset('$_announcementsAssetPath/$currentFileName');
+    await _announcementPlayer.setAnnouncement(currentFileName);
     if (state.isRunning) {
       await _announcementPlayer.play();
     }

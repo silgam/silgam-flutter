@@ -22,3 +22,5 @@ const announcementTypes = [
     description: '삐 소리, 코로나 관련 안내가 포함되어 있음',
   ),
 ];
+
+final AnnouncementType defaultAnnouncementType = announcementTypes.first;
