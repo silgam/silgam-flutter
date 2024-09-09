@@ -80,16 +80,7 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 28),
                     child: Text(
-                      '수능 타종 소리는 지역별로, 학교별로 다를 수 있어요.',
-                      style:
-                          TextStyle(height: 1.35, color: Colors.grey.shade800),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28),
-                    child: Text(
-                      '수능장에서의 타종 소리는 평소 연습하던 환경과 다를 수 있으니 다양한 타종 소리로 연습하는 것을 추천드려요.',
+                      '수능 시험장에서의 타종 소리는 지역별로 다를 수 있어요. 혹시 모를 상황에 대비해 다양한 타종 소리로 연습해보세요.',
                       style:
                           TextStyle(height: 1.35, color: Colors.grey.shade800),
                     ),

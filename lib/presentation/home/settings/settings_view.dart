@@ -108,7 +108,7 @@ class _SettingsViewState extends State<SettingsView> {
             '기본 과목의 이름, 응시 시간 등을 바꾼 새로운 과목을 만들 수 있어요. (하프 모의고사, 내신 시험 등 커스텀 가능)',
         showArrow: true,
       ),
-      const SettingDivider(),
+      const Subtitle(text: '소리 설정', margin: EdgeInsets.zero),
       SettingTile(
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',
@@ -119,7 +119,7 @@ class _SettingsViewState extends State<SettingsView> {
       SettingTile(
         onTap: _onAnnouncementSettingButtonTap,
         title: '타종 소리 설정',
-        description: '2024학년도 경기도교육청 사용 중',
+        description: '시험 중 재생되는 타종 소리의 종류를 선택할 수 있어요.',
         showArrow: true,
       ),
       const Subtitle(text: '기타', margin: EdgeInsets.zero),
