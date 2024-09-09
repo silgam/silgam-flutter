@@ -13,6 +13,7 @@ import '../../../model/user.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
+import '../../announcement_setting/announcement_setting_page.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
@@ -112,6 +113,13 @@ class _SettingsViewState extends State<SettingsView> {
         onTap: _onNoiseSettingButtonTap,
         title: '백색 소음, 시험장 소음 설정',
         description: '시험을 볼 때 백색소음과 시험장 소음을 통해 현장감을 극대화할 수 있어요.',
+        showArrow: true,
+      ),
+      const SettingDivider(),
+      SettingTile(
+        onTap: _onAnnouncementSettingButtonTap,
+        title: '타종 소리 설정',
+        description: '2024학년도 경기도교육청 사용 중',
         showArrow: true,
       ),
       const Subtitle(text: '기타', margin: EdgeInsets.zero),
@@ -462,6 +470,10 @@ class _SettingsViewState extends State<SettingsView> {
 
   void _onNoiseSettingButtonTap() {
     Navigator.pushNamed(context, NoiseSettingPage.routeName);
+  }
+
+  void _onAnnouncementSettingButtonTap() {
+    Navigator.pushNamed(context, AnnouncementSettingPage.routeName);
   }
 
   void _onCustomizeSubjectNameButtonTap() {

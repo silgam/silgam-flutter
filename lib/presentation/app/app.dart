@@ -13,6 +13,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
+import '../announcement_setting/announcement_setting_page.dart';
 import '../clock/clock_page.dart';
 import '../common/progress_overlay.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
@@ -90,6 +91,8 @@ class SilgamApp extends StatelessWidget {
           OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
           SilgampassPage.routeName: (_) => const SilgampassPage(),
           CustomExamListPage.routeName: (_) => const CustomExamListPage(),
+          AnnouncementSettingPage.routeName: (_) =>
+              const AnnouncementSettingPage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
