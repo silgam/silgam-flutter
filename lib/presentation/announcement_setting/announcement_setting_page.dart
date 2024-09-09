@@ -1,5 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../util/const.dart';
+import '../../util/injection.dart';
 import '../common/custom_menu_bar.dart';
 import 'announcement_type.dart';
 
@@ -14,12 +18,30 @@ class AnnouncementSettingPage extends StatefulWidget {
 }
 
 class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
+  final SharedPreferences _sharedPreferences = getIt.get();
+
   AnnouncementType? _selectedAnnouncementType = announcementTypes[0];
+
+  @override
+  void initState() {
+    super.initState();
+
+    final announcementTypeId =
+        _sharedPreferences.getInt(PreferenceKey.announcementTypeId) ??
+            announcementTypes[0].id;
+    _selectedAnnouncementType = announcementTypes.firstWhereOrNull(
+      (element) => element.id == announcementTypeId,
+    );
+  }
 
   void _onAnnouncementTypeChanged(AnnouncementType? value) {
     setState(() {
       _selectedAnnouncementType = value;
     });
+    _sharedPreferences.setInt(
+      PreferenceKey.announcementTypeId,
+      value?.id ?? announcementTypes[0].id,
+    );
   }
 
   @override

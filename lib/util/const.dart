@@ -30,6 +30,7 @@ abstract class PreferenceKey {
   static const cacheAds = 'ads';
   static const cacheDDays = 'ddays';
   static const isOnboardingFinished = 'isOnboardingFinished';
+  static const announcementTypeId = 'announcementTypeId';
 }
 
 abstract class ProductId {
