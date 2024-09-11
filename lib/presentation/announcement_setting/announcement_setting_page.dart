@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/subject.dart';
+import '../../util/analytics_manager.dart';
 import '../../util/announcement_player.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
@@ -46,12 +47,13 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
     super.dispose();
   }
 
-  void _onAnnouncementTypeChanged(AnnouncementType? value) {
+  void _onAnnouncementTypeChanged(AnnouncementType? announcementType) {
     setState(() {
-      _selectedAnnouncementType = value;
+      _selectedAnnouncementType = announcementType;
     });
 
-    final announcementTypeId = value?.id ?? defaultAnnouncementType.id;
+    final announcementTypeId =
+        announcementType?.id ?? defaultAnnouncementType.id;
     _sharedPreferences.setInt(
       PreferenceKey.announcementTypeId,
       announcementTypeId,
@@ -63,6 +65,17 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
         announcementTypeId: announcementTypeId,
       )
       ..play();
+
+    AnalyticsManager.logEvent(
+      name: '[AnnouncementSettingPage] Announcement Type Changed',
+      properties: {
+        'announcementTypeId': announcementTypeId,
+      },
+    );
+    AnalyticsManager.setPeopleProperty(
+      'Announcement Type',
+      announcementTypeId,
+    );
   }
 
   @override
