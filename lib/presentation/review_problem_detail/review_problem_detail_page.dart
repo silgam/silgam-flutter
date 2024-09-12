@@ -113,7 +113,9 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     return Container(
       padding: EdgeInsets.only(top: statusBarHeight),
       margin: const EdgeInsets.only(bottom: 40),
-      color: Colors.black38,
+      color: _hideMemo
+          ? Colors.black.withOpacity(0.4)
+          : Colors.black.withOpacity(0.7),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +143,6 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
-                      color: Colors.black38,
                       child: Text(
                         problem.memo,
                         style: const TextStyle(
