@@ -109,8 +109,10 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   Widget _buildMenuBar() {
     final problem = widget.reviewProblem;
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
+
     return Container(
       padding: EdgeInsets.only(top: statusBarHeight),
+      margin: const EdgeInsets.only(bottom: 40),
       color: Colors.black38,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -134,14 +136,18 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
           ),
           _hideMemo
               ? const SizedBox.shrink()
-              : Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  color: Colors.black38,
-                  child: Text(
-                    problem.memo,
-                    style: const TextStyle(
-                      color: Colors.white,
+              : Flexible(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      color: Colors.black38,
+                      child: Text(
+                        problem.memo,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),
