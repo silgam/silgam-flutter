@@ -820,11 +820,13 @@ class _EditRecordPageState extends State<EditRecordPage> {
       title: title,
       exam: _selectedExam,
       examStartedTime: _examStartedTime,
-      examDurationMinutes: int.tryParse(_examDurationEditingController.text),
-      score: int.tryParse(_scoreEditingController.text),
-      grade: int.tryParse(_gradeEditingController.text),
-      percentile: int.tryParse(_percentileEditingController.text),
-      standardScore: int.tryParse(_standardScoreEditingController.text),
+      examDurationMinutes:
+          _acceptPositiveInteger(_examDurationEditingController.text),
+      score: _acceptPositiveInteger(_scoreEditingController.text),
+      grade: _acceptPositiveInteger(_gradeEditingController.text),
+      percentile: _acceptPositiveInteger(_percentileEditingController.text),
+      standardScore:
+          _acceptPositiveInteger(_standardScoreEditingController.text),
       wrongProblems: _wrongProblems,
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
@@ -914,6 +916,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
         );
       },
     );
+  }
+
+  int? _acceptPositiveInteger(String text) {
+    final intValue = int.tryParse(text);
+    if (intValue == null || intValue <= 0) return null;
+    return intValue;
   }
 }
 
