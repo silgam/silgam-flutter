@@ -926,6 +926,13 @@ enum ExamValueType {
     minValue: 0,
     maxValue: 100,
   ),
+  scoreRatio(
+    name: '점수 비율',
+    postfix: '%',
+    getValue: getScoreRatio,
+    minValue: 0,
+    maxValue: 100,
+  ),
   grade(
     name: '등급',
     postfix: '등급',
@@ -968,8 +975,17 @@ enum ExamValueType {
   int get reverseMultiple => reverse ? -1 : 1;
 
   static int? getScore(ExamRecord record) => record.score;
+
+  static int? getScoreRatio(ExamRecord record) {
+    final perfectScore = record.exam.perfectScore;
+    final score = record.score?.clamp(0, perfectScore);
+    return score != null ? ((score / perfectScore) * 100).round() : null;
+  }
+
   static int? getGrade(ExamRecord record) => record.grade;
+
   static int? getPercentile(ExamRecord record) => record.percentile;
+
   static int? getStandardScore(ExamRecord record) => record.standardScore;
 }
 
