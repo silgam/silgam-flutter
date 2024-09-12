@@ -331,16 +331,22 @@ class _StatViewState extends State<StatView> {
           const SizedBox(height: 8),
           AspectRatio(
             aspectRatio: 3 / 2,
-            child: _buildValueGraphs(
-              examValueType: examValueType,
-              recordsMap: filteredRecords.map(
-                (exam, records) => MapEntry(
-                  exam,
-                  records
-                      .where((record) => examValueType.getValue(record) != null)
-                      .sortedBy((record) => record.examStartedTime),
-                ),
-              )..removeWhere((subject, records) => records.isEmpty),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return _buildValueGraphs(
+                  examValueType: examValueType,
+                  recordsMap: filteredRecords.map(
+                    (exam, records) => MapEntry(
+                      exam,
+                      records
+                          .where((record) =>
+                              examValueType.getValue(record) != null)
+                          .sortedBy((record) => record.examStartedTime),
+                    ),
+                  )..removeWhere((subject, records) => records.isEmpty),
+                  cardWidth: constraints.maxWidth,
+                );
+              },
             ),
           ),
           const SizedBox(height: 16),
@@ -388,9 +394,8 @@ class _StatViewState extends State<StatView> {
   Widget _buildValueGraphs({
     required Map<Exam, List<ExamRecord>> recordsMap,
     required ExamValueType examValueType,
+    required double cardWidth,
   }) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     final allRecords = recordsMap.values.flattened;
     final dateToRecordsMap = SplayTreeMap<String, List<ExamRecord>>();
     recordsMap.forEach((subject, records) {
@@ -490,7 +495,7 @@ class _StatViewState extends State<StatView> {
       },
       touchTooltipData: LineTouchTooltipData(
         fitInsideHorizontally: true,
-        maxContentWidth: screenWidth * 0.8,
+        maxContentWidth: cardWidth - 20,
         getTooltipColor: (_) => Colors.white,
         tooltipBorder: const BorderSide(color: Colors.grey),
         tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
