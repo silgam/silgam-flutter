@@ -32,7 +32,7 @@ class ReviewProblemDetailPage extends StatefulWidget {
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   final AppCubit _appCubit = getIt.get();
   bool _hideUi = false;
-  bool _hideMemo = true;
+  bool _hideMemo = false;
   int _currentIndex = 0;
   double _imageX = 0;
   double _imageY = 0;
