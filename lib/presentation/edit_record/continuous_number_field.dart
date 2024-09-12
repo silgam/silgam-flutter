@@ -4,11 +4,13 @@ import 'package:flutter/services.dart';
 class ContinuousNumberField extends StatefulWidget {
   final Function(int) onSubmit;
   final Function() onDelete;
+  final int maxDigits;
 
   const ContinuousNumberField({
     super.key,
     required this.onSubmit,
     required this.onDelete,
+    this.maxDigits = 2,
   });
 
   @override
@@ -82,7 +84,7 @@ class _ContinuousNumberFieldState extends State<ContinuousNumberField> {
     if (text.endsWith(' ') ||
         text.endsWith('.') ||
         text.endsWith(',') ||
-        text.length >= 2) {
+        text.length >= widget.maxDigits) {
       _onSubmitted(_editingController.text);
     }
   }

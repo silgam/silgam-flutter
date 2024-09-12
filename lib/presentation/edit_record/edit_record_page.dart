@@ -461,6 +461,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
               child: ContinuousNumberField(
                 onSubmit: _onWrongProblemAdded,
                 onDelete: _onWrongProblemDeleted,
+                maxDigits: _selectedExam.numberOfQuestions > 99 ? 3 : 2,
               ),
             )
           ],
