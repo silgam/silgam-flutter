@@ -326,6 +326,35 @@ class _StatViewState extends State<StatView> {
                 '그래프',
                 style: _titleTextStyle,
               ),
+              examValueType == ExamValueType.scoreRatio
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: Tooltip(
+                        message: '''모든 과목의 만점을 100점으로 환산해서 볼 수 있어요.
+
+예시1: 만점이 50점인 과목의 점수가 40점 -> 보정 점수 80점
+예시2: 만점이 20점인 과목의 점수가 10점 -> 보정 점수 50점
+
+환산식: 보정 점수 = (취득 점수 / 만점) x 100''',
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: const Duration(seconds: 5),
+                        textStyle: const TextStyle(
+                          height: 1.4,
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        child: Icon(
+                          Icons.help_outline,
+                          size: 18,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ],
           ),
           const SizedBox(height: 8),
@@ -908,9 +937,12 @@ class _StatViewState extends State<StatView> {
           .map((valueType) => DropdownMenuItem(
                 value: valueType,
                 alignment: Alignment.center,
-                child: Text(
-                  valueType.name,
-                  style: _titleTextStyle,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Text(
+                    valueType.name,
+                    style: _titleTextStyle,
+                  ),
                 ),
               ))
           .toList(),
@@ -927,8 +959,8 @@ enum ExamValueType {
     maxValue: 100,
   ),
   scoreRatio(
-    name: '점수 비율',
-    postfix: '%',
+    name: '보정 점수',
+    postfix: '점',
     getValue: getScoreRatio,
     minValue: 0,
     maxValue: 100,
