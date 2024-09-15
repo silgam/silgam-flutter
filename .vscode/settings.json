@@ -7,6 +7,7 @@
     "colorsets",
     "Cupertino",
     "Datas",
+    "dday",
     "ddays",
     "easyloading",
     "firestore",
@@ -20,10 +21,12 @@
     "silgam",
     "silgampass",
     "storekit",
+    "suneung",
     "unfocus",
     "unfreezed",
     "vsync",
-    "wakelock"
+    "wakelock",
+    "writeln"
   ],
   "cSpell.spellCheckOnlyWorkspaceFiles": true
 }
