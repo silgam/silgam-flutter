@@ -12,10 +12,6 @@ class WrongProblem with _$WrongProblem {
   factory WrongProblem.fromJson(Map<String, dynamic> json) =>
       _$WrongProblemFromJson(json);
 
-  static List<Map<String, dynamic>> toJsonList(List<WrongProblem> instances) {
-    return instances.map((e) => e.toJson()).toList();
-  }
-
   @override
   String toString() {
     return 'WrongProblem{problemNumber: $problemNumber}';
@@ -38,10 +34,6 @@ class ReviewProblem {
       _$ReviewProblemFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReviewProblemToJson(this);
-
-  static List<Map<String, dynamic>> toJsonList(List<ReviewProblem> instances) {
-    return instances.map((e) => e.toJson()).toList();
-  }
 
   @override
   String toString() {
