@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../util/date_time_extension.dart';
 import 'exam.dart';
 
 part 'timetable.freezed.dart';
@@ -10,9 +11,13 @@ class Timetable with _$Timetable {
   const Timetable._();
 
   const factory Timetable({
+    required String id,
+    String? userId,
     required String name,
+    @JsonKey(fromJson: timeFromJson, toJson: timeToJson)
     required DateTime startTime,
     required List<TimetableItem> items,
+    DateTime? createdAt,
   }) = _Timetable;
 
   factory Timetable.fromJson(Map<String, dynamic> json) =>

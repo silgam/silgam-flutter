@@ -28,3 +28,13 @@ extension TimeOfDayExtension on TimeOfDay {
     return DateTime(0, 1, 1, hour, minute);
   }
 }
+
+DateTime timeFromJson(String json) {
+  final parts = json.split(':');
+  return DateTimeBuilder.fromHourMinute(
+      int.parse(parts[0]), int.parse(parts[1]));
+}
+
+String timeToJson(DateTime dateTime) {
+  return '${dateTime.hour}:${dateTime.minute}';
+}

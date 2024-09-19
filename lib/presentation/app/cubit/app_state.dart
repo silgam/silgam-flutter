@@ -119,6 +119,7 @@ class AppState with _$AppState {
 
     final timetables = allExams
         .map((exam) => Timetable(
+              id: exam.id,
               name: exam.name,
               startTime: exam.timetableStartTime,
               items: [
@@ -136,6 +137,7 @@ class AppState with _$AppState {
       allExams.indexWhere((exam) =>
           exam.subject == Subject.investigation && !exam.isCustomExam),
       Timetable(
+        id: 'all-investigation',
         name: '탐구 연속',
         startTime: defaultInvestigationExam.timetableStartTime,
         items: [
