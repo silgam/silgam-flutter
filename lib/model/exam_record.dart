@@ -22,10 +22,8 @@ class ExamRecord with _$ExamRecord {
     final int? grade,
     final int? percentile,
     final int? standardScore,
-    @JsonKey(toJson: WrongProblem.toJsonList)
     required final List<WrongProblem> wrongProblems,
     required final String feedback,
-    @JsonKey(toJson: ReviewProblem.toJsonList)
     required final List<ReviewProblem> reviewProblems,
     required final DateTime createdAt,
   }) = _ExamRecord;
