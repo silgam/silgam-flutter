@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -29,7 +30,7 @@ abstract class RegisterModule {
   Dio get dio => Dio(BaseOptions(
         baseUrl: urlSilgamApi,
         contentType: Headers.jsonContentType,
-        sendTimeout: const Duration(seconds: 20),
+        sendTimeout: kIsWeb ? null : const Duration(seconds: 20),
         receiveTimeout: const Duration(seconds: 20),
         connectTimeout: const Duration(seconds: 20),
       ))
