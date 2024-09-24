@@ -71,7 +71,7 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
               Icon(
                 iconData,
                 color: color,
-                size: 28,
+                size: 24,
               ),
               const SizedBox(height: 4),
               Text(
@@ -79,8 +79,8 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: color,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
                   height: 1.15,
                 ),
               ),
