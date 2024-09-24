@@ -31,8 +31,21 @@
 
     <title>silgam</title>
     <link rel="manifest" href="manifest.json" />
+
+    <meta
+      name="google-signin-client_id"
+      content="55232180944-3nk43dor566t441a74lahhuu0ur0t5gt.apps.googleusercontent.com"
+    />
   </head>
   <body>
-    <script src="flutter_bootstrap.js" async></script>
+    <script src="flutter_bootstrap.js" async>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('firebase-messaging-sw.js', {
+            scope: '/firebase-cloud-messaging-push-scope',
+          });
+        });
+      }
+    </script>
   </body>
 </html>
