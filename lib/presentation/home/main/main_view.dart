@@ -59,126 +59,59 @@ class _MainViewState extends State<MainView> {
   final _randomWelcomeMessage =
       _welcomeMessages[Random().nextInt(_welcomeMessages.length)];
 
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    return BlocProvider.value(
-      value: getIt.get<MainCubit>(),
-      child: BlocListener<AppCubit, AppState>(
-        listenWhen: (previous, current) => previous.me != current.me,
-        listener: (context, state) {
-          context.read<MainCubit>().updateAds();
-        },
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                screenWidth > tabletScreenWidth
-                    ? _buildTabletLayout()
-                    : _buildMobileLayout(),
-              ],
-            ),
-          ),
+  void _onLoginButtonTap() {
+    Navigator.pushNamed(context, LoginPage.routeName);
+  }
+
+  void _onNoiseSettingButtonTap() {
+    Navigator.pushNamed(context, NoiseSettingPage.routeName);
+  }
+
+  void _onRecordButtonTap() async {
+    final isSignedIn = context.read<AppCubit>().state.isSignedIn;
+    if (isSignedIn) {
+      await Navigator.pushNamed(
+        context,
+        EditRecordPage.routeName,
+        arguments: EditRecordPageArguments(),
+      );
+    }
+    if (mounted) {
+      context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
+    }
+  }
+
+  void _onSendFeedbackButtonTap() {
+    showSendFeedbackDialog(context);
+  }
+
+  Widget _buildSnsButton({
+    required String snsName,
+    required String tooltip,
+    required String url,
+  }) {
+    return IconButton(
+      onPressed: () {
+        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+        AnalyticsManager.logEvent(
+          name: '[HomePage-main] SNS button tapped',
+          properties: {'title': tooltip},
+        );
+      },
+      splashRadius: 20,
+      tooltip: tooltip,
+      visualDensity: const VisualDensity(
+        horizontal: VisualDensity.minimumDensity,
+        vertical: VisualDensity.minimumDensity,
+      ),
+      icon: SvgPicture.asset(
+        'assets/sns_$snsName.svg',
+        width: 20,
+        colorFilter: const ColorFilter.mode(
+          Colors.grey,
+          BlendMode.srcIn,
         ),
       ),
-    );
-  }
-
-  Widget _buildTabletLayout() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
-    final horizontalPadding = max(
-      (screenWidth - maxWidthForTablet) / 2,
-      originalHorizontalPadding,
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: screenWidth > 1000 ? 80 : 40),
-        _buildTitle(horizontalPadding: horizontalPadding, isTablet: true),
-        const SizedBox(height: 16),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildWelcomeMessage(isTablet: true),
-              const SizedBox(height: 8),
-              const Divider(indent: 20, endIndent: 20),
-              const SizedBox(height: 20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildAdsCard(),
-                        _buildLoginCard(),
-                        _buildCustomExamCard(),
-                        _buildNoiseSettingCard(),
-                        _buildRecordCard(),
-                        _buildSendFeedbackCard(),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 40),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildDDaysCard(),
-                        const _SilgamNowCard(),
-                        _buildTimetableStartCard(),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              _buildAd(),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMobileLayout() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final horizontalPadding = max((screenWidth - maxWidth) / 2, 20.0);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 32),
-        _buildTitle(horizontalPadding: horizontalPadding),
-        const SizedBox(height: 4),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildWelcomeMessage(),
-              const SizedBox(height: 4),
-              const Divider(indent: 20, endIndent: 20),
-              _buildAdsCard(),
-              _buildDDaysCard(),
-              const _SilgamNowCard(),
-              _buildTimetableStartCard(),
-              _buildLoginCard(),
-              _buildCustomExamCard(),
-              _buildNoiseSettingCard(),
-              _buildRecordCard(),
-              _buildSendFeedbackCard(),
-              _buildAd(),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -245,36 +178,6 @@ class _MainViewState extends State<MainView> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildSnsButton({
-    required String snsName,
-    required String tooltip,
-    required String url,
-  }) {
-    return IconButton(
-      onPressed: () {
-        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-        AnalyticsManager.logEvent(
-          name: '[HomePage-main] SNS button tapped',
-          properties: {'title': tooltip},
-        );
-      },
-      splashRadius: 20,
-      tooltip: tooltip,
-      visualDensity: const VisualDensity(
-        horizontal: VisualDensity.minimumDensity,
-        vertical: VisualDensity.minimumDensity,
-      ),
-      icon: SvgPicture.asset(
-        'assets/sns_$snsName.svg',
-        width: 20,
-        colorFilter: const ColorFilter.mode(
-          Colors.grey,
-          BlendMode.srcIn,
-        ),
-      ),
     );
   }
 
@@ -396,29 +299,126 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  void _onLoginButtonTap() {
-    Navigator.pushNamed(context, LoginPage.routeName);
+  Widget _buildTabletLayout() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
+    final horizontalPadding = max(
+      (screenWidth - maxWidthForTablet) / 2,
+      originalHorizontalPadding,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: screenWidth > 1000 ? 80 : 40),
+        _buildTitle(horizontalPadding: horizontalPadding, isTablet: true),
+        const SizedBox(height: 16),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildWelcomeMessage(isTablet: true),
+              const SizedBox(height: 8),
+              const Divider(indent: 20, endIndent: 20),
+              const SizedBox(height: 20),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildAdsCard(),
+                        _buildLoginCard(),
+                        _buildCustomExamCard(),
+                        _buildNoiseSettingCard(),
+                        _buildRecordCard(),
+                        _buildSendFeedbackCard(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 40),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _buildDDaysCard(),
+                        const _SilgamNowCard(),
+                        _buildTimetableStartCard(),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              _buildAd(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
-  void _onNoiseSettingButtonTap() {
-    Navigator.pushNamed(context, NoiseSettingPage.routeName);
+  Widget _buildMobileLayout() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = max((screenWidth - maxWidth) / 2, 20.0);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 32),
+        _buildTitle(horizontalPadding: horizontalPadding),
+        const SizedBox(height: 4),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildWelcomeMessage(),
+              const SizedBox(height: 4),
+              const Divider(indent: 20, endIndent: 20),
+              _buildAdsCard(),
+              _buildDDaysCard(),
+              const _SilgamNowCard(),
+              _buildTimetableStartCard(),
+              _buildLoginCard(),
+              _buildCustomExamCard(),
+              _buildNoiseSettingCard(),
+              _buildRecordCard(),
+              _buildSendFeedbackCard(),
+              _buildAd(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
-  void _onRecordButtonTap() async {
-    final isSignedIn = context.read<AppCubit>().state.isSignedIn;
-    if (isSignedIn) {
-      await Navigator.pushNamed(
-        context,
-        EditRecordPage.routeName,
-        arguments: EditRecordPageArguments(),
-      );
-    }
-    if (mounted) {
-      context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
-    }
-  }
-
-  void _onSendFeedbackButtonTap() {
-    showSendFeedbackDialog(context);
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return BlocProvider.value(
+      value: getIt.get<MainCubit>(),
+      child: BlocListener<AppCubit, AppState>(
+        listenWhen: (previous, current) => previous.me != current.me,
+        listener: (context, state) {
+          context.read<MainCubit>().updateAds();
+        },
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                screenWidth > tabletScreenWidth
+                    ? _buildTabletLayout()
+                    : _buildMobileLayout(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
