@@ -1,15 +1,21 @@
-part of 'main_view.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class _TimetableStartCard extends StatefulWidget {
-  const _TimetableStartCard({required this.timetables});
+import '../../../model/timetable.dart';
+import '../../../util/duration_extension.dart';
+import '../../clock/clock_page.dart';
+import '../../common/custom_card.dart';
+
+class TimetableStartCard extends StatefulWidget {
+  const TimetableStartCard({super.key, required this.timetables});
 
   final List<Timetable> timetables;
 
   @override
-  _TimetableStartCardState createState() => _TimetableStartCardState();
+  State<TimetableStartCard> createState() => _TimetableStartCardState();
 }
 
-class _TimetableStartCardState extends State<_TimetableStartCard>
+class _TimetableStartCardState extends State<TimetableStartCard>
     with TickerProviderStateMixin {
   TabController? _tabController;
   int _selectedTimetableIndex = 0;
@@ -37,7 +43,7 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
   }
 
   @override
-  void didUpdateWidget(covariant _TimetableStartCard oldWidget) {
+  void didUpdateWidget(covariant TimetableStartCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateTabController();
   }

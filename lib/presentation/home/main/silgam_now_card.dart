@@ -1,13 +1,20 @@
-part of 'main_view.dart';
+import 'dart:async';
 
-class _SilgamNowCard extends StatefulWidget {
-  const _SilgamNowCard() : super();
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../app/cubit/app_cubit.dart';
+import '../../common/custom_card.dart';
+
+class SilgamNowCard extends StatefulWidget {
+  const SilgamNowCard({super.key});
 
   @override
-  State<_SilgamNowCard> createState() => _SilgamNowCardState();
+  State<SilgamNowCard> createState() => _SilgamNowCardState();
 }
 
-class _SilgamNowCardState extends State<_SilgamNowCard> {
+class _SilgamNowCardState extends State<SilgamNowCard> {
   Timer? _updateTimer;
   StreamSubscription? _onlineDevicesCountSubscription;
   StreamSubscription? _minOnlineDevicesShowingCountSubscription;

@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'dart:math';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,24 +7,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../model/timetable.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
-import '../../../util/duration_extension.dart';
 import '../../../util/injection.dart';
 import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
-import '../../clock/clock_page.dart';
 import '../../common/ad_tile.dart';
-import '../../common/custom_card.dart';
 import 'ads_card.dart';
 import 'cubit/main_cubit.dart';
 import 'd_days_card.dart';
 import 'quick_launcher_card.dart';
-
-part 'silgam_now_card.dart';
-part 'timetable_start_card.dart';
-part 'welcome_messages.dart';
+import 'silgam_now_card.dart';
+import 'timetable_start_card.dart';
+import 'welcome_messages.dart';
 
 class MainView extends StatefulWidget {
   static const title = '메인';
@@ -39,7 +32,7 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   final _randomWelcomeMessage =
-      _welcomeMessages[Random().nextInt(_welcomeMessages.length)];
+      welcomeMessages[Random().nextInt(welcomeMessages.length)];
 
   Widget _buildSnsButton({
     required String snsName,
@@ -152,7 +145,7 @@ class _MainViewState extends State<MainView> {
       buildWhen: (previous, current) =>
           !listEquals(previous.getAllTimetables(), current.getAllTimetables()),
       builder: (context, state) {
-        return _TimetableStartCard(timetables: state.getAllTimetables());
+        return TimetableStartCard(timetables: state.getAllTimetables());
       },
     );
   }
@@ -219,7 +212,7 @@ class _MainViewState extends State<MainView> {
                     child: Column(
                       children: [
                         const DDaysCard(),
-                        const _SilgamNowCard(),
+                        const SilgamNowCard(),
                         _buildTimetableStartCard(),
                       ],
                     ),
@@ -254,7 +247,7 @@ class _MainViewState extends State<MainView> {
               const Divider(indent: 20, endIndent: 20),
               const AdsCard(),
               const DDaysCard(),
-              const _SilgamNowCard(),
+              const SilgamNowCard(),
               _buildTimetableStartCard(),
               const QuickLauncherCard(),
               _buildAd(),

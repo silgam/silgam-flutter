@@ -1,6 +1,4 @@
-part of 'main_view.dart';
-
-const List<String> _welcomeMessages = [
+const List<String> welcomeMessages = [
   '오늘도 빡공하세요! 🔥',
   '오늘도 파이팅! 🔥',
   '오늘의 노력 = 수능 날의 1점 💯',
