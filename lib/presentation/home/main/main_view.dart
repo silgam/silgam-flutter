@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,20 +26,13 @@ import '../../app/cubit/iap_cubit.dart';
 import '../../clock/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
-import '../../common/dialog.dart';
 import '../../custom_exam_guide/custom_exam_guide_page.dart';
-import '../../custom_exam_list/custom_exam_list_page.dart';
-import '../../edit_record/edit_record_page.dart';
-import '../../login/login_page.dart';
-import '../../noise_setting/noise_setting_page.dart';
 import '../../offline/offline_guide_page.dart';
 import '../../purchase/purchase_page.dart';
-import '../cubit/home_cubit.dart';
-import '../record_list/record_list_view.dart';
 import 'cubit/main_cubit.dart';
+import 'quick_launcher_card.dart';
 
 part 'ads_card.dart';
-part 'button_card.dart';
 part 'd_days_card.dart';
 part 'silgam_now_card.dart';
 part 'timetable_start_card.dart';
@@ -58,32 +50,6 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   final _randomWelcomeMessage =
       _welcomeMessages[Random().nextInt(_welcomeMessages.length)];
-
-  void _onLoginButtonTap() {
-    Navigator.pushNamed(context, LoginPage.routeName);
-  }
-
-  void _onNoiseSettingButtonTap() {
-    Navigator.pushNamed(context, NoiseSettingPage.routeName);
-  }
-
-  void _onRecordButtonTap() async {
-    final isSignedIn = context.read<AppCubit>().state.isSignedIn;
-    if (isSignedIn) {
-      await Navigator.pushNamed(
-        context,
-        EditRecordPage.routeName,
-        arguments: EditRecordPageArguments(),
-      );
-    }
-    if (mounted) {
-      context.read<HomeCubit>().changeTabByTitle(RecordListView.title);
-    }
-  }
-
-  void _onSendFeedbackButtonTap() {
-    showSendFeedbackDialog(context);
-  }
 
   Widget _buildSnsButton({
     required String snsName,
@@ -225,59 +191,6 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildLoginCard() {
-    return BlocBuilder<AppCubit, AppState>(
-      buildWhen: (previous, current) =>
-          previous.isSignedIn != current.isSignedIn,
-      builder: (context, state) {
-        if (state.isNotSignedIn) {
-          return _ButtonCard(
-            onTap: _onLoginButtonTap,
-            iconData: Icons.login,
-            title: '간편로그인하고 더 많은 기능 이용하기',
-            primary: true,
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
-
-  Widget _buildCustomExamCard() {
-    return _ButtonCard(
-      onTap: () {
-        Navigator.pushNamed(context, CustomExamListPage.routeName);
-      },
-      iconData: Icons.palette,
-      title: '나만의 과목 만들기',
-    );
-  }
-
-  Widget _buildNoiseSettingCard() {
-    return _ButtonCard(
-      onTap: _onNoiseSettingButtonTap,
-      iconData: Icons.graphic_eq,
-      title: '백색 소음, 시험장 소음 설정하기',
-    );
-  }
-
-  Widget _buildRecordCard() {
-    return _ButtonCard(
-      onTap: _onRecordButtonTap,
-      iconData: Icons.edit,
-      title: '모의고사 기록하고 피드백하기',
-    );
-  }
-
-  Widget _buildSendFeedbackCard() {
-    return _ButtonCard(
-      onTap: _onSendFeedbackButtonTap,
-      iconData: CupertinoIcons.paperplane_fill,
-      title: '실감팀에게 의견 보내기',
-    );
-  }
-
   Widget _buildAd() {
     return BlocBuilder<AppCubit, AppState>(
       buildWhen: (previous, current) =>
@@ -331,11 +244,7 @@ class _MainViewState extends State<MainView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildAdsCard(),
-                        _buildLoginCard(),
-                        _buildCustomExamCard(),
-                        _buildNoiseSettingCard(),
-                        _buildRecordCard(),
-                        _buildSendFeedbackCard(),
+                        const QuickLauncherCard(),
                       ],
                     ),
                   ),
@@ -381,11 +290,7 @@ class _MainViewState extends State<MainView> {
               _buildDDaysCard(),
               const _SilgamNowCard(),
               _buildTimetableStartCard(),
-              _buildLoginCard(),
-              _buildCustomExamCard(),
-              _buildNoiseSettingCard(),
-              _buildRecordCard(),
-              _buildSendFeedbackCard(),
+              const QuickLauncherCard(),
               _buildAd(),
               const SizedBox(height: 20),
             ],
