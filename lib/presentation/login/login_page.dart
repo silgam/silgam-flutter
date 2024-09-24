@@ -105,15 +105,15 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            '로그인',
+            '3초만에 가입 / 로그인',
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 28,
               fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: 12),
           const Text(
-            '로그인하면 실감의 더 많은 기능들을 누릴 수 있어요!',
+            '로그인하면 실감의 더 많은 기능들을 이용할 수 있어요!',
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.w300),
           ),
@@ -251,7 +251,7 @@ class _LoginButton extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    '$provider 로그인',
+                    '$provider로 계속하기',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: lightText ? Colors.white : Colors.black,
