@@ -1,20 +1,14 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:collection/collection.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../../model/ads.dart';
 import '../../../model/timetable.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
@@ -22,17 +16,13 @@ import '../../../util/duration_extension.dart';
 import '../../../util/injection.dart';
 import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
-import '../../app/cubit/iap_cubit.dart';
 import '../../clock/clock_page.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
-import '../../custom_exam_guide/custom_exam_guide_page.dart';
-import '../../offline/offline_guide_page.dart';
-import '../../purchase/purchase_page.dart';
+import 'ads_card.dart';
 import 'cubit/main_cubit.dart';
 import 'quick_launcher_card.dart';
 
-part 'ads_card.dart';
 part 'd_days_card.dart';
 part 'silgam_now_card.dart';
 part 'timetable_start_card.dart';
@@ -157,18 +147,6 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildAdsCard() {
-    return BlocBuilder<MainCubit, MainState>(
-      builder: (context, state) {
-        if (state.ads.isNotEmpty) {
-          return AdsCard(ads: state.ads);
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
-
   Widget _buildDDaysCard() {
     return BlocBuilder<MainCubit, MainState>(
       builder: (context, state) {
@@ -238,13 +216,13 @@ class _MainViewState extends State<MainView> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildAdsCard(),
-                        const QuickLauncherCard(),
+                        AdsCard(),
+                        QuickLauncherCard(),
                       ],
                     ),
                   ),
@@ -286,7 +264,7 @@ class _MainViewState extends State<MainView> {
               _buildWelcomeMessage(),
               const SizedBox(height: 4),
               const Divider(indent: 20, endIndent: 20),
-              _buildAdsCard(),
+              const AdsCard(),
               _buildDDaysCard(),
               const _SilgamNowCard(),
               _buildTimetableStartCard(),

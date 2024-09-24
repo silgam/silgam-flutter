@@ -1,12 +1,24 @@
-part of 'main_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+
+import '../../../model/ads.dart';
+import '../../../util/analytics_manager.dart';
+import '../../../util/injection.dart';
+import '../../app/cubit/iap_cubit.dart';
+import '../../common/custom_card.dart';
+import '../../custom_exam_guide/custom_exam_guide_page.dart';
+import '../../offline/offline_guide_page.dart';
+import '../../purchase/purchase_page.dart';
+import 'cubit/main_cubit.dart';
 
 class AdsCard extends StatefulWidget {
-  final List<Ads> ads;
-
-  const AdsCard({
-    super.key,
-    required this.ads,
-  });
+  const AdsCard({super.key});
 
   @override
   State<AdsCard> createState() => _AdsCardState();
@@ -24,58 +36,67 @@ class _AdsCardState extends State<AdsCard> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomCard(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          CarouselSlider(
-            options: CarouselOptions(
-              aspectRatio: 2,
-              viewportFraction: 1,
-              autoPlay: widget.ads.length > 1,
-              enableInfiniteScroll: widget.ads.length > 1,
-              onPageChanged: _onPageChanged,
-            ),
-            items: [
-              for (final (index, ads) in widget.ads.indexed)
-                VisibilityDetector(
-                  key: Key('$index ${ads.imagePath}'),
-                  onVisibilityChanged: (info) =>
-                      _onVisibilityChanged(index, info),
-                  child: GestureDetector(
-                    onTap: () => _onAdsTap(ads, index),
-                    child: CachedNetworkImage(
-                      imageUrl: ads.imagePath,
-                      fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => Center(
-                        child: Icon(
-                          Icons.image,
-                          size: 32,
-                          color: Colors.grey.shade300,
+    return BlocBuilder<MainCubit, MainState>(
+      buildWhen: (previous, current) => previous.ads != current.ads,
+      builder: (context, state) {
+        if (state.ads.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return CustomCard(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              CarouselSlider(
+                options: CarouselOptions(
+                  aspectRatio: 2,
+                  viewportFraction: 1,
+                  autoPlay: state.ads.length > 1,
+                  enableInfiniteScroll: state.ads.length > 1,
+                  onPageChanged: _onPageChanged,
+                ),
+                items: [
+                  for (final (index, ads) in state.ads.indexed)
+                    VisibilityDetector(
+                      key: Key('$index ${ads.imagePath}'),
+                      onVisibilityChanged: (info) =>
+                          _onVisibilityChanged(index, info),
+                      child: GestureDetector(
+                        onTap: () => _onAdsTap(ads, index),
+                        child: CachedNetworkImage(
+                          imageUrl: ads.imagePath,
+                          fit: BoxFit.cover,
+                          errorWidget: (_, __, ___) => Center(
+                            child: Icon(
+                              Icons.image,
+                              size: 32,
+                              color: Colors.grey.shade300,
+                            ),
+                          ),
                         ),
                       ),
+                    ),
+                ],
+              ),
+              if (state.ads.length > 1)
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: AnimatedSmoothIndicator(
+                    activeIndex: _currentPageIndex,
+                    count: state.ads.length,
+                    effect: WormEffect(
+                      dotWidth: 6,
+                      dotHeight: 6,
+                      dotColor: Colors.white.withAlpha(50),
+                      activeDotColor: Colors.white.withAlpha(150),
                     ),
                   ),
                 ),
             ],
           ),
-          if (widget.ads.length > 1)
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: AnimatedSmoothIndicator(
-                activeIndex: _currentPageIndex,
-                count: widget.ads.length,
-                effect: WormEffect(
-                  dotWidth: 6,
-                  dotHeight: 6,
-                  dotColor: Colors.white.withAlpha(50),
-                  activeDotColor: Colors.white.withAlpha(150),
-                ),
-              ),
-            ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -135,8 +156,7 @@ class _AdsCardState extends State<AdsCard> {
 
   void _onVisibilityChanged(int index, VisibilityInfo info) {
     if (info.visibleFraction > 0.5) {
-      Ads ads = widget.ads[index];
-      _mainCubit.onAdsShown(index, ads);
+      _mainCubit.onAdsShown(index);
     }
   }
 }

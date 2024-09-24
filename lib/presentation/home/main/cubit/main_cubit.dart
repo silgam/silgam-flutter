@@ -83,12 +83,13 @@ class MainCubit extends Cubit<MainState> {
     return DDayUtil(dDays).getItemsToShow(DateTime.now());
   }
 
-  void onAdsShown(int index, Ads ads) {
+  void onAdsShown(int index) {
     if (state.adsShownLoggedMap[index] == true) return;
     emit(state.copyWith(
       adsShownLoggedMap: {...state.adsShownLoggedMap, index: true},
     ));
 
+    final Ads ads = state.ads[index];
     AnalyticsManager.logEvent(
       name: '[HomePage-main] Silgam ads shown',
       properties: {
