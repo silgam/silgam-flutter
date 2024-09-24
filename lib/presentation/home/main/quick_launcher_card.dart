@@ -108,7 +108,7 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
                 _buildItem(
                   onTap: _onLoginItemTap,
                   iconData: Icons.login,
-                  title: '간편 가입\n/ 로그인',
+                  title: '간편 가입\n및 로그인',
                   primary: true,
                 ),
               _buildItem(
@@ -124,7 +124,7 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
               _buildItem(
                 onTap: _onRecordItemTap,
                 iconData: Icons.edit,
-                title: '모의고사 기록\n& 피드백하기',
+                title: '모의고사\n기록하기',
               ),
               _buildItem(
                 onTap: _onSendFeedbackItemTap,
