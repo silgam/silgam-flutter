@@ -21,9 +21,9 @@ import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import 'ads_card.dart';
 import 'cubit/main_cubit.dart';
+import 'd_days_card.dart';
 import 'quick_launcher_card.dart';
 
-part 'd_days_card.dart';
 part 'silgam_now_card.dart';
 part 'timetable_start_card.dart';
 part 'welcome_messages.dart';
@@ -147,18 +147,6 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildDDaysCard() {
-    return BlocBuilder<MainCubit, MainState>(
-      builder: (context, state) {
-        if (state.dDayItems.isNotEmpty) {
-          return _DDaysCard(dDayItems: state.dDayItems);
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
-
   Widget _buildTimetableStartCard() {
     return BlocBuilder<AppCubit, AppState>(
       buildWhen: (previous, current) =>
@@ -230,7 +218,7 @@ class _MainViewState extends State<MainView> {
                   Expanded(
                     child: Column(
                       children: [
-                        _buildDDaysCard(),
+                        const DDaysCard(),
                         const _SilgamNowCard(),
                         _buildTimetableStartCard(),
                       ],
@@ -265,7 +253,7 @@ class _MainViewState extends State<MainView> {
               const SizedBox(height: 4),
               const Divider(indent: 20, endIndent: 20),
               const AdsCard(),
-              _buildDDaysCard(),
+              const DDaysCard(),
               const _SilgamNowCard(),
               _buildTimetableStartCard(),
               const QuickLauncherCard(),
