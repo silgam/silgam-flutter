@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -155,7 +156,7 @@ class MyPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       _buildInfo(
-                          '상세한 결제 내역은 ${Platform.isAndroid ? '플레이스토어' : '앱스토어'} 내에서 확인이 가능합니다.'),
+                          '상세한 결제 내역은 ${!kIsWeb && Platform.isAndroid ? '플레이스토어' : '앱스토어'} 내에서 확인이 가능합니다.'),
                       _buildInfo('결제 및 구매 취소 관련 문의는 실감 카카오톡 채널을 이용해주세요.'),
                       _buildInfo(
                         '구독기간 이후에는 자동으로 서비스 권한이 만료되며, 추가 결제가 발생하지 않습니다.',

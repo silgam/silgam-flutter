@@ -11,7 +11,7 @@ import '../../../../util/analytics_manager.dart';
 import '../../../../util/cache_manager.dart';
 import '../../../../util/dday_util.dart';
 import '../../../app/cubit/app_cubit.dart';
-import '../main_view.dart';
+import '../d_days_card.dart';
 
 part 'main_cubit.freezed.dart';
 part 'main_state.dart';
@@ -83,12 +83,13 @@ class MainCubit extends Cubit<MainState> {
     return DDayUtil(dDays).getItemsToShow(DateTime.now());
   }
 
-  void onAdsShown(int index, Ads ads) {
+  void onAdsShown(int index) {
     if (state.adsShownLoggedMap[index] == true) return;
     emit(state.copyWith(
       adsShownLoggedMap: {...state.adsShownLoggedMap, index: true},
     ));
 
+    final Ads ads = state.ads[index];
     AnalyticsManager.logEvent(
       name: '[HomePage-main] Silgam ads shown',
       properties: {

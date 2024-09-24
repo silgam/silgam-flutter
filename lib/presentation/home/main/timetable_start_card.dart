@@ -1,18 +1,42 @@
-part of 'main_view.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class _TimetableStartCard extends StatefulWidget {
-  const _TimetableStartCard({required this.timetables});
+import '../../../model/timetable.dart';
+import '../../../util/duration_extension.dart';
+import '../../clock/clock_page.dart';
+import '../../common/custom_card.dart';
+
+class TimetableStartCard extends StatefulWidget {
+  const TimetableStartCard({super.key, required this.timetables});
 
   final List<Timetable> timetables;
 
   @override
-  _TimetableStartCardState createState() => _TimetableStartCardState();
+  State<TimetableStartCard> createState() => _TimetableStartCardState();
 }
 
-class _TimetableStartCardState extends State<_TimetableStartCard>
+class _TimetableStartCardState extends State<TimetableStartCard>
     with TickerProviderStateMixin {
   TabController? _tabController;
   int _selectedTimetableIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateTabController();
+  }
+
+  @override
+  void didUpdateWidget(covariant TimetableStartCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateTabController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tabController?.dispose();
+  }
 
   void _updateTabController() {
     if (_selectedTimetableIndex >= widget.timetables.length) {
@@ -30,57 +54,85 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
     )..addListener(_onTapSelected);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _updateTabController();
+  void _onTapSelected() async {
+    final index = _tabController?.index ?? 0;
+    if (_selectedTimetableIndex != index) {
+      setState(() {
+        _selectedTimetableIndex = index;
+      });
+    }
   }
 
-  @override
-  void didUpdateWidget(covariant _TimetableStartCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _updateTabController();
+  void _onTimetableStartTap(Timetable timetable) async {
+    Navigator.pushNamed(
+      context,
+      ClockPage.routeName,
+      arguments: ClockPageArguments(timetable),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Color disabledColor = Theme.of(context).primaryColor.withAlpha(80);
-    TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
-    return CustomCard(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        children: [
-          IntrinsicWidth(
-            child: Stack(
-              alignment: AlignmentDirectional.bottomCenter,
-              children: [
-                Container(
-                  height: 2,
-                  color: disabledColor,
-                ),
-                TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  labelColor: Theme.of(context).primaryColor,
-                  unselectedLabelColor: disabledColor,
-                  labelStyle:
-                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
-                  unselectedLabelStyle:
-                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
-                  tabs: widget.timetables
-                      .map((timetable) => Tab(text: timetable.name))
-                      .toList(),
-                ),
-              ],
-            ),
+  Widget _buildInfo({
+    required IconData iconData,
+    required String title,
+    required String content,
+    String? badgeText,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          iconData,
+          size: 28,
+        ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  if (badgeText != null) const SizedBox(width: 6),
+                  if (badgeText != null)
+                    Container(
+                      padding: const EdgeInsets.all(1.5),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withAlpha(20),
+                        borderRadius: BorderRadius.circular(2),
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Text(
+                        badgeText,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).primaryColor,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                content,
+                textWidthBasis: TextWidthBasis.longestLine,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ],
           ),
-          const SizedBox(height: 32),
-          _buildTabLayout(),
-          const SizedBox(height: 32),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -163,91 +215,45 @@ class _TimetableStartCardState extends State<_TimetableStartCard>
     );
   }
 
-  Widget _buildInfo({
-    required IconData iconData,
-    required String title,
-    required String content,
-    String? badgeText,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          iconData,
-          size: 28,
-        ),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                  if (badgeText != null) const SizedBox(width: 6),
-                  if (badgeText != null)
-                    Container(
-                      padding: const EdgeInsets.all(1.5),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withAlpha(20),
-                        borderRadius: BorderRadius.circular(2),
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 0.5,
-                        ),
-                      ),
-                      child: Text(
-                        badgeText,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).primaryColor,
-                          height: 1.2,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                content,
-                textWidthBasis: TextWidthBasis.longestLine,
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _onTapSelected() async {
-    final index = _tabController?.index ?? 0;
-    if (_selectedTimetableIndex != index) {
-      setState(() {
-        _selectedTimetableIndex = index;
-      });
-    }
-  }
-
-  void _onTimetableStartTap(Timetable timetable) async {
-    Navigator.pushNamed(
-      context,
-      ClockPage.routeName,
-      arguments: ClockPageArguments(timetable),
-    );
-  }
-
   @override
-  void dispose() {
-    super.dispose();
-    _tabController?.dispose();
+  Widget build(BuildContext context) {
+    Color disabledColor = Theme.of(context).primaryColor.withAlpha(80);
+    TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        children: [
+          IntrinsicWidth(
+            child: Stack(
+              alignment: AlignmentDirectional.bottomCenter,
+              children: [
+                Container(
+                  height: 2,
+                  color: disabledColor,
+                ),
+                TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  labelColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: disabledColor,
+                  labelStyle:
+                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
+                  unselectedLabelStyle:
+                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
+                  tabs: widget.timetables
+                      .map((timetable) => Tab(text: timetable.name))
+                      .toList(),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          _buildTabLayout(),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
   }
 }

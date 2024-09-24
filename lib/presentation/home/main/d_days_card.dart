@@ -1,23 +1,12 @@
-part of 'main_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
-class _DDaysCard extends StatelessWidget {
-  final List<DDayItem> dDayItems;
+import '../../common/custom_card.dart';
+import 'cubit/main_cubit.dart';
 
-  const _DDaysCard({required this.dDayItems});
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomCard(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          for (DDayItem item in dDayItems)
-            _buildDDayWidget(item, Theme.of(context).primaryColor),
-        ],
-      ),
-    );
-  }
+class DDaysCard extends StatelessWidget {
+  const DDaysCard({super.key});
 
   Widget _buildDDayWidget(DDayItem dDayItem, Color primaryColor) {
     return Column(
@@ -71,6 +60,29 @@ class _DDaysCard extends StatelessWidget {
         ),
         const SizedBox(height: 8),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MainCubit, MainState>(
+      buildWhen: (previous, current) => previous.dDayItems != current.dDayItems,
+      builder: (context, state) {
+        if (state.dDayItems.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return CustomCard(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            children: [
+              for (DDayItem item in state.dDayItems)
+                _buildDDayWidget(item, Theme.of(context).primaryColor),
+            ],
+          ),
+        );
+      },
     );
   }
 }

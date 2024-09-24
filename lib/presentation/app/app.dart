@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,7 +67,8 @@ class SilgamApp extends StatelessWidget {
         initialRoute: _initialRoute,
 
         // Android에서 App links로 실행될 때 initial route가 http를 포함한 형태로 오는 문제가 있음
-        onGenerateInitialRoutes: Platform.isAndroid &&
+        onGenerateInitialRoutes: !kIsWeb &&
+                Platform.isAndroid &&
                 PlatformDispatcher.instance.defaultRouteName
                     .contains('silgam.app')
             ? (initialRoute) {
