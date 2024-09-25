@@ -27,6 +27,7 @@ class CustomExamEditCubit extends Cubit<CustomExamEditState> {
     required int duration,
     required int numberOfQuestions,
     required int perfectScore,
+    required bool isBeforeFinishAnnouncementEnabled,
   }) {
     final userId = _appCubit.state.me!.id;
     final newExam = Exam(
@@ -39,6 +40,7 @@ class CustomExamEditCubit extends Cubit<CustomExamEditState> {
       durationMinutes: duration,
       numberOfQuestions: numberOfQuestions,
       perfectScore: perfectScore,
+      isBeforeFinishAnnouncementEnabled: isBeforeFinishAnnouncementEnabled,
       color: baseExam.color,
       createdAt: examToEdit?.createdAt ?? DateTime.now(),
     );

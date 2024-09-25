@@ -24,6 +24,7 @@ class Exam with _$Exam {
     required int durationMinutes,
     required int numberOfQuestions,
     required int perfectScore,
+    @Default(true) bool isBeforeFinishAnnouncementEnabled,
     required int color,
     DateTime? createdAt,
   }) = _Exam;
