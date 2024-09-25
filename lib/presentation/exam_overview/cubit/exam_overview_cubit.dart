@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../model/announcement.dart';
 import '../../../model/exam.dart';
 import '../../../model/exam_detail.dart';
 import '../../../model/lap_time.dart';
@@ -48,7 +49,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     final List<LapTimeItemGroup> lapTimeItemGroups = [];
     for (final exam in exams) {
       for (final announcement in exam.subject.defaultAnnouncements) {
-        if (announcement.title.contains('예비령')) {
+        if (announcement.purpose == AnnouncementPurpose.preliminary) {
           lapTimeItemGroups.add(LapTimeItemGroup(
             title: announcement.title,
             startTime: announcement.time.calculateBreakpointTime(
@@ -57,7 +58,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
             ),
             lapTimeItems: [],
           ));
-        } else if (announcement.title.contains('본령')) {
+        } else if (announcement.purpose == AnnouncementPurpose.start) {
           lapTimeItemGroups.add(LapTimeItemGroup(
             title: announcement.title,
             startTime: announcement.time.calculateBreakpointTime(
