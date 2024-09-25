@@ -531,7 +531,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               style: settingTitleTextStyle,
             ),
             subtitle: const Text(
-              '종료 10분 전 또는 종료 5분 전 안내방송을 재생할 지 설정할 수 있어요.',
+              '종료 10분 전 또는 종료 5분 전 안내방송 재생 여부를 선택할 수 있어요.',
               style: settingDescriptionTextStyle,
             ),
             contentPadding: const EdgeInsets.symmetric(
