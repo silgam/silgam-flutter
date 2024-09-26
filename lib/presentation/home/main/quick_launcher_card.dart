@@ -9,6 +9,7 @@ import '../../custom_exam_list/custom_exam_list_page.dart';
 import '../../edit_record/edit_record_page.dart';
 import '../../login/login_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
+import '../../timetable_edit/timetable_edit_page.dart';
 import '../cubit/home_cubit.dart';
 import '../record_list/record_list_view.dart';
 
@@ -26,6 +27,10 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
 
   void _onCustomExamItemTap() {
     Navigator.pushNamed(context, CustomExamListPage.routeName);
+  }
+
+  void _onTimetableItemTap() {
+    Navigator.pushNamed(context, TimetableEditPage.routeName);
   }
 
   void _onNoiseSettingItemTap() {
@@ -115,6 +120,11 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
                 onTap: _onCustomExamItemTap,
                 iconData: Icons.palette,
                 title: '나만의 과목\n만들기',
+              ),
+              _buildItem(
+                onTap: _onTimetableItemTap,
+                iconData: Icons.view_timeline_outlined,
+                title: '시간표\n만들기',
               ),
               _buildItem(
                 onTap: _onNoiseSettingItemTap,

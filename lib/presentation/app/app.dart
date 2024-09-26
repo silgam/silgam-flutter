@@ -35,6 +35,7 @@ import '../purchase/purchase_page.dart';
 import '../record_detail/record_detail_page.dart';
 import '../review_problem_detail/review_problem_detail_page.dart';
 import '../save_image/save_image_page.dart';
+import '../timetable_edit/timetable_edit_page.dart';
 import 'cubit/app_cubit.dart';
 import 'cubit/iap_cubit.dart';
 import 'initial_route_handler.dart';
@@ -93,6 +94,7 @@ class SilgamApp extends StatelessWidget {
           CustomExamListPage.routeName: (_) => const CustomExamListPage(),
           AnnouncementSettingPage.routeName: (_) =>
               const AnnouncementSettingPage(),
+          TimetableEditPage.routeName: (_) => const TimetableEditPage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
