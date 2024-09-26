@@ -61,6 +61,10 @@ class Breakpoint {
           announcement.time.minutes >= exam.durationMinutes) {
         continue;
       }
+      if (!exam.isBeforeFinishAnnouncementEnabled &&
+          announcement.purpose == AnnouncementPurpose.beforeFinish) {
+        continue;
+      }
 
       final DateTime breakpointTime = announcement.time.calculateBreakpointTime(
         examStartTime,
