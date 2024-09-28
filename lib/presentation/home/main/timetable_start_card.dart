@@ -89,8 +89,9 @@ class _TimetableStartCardState extends State<TimetableStartCard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
                 children: [
                   Flexible(
                     child: Text(
@@ -101,7 +102,6 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                       ),
                     ),
                   ),
-                  if (badgeText != null) const SizedBox(width: 6),
                   if (badgeText != null)
                     Container(
                       padding: const EdgeInsets.all(1.5),
@@ -145,8 +145,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
       children: [
         const SizedBox(width: 32),
         Expanded(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
+          child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
