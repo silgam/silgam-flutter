@@ -93,13 +93,11 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                 spacing: 6,
                 runSpacing: 4,
                 children: [
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 14,
-                      ),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
                     ),
                   ),
                   if (badgeText != null)
