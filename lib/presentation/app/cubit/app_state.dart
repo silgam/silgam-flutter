@@ -145,6 +145,35 @@ class AppState with _$AppState {
       ),
     );
 
+    final defaultExams = getDefaultExams()
+        .where((exam) => exam.subject.includeInAllExamsTimetable);
+    final Timetable allExamsTimetable = Timetable(
+      name: '전과목',
+      startTime: defaultExams.first.timetableStartTime,
+      items: defaultExams
+          .map((exam) => TimetableItem(
+                exam: exam,
+                breakMinutesAfter: exam.subject.breakMinutesAfter,
+              ))
+          .toList(),
+    );
+
+    timetables.insert(0, allExamsTimetable);
+
     return timetables;
   }
+}
+
+extension on Subject {
+  bool get includeInAllExamsTimetable => this != Subject.secondLanguage;
+
+  int get breakMinutesAfter => switch (this) {
+        Subject.language || Subject.english => 20,
+        Subject.math => 50,
+        Subject.history => 5,
+        Subject.investigation ||
+        Subject.investigation2 ||
+        Subject.secondLanguage =>
+          0,
+      };
 }

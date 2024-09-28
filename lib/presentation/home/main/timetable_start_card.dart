@@ -18,7 +18,7 @@ class TimetableStartCard extends StatefulWidget {
 class _TimetableStartCardState extends State<TimetableStartCard>
     with TickerProviderStateMixin {
   TabController? _tabController;
-  int _selectedTimetableIndex = 0;
+  int _selectedTimetableIndex = 1;
 
   @override
   void initState() {
