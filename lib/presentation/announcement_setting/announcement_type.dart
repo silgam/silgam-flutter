@@ -18,7 +18,7 @@ const announcementTypes = [
   ),
   AnnouncementType(
     id: 1,
-    title: '부저음',
+    title: '비프음',
     description: '2022학년도 수능에 사용된 음원 (코로나 관련 안내 포함)',
   ),
 ];
