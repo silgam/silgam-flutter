@@ -153,6 +153,7 @@ class ClockCubit extends Cubit<ClockState> {
   void onLapTimeButtonPressed() {
     final newLapTime = LapTime(
       time: state.currentTime,
+      breakpoint: state.currentBreakpoint,
     );
     if (state.lapTimes.lastOrNull?.time != newLapTime.time) {
       emit(state.copyWith(

@@ -74,7 +74,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   void _showExitConfirmDialog() {
     var content = '랩타임과 모의고사 기록을 저장하지 않고 나가시겠어요?';
-    if (_examOverviewCubit.state.lapTimeItemGroups.isItemsEmpty ||
+    if (widget.examDetail.lapTimes.isEmpty ||
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups) {
       content = '모의고사 기록을 저장하지 않고 나가시겠어요?';
     }
@@ -161,7 +161,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   void _onBottomButtonPressed(Exam exam) {
     final isSignedIn = _appCubit.state.isSignedIn;
-    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final lapTimeItemGroups =
+        _examOverviewCubit.state.examToLapTimeItemGroups[exam] ?? [];
     final isUsingExample =
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
 
@@ -170,7 +171,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         inputExam: exam,
         examStartedTime: widget.examDetail.examStartedTime,
         examFinishedTime: widget.examDetail.examFinishedTime,
-        prefillFeedback: (lapTimeItemGroups.isItemsEmpty || isUsingExample)
+        prefillFeedback: (lapTimeItemGroups.isEmpty || isUsingExample)
             ? null
             : lapTimeItemGroups.toCopyableString(),
       );
@@ -568,7 +569,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildLapTimeCard() {
-    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final examToLapTimeItemGroups =
+        _examOverviewCubit.state.examToLapTimeItemGroups;
     final isUsingExample =
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
     final isLapTimeAvailable =
@@ -589,31 +591,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 '랩타임',
                 style: _titleTextStyle,
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  onPressed: () => _onCopyLapTimePressed(
-                    lapTimeItemGroups: lapTimeItemGroups,
-                    isUsingExample: isUsingExample,
-                  ),
-                  splashColor: Colors.transparent,
-                  padding: const EdgeInsets.all(0),
-                  splashRadius: 24,
-                  visualDensity: const VisualDensity(
-                    horizontal: VisualDensity.minimumDensity,
-                    vertical: VisualDensity.minimumDensity,
-                  ),
-                  tooltip: '복사하기',
-                  icon: const Icon(
-                    Icons.copy,
-                    size: 20,
-                  ),
-                ),
-              )
             ],
           ),
           const SizedBox(height: 8),
-          if (lapTimeItemGroups.isItemsEmpty && isLapTimeAvailable)
+          if (examToLapTimeItemGroups.isEmpty && isLapTimeAvailable)
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 20),
               child: Text(
@@ -634,48 +615,81 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 Column(
                   children: [
                     _buildLapTimeTimeline(),
-                    const SizedBox(height: 8),
-                    const Divider(
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 2),
-                    for (final lapTimeItemGroup in lapTimeItemGroups)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                    for (final MapEntry(key: exam, value: lapTimeItemGroups)
+                        in examToLapTimeItemGroups.entries) ...[
+                      const SizedBox(height: 20),
+                      Stack(
+                        alignment: Alignment.topCenter,
                         children: [
-                          const SizedBox(height: 8),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 5,
-                              horizontal: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context).primaryColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 14,
-                              ),
+                          Text(
+                            exam.name,
+                            style: TextStyle(
+                              color: Color(exam.color),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          for (final (index, lapTimeItem)
-                              in lapTimeItemGroup.lapTimeItems.indexed)
-                            _buildLapTimeItem(
-                              index: index,
-                              time: lapTimeItem.time,
-                              timeDifference: lapTimeItem.timeDifference,
-                              timeElapsed: lapTimeItem.timeElapsed,
-                            )
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () => _onCopyLapTimePressed(
+                                lapTimeItemGroups: lapTimeItemGroups,
+                                isUsingExample: isUsingExample,
+                              ),
+                              padding: const EdgeInsets.all(0),
+                              splashRadius: 24,
+                              visualDensity: const VisualDensity(
+                                horizontal: VisualDensity.minimumDensity,
+                                vertical: VisualDensity.minimumDensity,
+                              ),
+                              color: Color(exam.color),
+                              tooltip: '복사하기',
+                              icon: const Icon(
+                                Icons.copy,
+                                size: 20,
+                              ),
+                            ),
+                          )
                         ],
                       ),
+                      for (final lapTimeItemGroup in lapTimeItemGroups)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 8),
+                            Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 5,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            for (final (index, lapTimeItem)
+                                in lapTimeItemGroup.lapTimeItems.indexed)
+                              _buildLapTimeItem(
+                                index: index,
+                                time: lapTimeItem.time,
+                                timeDifference: lapTimeItem.timeDifference,
+                                timeElapsed: lapTimeItem.timeElapsed,
+                              )
+                          ],
+                        ),
+                    ]
                   ],
                 ),
                 if (isUsingExample)
@@ -693,7 +707,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildLapTimeTimeline() {
-    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final lapTimeItemGroups =
+        _examOverviewCubit.state.examToLapTimeItemGroups.values.flattened;
     final startTime = lapTimeItemGroups.first.startTime;
     final endTime = _exams.last.endTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;

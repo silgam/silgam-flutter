@@ -3,7 +3,6 @@ import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../model/announcement.dart';
 import '../../../model/exam.dart';
 import '../../../model/exam_detail.dart';
 import '../../../model/lap_time.dart';
@@ -28,7 +27,6 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   void initialize() {
     if (_appCubit.state.productBenefit.isLapTimeAvailable) {
       _updateLapTimeItemGroups(
-        exams: _examDetail.exams,
         lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
       );
     } else {
@@ -42,69 +40,42 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     ));
   }
 
-  void _updateLapTimeItemGroups({
-    required List<Exam> exams,
-    required List<LapTime> lapTimes,
-  }) {
-    final List<LapTimeItemGroup> lapTimeItemGroups = [];
-    for (final exam in exams) {
-      for (final announcement in exam.subject.defaultAnnouncements) {
-        if (announcement.purpose == AnnouncementPurpose.preliminary) {
-          lapTimeItemGroups.add(LapTimeItemGroup(
-            title: announcement.title,
-            startTime: announcement.time.calculateBreakpointTime(
-              exam.startTime,
-              exam.endTime,
-            ),
-            lapTimeItems: [],
-          ));
-        } else if (announcement.purpose == AnnouncementPurpose.start) {
-          lapTimeItemGroups.add(LapTimeItemGroup(
-            title: announcement.title,
-            startTime: announcement.time.calculateBreakpointTime(
-              exam.startTime,
-              exam.endTime,
-            ),
-            lapTimeItems: [],
-          ));
-        }
+  void _updateLapTimeItemGroups({required List<LapTime> lapTimes}) {
+    final Map<Exam, List<LapTimeItemGroup>> examToLapTimeItemGroups = {};
+
+    for (final lapTime in lapTimes) {
+      final announcement = lapTime.breakpoint.announcement;
+      final exam = lapTime.breakpoint.exam;
+
+      final List<LapTimeItemGroup> lapTimeItemGroups =
+          examToLapTimeItemGroups.putIfAbsent(exam, () => []);
+
+      if (lapTimeItemGroups.lastOrNull?.announcementPurpose !=
+          announcement.purpose) {
+        lapTimeItemGroups.add(LapTimeItemGroup(
+          title: announcement.title,
+          startTime: announcement.time.calculateBreakpointTime(
+            exam.startTime,
+            exam.endTime,
+          ),
+          announcementPurpose: announcement.purpose,
+          lapTimeItems: [],
+        ));
       }
+
+      final lapTimeItemGroup = lapTimeItemGroups.last;
+      lapTimeItemGroup.lapTimeItems.add(LapTimeItem(
+        time: lapTime.time,
+        timeDifference: lapTime.time.difference(
+          lapTimeItemGroup.lapTimeItems.lastOrNull?.time ??
+              lapTimeItemGroup.startTime,
+        ),
+        timeElapsed: lapTime.time.difference(lapTimeItemGroup.startTime),
+      ));
     }
 
-    lapTimeItemGroups.forEachIndexed((index, group) {
-      final lapTimesForGroup = lapTimes
-          .where(
-            (lapTime) =>
-                (lapTime.time.isAfter(group.startTime) ||
-                    lapTime.time.isAtSameMomentAs(group.startTime)) &&
-                (index == lapTimeItemGroups.length - 1
-                    ? true
-                    : lapTime.time
-                        .isBefore(lapTimeItemGroups[index + 1].startTime)),
-          )
-          .toList();
-      final lapTimeItems = lapTimesForGroup.mapIndexed(
-        (index, lapTime) {
-          final timeDifference = index == 0
-              ? lapTime.time.difference(group.startTime)
-              : lapTime.time.difference(lapTimesForGroup[index - 1].time);
-          final timeElapsed = lapTime.time.difference(group.startTime);
-          return LapTimeItem(
-            time: lapTime.time,
-            timeDifference: timeDifference,
-            timeElapsed: timeElapsed,
-          );
-        },
-      ).toList();
-      lapTimeItemGroups[index] = group.copyWith(
-        lapTimeItems: lapTimeItems,
-      );
-    });
-
-    lapTimeItemGroups.removeWhere((group) => group.lapTimeItems.isEmpty);
-
     emit(state.copyWith(
-      lapTimeItemGroups: lapTimeItemGroups,
+      examToLapTimeItemGroups: examToLapTimeItemGroups,
     ));
   }
 
@@ -119,7 +90,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     );
 
     emit(state.copyWith(
-      lapTimeItemGroups: exampleLapTimeItemGroups,
+      examToLapTimeItemGroups: {firstExam: exampleLapTimeItemGroups},
       isUsingExampleLapTimeItemGroups: true,
     ));
   }
