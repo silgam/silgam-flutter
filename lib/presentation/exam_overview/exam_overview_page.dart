@@ -639,8 +639,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                       color: Colors.grey,
                     ),
                     const SizedBox(height: 2),
-                    ...lapTimeItemGroups.map(
-                      (lapTimeItemGroup) => Column(
+                    for (final lapTimeItemGroup in lapTimeItemGroups)
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 8),
@@ -666,17 +666,16 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          ...lapTimeItemGroup.lapTimeItems.mapIndexed(
-                            (index, lapTimeItem) => _buildLapTimeItem(
+                          for (final (index, lapTimeItem)
+                              in lapTimeItemGroup.lapTimeItems.indexed)
+                            _buildLapTimeItem(
                               index: index,
                               time: lapTimeItem.time,
                               timeDifference: lapTimeItem.timeDifference,
                               timeElapsed: lapTimeItem.timeElapsed,
-                            ),
-                          )
+                            )
                         ],
                       ),
-                    ),
                   ],
                 ),
                 if (isUsingExample)
