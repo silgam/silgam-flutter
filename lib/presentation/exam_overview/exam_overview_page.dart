@@ -64,6 +64,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   double get _screenWidth => MediaQuery.of(context).size.width;
   bool get _isTablet => _screenWidth > _tabletLayoutWidth;
   double get _horizontalPadding => _isTablet ? 60 : 24;
+  double get _screenHorizontalPadding =>
+      MediaQuery.of(context).padding.horizontal;
 
   void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
@@ -241,7 +243,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       childrenAnimation: ExpandableFabAnimation.none,
       openButtonBuilder: FloatingActionButtonBuilder(
         size: 60,
-        builder: (context, onPressed, progress) {
+        builder: (_, onPressed, progress) {
           return Padding(
             padding: EdgeInsets.only(right: rightOffset),
             child: Material(
@@ -253,7 +255,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 onTap: onPressed,
                 splashFactory: NoSplash.splashFactory,
                 child: Container(
-                  width: _screenWidth - _horizontalPadding * 2,
+                  width: _screenWidth -
+                      _horizontalPadding * 2 -
+                      _screenHorizontalPadding,
                   height: 48,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
@@ -288,7 +292,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       ),
       closeButtonBuilder: FloatingActionButtonBuilder(
         size: 60,
-        builder: (context, onPressed, progress) {
+        builder: (_, onPressed, progress) {
           return Padding(
             padding: EdgeInsets.only(right: rightOffset),
             child: Material(
@@ -301,7 +305,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 onTap: onPressed,
                 splashFactory: NoSplash.splashFactory,
                 child: Container(
-                  width: _screenWidth - _horizontalPadding * 2,
+                  width: _screenWidth -
+                      _horizontalPadding * 2 -
+                      _screenHorizontalPadding,
                   height: 48,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
@@ -818,7 +824,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         onTap: () => _onBottomButtonPressed(exam),
         splashFactory: NoSplash.splashFactory,
         child: Container(
-          width: _screenWidth - _horizontalPadding * 2,
+          width:
+              _screenWidth - _horizontalPadding * 2 - _screenHorizontalPadding,
           height: 40,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           child: Stack(
