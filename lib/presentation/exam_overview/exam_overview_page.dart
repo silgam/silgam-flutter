@@ -5,6 +5,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
@@ -38,10 +39,6 @@ class ExamOverviewPage extends StatefulWidget {
 }
 
 class _ExamOverviewPageState extends State<ExamOverviewPage> {
-  final AppCubit _appCubit = getIt.get();
-  late final ExamOverviewCubit _examOverviewCubit =
-      getIt.get(param1: widget.examDetail);
-
   static const _tabletLayoutWidth = 800.0;
   static final TextStyle _titleTextStyle = TextStyle(
     fontSize: 14,
@@ -55,10 +52,18 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.2,
   );
 
-  List<Exam> get _exams => widget.examDetail.exams;
+  final AppCubit _appCubit = getIt.get();
+  late final ExamOverviewCubit _examOverviewCubit =
+      getIt.get(param1: widget.examDetail);
 
   final _randomTitle =
       _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
+
+  List<Exam> get _exams => widget.examDetail.exams;
+
+  double get _screenWidth => MediaQuery.of(context).size.width;
+  bool get _isTablet => _screenWidth > _tabletLayoutWidth;
+  double get _horizontalPadding => _isTablet ? 60 : 24;
 
   void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
@@ -190,12 +195,13 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider<ExamOverviewCubit>(
       create: (_) => _examOverviewCubit,
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
         child: Scaffold(
+          floatingActionButtonLocation: ExpandableFab.location,
+          floatingActionButton: _buildFab(),
           body: SafeArea(
             child: BlocBuilder<AppCubit, AppState>(
               builder: (context, appState) {
@@ -205,7 +211,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     return PopScope(
                       canPop: state.recordedExamIds.length == _exams.length,
                       onPopInvokedWithResult: _onPopInvokedWithResult,
-                      child: screenWidth > _tabletLayoutWidth
+                      child: _isTablet
                           ? _buildTabletLayout()
                           : _buildMobileLayout(),
                     );
@@ -219,15 +225,122 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
+  Widget _buildFab() {
+    final rightOffset = _horizontalPadding - 16;
+
+    return ExpandableFab(
+      openCloseStackAlignment: Alignment.centerRight,
+      distance: 52,
+      type: ExpandableFabType.up,
+      overlayStyle: ExpandableFabOverlayStyle(
+        color: Colors.black.withOpacity(0.2),
+        blur: 8,
+      ),
+      childrenOffset: Offset(rightOffset, 8),
+      childrenAnimation: ExpandableFabAnimation.none,
+      openButtonBuilder: FloatingActionButtonBuilder(
+        size: 60,
+        builder: (context, onPressed, progress) {
+          return Padding(
+            padding: EdgeInsets.only(right: rightOffset),
+            child: Material(
+              color: Theme.of(context).primaryColor,
+              shape: const StadiumBorder(),
+              clipBehavior: Clip.hardEdge,
+              elevation: 5,
+              child: InkWell(
+                onTap: onPressed,
+                splashFactory: NoSplash.splashFactory,
+                child: Container(
+                  width: _screenWidth - _horizontalPadding * 2,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  child: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          '기록하기',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      closeButtonBuilder: FloatingActionButtonBuilder(
+        size: 60,
+        builder: (context, onPressed, progress) {
+          return Padding(
+            padding: EdgeInsets.only(right: rightOffset),
+            child: Material(
+              color: Colors.white,
+              shape: const StadiumBorder(),
+              clipBehavior: Clip.hardEdge,
+              elevation: 5,
+              shadowColor: Colors.black26,
+              child: InkWell(
+                onTap: onPressed,
+                splashFactory: NoSplash.splashFactory,
+                child: Container(
+                  width: _screenWidth - _horizontalPadding * 2,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  child: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.close,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          '닫기',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      children: _exams.reversed.map(_buildBottomButton).toList(),
+    );
+  }
+
   Widget _buildMobileLayout() {
-    const horizontalPadding = 24.0;
     return Stack(
       children: [
         SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: horizontalPadding,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -246,13 +359,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        _buildBottomButtons(horizontalPadding: horizontalPadding),
+        // TODO: 과목 하나일 때는 여기에 버튼 띄우기
       ],
     );
   }
 
   Widget _buildTabletLayout() {
-    const horizontalPadding = 60.0;
     return Stack(
       children: [
         SingleChildScrollView(
@@ -260,9 +372,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             alignment: Alignment.center,
             child: Container(
               constraints: const BoxConstraints(maxWidth: _tabletLayoutWidth),
-              padding: const EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -280,7 +390,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        _buildBottomButtons(horizontalPadding: horizontalPadding),
+        // TODO: 과목 하나일 때는 여기에 버튼 띄우기
         Positioned(
           top: 12,
           right: 20,
@@ -689,30 +799,32 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildBottomButton(Exam exam) {
     return Material(
       color: Color(exam.color),
-      borderRadius: BorderRadius.circular(100),
-      clipBehavior: Clip.antiAlias,
+      shape: const StadiumBorder(),
+      clipBehavior: Clip.hardEdge,
+      elevation: 5,
+      shadowColor: Colors.black26,
       child: InkWell(
         onTap: () => _onBottomButtonPressed(exam),
-        splashColor: Colors.transparent,
-        highlightColor: Colors.grey.withAlpha(60),
+        splashFactory: NoSplash.splashFactory,
         child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 14,
-          ),
+          width: _screenWidth - _horizontalPadding * 2,
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           child: Stack(
             alignment: Alignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Text(
-                  '${exam.name} 기록하기',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    fontSize: 18,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '${exam.name} 기록하기',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -721,44 +833,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 child: Icon(
                   Icons.chevron_right,
                   color: Colors.white,
-                  size: 28,
+                  size: 24,
                 ),
               )
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomButtons({
-    required double horizontalPadding,
-  }) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: horizontalPadding,
-          right: horizontalPadding,
-          bottom: 20,
-        ),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              SilgamApp.backgroundColor.withOpacity(0),
-              SilgamApp.backgroundColor,
-            ],
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: _exams
-              .map((exam) => Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: _buildBottomButton(exam)))
-              .toList(),
         ),
       ),
     );
