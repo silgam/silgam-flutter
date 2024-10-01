@@ -13,7 +13,7 @@ part 'exam.g.dart';
 
 @freezed
 class Exam with _$Exam {
-  const Exam._();
+  Exam._();
 
   factory Exam({
     required String id,
@@ -55,7 +55,9 @@ class Exam with _$Exam {
 
   bool get isCustomExam => userId != null;
 
-  List<Announcement> getAnnouncements() {
+  late final List<Announcement> announcements = _getAnnouncements();
+
+  List<Announcement> _getAnnouncements() {
     return subject.defaultAnnouncements.where((announcement) {
       final isOverExamDuration =
           (announcement.time.type == RelativeTimeType.afterStart ||

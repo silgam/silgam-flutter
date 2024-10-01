@@ -54,7 +54,7 @@ class Breakpoint {
   ) {
     final breakpoints = <Breakpoint>[];
 
-    for (final announcement in exam.getAnnouncements()) {
+    for (final announcement in exam.announcements) {
       final DateTime breakpointTime = announcement.time.calculateBreakpointTime(
         examStartTime,
         examStartTime.add(Duration(minutes: exam.durationMinutes)),
