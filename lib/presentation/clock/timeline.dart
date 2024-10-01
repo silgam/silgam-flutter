@@ -187,7 +187,7 @@ class TimelineConnector extends StatelessWidget {
                       children: [
                         if (position > 0)
                           Spacer(
-                            flex: (position * 10000).toInt(),
+                            flex: (position * 100000000).toInt(),
                           ),
                         RotatedBox(
                           quarterTurns: direction == Axis.horizontal ? 0 : -1,
@@ -202,7 +202,7 @@ class TimelineConnector extends StatelessWidget {
                         ),
                         if (position < 1)
                           Spacer(
-                            flex: ((1 - position) * 10000).toInt(),
+                            flex: ((1 - position) * 100000000).toInt(),
                           ),
                       ],
                     ),
