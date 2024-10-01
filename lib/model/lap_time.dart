@@ -10,7 +10,6 @@ part 'lap_time.freezed.dart';
 class LapTime with _$LapTime {
   const factory LapTime({
     required DateTime time,
-    required DateTime createdAt,
   }) = _LapTime;
 }
 
