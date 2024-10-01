@@ -155,7 +155,7 @@ class ClockCubit extends Cubit<ClockState> {
       time: state.currentTime,
       createdAt: DateTime.now(),
     );
-    if (state.lapTimes.every((e) => e.time != newLapTime.time)) {
+    if (state.lapTimes.lastOrNull?.time != newLapTime.time) {
       emit(state.copyWith(
         lapTimes: [...state.lapTimes, newLapTime],
       ));
