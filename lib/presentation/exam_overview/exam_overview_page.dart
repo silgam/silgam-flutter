@@ -200,8 +200,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
         child: Scaffold(
-          floatingActionButtonLocation: ExpandableFab.location,
-          floatingActionButton: _buildFab(),
+          floatingActionButtonLocation:
+              _exams.length > 1 ? ExpandableFab.location : null,
+          floatingActionButton: _exams.length > 1 ? _buildFab() : null,
           body: SafeArea(
             child: BlocBuilder<AppCubit, AppState>(
               builder: (context, appState) {
@@ -331,7 +332,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           );
         },
       ),
-      children: _exams.reversed.map(_buildBottomButton).toList(),
+      children: _exams.reversed.map(_buildRecordExamButton).toList(),
     );
   }
 
@@ -359,7 +360,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        // TODO: 과목 하나일 때는 여기에 버튼 띄우기
+        if (_exams.length == 1)
+          Container(
+            padding: const EdgeInsets.only(bottom: 20),
+            alignment: Alignment.bottomCenter,
+            child: _buildRecordExamButton(_exams.first),
+          ),
       ],
     );
   }
@@ -390,7 +396,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        // TODO: 과목 하나일 때는 여기에 버튼 띄우기
+        if (_exams.length == 1)
+          Container(
+            padding: const EdgeInsets.only(bottom: 20),
+            alignment: Alignment.bottomCenter,
+            child: _buildRecordExamButton(_exams.first),
+          ),
         Positioned(
           top: 12,
           right: 20,
@@ -796,7 +807,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildBottomButton(Exam exam) {
+  Widget _buildRecordExamButton(Exam exam) {
     return Material(
       color: Color(exam.color),
       shape: const StadiumBorder(),
