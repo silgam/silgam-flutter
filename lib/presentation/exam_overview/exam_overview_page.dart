@@ -5,6 +5,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:intl/intl.dart';
 
@@ -142,11 +143,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       isExample: isUsingExample,
     );
     Clipboard.setData(ClipboardData(text: textToCopy));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text('복사되었습니다.'),
-      ),
+    EasyLoading.showToast(
+      '복사되었습니다.',
+      dismissOnTap: true,
+      duration: const Duration(milliseconds: 500),
     );
 
     AnalyticsManager.logEvent(
@@ -198,6 +198,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Example 이상하게 보이는거 수정, 복사했을 때 스낵바 안뜨는거 수정
     return BlocProvider<ExamOverviewCubit>(
       create: (_) => _examOverviewCubit,
       child: AnnotatedRegion(
