@@ -709,8 +709,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildLapTimeTimeline() {
     final lapTimeItemGroups =
         _examOverviewCubit.state.examToLapTimeItemGroups.values.flattened;
+    final isUsingExample =
+        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
     final startTime = lapTimeItemGroups.first.startTime;
-    final endTime = _exams.last.endTime;
+    final endTime = isUsingExample ? _exams.first.endTime : _exams.last.endTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;
 
     final markerPositions = lapTimeItemGroups
