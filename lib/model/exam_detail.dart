@@ -11,7 +11,6 @@ class ExamDetail with _$ExamDetail {
     required List<Exam> exams,
     required DateTime examStartedTime,
     required DateTime examFinishedTime,
-    required DateTime pageOpenedTime,
     required List<LapTime> lapTimes,
   }) = _ExamDetail;
 }

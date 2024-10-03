@@ -570,7 +570,6 @@ class _ClockPageState extends State<ClockPage> {
         exams: widget.timetable.exams,
         examStartedTime: _cubit.state.examStartedTime,
         examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
-        pageOpenedTime: _cubit.state.pageOpenedTime,
         lapTimes: _cubit.state.lapTimes,
       ),
     );
