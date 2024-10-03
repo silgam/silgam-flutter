@@ -198,7 +198,6 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Example 이상하게 보이는거 수정, 복사했을 때 스낵바 안뜨는거 수정
     return BlocProvider<ExamOverviewCubit>(
       create: (_) => _examOverviewCubit,
       child: AnnotatedRegion(
