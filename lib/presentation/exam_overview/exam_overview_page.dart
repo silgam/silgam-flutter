@@ -159,7 +159,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  void _onBottomButtonPressed(Exam exam) {
+  void _onRecordExamButtonPressed(Exam exam) {
     final isSignedIn = _appCubit.state.isSignedIn;
     final lapTimeItemGroups =
         _examOverviewCubit.state.examToLapTimeItemGroups[exam] ?? [];
@@ -837,7 +837,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       elevation: 5,
       shadowColor: Colors.black26,
       child: InkWell(
-        onTap: () => _onBottomButtonPressed(exam),
+        onTap: () => _onRecordExamButtonPressed(exam),
         splashFactory: NoSplash.splashFactory,
         child: Container(
           width:
