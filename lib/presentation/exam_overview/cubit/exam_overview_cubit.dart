@@ -34,9 +34,9 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     }
   }
 
-  void examRecorded(String examId) {
+  void examRecorded(Exam exam, String recordId) {
     emit(state.copyWith(
-      recordedExamIds: {...state.recordedExamIds, examId},
+      examToRecordIds: {...state.examToRecordIds, exam: recordId},
     ));
   }
 

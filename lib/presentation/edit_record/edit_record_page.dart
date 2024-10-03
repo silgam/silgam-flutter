@@ -865,6 +865,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           context,
           RecordDetailPage.routeName,
           arguments: RecordDetailPageArguments(recordId: record.id),
+          result: record,
         );
       }
     }

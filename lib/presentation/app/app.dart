@@ -12,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import '../../model/exam_record.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../announcement_setting/announcement_setting_page.dart';
@@ -117,7 +118,7 @@ class SilgamApp extends StatelessWidget {
               );
             case EditRecordPage.routeName:
               final args = settings.arguments as EditRecordPageArguments;
-              return MaterialPageRoute(
+              return MaterialPageRoute<ExamRecord>(
                 builder: (_) => EditRecordPage(arguments: args),
                 settings: settings,
               );

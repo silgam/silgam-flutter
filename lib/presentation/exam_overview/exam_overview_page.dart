@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
+import '../../model/exam_record.dart';
 import '../../model/lap_time.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/date_time_extension.dart';
@@ -22,6 +23,7 @@ import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
 import '../edit_record/edit_record_page.dart';
 import '../login/login_page.dart';
+import '../record_detail/record_detail_page.dart';
 import 'cubit/exam_overview_cubit.dart';
 
 part 'exam_overview_messages.dart';
@@ -159,7 +161,17 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  void _onRecordExamButtonPressed(Exam exam) {
+  Future<void> _onRecordExamButtonPressed(Exam exam) async {
+    final examRecordId = _examOverviewCubit.state.examToRecordIds[exam];
+    if (examRecordId != null) {
+      Navigator.pushNamed(
+        context,
+        RecordDetailPage.routeName,
+        arguments: RecordDetailPageArguments(recordId: examRecordId),
+      );
+      return;
+    }
+
     final isSignedIn = _appCubit.state.isSignedIn;
     final lapTimeItemGroups =
         _examOverviewCubit.state.examToLapTimeItemGroups[exam] ?? [];
@@ -175,12 +187,15 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ? null
             : lapTimeItemGroups.toCopyableString(),
       );
-      Navigator.pushNamed(
+      final ExamRecord? examRecord = await Navigator.pushNamed<ExamRecord>(
         context,
         EditRecordPage.routeName,
         arguments: arguments,
       );
-      _examOverviewCubit.examRecorded(exam.id);
+
+      if (examRecord != null) {
+        _examOverviewCubit.examRecorded(exam, examRecord.id);
+      }
     } else {
       Navigator.pushNamed(
         context,
@@ -213,7 +228,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
                   builder: (context, state) {
                     return PopScope(
-                      canPop: state.recordedExamIds.length == _exams.length,
+                      canPop: state.examToRecordIds.length == _exams.length,
                       onPopInvokedWithResult: _onPopInvokedWithResult,
                       child: _isTablet
                           ? _buildTabletLayout()
@@ -830,6 +845,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildRecordExamButton(Exam exam) {
+    final isRecorded =
+        _examOverviewCubit.state.examToRecordIds.containsKey(exam);
+
     return Material(
       color: Color(exam.color),
       shape: const StadiumBorder(),
@@ -852,7 +870,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    '${exam.name} 기록하기',
+                    isRecorded ? '${exam.name} 기록 확인하기' : '${exam.name} 기록하기',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontWeight: FontWeight.w900,
@@ -862,10 +880,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   ),
                 ),
               ),
-              const Positioned(
+              Positioned(
                 right: 0,
                 child: Icon(
-                  Icons.chevron_right,
+                  isRecorded ? Icons.check : Icons.chevron_right,
                   color: Colors.white,
                   size: 24,
                 ),
