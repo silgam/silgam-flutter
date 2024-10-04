@@ -849,8 +849,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         _examOverviewCubit.state.examToRecordIds.containsKey(exam);
 
     return Material(
-      color: Color(exam.color),
-      shape: const StadiumBorder(),
+      color: isRecorded ? Colors.grey.shade100 : Color(exam.color),
+      shape: StadiumBorder(
+        side: isRecorded
+            ? BorderSide(
+                color: Color(exam.color),
+              )
+            : BorderSide.none,
+      ),
       clipBehavior: Clip.hardEdge,
       elevation: 5,
       shadowColor: Colors.black26,
@@ -872,9 +878,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   child: Text(
                     isRecorded ? '${exam.name} 기록 확인하기' : '${exam.name} 기록하기',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: isRecorded ? Color(exam.color) : Colors.white,
                       fontSize: 16,
                     ),
                   ),
@@ -884,7 +890,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 right: 0,
                 child: Icon(
                   isRecorded ? Icons.check : Icons.chevron_right,
-                  color: Colors.white,
+                  color: isRecorded ? Color(exam.color) : Colors.white,
                   size: 24,
                 ),
               )
