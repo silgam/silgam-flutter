@@ -632,7 +632,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                     _buildLapTimeTimeline(),
                     for (final MapEntry(key: exam, value: lapTimeItemGroups)
                         in examToLapTimeItemGroups.entries) ...[
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 8),
+                      const Divider(color: Colors.grey),
+                      const SizedBox(height: 28),
                       Stack(
                         alignment: Alignment.topCenter,
                         children: [
@@ -657,7 +659,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                                 horizontal: VisualDensity.minimumDensity,
                                 vertical: VisualDensity.minimumDensity,
                               ),
-                              color: Color(exam.color),
+                              color: Colors.grey.shade700,
                               tooltip: '복사하기',
                               icon: const Icon(
                                 Icons.copy,
@@ -680,15 +682,15 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                               ),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 1,
+                                  color: Colors.grey.shade600,
+                                  width: 0.7,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
                                 '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
                                 style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
+                                  color: Colors.grey.shade600,
                                   fontSize: 14,
                                 ),
                               ),
