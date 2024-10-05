@@ -13,6 +13,9 @@ class Timetable with _$Timetable {
     required String name,
     required DateTime startTime,
     required List<TimetableItem> items,
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    @Default(false)
+    bool isAllSubjectsTimetable,
   }) = _Timetable;
 
   factory Timetable.fromJson(Map<String, dynamic> json) =>

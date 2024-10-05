@@ -3,8 +3,11 @@ import 'package:intl/intl.dart';
 
 import '../../../model/timetable.dart';
 import '../../../util/duration_extension.dart';
+import '../../../util/injection.dart';
+import '../../app/cubit/app_cubit.dart';
 import '../../clock/clock_page.dart';
 import '../../common/custom_card.dart';
+import '../../common/dialog.dart';
 
 class TimetableStartCard extends StatefulWidget {
   const TimetableStartCard({super.key, required this.timetables});
@@ -17,6 +20,8 @@ class TimetableStartCard extends StatefulWidget {
 
 class _TimetableStartCardState extends State<TimetableStartCard>
     with TickerProviderStateMixin {
+  final AppCubit _appCubit = getIt.get();
+
   TabController? _tabController;
   int _selectedTimetableIndex = 1;
 
@@ -64,6 +69,12 @@ class _TimetableStartCardState extends State<TimetableStartCard>
   }
 
   void _onTimetableStartTap(Timetable timetable) async {
+    if (timetable.isAllSubjectsTimetable &&
+        !_appCubit.state.productBenefit.isAllSubjectsTimetableAvailable) {
+      showAllSubjectsTimetableNotAvailableDialog(context);
+      return;
+    }
+
     Navigator.pushNamed(
       context,
       ClockPage.routeName,

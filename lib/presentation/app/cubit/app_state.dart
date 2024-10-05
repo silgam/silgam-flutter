@@ -149,6 +149,7 @@ class AppState with _$AppState {
         .where((exam) => exam.subject.includeInAllSubjectsTimetable);
     final Timetable allSubjectsTimetable = Timetable(
       name: '전과목',
+      isAllSubjectsTimetable: true,
       startTime: defaultExams.first.timetableStartTime,
       items: defaultExams
           .map((exam) => TimetableItem(
