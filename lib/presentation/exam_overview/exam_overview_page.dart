@@ -62,6 +62,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   final _randomTitle =
       _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
 
+  bool _isExpandableFabOpen = false;
+
   List<Exam> get _exams => widget.examDetail.exams;
 
   double get _screenWidth => MediaQuery.sizeOf(context).width;
@@ -250,6 +252,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     final rightOffset = _horizontalPadding - 16;
 
     return ExpandableFab(
+      initialOpen: _isExpandableFabOpen,
+      onOpen: () => _isExpandableFabOpen = true,
+      onClose: () => _isExpandableFabOpen = false,
       openCloseStackAlignment: Alignment.centerRight,
       distance: 52,
       type: ExpandableFabType.up,
