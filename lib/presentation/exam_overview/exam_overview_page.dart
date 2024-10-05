@@ -851,59 +851,67 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildRecordExamButton(Exam exam) {
-    final isRecorded =
-        _examOverviewCubit.state.examToRecordIds.containsKey(exam);
+    return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
+      buildWhen: (previous, current) =>
+          previous.examToRecordIds != current.examToRecordIds,
+      builder: (context, state) {
+        final isRecorded = state.examToRecordIds.containsKey(exam);
 
-    return Material(
-      color: isRecorded ? Colors.grey.shade100 : Color(exam.color),
-      shape: StadiumBorder(
-        side: isRecorded
-            ? BorderSide(
-                color: Color(exam.color),
-              )
-            : BorderSide.none,
-      ),
-      clipBehavior: Clip.hardEdge,
-      elevation: 5,
-      shadowColor: Colors.black26,
-      child: InkWell(
-        onTap: () => _onRecordExamButtonPressed(exam),
-        splashFactory: NoSplash.splashFactory,
-        child: Container(
-          width:
-              _screenWidth - _horizontalPadding * 2 - _screenHorizontalPadding,
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    isRecorded ? '${exam.name} 기록 확인하기' : '${exam.name} 기록하기',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: isRecorded ? Color(exam.color) : Colors.white,
-                      fontSize: 16,
+        return Material(
+          color: isRecorded ? Colors.grey.shade100 : Color(exam.color),
+          shape: StadiumBorder(
+            side: isRecorded
+                ? BorderSide(
+                    color: Color(exam.color),
+                  )
+                : BorderSide.none,
+          ),
+          clipBehavior: Clip.hardEdge,
+          elevation: 5,
+          shadowColor: Colors.black26,
+          child: InkWell(
+            onTap: () => _onRecordExamButtonPressed(exam),
+            splashFactory: NoSplash.splashFactory,
+            child: Container(
+              width: _screenWidth -
+                  _horizontalPadding * 2 -
+                  _screenHorizontalPadding,
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        isRecorded
+                            ? '${exam.name} 기록 확인하기'
+                            : '${exam.name} 기록하기',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: isRecorded ? Color(exam.color) : Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    right: 0,
+                    child: Icon(
+                      isRecorded ? Icons.check : Icons.chevron_right,
+                      color: isRecorded ? Color(exam.color) : Colors.white,
+                      size: 24,
+                    ),
+                  )
+                ],
               ),
-              Positioned(
-                right: 0,
-                child: Icon(
-                  isRecorded ? Icons.check : Icons.chevron_right,
-                  color: isRecorded ? Color(exam.color) : Colors.white,
-                  size: 24,
-                ),
-              )
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
