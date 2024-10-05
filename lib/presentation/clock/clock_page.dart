@@ -567,6 +567,7 @@ class _ClockPageState extends State<ClockPage> {
 
     final arguments = ExamOverviewPageArguments(
       examDetail: ExamDetail(
+        timetableName: widget.timetable.name,
         exams: widget.timetable.exams,
         examStartedTimes: _cubit.state.examStartedTimes,
         examFinishedTimes: _cubit.state.examFinishedTimes,

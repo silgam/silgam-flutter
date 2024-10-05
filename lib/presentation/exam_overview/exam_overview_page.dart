@@ -380,6 +380,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 const SizedBox(height: 16),
                 _buildTitle(),
                 const SizedBox(height: 40),
+                if (_exams.length > 1) _buildTimetableNameCard(),
+                if (_exams.length > 1) const SizedBox(height: 20),
                 _buildSubjectCard(),
                 const SizedBox(height: 20),
                 _buildExamTimeCard(),
@@ -415,6 +417,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   const SizedBox(height: 40),
                   _buildTitle(),
                   const SizedBox(height: 32),
+                  if (_exams.length > 1) _buildTimetableNameCard(),
+                  if (_exams.length > 1) const SizedBox(height: 28),
                   _buildSubjectCard(),
                   const SizedBox(height: 28),
                   _buildExamTimeCard(),
@@ -465,6 +469,25 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           fontWeight: FontWeight.w900,
           height: 1.3,
         ),
+      ),
+    );
+  }
+
+  Widget _buildTimetableNameCard() {
+    return CustomCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        children: [
+          Text(
+            '시간표',
+            style: _titleTextStyle,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            widget.examDetail.timetableName,
+            style: _contentTextStyle,
+          ),
+        ],
       ),
     );
   }
