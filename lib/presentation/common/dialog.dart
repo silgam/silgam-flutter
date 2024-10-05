@@ -179,11 +179,11 @@ void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
           final sellingProduct = iapState.sellingProduct;
           return AlertDialog(
             title: const Text(
-              '전과목 시험 이용 제한 안내',
+              '전과목 연속 응시 기능 이용 제한 안내',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
             content: const Text(
-              '전과목 시험은 실감패스 구매 후에 이용 가능해요. (전과목 시험에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
+              '전과목 연속 응시 기능은 실감패스 구매 후에 이용 가능해요. (전과목 연속 응시 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
             ),
             actions: [
               TextButton(
