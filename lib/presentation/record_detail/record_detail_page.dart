@@ -407,7 +407,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     });
     await _recordRepository.deleteExamRecord(_record);
     _recordListCubit.onRecordDeleted(_record);
-    if (mounted) Navigator.pop(context);
+
+    if (mounted) Navigator.pop(context, RecordDetailPageResult.deleted);
 
     await AnalyticsManager.logEvent(
         name: '[ExamRecordDetailPage] Delete exam record');
@@ -424,4 +425,8 @@ class RecordDetailPageArguments {
   final String recordId;
 
   RecordDetailPageArguments({required this.recordId});
+}
+
+enum RecordDetailPageResult {
+  deleted,
 }

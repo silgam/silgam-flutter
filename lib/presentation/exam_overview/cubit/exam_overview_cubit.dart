@@ -40,6 +40,12 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     ));
   }
 
+  void examRecordDeleted(Exam exam) {
+    emit(state.copyWith(
+      examToRecordIds: {...state.examToRecordIds}..remove(exam),
+    ));
+  }
+
   void _updateLapTimeItemGroups({required List<LapTime> lapTimes}) {
     final Map<Exam, List<LapTimeItemGroup>> examToLapTimeItemGroups = {};
 

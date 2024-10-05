@@ -124,7 +124,7 @@ class SilgamApp extends StatelessWidget {
               );
             case RecordDetailPage.routeName:
               final args = settings.arguments as RecordDetailPageArguments;
-              return MaterialPageRoute(
+              return MaterialPageRoute<RecordDetailPageResult>(
                 builder: (_) => RecordDetailPage(arguments: args),
                 settings: settings,
               );

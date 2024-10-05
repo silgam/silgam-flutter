@@ -168,11 +168,16 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Future<void> _onRecordExamButtonPressed(Exam exam) async {
     final examRecordId = _examOverviewCubit.state.examToRecordIds[exam];
     if (examRecordId != null) {
-      Navigator.pushNamed(
+      final RecordDetailPageResult? recordDetailPageResult =
+          await Navigator.pushNamed<RecordDetailPageResult>(
         context,
         RecordDetailPage.routeName,
         arguments: RecordDetailPageArguments(recordId: examRecordId),
       );
+
+      if (recordDetailPageResult == RecordDetailPageResult.deleted) {
+        _examOverviewCubit.examRecordDeleted(exam);
+      }
       return;
     }
 
