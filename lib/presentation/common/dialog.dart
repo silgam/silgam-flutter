@@ -167,6 +167,57 @@ void showCustomExamNotAvailableDialog(
   );
 }
 
+void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    routeSettings: const RouteSettings(
+      name: '/all_subjects_timetable_not_available_dialog',
+    ),
+    builder: (context) {
+      return BlocBuilder<IapCubit, IapState>(
+        builder: (context, iapState) {
+          final sellingProduct = iapState.sellingProduct;
+          return AlertDialog(
+            title: const Text(
+              '전과목 연속 응시 기능 이용 제한 안내',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            content: const Text(
+              '전과목 연속 응시 기능은 실감패스 구매 후에 이용 가능해요. (전과목 연속 응시 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey,
+                ),
+                child: const Text('확인'),
+              ),
+              if (sellingProduct != null)
+                TextButton(
+                  onPressed: () {
+                    AnalyticsManager.logEvent(
+                      name:
+                          '[AllSubjectsTimetableNotAvailableDialog] Check pass button tapped',
+                    );
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(
+                      PurchasePage.routeName,
+                      arguments: PurchasePageArguments(product: sellingProduct),
+                    );
+                  },
+                  child: const Text('실감패스 확인하러 가기'),
+                ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
 Future<void> showMarketingInfoReceivingConsentDialog(
   BuildContext context, {
   bool isDismissible = false,

@@ -1,3 +1,4 @@
+import '../../model/announcement.dart';
 import '../../model/lap_time.dart';
 
 List<LapTimeItemGroup> getExampleLapTimeGroups({
@@ -7,6 +8,7 @@ List<LapTimeItemGroup> getExampleLapTimeGroups({
       LapTimeItemGroup(
         title: '예비령',
         startTime: startTime,
+        announcementPurpose: AnnouncementPurpose.preliminary,
         lapTimeItems: [
           LapTimeItem(
             time: startTime.add(const Duration(minutes: 1, seconds: 15)),
@@ -23,6 +25,7 @@ List<LapTimeItemGroup> getExampleLapTimeGroups({
       LapTimeItemGroup(
         title: '본령',
         startTime: startTime.add(const Duration(minutes: 10)),
+        announcementPurpose: AnnouncementPurpose.start,
         lapTimeItems: [
           LapTimeItem(
             time: startTime.add(const Duration(minutes: 12, seconds: 5)),

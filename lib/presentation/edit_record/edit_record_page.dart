@@ -108,17 +108,22 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _initializeCreateMode() {
-    _examStartedTime = widget.arguments.examStartedTime ?? _examStartedTime;
-
-    final examFinishedTime = widget.arguments.examFinishedTime;
-    if (examFinishedTime != null) {
-      _examDurationEditingController.text =
-          examFinishedTime.difference(_examStartedTime).inMinutes.toString();
-    }
-
     final exam = widget.arguments.inputExam;
     _selectedExam = exam ?? _selectedExam;
+
     _feedbackEditingController.text = widget.arguments.prefillFeedback ?? '';
+
+    final examStartedTime = widget.arguments.examStartedTime;
+    _examStartedTime = examStartedTime ?? _examStartedTime;
+
+    final examFinishedTime = widget.arguments.examFinishedTime;
+
+    if (examStartedTime != null && examFinishedTime != null) {
+      _examDurationEditingController.text =
+          examFinishedTime.difference(_examStartedTime).inMinutes.toString();
+    } else if (exam != null) {
+      _examDurationEditingController.text = exam.durationMinutes.toString();
+    }
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
@@ -865,6 +870,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           context,
           RecordDetailPage.routeName,
           arguments: RecordDetailPageArguments(recordId: record.id),
+          result: record,
         );
       }
     }

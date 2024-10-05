@@ -3,8 +3,11 @@ import 'package:intl/intl.dart';
 
 import '../../../model/timetable.dart';
 import '../../../util/duration_extension.dart';
+import '../../../util/injection.dart';
+import '../../app/cubit/app_cubit.dart';
 import '../../clock/clock_page.dart';
 import '../../common/custom_card.dart';
+import '../../common/dialog.dart';
 
 class TimetableStartCard extends StatefulWidget {
   const TimetableStartCard({super.key, required this.timetables});
@@ -17,8 +20,10 @@ class TimetableStartCard extends StatefulWidget {
 
 class _TimetableStartCardState extends State<TimetableStartCard>
     with TickerProviderStateMixin {
+  final AppCubit _appCubit = getIt.get();
+
   TabController? _tabController;
-  int _selectedTimetableIndex = 0;
+  int _selectedTimetableIndex = 1;
 
   @override
   void initState() {
@@ -64,6 +69,12 @@ class _TimetableStartCardState extends State<TimetableStartCard>
   }
 
   void _onTimetableStartTap(Timetable timetable) async {
+    if (timetable.isAllSubjectsTimetable &&
+        !_appCubit.state.productBenefit.isAllSubjectsTimetableAvailable) {
+      showAllSubjectsTimetableNotAvailableDialog(context);
+      return;
+    }
+
     Navigator.pushNamed(
       context,
       ClockPage.routeName,
@@ -89,19 +100,17 @@ class _TimetableStartCardState extends State<TimetableStartCard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
                 children: [
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 14,
-                      ),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
                     ),
                   ),
-                  if (badgeText != null) const SizedBox(width: 6),
                   if (badgeText != null)
                     Container(
                       padding: const EdgeInsets.all(1.5),
@@ -145,8 +154,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
       children: [
         const SizedBox(width: 32),
         Expanded(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
+          child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -8,10 +8,12 @@ part 'exam_detail.freezed.dart';
 @freezed
 class ExamDetail with _$ExamDetail {
   const factory ExamDetail({
+    required String timetableName,
     required List<Exam> exams,
-    required DateTime examStartedTime,
-    required DateTime examFinishedTime,
-    required DateTime pageOpenedTime,
+    required Map<Exam, DateTime> examStartedTimes,
+    required Map<Exam, DateTime> examFinishedTimes,
     required List<LapTime> lapTimes,
+    required DateTime timetableStartedTime,
+    required DateTime timetableFinishedTime,
   }) = _ExamDetail;
 }
