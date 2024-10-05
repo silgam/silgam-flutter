@@ -501,81 +501,88 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     final durationMinutes = finishedTime.difference(startedTime).inMinutes;
     final durationSeconds = finishedTime.difference(startedTime).inSeconds;
 
-    return CustomCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 16,
-      ),
-      child: Column(
-        children: [
-          Text(
-            '시험을 본 시간',
-            style: _titleTextStyle,
-          ),
-          const SizedBox(height: 12),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.timer_outlined,
-                  color: Theme.of(context).primaryColor,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '$startedTimeString ~ $finishedTimeString',
-                        style: _contentTextStyle,
-                      ),
-                      VerticalDivider(
-                        color: Colors.grey.shade900,
-                        width: 20,
-                        thickness: 1.1,
-                        indent: 6,
-                        endIndent: 6,
-                      ),
-                      Text(
-                        '$durationMinutes',
-                        style: _contentTextStyle,
-                      ),
-                      const SizedBox(width: 1),
-                      Text(
-                        'm',
-                        style: _contentTextStyle.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 2,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${durationSeconds % 60}',
-                        style: _contentTextStyle,
-                      ),
-                      const SizedBox(width: 1),
-                      Text(
-                        's',
-                        style: _contentTextStyle.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 2,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
+    return Tooltip(
+      message: '예비령과 준비령, 쉬는 시간 등을 모두 포함하여 시험 화면에 머무른 총 응시 시간입니다.',
+      triggerMode: TooltipTriggerMode.tap,
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      showDuration: const Duration(seconds: 3),
+      child: CustomCard(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        child: Column(
+          children: [
+            Text(
+              '총 응시 시간',
+              style: _titleTextStyle,
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.timer_outlined,
+                    color: Theme.of(context).primaryColor,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '$startedTimeString ~ $finishedTimeString',
+                          style: _contentTextStyle,
+                        ),
+                        VerticalDivider(
+                          color: Colors.grey.shade900,
+                          width: 20,
+                          thickness: 1.1,
+                          indent: 6,
+                          endIndent: 6,
+                        ),
+                        Text(
+                          '$durationMinutes',
+                          style: _contentTextStyle,
+                        ),
+                        const SizedBox(width: 1),
+                        Text(
+                          'm',
+                          style: _contentTextStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            height: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${durationSeconds % 60}',
+                          style: _contentTextStyle,
+                        ),
+                        const SizedBox(width: 1),
+                        Text(
+                          's',
+                          style: _contentTextStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            height: 2,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
