@@ -146,8 +146,8 @@ class AppState with _$AppState {
     );
 
     final defaultExams = getDefaultExams()
-        .where((exam) => exam.subject.includeInAllExamsTimetable);
-    final Timetable allExamsTimetable = Timetable(
+        .where((exam) => exam.subject.includeInAllSubjectsTimetable);
+    final Timetable allSubjectsTimetable = Timetable(
       name: '전과목',
       startTime: defaultExams.first.timetableStartTime,
       items: defaultExams
@@ -158,14 +158,14 @@ class AppState with _$AppState {
           .toList(),
     );
 
-    timetables.insert(0, allExamsTimetable);
+    timetables.insert(0, allSubjectsTimetable);
 
     return timetables;
   }
 }
 
 extension on Subject {
-  bool get includeInAllExamsTimetable => this != Subject.secondLanguage;
+  bool get includeInAllSubjectsTimetable => this != Subject.secondLanguage;
 
   int get breakMinutesAfter => switch (this) {
         Subject.language || Subject.english => 20,
