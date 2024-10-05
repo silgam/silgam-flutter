@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../model/announcement.dart';
 import '../../../model/exam.dart';
 import '../../../model/lap_time.dart';
-import '../../../model/relative_time.dart';
 import '../../../model/timetable.dart';
 import '../../../repository/noise/noise_repository.dart';
 import '../../../util/analytics_manager.dart';
@@ -30,8 +30,8 @@ class ClockCubit extends Cubit<ClockState> {
     this._announcementPlayer,
   ) : super(ClockState(
           currentTime: DateTime.now(),
-          examStartedTime: DateTime.now(),
           pageOpenedTime: DateTime.now(),
+          timetableStartedTime: DateTime.now(),
         )) {
     _initialize();
   }
@@ -80,7 +80,10 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void startExam() {
-    emit(state.copyWith(isStarted: true));
+    emit(state.copyWith(
+      isStarted: true,
+      timetableStartedTime: DateTime.now(),
+    ));
     _restartTimer();
     _playAnnouncement();
     _noiseGenerator?.start();
@@ -223,16 +226,32 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void _saveExamStartedTimeIfNeeded() {
-    final currentAnnouncementTime = state.currentBreakpoint.announcement.time;
-    if (currentAnnouncementTime == const RelativeTime.afterStart(minutes: 0)) {
-      emit(state.copyWith(examStartedTime: DateTime.now()));
+    if (state.currentBreakpoint.announcement.purpose ==
+        AnnouncementPurpose.start) {
+      emit(state.copyWith(
+        examStartedTimes: {
+          ...state.examStartedTimes,
+          state.currentExam: DateTime.now(),
+        },
+      ));
     }
   }
 
   void _saveExamFinishedTimeIfNeeded() {
-    final currentAnnouncementTime = state.currentBreakpoint.announcement.time;
-    if (currentAnnouncementTime == const RelativeTime.afterFinish(minutes: 0)) {
-      emit(state.copyWith(examFinishedTime: DateTime.now()));
+    if (state.currentBreakpoint.announcement.purpose ==
+        AnnouncementPurpose.finish) {
+      emit(state.copyWith(
+        examFinishedTimes: {
+          ...state.examFinishedTimes,
+          state.currentExam: DateTime.now(),
+        },
+      ));
+    }
+
+    if (state.isFinished) {
+      emit(state.copyWith(
+        timetableFinishedTime: DateTime.now(),
+      ));
     }
   }
 

@@ -568,9 +568,12 @@ class _ClockPageState extends State<ClockPage> {
     final arguments = ExamOverviewPageArguments(
       examDetail: ExamDetail(
         exams: widget.timetable.exams,
-        examStartedTime: _cubit.state.examStartedTime,
-        examFinishedTime: _cubit.state.examFinishedTime ?? DateTime.now(),
+        examStartedTimes: _cubit.state.examStartedTimes,
+        examFinishedTimes: _cubit.state.examFinishedTimes,
         lapTimes: _cubit.state.lapTimes,
+        timetableStartedTime: _cubit.state.timetableStartedTime,
+        timetableFinishedTime:
+            _cubit.state.timetableFinishedTime ?? DateTime.now(),
       ),
     );
     SchedulerBinding.instance.addPostFrameCallback((_) {

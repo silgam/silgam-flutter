@@ -181,8 +181,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     if (isSignedIn) {
       final arguments = EditRecordPageArguments(
         inputExam: exam,
-        examStartedTime: widget.examDetail.examStartedTime,
-        examFinishedTime: widget.examDetail.examFinishedTime,
+        examStartedTime: widget.examDetail.examStartedTimes[exam],
+        examFinishedTime: widget.examDetail.examFinishedTimes[exam],
         prefillFeedback: (lapTimeItemGroups.isEmpty || isUsingExample)
             ? null
             : lapTimeItemGroups.toCopyableString(),
@@ -494,16 +494,13 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildExamTimeCard() {
-    String startedTimeString =
-        DateFormat.Hm().format(widget.examDetail.examStartedTime);
-    String finishedTimeString =
-        DateFormat.Hm().format(widget.examDetail.examFinishedTime);
-    int durationMinutes = widget.examDetail.examFinishedTime
-        .difference(widget.examDetail.examStartedTime)
-        .inMinutes;
-    int durationSeconds = widget.examDetail.examFinishedTime
-        .difference(widget.examDetail.examStartedTime)
-        .inSeconds;
+    final startedTime = widget.examDetail.timetableStartedTime;
+    final finishedTime = widget.examDetail.timetableFinishedTime;
+    final startedTimeString = DateFormat.Hm().format(startedTime);
+    final finishedTimeString = DateFormat.Hm().format(finishedTime);
+    final durationMinutes = finishedTime.difference(startedTime).inMinutes;
+    final durationSeconds = finishedTime.difference(startedTime).inSeconds;
+
     return CustomCard(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,

@@ -11,10 +11,12 @@ class ClockState with _$ClockState {
     @Default([]) List<Breakpoint> breakpoints,
     @Default(0) int currentBreakpointIndex,
     required DateTime currentTime,
-    required DateTime examStartedTime,
-    @Default(null) DateTime? examFinishedTime,
-    required DateTime pageOpenedTime,
+    @Default({}) Map<Exam, DateTime> examStartedTimes,
+    @Default({}) Map<Exam, DateTime> examFinishedTimes,
     @Default([]) List<LapTime> lapTimes,
+    required DateTime pageOpenedTime,
+    required DateTime timetableStartedTime,
+    DateTime? timetableFinishedTime,
   }) = _ClockState;
 
   Breakpoint get currentBreakpoint => breakpoints[currentBreakpointIndex];
