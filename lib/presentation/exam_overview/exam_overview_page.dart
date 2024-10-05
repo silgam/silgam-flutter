@@ -64,11 +64,13 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   List<Exam> get _exams => widget.examDetail.exams;
 
-  double get _screenWidth => MediaQuery.of(context).size.width;
+  double get _screenWidth => MediaQuery.sizeOf(context).width;
   bool get _isTablet => _screenWidth > _tabletLayoutWidth;
   double get _horizontalPadding => _isTablet ? 60 : 24;
-  double get _screenHorizontalPadding =>
-      MediaQuery.of(context).padding.horizontal;
+  double get _floatingButtonWidth =>
+      _screenWidth -
+      _horizontalPadding * 2 -
+      MediaQuery.paddingOf(context).horizontal;
 
   void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
@@ -271,9 +273,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 onTap: onPressed,
                 splashFactory: NoSplash.splashFactory,
                 child: Container(
-                  width: _screenWidth -
-                      _horizontalPadding * 2 -
-                      _screenHorizontalPadding,
+                  width: _floatingButtonWidth,
                   height: 48,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
@@ -321,9 +321,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 onTap: onPressed,
                 splashFactory: NoSplash.splashFactory,
                 child: Container(
-                  width: _screenWidth -
-                      _horizontalPadding * 2 -
-                      _screenHorizontalPadding,
+                  width: _floatingButtonWidth,
                   height: 48,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
@@ -873,9 +871,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             onTap: () => _onRecordExamButtonPressed(exam),
             splashFactory: NoSplash.splashFactory,
             child: Container(
-              width: _screenWidth -
-                  _horizontalPadding * 2 -
-                  _screenHorizontalPadding,
+              width: _floatingButtonWidth,
               height: 40,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               child: Stack(
