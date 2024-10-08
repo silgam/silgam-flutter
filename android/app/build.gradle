@@ -79,5 +79,4 @@ flutter {
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
-    implementation "com.android.billingclient:billing-ktx:5.1.0"
 }
