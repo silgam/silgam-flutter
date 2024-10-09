@@ -2,7 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
 
+import '../presentation/clock/breakpoint.dart';
 import '../util/date_time_extension.dart';
+import 'announcement.dart';
 
 part 'lap_time.freezed.dart';
 
@@ -10,7 +12,7 @@ part 'lap_time.freezed.dart';
 class LapTime with _$LapTime {
   const factory LapTime({
     required DateTime time,
-    required DateTime createdAt,
+    required Breakpoint breakpoint,
   }) = _LapTime;
 }
 
@@ -23,11 +25,12 @@ class LapTimeItem with _$LapTimeItem {
   }) = _LapTimeItem;
 }
 
-@freezed
+@Freezed(makeCollectionsUnmodifiable: false)
 class LapTimeItemGroup with _$LapTimeItemGroup {
   const factory LapTimeItemGroup({
     required String title,
     required DateTime startTime,
+    required AnnouncementPurpose announcementPurpose,
     required List<LapTimeItem> lapTimeItems,
   }) = _LapTimeItemGroup;
 }
@@ -54,9 +57,5 @@ extension LapTimeItemGroupsExtension on List<LapTimeItemGroup> {
       });
     }
     return buffer.toString();
-  }
-
-  bool get isItemsEmpty {
-    return every((group) => group.lapTimeItems.isEmpty);
   }
 }

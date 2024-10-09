@@ -4,6 +4,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../presentation/app/cubit/app_cubit.dart';
 import '../util/date_time_extension.dart';
 import '../util/injection.dart';
+import 'announcement.dart';
+import 'relative_time.dart';
 import 'subject.dart';
 
 part 'exam.freezed.dart';
@@ -11,7 +13,7 @@ part 'exam.g.dart';
 
 @freezed
 class Exam with _$Exam {
-  const Exam._();
+  Exam._();
 
   factory Exam({
     required String id,
@@ -52,4 +54,19 @@ class Exam with _$Exam {
       subject.minutesAfterExamFinish;
 
   bool get isCustomExam => userId != null;
+
+  late final List<Announcement> announcements = _getAnnouncements();
+
+  List<Announcement> _getAnnouncements() {
+    return subject.defaultAnnouncements.where((announcement) {
+      final isOverExamDuration =
+          (announcement.time.type == RelativeTimeType.afterStart ||
+                  announcement.time.type == RelativeTimeType.beforeFinish) &&
+              announcement.time.minutes >= durationMinutes;
+      final skipBeforeFinishAnnouncement = !isBeforeFinishAnnouncementEnabled &&
+          announcement.purpose == AnnouncementPurpose.beforeFinish;
+
+      return !isOverExamDuration && !skipBeforeFinishAnnouncement;
+    }).toList();
+  }
 }

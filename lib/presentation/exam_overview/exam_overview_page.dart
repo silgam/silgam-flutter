@@ -5,10 +5,13 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
+import '../../model/exam_record.dart';
 import '../../model/lap_time.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/date_time_extension.dart';
@@ -20,6 +23,7 @@ import '../common/custom_card.dart';
 import '../common/free_user_block_overlay.dart';
 import '../edit_record/edit_record_page.dart';
 import '../login/login_page.dart';
+import '../record_detail/record_detail_page.dart';
 import 'cubit/exam_overview_cubit.dart';
 
 part 'exam_overview_messages.dart';
@@ -38,10 +42,6 @@ class ExamOverviewPage extends StatefulWidget {
 }
 
 class _ExamOverviewPageState extends State<ExamOverviewPage> {
-  final AppCubit _appCubit = getIt.get();
-  late final ExamOverviewCubit _examOverviewCubit =
-      getIt.get(param1: widget.examDetail);
-
   static const _tabletLayoutWidth = 800.0;
   static final TextStyle _titleTextStyle = TextStyle(
     fontSize: 14,
@@ -55,10 +55,24 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     height: 1.2,
   );
 
-  List<Exam> get _exams => widget.examDetail.exams;
+  final AppCubit _appCubit = getIt.get();
+  late final ExamOverviewCubit _examOverviewCubit =
+      getIt.get(param1: widget.examDetail);
 
   final _randomTitle =
       _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
+
+  bool _isExpandableFabOpen = false;
+
+  List<Exam> get _exams => widget.examDetail.exams;
+
+  double get _screenWidth => MediaQuery.sizeOf(context).width;
+  bool get _isTablet => _screenWidth > _tabletLayoutWidth;
+  double get _horizontalPadding => _isTablet ? 60 : 24;
+  double get _floatingButtonWidth =>
+      _screenWidth -
+      _horizontalPadding * 2 -
+      MediaQuery.paddingOf(context).horizontal;
 
   void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
@@ -67,7 +81,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   void _showExitConfirmDialog() {
     var content = '랩타임과 모의고사 기록을 저장하지 않고 나가시겠어요?';
-    if (_examOverviewCubit.state.lapTimeItemGroups.isItemsEmpty ||
+    if (widget.examDetail.lapTimes.isEmpty ||
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups) {
       content = '모의고사 기록을 저장하지 않고 나가시겠어요?';
     }
@@ -135,11 +149,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       isExample: isUsingExample,
     );
     Clipboard.setData(ClipboardData(text: textToCopy));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text('복사되었습니다.'),
-      ),
+    EasyLoading.showToast(
+      '복사되었습니다.',
+      dismissOnTap: true,
+      duration: const Duration(milliseconds: 500),
     );
 
     AnalyticsManager.logEvent(
@@ -152,27 +165,46 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  void _onBottomButtonPressed(Exam exam) {
+  Future<void> _onRecordExamButtonPressed(Exam exam) async {
+    final examRecordId = _examOverviewCubit.state.examToRecordIds[exam];
+    if (examRecordId != null) {
+      final RecordDetailPageResult? recordDetailPageResult =
+          await Navigator.pushNamed<RecordDetailPageResult>(
+        context,
+        RecordDetailPage.routeName,
+        arguments: RecordDetailPageArguments(recordId: examRecordId),
+      );
+
+      if (recordDetailPageResult == RecordDetailPageResult.deleted) {
+        _examOverviewCubit.examRecordDeleted(exam);
+      }
+      return;
+    }
+
     final isSignedIn = _appCubit.state.isSignedIn;
-    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final lapTimeItemGroups =
+        _examOverviewCubit.state.examToLapTimeItemGroups[exam] ?? [];
     final isUsingExample =
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
 
     if (isSignedIn) {
       final arguments = EditRecordPageArguments(
         inputExam: exam,
-        examStartedTime: widget.examDetail.examStartedTime,
-        examFinishedTime: widget.examDetail.examFinishedTime,
-        prefillFeedback: (lapTimeItemGroups.isItemsEmpty || isUsingExample)
+        examStartedTime: widget.examDetail.examStartedTimes[exam],
+        examFinishedTime: widget.examDetail.examFinishedTimes[exam],
+        prefillFeedback: (lapTimeItemGroups.isEmpty || isUsingExample)
             ? null
             : lapTimeItemGroups.toCopyableString(),
       );
-      Navigator.pushNamed(
+      final ExamRecord? examRecord = await Navigator.pushNamed<ExamRecord>(
         context,
         EditRecordPage.routeName,
         arguments: arguments,
       );
-      _examOverviewCubit.examRecorded(exam.id);
+
+      if (examRecord != null) {
+        _examOverviewCubit.examRecorded(exam, examRecord.id);
+      }
     } else {
       Navigator.pushNamed(
         context,
@@ -190,12 +222,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider<ExamOverviewCubit>(
       create: (_) => _examOverviewCubit,
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
         child: Scaffold(
+          floatingActionButtonLocation:
+              _exams.length > 1 ? ExpandableFab.location : null,
+          floatingActionButton: _exams.length > 1 ? _buildFab() : null,
           body: SafeArea(
             child: BlocBuilder<AppCubit, AppState>(
               builder: (context, appState) {
@@ -203,9 +237,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
                   builder: (context, state) {
                     return PopScope(
-                      canPop: state.recordedExamIds.length == _exams.length,
+                      canPop: state.examToRecordIds.length == _exams.length,
                       onPopInvokedWithResult: _onPopInvokedWithResult,
-                      child: screenWidth > _tabletLayoutWidth
+                      child: _isTablet
                           ? _buildTabletLayout()
                           : _buildMobileLayout(),
                     );
@@ -219,15 +253,125 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
+  Widget _buildFab() {
+    final rightOffset = _horizontalPadding - 16;
+
+    return ExpandableFab(
+      initialOpen: _isExpandableFabOpen,
+      onOpen: () => _isExpandableFabOpen = true,
+      onClose: () => _isExpandableFabOpen = false,
+      openCloseStackAlignment: Alignment.centerRight,
+      distance: 52,
+      type: ExpandableFabType.up,
+      overlayStyle: ExpandableFabOverlayStyle(
+        color: Colors.black.withOpacity(0.2),
+        blur: 8,
+      ),
+      childrenOffset: Offset(rightOffset, 8),
+      childrenAnimation: ExpandableFabAnimation.none,
+      openButtonBuilder: FloatingActionButtonBuilder(
+        size: 60,
+        builder: (_, onPressed, progress) {
+          return Padding(
+            padding: EdgeInsets.only(right: rightOffset),
+            child: Material(
+              color: Theme.of(context).primaryColor,
+              shape: const StadiumBorder(),
+              clipBehavior: Clip.hardEdge,
+              elevation: 5,
+              child: InkWell(
+                onTap: onPressed,
+                splashFactory: NoSplash.splashFactory,
+                child: Container(
+                  width: _floatingButtonWidth,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  child: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          '기록하기',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      closeButtonBuilder: FloatingActionButtonBuilder(
+        size: 60,
+        builder: (_, onPressed, progress) {
+          return Padding(
+            padding: EdgeInsets.only(right: rightOffset),
+            child: Material(
+              color: Colors.white,
+              shape: const StadiumBorder(),
+              clipBehavior: Clip.hardEdge,
+              elevation: 5,
+              shadowColor: Colors.black26,
+              child: InkWell(
+                onTap: onPressed,
+                splashFactory: NoSplash.splashFactory,
+                child: Container(
+                  width: _floatingButtonWidth,
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  child: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.close,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          '닫기',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      children: _exams.reversed.map(_buildRecordExamButton).toList(),
+    );
+  }
+
   Widget _buildMobileLayout() {
-    const horizontalPadding = 24.0;
     return Stack(
       children: [
         SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: horizontalPadding,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -236,6 +380,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 const SizedBox(height: 16),
                 _buildTitle(),
                 const SizedBox(height: 40),
+                if (_exams.length > 1) _buildTimetableNameCard(),
+                if (_exams.length > 1) const SizedBox(height: 20),
                 _buildSubjectCard(),
                 const SizedBox(height: 20),
                 _buildExamTimeCard(),
@@ -246,13 +392,17 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        _buildBottomButtons(horizontalPadding: horizontalPadding),
+        if (_exams.length == 1)
+          Container(
+            padding: const EdgeInsets.only(bottom: 20),
+            alignment: Alignment.bottomCenter,
+            child: _buildRecordExamButton(_exams.first),
+          ),
       ],
     );
   }
 
   Widget _buildTabletLayout() {
-    const horizontalPadding = 60.0;
     return Stack(
       children: [
         SingleChildScrollView(
@@ -260,15 +410,15 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             alignment: Alignment.center,
             child: Container(
               constraints: const BoxConstraints(maxWidth: _tabletLayoutWidth),
-              padding: const EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 40),
                   _buildTitle(),
                   const SizedBox(height: 32),
+                  if (_exams.length > 1) _buildTimetableNameCard(),
+                  if (_exams.length > 1) const SizedBox(height: 28),
                   _buildSubjectCard(),
                   const SizedBox(height: 28),
                   _buildExamTimeCard(),
@@ -280,7 +430,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             ),
           ),
         ),
-        _buildBottomButtons(horizontalPadding: horizontalPadding),
+        if (_exams.length == 1)
+          Container(
+            padding: const EdgeInsets.only(bottom: 20),
+            alignment: Alignment.bottomCenter,
+            child: _buildRecordExamButton(_exams.first),
+          ),
         Positioned(
           top: 12,
           right: 20,
@@ -318,6 +473,25 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
+  Widget _buildTimetableNameCard() {
+    return CustomCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        children: [
+          Text(
+            '시간표',
+            style: _titleTextStyle,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            widget.examDetail.timetableName,
+            style: _contentTextStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSubjectCard() {
     return CustomCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -351,97 +525,102 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildExamTimeCard() {
-    String startedTimeString =
-        DateFormat.Hm().format(widget.examDetail.examStartedTime);
-    String finishedTimeString =
-        DateFormat.Hm().format(widget.examDetail.examFinishedTime);
-    int durationMinutes = widget.examDetail.examFinishedTime
-        .difference(widget.examDetail.examStartedTime)
-        .inMinutes;
-    int durationSeconds = widget.examDetail.examFinishedTime
-        .difference(widget.examDetail.examStartedTime)
-        .inSeconds;
-    return CustomCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 16,
-      ),
-      child: Column(
-        children: [
-          Text(
-            '시험을 본 시간',
-            style: _titleTextStyle,
-          ),
-          const SizedBox(height: 12),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.timer_outlined,
-                  color: Theme.of(context).primaryColor,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '$startedTimeString ~ $finishedTimeString',
-                        style: _contentTextStyle,
-                      ),
-                      VerticalDivider(
-                        color: Colors.grey.shade900,
-                        width: 20,
-                        thickness: 1.1,
-                        indent: 6,
-                        endIndent: 6,
-                      ),
-                      Text(
-                        '$durationMinutes',
-                        style: _contentTextStyle,
-                      ),
-                      const SizedBox(width: 1),
-                      Text(
-                        'm',
-                        style: _contentTextStyle.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 2,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${durationSeconds % 60}',
-                        style: _contentTextStyle,
-                      ),
-                      const SizedBox(width: 1),
-                      Text(
-                        's',
-                        style: _contentTextStyle.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 2,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
+    final startedTime = widget.examDetail.timetableStartedTime;
+    final finishedTime = widget.examDetail.timetableFinishedTime;
+    final startedTimeString = DateFormat.Hm().format(startedTime);
+    final finishedTimeString = DateFormat.Hm().format(finishedTime);
+    final durationMinutes = finishedTime.difference(startedTime).inMinutes;
+    final durationSeconds = finishedTime.difference(startedTime).inSeconds;
+
+    return Tooltip(
+      message: '예비령과 준비령, 쉬는 시간 등을 모두 포함하여 시험 화면에 머무른 총 응시 시간입니다.',
+      triggerMode: TooltipTriggerMode.tap,
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      showDuration: const Duration(seconds: 3),
+      child: CustomCard(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        child: Column(
+          children: [
+            Text(
+              '총 응시 시간',
+              style: _titleTextStyle,
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.timer_outlined,
+                    color: Theme.of(context).primaryColor,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '$startedTimeString ~ $finishedTimeString',
+                          style: _contentTextStyle,
+                        ),
+                        VerticalDivider(
+                          color: Colors.grey.shade900,
+                          width: 20,
+                          thickness: 1.1,
+                          indent: 6,
+                          endIndent: 6,
+                        ),
+                        Text(
+                          '$durationMinutes',
+                          style: _contentTextStyle,
+                        ),
+                        const SizedBox(width: 1),
+                        Text(
+                          'm',
+                          style: _contentTextStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            height: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${durationSeconds % 60}',
+                          style: _contentTextStyle,
+                        ),
+                        const SizedBox(width: 1),
+                        Text(
+                          's',
+                          style: _contentTextStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            height: 2,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildLapTimeCard() {
-    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final examToLapTimeItemGroups =
+        _examOverviewCubit.state.examToLapTimeItemGroups;
     final isUsingExample =
         _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
     final isLapTimeAvailable =
@@ -462,31 +641,10 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 '랩타임',
                 style: _titleTextStyle,
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  onPressed: () => _onCopyLapTimePressed(
-                    lapTimeItemGroups: lapTimeItemGroups,
-                    isUsingExample: isUsingExample,
-                  ),
-                  splashColor: Colors.transparent,
-                  padding: const EdgeInsets.all(0),
-                  splashRadius: 24,
-                  visualDensity: const VisualDensity(
-                    horizontal: VisualDensity.minimumDensity,
-                    vertical: VisualDensity.minimumDensity,
-                  ),
-                  tooltip: '복사하기',
-                  icon: const Icon(
-                    Icons.copy,
-                    size: 20,
-                  ),
-                ),
-              )
             ],
           ),
           const SizedBox(height: 8),
-          if (lapTimeItemGroups.isItemsEmpty && isLapTimeAvailable)
+          if (examToLapTimeItemGroups.isEmpty && isLapTimeAvailable)
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 20),
               child: Text(
@@ -507,49 +665,83 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                 Column(
                   children: [
                     _buildLapTimeTimeline(),
-                    const SizedBox(height: 8),
-                    const Divider(
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 2),
-                    ...lapTimeItemGroups.map(
-                      (lapTimeItemGroup) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                    for (final MapEntry(key: exam, value: lapTimeItemGroups)
+                        in examToLapTimeItemGroups.entries) ...[
+                      const SizedBox(height: 8),
+                      const Divider(color: Colors.grey),
+                      const SizedBox(height: 28),
+                      Stack(
+                        alignment: Alignment.topCenter,
                         children: [
-                          const SizedBox(height: 8),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 5,
-                              horizontal: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context).primaryColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 14,
-                              ),
+                          Text(
+                            exam.name,
+                            style: TextStyle(
+                              color: Color(exam.color),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          ...lapTimeItemGroup.lapTimeItems.mapIndexed(
-                            (index, lapTimeItem) => _buildLapTimeItem(
-                              index: index,
-                              time: lapTimeItem.time,
-                              timeDifference: lapTimeItem.timeDifference,
-                              timeElapsed: lapTimeItem.timeElapsed,
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () => _onCopyLapTimePressed(
+                                lapTimeItemGroups: lapTimeItemGroups,
+                                isUsingExample: isUsingExample,
+                              ),
+                              padding: const EdgeInsets.all(0),
+                              splashRadius: 24,
+                              visualDensity: const VisualDensity(
+                                horizontal: VisualDensity.minimumDensity,
+                                vertical: VisualDensity.minimumDensity,
+                              ),
+                              color: Colors.grey.shade700,
+                              tooltip: '복사하기',
+                              icon: const Icon(
+                                Icons.copy,
+                                size: 20,
+                              ),
                             ),
                           )
                         ],
                       ),
-                    ),
+                      for (final lapTimeItemGroup in lapTimeItemGroups)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 8),
+                            Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 5,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey.shade600,
+                                  width: 0.7,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            for (final (index, lapTimeItem)
+                                in lapTimeItemGroup.lapTimeItems.indexed)
+                              _buildLapTimeItem(
+                                index: index,
+                                time: lapTimeItem.time,
+                                timeDifference: lapTimeItem.timeDifference,
+                                timeElapsed: lapTimeItem.timeElapsed,
+                              )
+                          ],
+                        ),
+                    ]
                   ],
                 ),
                 if (isUsingExample)
@@ -567,9 +759,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   }
 
   Widget _buildLapTimeTimeline() {
-    final lapTimeItemGroups = _examOverviewCubit.state.lapTimeItemGroups;
+    final lapTimeItemGroups =
+        _examOverviewCubit.state.examToLapTimeItemGroups.values.flattened;
+    final isUsingExample =
+        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
     final startTime = lapTimeItemGroups.first.startTime;
-    final endTime = _exams.last.endTime;
+    final endTime = isUsingExample ? _exams.first.endTime : _exams.last.endTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;
 
     final markerPositions = lapTimeItemGroups
@@ -686,81 +881,66 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
     );
   }
 
-  Widget _buildBottomButton(Exam exam) {
-    return Material(
-      color: Color(exam.color),
-      borderRadius: BorderRadius.circular(100),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => _onBottomButtonPressed(exam),
-        splashColor: Colors.transparent,
-        highlightColor: Colors.grey.withAlpha(60),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 14,
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Text(
-                  '${exam.name} 기록하기',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const Positioned(
-                right: 0,
-                child: Icon(
-                  Icons.chevron_right,
-                  color: Colors.white,
-                  size: 28,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget _buildRecordExamButton(Exam exam) {
+    return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
+      buildWhen: (previous, current) =>
+          previous.examToRecordIds != current.examToRecordIds,
+      builder: (context, state) {
+        final isRecorded = state.examToRecordIds.containsKey(exam);
 
-  Widget _buildBottomButtons({
-    required double horizontalPadding,
-  }) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: horizontalPadding,
-          right: horizontalPadding,
-          bottom: 20,
-        ),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              SilgamApp.backgroundColor.withOpacity(0),
-              SilgamApp.backgroundColor,
-            ],
+        return Material(
+          color: isRecorded ? Colors.grey.shade100 : Color(exam.color),
+          shape: StadiumBorder(
+            side: isRecorded
+                ? BorderSide(
+                    color: Color(exam.color),
+                  )
+                : BorderSide.none,
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: _exams
-              .map((exam) => Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: _buildBottomButton(exam)))
-              .toList(),
-        ),
-      ),
+          clipBehavior: Clip.hardEdge,
+          elevation: 5,
+          shadowColor: Colors.black26,
+          child: InkWell(
+            onTap: () => _onRecordExamButtonPressed(exam),
+            splashFactory: NoSplash.splashFactory,
+            child: Container(
+              width: _floatingButtonWidth,
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        isRecorded
+                            ? '${exam.name} 기록 확인하기'
+                            : '${exam.name} 기록하기',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: isRecorded ? Color(exam.color) : Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    child: Icon(
+                      isRecorded ? Icons.check : Icons.chevron_right,
+                      color: isRecorded ? Color(exam.color) : Colors.white,
+                      size: 24,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
