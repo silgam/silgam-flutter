@@ -150,6 +150,7 @@ class AppState with _$AppState {
     final defaultExams = getDefaultExams()
         .where((exam) => exam.subject.includeInAllSubjectsTimetable);
     final Timetable allSubjectsTimetable = Timetable(
+      id: 'all-subjects',
       name: '전과목',
       isAllSubjectsTimetable: true,
       startTime: defaultExams.first.timetableStartTime,
