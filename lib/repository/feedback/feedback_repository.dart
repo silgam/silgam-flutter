@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,7 +23,9 @@ class FeedbackRepository {
     final request = SendFeedbackRequestDto(
       userId: FirebaseAuth.instance.currentUser?.uid,
       feedback: feedback,
-      appVersion: await appVersion,
+      appVersion: await _getAppVersion(),
+      os: Platform.operatingSystem,
+      osVersion: Platform.operatingSystemVersion,
     );
     try {
       await _feedbackApi.sendFeedback(request);
@@ -33,7 +36,7 @@ class FeedbackRepository {
     }
   }
 
-  Future<String> get appVersion async {
+  Future<String> _getAppVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
     return packageInfo.version;
   }

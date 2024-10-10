@@ -9,6 +9,8 @@ class SendFeedbackRequestDto with _$SendFeedbackRequestDto {
     required String? userId,
     required String feedback,
     required String appVersion,
+    required String os,
+    required String osVersion,
   }) = _SendFeedbackRequestDto;
 
   factory SendFeedbackRequestDto.fromJson(Map<String, dynamic> json) =>
