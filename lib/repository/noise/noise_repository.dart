@@ -55,9 +55,10 @@ class Noise {
     required this.preferenceKey,
     required this.presetLevels,
     required this.existingFiles,
-  }) : assert(existingFiles > 0, 'existingFiles must be greater than 0');
+  });
 
-  String getRandomNoisePath() {
+  String? getRandomNoisePath() {
+    if (existingFiles == 0) return null;
     int randomNumber = Random().nextInt(existingFiles) + 1;
     return '$_noiseAssetPath/$preferenceKey$randomNumber.mp3';
   }
