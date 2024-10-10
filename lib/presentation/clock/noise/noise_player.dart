@@ -25,8 +25,7 @@ class NoiseAudioPlayer implements NoisePlayer {
   Future<void> playNoise({required int noiseId, int delayMillis = 0}) async {
     if (!availableNoiseIds.contains(noiseId)) return;
     Noise noise = Noise.byId(noiseId);
-    String? noisePath = noise.getRandomNoisePath();
-    if (noisePath == null) return;
+    String noisePath = noise.getRandomNoisePath();
 
     int playerId = DateTime.now().millisecondsSinceEpoch;
     _noisePlayers[playerId] = AudioPlayer();
