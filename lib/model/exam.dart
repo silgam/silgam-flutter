@@ -55,20 +55,17 @@ class Exam with _$Exam {
 
   bool get isCustomExam => userId != null;
 
-  late final List<Announcement> announcements = _getAnnouncements();
+  late final List<Announcement> announcements =
+      subject.defaultAnnouncements.where((announcement) {
+    final isOverExamDuration =
+        (announcement.time.type == RelativeTimeType.afterStart ||
+                announcement.time.type == RelativeTimeType.beforeFinish) &&
+            announcement.time.minutes >= durationMinutes;
+    final skipBeforeFinishAnnouncement = !isBeforeFinishAnnouncementEnabled &&
+        announcement.purpose == AnnouncementPurpose.beforeFinish;
 
-  List<Announcement> _getAnnouncements() {
-    return subject.defaultAnnouncements.where((announcement) {
-      final isOverExamDuration =
-          (announcement.time.type == RelativeTimeType.afterStart ||
-                  announcement.time.type == RelativeTimeType.beforeFinish) &&
-              announcement.time.minutes >= durationMinutes;
-      final skipBeforeFinishAnnouncement = !isBeforeFinishAnnouncementEnabled &&
-          announcement.purpose == AnnouncementPurpose.beforeFinish;
-
-      return !isOverExamDuration && !skipBeforeFinishAnnouncement;
-    }).toList();
-  }
+    return !isOverExamDuration && !skipBeforeFinishAnnouncement;
+  }).toList();
 }
 
 DateTime timeFromJson(String json) {
