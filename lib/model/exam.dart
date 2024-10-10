@@ -43,9 +43,10 @@ class Exam with _$Exam {
 
   static String toId(Exam exam) => exam.id;
 
-  DateTime get endTime => startTime.add(Duration(minutes: durationMinutes));
+  late final DateTime endTime =
+      startTime.add(Duration(minutes: durationMinutes));
 
-  DateTime get timetableStartTime =>
+  late final DateTime timetableStartTime =
       startTime.subtract(Duration(minutes: subject.minutesBeforeExamStart));
 
   int get timetableDurationMinutes =>
@@ -66,6 +67,14 @@ class Exam with _$Exam {
 
     return !isOverExamDuration && !skipBeforeFinishAnnouncement;
   }).toList();
+
+  late final Announcement? firstAnnouncement = announcements.firstOrNull;
+
+  late final Announcement? startAnnouncement = announcements.firstWhereOrNull(
+      (announcement) => announcement.purpose == AnnouncementPurpose.start);
+
+  late final Announcement? finishAnnouncement = announcements.lastWhereOrNull(
+      (announcement) => announcement.purpose == AnnouncementPurpose.finish);
 }
 
 DateTime timeFromJson(String json) {

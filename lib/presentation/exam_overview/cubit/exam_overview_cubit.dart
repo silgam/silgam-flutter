@@ -3,9 +3,11 @@ import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../model/announcement.dart';
 import '../../../model/exam.dart';
 import '../../../model/exam_detail.dart';
 import '../../../model/lap_time.dart';
+import '../../../util/date_time_extension.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../example_lap_time_groups.dart';
 
@@ -50,21 +52,30 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     final Map<Exam, List<LapTimeItemGroup>> examToLapTimeItemGroups = {};
 
     for (final lapTime in lapTimes) {
-      final announcement = lapTime.breakpoint.announcement;
       final exam = lapTime.breakpoint.exam;
 
       final List<LapTimeItemGroup> lapTimeItemGroups =
           examToLapTimeItemGroups.putIfAbsent(exam, () => []);
 
-      if (lapTimeItemGroups.lastOrNull?.announcementPurpose !=
-          announcement.purpose) {
+      final Announcement? targetAnnouncement;
+      if (lapTime.time.isSameOrAfter(exam.endTime)) {
+        targetAnnouncement = exam.finishAnnouncement;
+      } else if (lapTime.time.isSameOrAfter(exam.startTime)) {
+        targetAnnouncement = exam.startAnnouncement;
+      } else {
+        targetAnnouncement = exam.firstAnnouncement;
+      }
+
+      if (targetAnnouncement != null &&
+          lapTimeItemGroups.lastOrNull?.announcementPurpose !=
+              targetAnnouncement.purpose) {
         lapTimeItemGroups.add(LapTimeItemGroup(
-          title: announcement.title,
-          startTime: announcement.time.calculateBreakpointTime(
+          title: targetAnnouncement.title,
+          startTime: targetAnnouncement.time.calculateBreakpointTime(
             exam.startTime,
             exam.endTime,
           ),
-          announcementPurpose: announcement.purpose,
+          announcementPurpose: targetAnnouncement.purpose,
           lapTimeItems: [],
         ));
       }
