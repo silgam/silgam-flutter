@@ -11,7 +11,7 @@ abstract class NoisePlayer {
 
   Future<void> playNoise({required int noiseId, int delayMillis = 0});
 
-  void dispose();
+  Future<void> dispose();
 }
 
 class NoiseAudioPlayer implements NoisePlayer {
@@ -56,7 +56,7 @@ class NoiseAudioPlayer implements NoisePlayer {
   }
 
   @override
-  void dispose() async {
+  Future<void> dispose() async {
     await _whiteNoisePlayer.stop();
     await _whiteNoisePlayer.dispose();
     await Future.wait(_noisePlayers.values.map((player) async {

@@ -283,11 +283,13 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   @override
-  Future<void> close() {
-    _announcementPlayer.stop();
-    _announcementPlayer.dispose();
-    _noiseGenerator?.dispose();
+  Future<void> close() async {
     _timer?.cancel();
+
+    await _announcementPlayer.stop();
+    await _announcementPlayer.dispose();
+    await _noiseGenerator?.dispose();
+
     return super.close();
   }
 }

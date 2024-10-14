@@ -81,9 +81,9 @@ class NoiseGenerator {
     noisePlayer.pauseWhiteNoise();
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     _timer?.cancel();
-    noisePlayer.dispose();
+    await noisePlayer.dispose();
   }
 
   bool _calculateProbability(double level) {

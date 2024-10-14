@@ -39,12 +39,11 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
   }
 
   @override
-  void dispose() {
-    _announcementPlayer
-      ..stop()
-      ..dispose();
-
+  void dispose() async {
     super.dispose();
+
+    await _announcementPlayer.stop();
+    await _announcementPlayer.dispose();
   }
 
   void _onAnnouncementTypeChanged(AnnouncementType? announcementType) {
