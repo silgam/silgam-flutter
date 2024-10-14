@@ -54,7 +54,8 @@ class AnalyticsManager {
   }) async {
     if (kIsWeb) return;
 
-    log('Event Logged: $name, $properties');
+    log('Event Logged: $name, $properties', name: 'AnalyticsManager');
+
     _mixpanel.track(name, properties: properties);
 
     String firebaseEventName = name
@@ -78,6 +79,8 @@ class AnalyticsManager {
   static void eventStartTime({required String name}) {
     if (kIsWeb) return;
 
+    log('Event start time logged: $name', name: 'AnalyticsManager');
+
     _mixpanel.timeEvent(name);
   }
 
@@ -85,12 +88,16 @@ class AnalyticsManager {
       Map<String, dynamic> properties) async {
     if (kIsWeb) return;
 
+    log('User properties registered: $properties', name: 'AnalyticsManager');
+
     _mixpanel.registerSuperProperties(properties);
     await _firebaseAnalytics.setDefaultEventParameters(properties);
   }
 
   static Future<void> setUserId({required String? userId}) async {
     if (kIsWeb) return;
+
+    log('User ID set: $userId', name: 'AnalyticsManager');
 
     if (userId != null) _mixpanel.identify(userId);
     await _firebaseAnalytics.setUserId(id: userId);
@@ -100,7 +107,8 @@ class AnalyticsManager {
   static void setPeopleProperty(String prop, dynamic to) {
     if (kIsWeb) return;
 
-    log('People Property Set: $prop, $to');
+    log('People property set: $prop, $to', name: 'AnalyticsManager');
+
     _mixpanel.getPeople().set(prop, to);
   }
 
