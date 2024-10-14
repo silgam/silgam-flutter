@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -13,6 +14,8 @@ import '../app_env.dart';
 class AnalyticsManager {
   static final FirebaseAnalytics _firebaseAnalytics =
       FirebaseAnalytics.instance;
+  static final FirebaseCrashlytics _firebaseCrashlytics =
+      FirebaseCrashlytics.instance;
   static late final Mixpanel _mixpanel;
 
   static Future<void> init() async {
@@ -91,6 +94,7 @@ class AnalyticsManager {
 
     if (userId != null) _mixpanel.identify(userId);
     await _firebaseAnalytics.setUserId(id: userId);
+    await _firebaseCrashlytics.setUserIdentifier(userId ?? '');
   }
 
   static void setPeopleProperty(String prop, dynamic to) {
