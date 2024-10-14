@@ -29,6 +29,7 @@ class AdTileState extends State<AdTile> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     _currentOrientation = MediaQuery.of(context).orientation;
     _loadAd();
   }
@@ -42,11 +43,13 @@ class AdTileState extends State<AdTile> {
           _loadAd();
           return const SizedBox.shrink();
         }
+
         final bannerAd = _bannerAd;
         final adSize = _adSize;
         if (bannerAd == null || adSize == null || !_isLoaded) {
           return const SizedBox.shrink();
         }
+
         return Container(
           width: adSize.width.toDouble(),
           height: adSize.height.toDouble(),
@@ -63,12 +66,14 @@ class AdTileState extends State<AdTile> {
     if (_isLoading) return;
     _isLoading = true;
 
-    await _bannerAd?.dispose();
+    BannerAd? bannerAd = _bannerAd;
     setState(() {
       _bannerAd = null;
       _adSize = null;
       _isLoaded = false;
     });
+
+    await bannerAd?.dispose();
 
     _bannerAd = BannerAd(
       size: AdSize.getInlineAdaptiveBannerAdSize(widget.width, 100),
@@ -77,6 +82,7 @@ class AdTileState extends State<AdTile> {
       listener: BannerAdListener(
         onAdLoaded: ((Ad ad) async {
           final bannerAd = ad as BannerAd;
+
           final adSize = await bannerAd.getPlatformAdSize();
           if (adSize == null) {
             log('Error: getPlatformAdSize() returned null for $bannerAd');
@@ -84,7 +90,6 @@ class AdTileState extends State<AdTile> {
           }
 
           setState(() {
-            _bannerAd = _bannerAd;
             _adSize = adSize;
             _isLoaded = true;
             _isLoading = false;
@@ -93,13 +98,14 @@ class AdTileState extends State<AdTile> {
         onAdFailedToLoad: ((ad, error) {
           log('Failed to load a banner ad: $error');
           setState(() {
+            _bannerAd = null;
+            _adSize = null;
             _isLoaded = false;
             _isLoading = false;
           });
           ad.dispose();
         }),
       ),
-    );
-    await _bannerAd?.load();
+    )..load();
   }
 }
