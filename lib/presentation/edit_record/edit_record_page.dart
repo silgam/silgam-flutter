@@ -302,45 +302,50 @@ class _EditRecordPageState extends State<EditRecordPage> {
         const SizedBox(height: 12),
         _buildDivider(),
         const SizedBox(height: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSubTitle('과목'),
+            const SizedBox(height: 6),
+            Container(
+              height: 36,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 3,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: Colors.grey.shade300,
+                  width: 0.5,
+                ),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  isExpanded: true,
+                  borderRadius: BorderRadius.circular(6),
+                  value: _selectedExam,
+                  onChanged: _onSelectedExamChanged,
+                  items: _exams.map((exam) {
+                    return DropdownMenuItem(
+                      value: exam,
+                      child: Text(
+                        exam.name,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
         Wrap(
           spacing: 20,
           runSpacing: 12,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSubTitle('과목'),
-                const SizedBox(height: 6),
-                Container(
-                  height: 36,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton(
-                      borderRadius: BorderRadius.circular(6),
-                      value: _selectedExam,
-                      onChanged: _onSelectedExamChanged,
-                      items: _exams.map((exam) {
-                        return DropdownMenuItem(
-                          value: exam,
-                          child: Text(exam.name),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
             _buildNumberInputWithTitle(
               _scoreEditingController,
               '점수',
