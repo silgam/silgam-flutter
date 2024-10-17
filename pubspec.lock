@@ -958,10 +958,11 @@ packages:
   image_gallery_saver:
     dependency: "direct main"
     description:
-      name: image_gallery_saver
-      sha256: "0aba74216a4d9b0561510cb968015d56b701ba1bd94aace26aacdd8ae5761816"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: knottx
+      resolved-ref: "05675bd4d70f3f4dfd702ae4f0075fa09025c436"
+      url: "https://github.com/knottx/image_gallery_saver.git"
+    source: git
     version: "2.0.3"
   image_picker:
     dependency: "direct main"
@@ -1136,10 +1137,10 @@ packages:
     description:
       path: just_audio
       ref: "fix/memory-leak"
-      resolved-ref: aaff56c51209bb03bd8b33e4779590be2c68eecc
+      resolved-ref: a9e373f4102ae9e3ee9a0aebbf6a77a7bd89f13d
       url: "https://github.com/silgam/just_audio"
     source: git
-    version: "0.9.20"
+    version: "0.9.41"
   just_audio_platform_interface:
     dependency: transitive
     description:

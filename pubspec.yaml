@@ -45,7 +45,10 @@ dependencies:
   screenshot: ^3.0.0
   path_provider: ^2.1.4
   share_plus: ^10.0.0
-  image_gallery_saver: ^2.0.3
+  image_gallery_saver:
+    git:
+      url: https://github.com/knottx/image_gallery_saver.git
+      ref: knottx
   carousel_slider: ^5.0.0
   smooth_page_indicator: ^1.2.0+3
   google_mobile_ads: ^5.1.0
