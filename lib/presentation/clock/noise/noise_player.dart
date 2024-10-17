@@ -19,7 +19,7 @@ class NoiseAudioPlayer implements NoisePlayer {
 
   final List<int> availableNoiseIds;
   final AudioPlayer _whiteNoisePlayer = AudioPlayer();
-  final Map<int, AudioPlayer> _noisePlayers = {};
+  final Map<int, AudioPlayer> _undisposedNoisePlayers = {};
 
   @override
   Future<void> playNoise({required int noiseId, int delayMillis = 0}) async {
@@ -28,8 +28,8 @@ class NoiseAudioPlayer implements NoisePlayer {
     String noisePath = noise.getRandomNoisePath();
 
     int playerId = DateTime.now().millisecondsSinceEpoch;
-    _noisePlayers[playerId] = AudioPlayer();
-    final AudioPlayer audioPlayer = _noisePlayers[playerId]!;
+    _undisposedNoisePlayers[playerId] = AudioPlayer();
+    final AudioPlayer audioPlayer = _undisposedNoisePlayers[playerId]!;
 
     await audioPlayer.setAsset(noisePath);
     double volume = (Random().nextDouble() + 2) * 2;
@@ -37,9 +37,8 @@ class NoiseAudioPlayer implements NoisePlayer {
     await Future.delayed(Duration(milliseconds: delayMillis));
 
     await audioPlayer.play();
-    await audioPlayer.stop();
-    await audioPlayer.dispose();
-    _noisePlayers.remove(playerId);
+
+    await _disposeNoisePlayer(playerId);
   }
 
   @override
@@ -59,9 +58,14 @@ class NoiseAudioPlayer implements NoisePlayer {
   Future<void> dispose() async {
     await _whiteNoisePlayer.stop();
     await _whiteNoisePlayer.dispose();
-    await Future.wait(_noisePlayers.values.map((player) async {
-      await player.stop();
-      await player.dispose();
-    }));
+
+    await Future.wait(
+        [..._undisposedNoisePlayers.keys].map(_disposeNoisePlayer));
+  }
+
+  Future<void> _disposeNoisePlayer(int playerId) async {
+    final undisposedNoisePlayer = _undisposedNoisePlayers.remove(playerId);
+    await undisposedNoisePlayer?.stop();
+    await undisposedNoisePlayer?.dispose();
   }
 }
