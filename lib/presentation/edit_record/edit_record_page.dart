@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -60,10 +62,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
   bool _isEditingMode = false;
   bool _isSaving = false;
 
-  late final List<String> autocompleteTitles = _recordListCubit
-      .state.originalRecords
-      .map((e) => e.title)
-      .toSet()
+  late final List<ExamRecord> _autocompleteRecords = (LinkedHashSet<ExamRecord>(
+    equals: (a, b) => a.title == b.title,
+    hashCode: (a) => a.title.hashCode,
+  )..addAll(_recordListCubit.state.originalRecords))
       .toList();
 
   Map<String, dynamic> get _defaultLogProperties => {
@@ -210,9 +212,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
           builder: (context, constraints) {
             return Autocomplete(
               initialValue: TextEditingValue(text: title),
+              displayStringForOption: (option) => option.title,
               optionsBuilder: (textEditingValue) {
-                return autocompleteTitles.where((element) {
-                  return element.contains(textEditingValue.text);
+                return _autocompleteRecords.where((element) {
+                  return element.title.contains(textEditingValue.text);
                 }).toList();
               },
               optionsViewBuilder: (context, onSelected, options) {
@@ -242,11 +245,13 @@ class _EditRecordPageState extends State<EditRecordPage> {
                       itemCount: options.length,
                       itemBuilder: (context, index) {
                         final option = options.elementAt(index);
+
                         return ListTile(
-                          title: Text(option),
+                          title: Text(option.title),
                           onTap: () {
                             onSelected(option);
-                            _onTitleChanged(option);
+                            _onTitleChanged(option.title);
+                            _onSelectedExamChanged(option.exam);
                           },
                         );
                       },
