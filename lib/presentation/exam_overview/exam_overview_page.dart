@@ -545,9 +545,20 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         ),
         child: Column(
           children: [
-            Text(
-              '총 응시 시간',
-              style: _titleTextStyle,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '총 응시 시간',
+                  style: _titleTextStyle,
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.help_outline,
+                  color: Colors.grey.shade500,
+                  size: 16,
+                )
+              ],
             ),
             const SizedBox(height: 12),
             FittedBox(
