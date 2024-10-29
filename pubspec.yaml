@@ -18,7 +18,7 @@ dependencies:
     git:
       url: https://github.com/silgam/just_audio
       path: just_audio
-      ref: 6c0742e6f4f829d8abf0452a9bffbcafcf87a1a7
+      ref: baeb000cd0e4164bcbc167fd152de5748616a1c9
   firebase_core: 3.3.0
   firebase_analytics: 11.2.1
   firebase_crashlytics: 4.0.4
