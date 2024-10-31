@@ -16,9 +16,9 @@ dependencies:
   flutter_svg: ^2.0.10+1
   just_audio:
     git:
-      url: https://github.com/silgam/just_audio
+      url: https://github.com/ryanheise/just_audio
       path: just_audio
-      ref: baeb000cd0e4164bcbc167fd152de5748616a1c9
+      ref: 3d3815f4eabc54daf316bca8d020ed201952a42c
   firebase_core: 3.3.0
   firebase_analytics: 11.2.1
   firebase_crashlytics: 4.0.4

@@ -1136,9 +1136,9 @@ packages:
     dependency: "direct main"
     description:
       path: just_audio
-      ref: baeb000cd0e4164bcbc167fd152de5748616a1c9
-      resolved-ref: baeb000cd0e4164bcbc167fd152de5748616a1c9
-      url: "https://github.com/silgam/just_audio"
+      ref: "3d3815f4eabc54daf316bca8d020ed201952a42c"
+      resolved-ref: "3d3815f4eabc54daf316bca8d020ed201952a42c"
+      url: "https://github.com/ryanheise/just_audio"
     source: git
     version: "0.9.42"
   just_audio_platform_interface:
