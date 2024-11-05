@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 import 'exam.dart';
 import 'problem.dart';
@@ -38,12 +39,12 @@ class ExamRecord with _$ExamRecord {
     final int? grade,
     final int? percentile,
     final int? standardScore,
-    final List<WrongProblem> wrongProblems = const [],
-    final String feedback = '',
-    final List<ReviewProblem> reviewProblems = const [],
+    final List<WrongProblem>? wrongProblems,
+    final String? feedback,
+    final List<ReviewProblem>? reviewProblems,
   }) =>
       ExamRecord(
-        id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
+        id: '$userId-${const Uuid().v1()}',
         userId: userId,
         title: title,
         exam: exam,
@@ -53,9 +54,9 @@ class ExamRecord with _$ExamRecord {
         grade: grade,
         percentile: percentile,
         standardScore: standardScore,
-        wrongProblems: wrongProblems,
-        feedback: feedback,
-        reviewProblems: reviewProblems,
+        wrongProblems: wrongProblems ?? const [],
+        feedback: feedback ?? '',
+        reviewProblems: reviewProblems ?? const [],
         createdAt: DateTime.now().toUtc(),
       );
 

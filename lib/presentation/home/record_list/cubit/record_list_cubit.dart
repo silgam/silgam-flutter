@@ -61,6 +61,17 @@ class RecordListCubit extends Cubit<RecordListState> {
     await refresh();
   }
 
+  Future<void> onRecordsCreated(List<ExamRecord> records) async {
+    final newOriginalRecords = [...records.reversed, ...state.originalRecords];
+    emit(state.copyWith(
+      originalRecords: newOriginalRecords,
+      records: _getFilteredAndSortedRecords(
+        originalRecords: newOriginalRecords,
+      ),
+    ));
+    await refresh();
+  }
+
   Future<void> onRecordUpdated(ExamRecord record) async {
     final newOriginalRecords = [...state.originalRecords];
     newOriginalRecords[

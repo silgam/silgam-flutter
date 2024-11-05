@@ -181,20 +181,13 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       return;
     }
 
-    final isSignedIn = _appCubit.state.isSignedIn;
-    final lapTimeItemGroups =
-        _examOverviewCubit.state.examToLapTimeItemGroups[exam] ?? [];
-    final isUsingExample =
-        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
-
-    if (isSignedIn) {
+    if (_appCubit.state.isSignedIn) {
       final arguments = EditRecordPageArguments(
         inputExam: exam,
         examStartedTime: widget.examDetail.examStartedTimes[exam],
         examFinishedTime: widget.examDetail.examFinishedTimes[exam],
-        prefillFeedback: (lapTimeItemGroups.isEmpty || isUsingExample)
-            ? null
-            : lapTimeItemGroups.toCopyableString(),
+        prefillFeedback:
+            _examOverviewCubit.state.getPrefillFeedbackForExamRecord(exam),
       );
       final ExamRecord? examRecord = await Navigator.pushNamed<ExamRecord>(
         context,

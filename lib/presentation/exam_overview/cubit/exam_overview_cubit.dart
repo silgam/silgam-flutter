@@ -2,13 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../model/announcement.dart';
 import '../../../model/exam.dart';
 import '../../../model/exam_detail.dart';
+import '../../../model/exam_record.dart';
 import '../../../model/lap_time.dart';
+import '../../../repository/exam_record/exam_record_repository.dart';
+import '../../../util/const.dart';
 import '../../../util/date_time_extension.dart';
+import '../../../util/duration_extension.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../../home/record_list/cubit/record_list_cubit.dart';
 import '../example_lap_time_groups.dart';
 
 part 'exam_overview_cubit.freezed.dart';
@@ -19,12 +25,55 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   ExamOverviewCubit(
     @factoryParam this._examDetail,
     this._appCubit,
+    this._recordListCubit,
+    this._sharedPreferences,
+    this._examRecordRepository,
   ) : super(const ExamOverviewState()) {
     updateLapTimeItemGroups();
+    _autoSaveExamRecords();
   }
 
   final ExamDetail _examDetail;
   final AppCubit _appCubit;
+  final RecordListCubit _recordListCubit;
+  final SharedPreferences _sharedPreferences;
+  final ExamRecordRepository _examRecordRepository;
+
+  Future<void> _autoSaveExamRecords() async {
+    final userId = _appCubit.state.me?.id;
+    if (userId == null) return;
+
+    if (_sharedPreferences.getBool(PreferenceKey.useAutoSaveRecords) ?? true) {
+      // TODO: 기록 저장 가능 개수 제한 확인
+      final List<ExamRecord> savedRecords = [];
+
+      for (final exam in _examDetail.exams) {
+        final examStartedTime = _examDetail.examStartedTimes[exam];
+        final examFinishedTime = _examDetail.examFinishedTimes[exam];
+        final examDurationMinutes =
+            examStartedTime != null && examFinishedTime != null
+                ? examFinishedTime
+                    .difference(examStartedTime)
+                    .inMinutesWithCorrection
+                : exam.durationMinutes;
+
+        final record = ExamRecord.create(
+          userId: userId,
+          title: exam.name, // TODO: 제목 정하기
+          exam: exam,
+          examStartedTime: examStartedTime ?? DateTime.now(),
+          examDurationMinutes: examDurationMinutes,
+          feedback: state.getPrefillFeedbackForExamRecord(exam),
+        );
+
+        final savedRecord = await _examRecordRepository.addExamRecord(record);
+        examRecorded(exam, savedRecord.id);
+        savedRecords.add(savedRecord);
+      }
+
+      await _recordListCubit.onRecordsCreated(savedRecords);
+    }
+  }
 
   void updateLapTimeItemGroups() {
     if (_appCubit.state.productBenefit.isLapTimeAvailable) {
