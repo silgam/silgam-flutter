@@ -81,13 +81,20 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
-      // TODO 로그인 확인
-      const SettingTile(
-        title: '시험 종료 후 자동 저장',
-        description:
-            '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
-        preferenceKey: PreferenceKey.useAutoSaveRecords,
-      ),
+      appState.isSignedIn
+          ? const SettingTile(
+              title: '시험 종료 후 자동 저장',
+              description:
+                  '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+              preferenceKey: PreferenceKey.useAutoSaveRecords,
+            )
+          : SettingTile(
+              onTap: _onAutoSaveRecordsUnavailableButtonTap,
+              title: '시험 종료 후 자동 저장',
+              description:
+                  '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+              showArrow: true,
+            ),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
               title: '랩타임 기능 사용',
@@ -467,6 +474,15 @@ class _SettingsViewState extends State<SettingsView> {
             child: const Text('계정 탈퇴'),
           )
         ],
+      ),
+    );
+  }
+
+  void _onAutoSaveRecordsUnavailableButtonTap() {
+    Navigator.pushNamed(context, LoginPage.routeName);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('로그인 후 사용할 수 있는 기능이에요.'),
       ),
     );
   }
