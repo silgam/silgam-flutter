@@ -60,7 +60,11 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
 
         final record = ExamRecord.create(
           userId: userId,
-          title: exam.name, // TODO: 제목 정하기
+          title: ExamRecord.autoSaveTitlePrefix +
+              (_examDetail.exams.length > 1
+                  ? '${_examDetail.timetableName} - '
+                  : '') +
+              exam.name,
           exam: exam,
           examStartedTime: examStartedTime ?? DateTime.now(),
           examDurationMinutes: examDurationMinutes,

@@ -63,6 +63,8 @@ class ExamRecord with _$ExamRecord {
   factory ExamRecord.fromJson(Map<String, dynamic> json) =>
       _$ExamRecordFromJson(json);
 
+  static const String autoSaveTitlePrefix = '(자동 저장됨) ';
+
   int getGradeColor() {
     switch (grade) {
       case 1:

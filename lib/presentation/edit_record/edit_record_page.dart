@@ -132,7 +132,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
-    title = recordToEdit.title;
+    title = recordToEdit.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '');
     _selectedExam = recordToEdit.exam;
     _examStartedTime = recordToEdit.examStartedTime;
     _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
