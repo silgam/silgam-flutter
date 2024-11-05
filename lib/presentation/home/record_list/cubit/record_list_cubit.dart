@@ -51,7 +51,7 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   Future<void> onRecordCreated(ExamRecord record) async {
-    final newOriginalRecords = [...state.originalRecords, record];
+    final newOriginalRecords = [record, ...state.originalRecords];
     emit(state.copyWith(
       originalRecords: newOriginalRecords,
       records: _getFilteredAndSortedRecords(
@@ -62,10 +62,9 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   Future<void> onRecordUpdated(ExamRecord record) async {
-    final newOriginalRecords = [
-      ...state.originalRecords.where((r) => r.id != record.id),
-      record
-    ];
+    final newOriginalRecords = [...state.originalRecords];
+    newOriginalRecords[
+        newOriginalRecords.indexWhere((r) => r.id == record.id)] = record;
     emit(state.copyWith(
       originalRecords: newOriginalRecords,
       records: _getFilteredAndSortedRecords(
