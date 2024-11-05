@@ -861,7 +861,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
       record = await _recordRepository.updateExamRecord(
-        userId: _appCubit.state.me!.id,
         oldRecord: oldRecord,
         newRecord: record.copyWith(
           id: oldRecord.id,
@@ -871,10 +870,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _recordListCubit.onRecordUpdated(record);
       if (mounted) Navigator.pop(context);
     } else {
-      record = await _recordRepository.addExamRecord(
-        userId: _appCubit.state.me!.id,
-        record: record,
-      );
+      record = await _recordRepository.addExamRecord(record);
       _recordListCubit.onRecordCreated(record);
       if (mounted) {
         Navigator.pushReplacementNamed(
