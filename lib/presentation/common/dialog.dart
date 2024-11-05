@@ -29,11 +29,11 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
               final sellingProduct = iapState.sellingProduct;
               return AlertDialog(
                 title: const Text(
-                  '실모 기록 개수 제한 안내',
+                  '모의고사 기록 개수 제한 안내',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 content: Text(
-                  '실감패스를 이용하기 전까지는 실모 기록을 ${appState.freeProductBenefit.examRecordLimit}개까지만 추가/수정할 수 있어요. (${appState.freeProductBenefit.examRecordLimit}개 미만까지 삭제 시 추가/수정 가능)',
+                  '실감패스를 이용하기 전까지는 모의고사 기록을 ${appState.freeProductBenefit.examRecordLimit}개까지만 추가/수정할 수 있어요. (${appState.freeProductBenefit.examRecordLimit}개 미만까지 삭제 시 추가/수정 가능)',
                 ),
                 actions: [
                   TextButton(
