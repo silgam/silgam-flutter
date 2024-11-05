@@ -199,9 +199,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         _examOverviewCubit.examRecorded(exam, examRecord.id);
       }
     } else {
-      Navigator.pushNamed(
-        context,
-        LoginPage.routeName,
+      Navigator.pushNamed(context, LoginPage.routeName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로그인 후 사용할 수 있는 기능이에요.'),
+        ),
       );
     }
 
