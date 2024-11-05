@@ -20,13 +20,13 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     @factoryParam this._examDetail,
     this._appCubit,
   ) : super(const ExamOverviewState()) {
-    initialize();
+    updateLapTimeItemGroups();
   }
 
   final ExamDetail _examDetail;
   final AppCubit _appCubit;
 
-  void initialize() {
+  void updateLapTimeItemGroups() {
     if (_appCubit.state.productBenefit.isLapTimeAvailable) {
       _updateLapTimeItemGroups(
         lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),

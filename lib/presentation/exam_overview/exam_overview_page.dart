@@ -233,7 +233,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           body: SafeArea(
             child: BlocBuilder<AppCubit, AppState>(
               builder: (context, appState) {
-                _examOverviewCubit.initialize();
+                _examOverviewCubit.updateLapTimeItemGroups();
+
                 return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
                   builder: (context, state) {
                     return PopScope(
