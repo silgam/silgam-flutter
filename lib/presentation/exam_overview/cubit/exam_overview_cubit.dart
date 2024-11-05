@@ -40,6 +40,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   final ExamRecordRepository _examRecordRepository;
 
   Future<void> _autoSaveExamRecords() async {
+    // TODO: 저장 중일 때 로딩
     final userId = _appCubit.state.me?.id;
     if (userId == null) return;
 
