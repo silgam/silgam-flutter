@@ -28,6 +28,37 @@ class ExamRecord with _$ExamRecord {
     required final DateTime createdAt,
   }) = _ExamRecord;
 
+  factory ExamRecord.create({
+    required final String userId,
+    required final String title,
+    required final Exam exam,
+    required final DateTime examStartedTime,
+    final int? examDurationMinutes,
+    final int? score,
+    final int? grade,
+    final int? percentile,
+    final int? standardScore,
+    final List<WrongProblem> wrongProblems = const [],
+    final String feedback = '',
+    final List<ReviewProblem> reviewProblems = const [],
+  }) =>
+      ExamRecord(
+        id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
+        userId: userId,
+        title: title,
+        exam: exam,
+        examStartedTime: examStartedTime,
+        examDurationMinutes: examDurationMinutes,
+        score: score,
+        grade: grade,
+        percentile: percentile,
+        standardScore: standardScore,
+        wrongProblems: wrongProblems,
+        feedback: feedback,
+        reviewProblems: reviewProblems,
+        createdAt: DateTime.now().toUtc(),
+      );
+
   factory ExamRecord.fromJson(Map<String, dynamic> json) =>
       _$ExamRecordFromJson(json);
 

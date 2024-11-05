@@ -832,8 +832,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
 
     final userId = _appCubit.state.me!.id;
-    ExamRecord record = ExamRecord(
-      id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
+    ExamRecord record = ExamRecord.create(
       userId: userId,
       title: title,
       exam: _selectedExam,
@@ -848,7 +847,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
       wrongProblems: _wrongProblems,
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
-      createdAt: DateTime.now().toUtc(),
     );
 
     if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
