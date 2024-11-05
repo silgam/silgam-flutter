@@ -81,6 +81,13 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
+      // TODO 로그인 확인, 문구 수정
+      const SettingTile(
+        title: '시험 종료 후 기록 자동 저장',
+        description:
+            '시험 종료 후 기록이 자동으로 저장돼요. 여러 과목을 본 경우 모든 과목의 기록이 저장되어요. 랩타임이 포함됨',
+        preferenceKey: PreferenceKey.useAutoSaveRecords,
+      ),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
               title: '랩타임 기능 사용',
