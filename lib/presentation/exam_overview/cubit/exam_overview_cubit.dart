@@ -44,40 +44,40 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     final userId = _appCubit.state.me?.id;
     if (userId == null) return;
 
-    if (_sharedPreferences.getBool(PreferenceKey.useAutoSaveRecords) ?? true) {
-      // TODO: 기록 저장 가능 개수 제한 확인
-      final List<ExamRecord> savedRecords = [];
+    final isAutoSaveRecordsEnabled =
+        _sharedPreferences.getBool(PreferenceKey.useAutoSaveRecords) ?? true;
+    if (!isAutoSaveRecordsEnabled) return;
 
-      for (final exam in _examDetail.exams) {
-        final examStartedTime = _examDetail.examStartedTimes[exam];
-        final examFinishedTime = _examDetail.examFinishedTimes[exam];
-        final examDurationMinutes =
-            examStartedTime != null && examFinishedTime != null
-                ? examFinishedTime
-                    .difference(examStartedTime)
-                    .inMinutesWithCorrection
-                : exam.durationMinutes;
+    // TODO: 기록 저장 가능 개수 제한 확인
+    final List<ExamRecord> savedRecords = [];
 
-        final record = ExamRecord.create(
-          userId: userId,
-          title: ExamRecord.autoSaveTitlePrefix +
-              (_examDetail.exams.length > 1
-                  ? '${_examDetail.timetableName} - '
-                  : '') +
-              exam.name,
-          exam: exam,
-          examStartedTime: examStartedTime ?? DateTime.now(),
-          examDurationMinutes: examDurationMinutes,
-          feedback: state.getPrefillFeedbackForExamRecord(exam),
-        );
+    for (final exam in _examDetail.exams) {
+      final examStartedTime = _examDetail.examStartedTimes[exam];
+      final examFinishedTime = _examDetail.examFinishedTimes[exam];
+      final examDurationMinutes = examStartedTime != null &&
+              examFinishedTime != null
+          ? examFinishedTime.difference(examStartedTime).inMinutesWithCorrection
+          : exam.durationMinutes;
 
-        final savedRecord = await _examRecordRepository.addExamRecord(record);
-        examRecorded(exam, savedRecord.id);
-        savedRecords.add(savedRecord);
-      }
+      final record = ExamRecord.create(
+        userId: userId,
+        title: ExamRecord.autoSaveTitlePrefix +
+            (_examDetail.exams.length > 1
+                ? '${_examDetail.timetableName} - '
+                : '') +
+            exam.name,
+        exam: exam,
+        examStartedTime: examStartedTime ?? DateTime.now(),
+        examDurationMinutes: examDurationMinutes,
+        feedback: state.getPrefillFeedbackForExamRecord(exam),
+      );
 
-      await _recordListCubit.onRecordsCreated(savedRecords);
+      final savedRecord = await _examRecordRepository.addExamRecord(record);
+      examRecorded(exam, savedRecord.id);
+      savedRecords.add(savedRecord);
     }
+
+    await _recordListCubit.onRecordsCreated(savedRecords);
   }
 
   void updateLapTimeItemGroups() {
