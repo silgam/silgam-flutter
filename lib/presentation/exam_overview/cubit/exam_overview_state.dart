@@ -8,6 +8,7 @@ class ExamOverviewState with _$ExamOverviewState {
     @Default({}) Map<Exam, List<LapTimeItemGroup>> examToLapTimeItemGroups,
     @Default(false) bool isUsingExampleLapTimeItemGroups,
     @Default({}) Map<Exam, String> examToRecordIds,
+    @Default(false) bool isAutoSavingRecords,
   }) = _ExamOverviewState;
 
   String? getPrefillFeedbackForExamRecord(Exam exam) {

@@ -40,13 +40,14 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   final ExamRecordRepository _examRecordRepository;
 
   Future<void> _autoSaveExamRecords() async {
-    // TODO: 저장 중일 때 로딩
     final userId = _appCubit.state.me?.id;
     if (userId == null) return;
 
     final isAutoSaveRecordsEnabled =
         _sharedPreferences.getBool(PreferenceKey.useAutoSaveRecords) ?? true;
     if (!isAutoSaveRecordsEnabled) return;
+
+    emit(state.copyWith(isAutoSavingRecords: true));
 
     // TODO: 기록 저장 가능 개수 제한 확인
     final List<ExamRecord> savedRecords = [];
@@ -73,11 +74,18 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
       );
 
       final savedRecord = await _examRecordRepository.addExamRecord(record);
-      examRecorded(exam, savedRecord.id);
       savedRecords.add(savedRecord);
     }
 
-    await _recordListCubit.onRecordsCreated(savedRecords);
+    _recordListCubit.onRecordsCreated(savedRecords);
+
+    emit(state.copyWith(
+      isAutoSavingRecords: false,
+      examToRecordIds: {
+        ...state.examToRecordIds,
+        for (final record in savedRecords) record.exam: record.id,
+      },
+    ));
   }
 
   void updateLapTimeItemGroups() {

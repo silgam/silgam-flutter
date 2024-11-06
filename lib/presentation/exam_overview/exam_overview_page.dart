@@ -891,9 +891,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildRecordExamButton(Exam exam) {
     return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
       buildWhen: (previous, current) =>
+          previous.isAutoSavingRecords != current.isAutoSavingRecords ||
           previous.examToRecordIds != current.examToRecordIds,
       builder: (context, state) {
         final isRecorded = state.examToRecordIds.containsKey(exam);
+        final isAutoSaving = !isRecorded && state.isAutoSavingRecords;
 
         return Material(
           color: isRecorded ? Colors.grey.shade100 : Color(exam.color),
@@ -908,7 +910,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           elevation: 5,
           shadowColor: Colors.black26,
           child: InkWell(
-            onTap: () => _onRecordExamButtonPressed(exam),
+            onTap:
+                isAutoSaving ? () {} : () => _onRecordExamButtonPressed(exam),
             splashFactory: NoSplash.splashFactory,
             child: Container(
               width: _floatingButtonWidth,
@@ -924,7 +927,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                       child: Text(
                         isRecorded
                             ? '${exam.name} 기록 확인하기'
-                            : '${exam.name} 기록하기',
+                            : isAutoSaving
+                                ? '${exam.name} 자동 저장 중'
+                                : '${exam.name} 기록하기',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
@@ -936,11 +941,21 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   ),
                   Positioned(
                     right: 0,
-                    child: Icon(
-                      isRecorded ? Icons.check : Icons.chevron_right,
-                      color: isRecorded ? Color(exam.color) : Colors.white,
-                      size: 24,
-                    ),
+                    child: isAutoSaving
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Icon(
+                            isRecorded ? Icons.check : Icons.chevron_right,
+                            color:
+                                isRecorded ? Color(exam.color) : Colors.white,
+                            size: 24,
+                          ),
                   )
                 ],
               ),
