@@ -15,6 +15,7 @@ import '../../../util/date_time_extension.dart';
 import '../../../util/duration_extension.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../home/record_list/cubit/record_list_cubit.dart';
+import '../../home/settings/cubit/settings_cubit.dart';
 import '../example_lap_time_groups.dart';
 
 part 'exam_overview_cubit.freezed.dart';
@@ -26,6 +27,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     @factoryParam this._examDetail,
     this._appCubit,
     this._recordListCubit,
+    this._settingsCubit,
     this._sharedPreferences,
     this._examRecordRepository,
   ) : super(const ExamOverviewState()) {
@@ -35,6 +37,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   final ExamDetail _examDetail;
   final AppCubit _appCubit;
   final RecordListCubit _recordListCubit;
+  final SettingsCubit _settingsCubit;
   final SharedPreferences _sharedPreferences;
   final ExamRecordRepository _examRecordRepository;
 
@@ -106,6 +109,11 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
         .toList()
         .reversed
         .toList();
+
+    if (autoSaveFailedExamNames.isNotEmpty) {
+      _sharedPreferences.setBool(PreferenceKey.useAutoSaveRecords, false);
+      _settingsCubit.preferenceUpdated(PreferenceKey.useAutoSaveRecords);
+    }
 
     return autoSaveFailedExamNames;
   }

@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../util/analytics_manager.dart';
 import '../../../util/injection.dart';
+import 'cubit/settings_cubit.dart';
 
 const settingTitleTextStyle = TextStyle(
   fontSize: 14,
@@ -45,6 +47,7 @@ class SettingTile extends StatefulWidget {
 }
 
 class _SettingTileState extends State<SettingTile> {
+  final SettingsCubit _settingsCubit = getIt.get();
   final SharedPreferences _sharedPreferences = getIt.get();
 
   bool _isSwitchEnabled = true;
@@ -56,58 +59,81 @@ class _SettingTileState extends State<SettingTile> {
       _isSwitchEnabled =
           _sharedPreferences.getBool(preferenceKey) ?? widget.defaultValue;
     }
-    return InkWell(
-      onTap: widget.preferenceKey == null
-          ? _onTap
-          : () => _onSwitchChanged(!_isSwitchEnabled),
-      splashColor: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: widget.paddingHorizontal,
-          vertical: widget.description == null && widget.preferenceKey == null
-              ? 16
-              : 12,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: settingTitleTextStyle.copyWith(
-                      color: widget.titleColor,
-                    ),
-                  ),
-                  if (widget.description != null) const SizedBox(height: 4),
-                  if (widget.description != null)
-                    Text(
-                      _getDescription(),
-                      style: settingDescriptionTextStyle,
-                    ),
-                ],
-              ),
+
+    return BlocProvider.value(
+      value: _settingsCubit,
+      child: BlocListener<SettingsCubit, SettingsState>(
+        listenWhen: (previous, current) =>
+            previous.updatedPreferenceKey != current.updatedPreferenceKey,
+        listener: (context, state) {
+          if (state.updatedPreferenceKey == widget.preferenceKey) {
+            _onPreferenceUpdated();
+          }
+        },
+        child: InkWell(
+          onTap: widget.preferenceKey == null
+              ? _onTap
+              : () => _onSwitchChanged(!_isSwitchEnabled),
+          splashColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: widget.paddingHorizontal,
+              vertical:
+                  widget.description == null && widget.preferenceKey == null
+                      ? 16
+                      : 12,
             ),
-            if (widget.preferenceKey != null || widget.showArrow)
-              const SizedBox(width: 16),
-            if (widget.preferenceKey != null)
-              Switch(
-                value: _isSwitchEnabled,
-                onChanged: _onSwitchChanged,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            if (widget.showArrow)
-              const Icon(
-                CupertinoIcons.chevron_right,
-                color: Colors.black26,
-                size: 18,
-              ),
-            if (widget.showArrow) const SizedBox(width: 2)
-          ],
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: settingTitleTextStyle.copyWith(
+                          color: widget.titleColor,
+                        ),
+                      ),
+                      if (widget.description != null) const SizedBox(height: 4),
+                      if (widget.description != null)
+                        Text(
+                          _getDescription(),
+                          style: settingDescriptionTextStyle,
+                        ),
+                    ],
+                  ),
+                ),
+                if (widget.preferenceKey != null || widget.showArrow)
+                  const SizedBox(width: 16),
+                if (widget.preferenceKey != null)
+                  Switch(
+                    value: _isSwitchEnabled,
+                    onChanged: _onSwitchChanged,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                if (widget.showArrow)
+                  const Icon(
+                    CupertinoIcons.chevron_right,
+                    color: Colors.black26,
+                    size: 18,
+                  ),
+                if (widget.showArrow) const SizedBox(width: 2)
+              ],
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  void _onPreferenceUpdated() {
+    final preferenceKey = widget.preferenceKey;
+    if (preferenceKey == null) return;
+
+    final updatedValue =
+        _sharedPreferences.getBool(preferenceKey) ?? widget.defaultValue;
+    _onSwitchChanged(updatedValue);
   }
 
   void _onTap() {
