@@ -74,6 +74,59 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       _horizontalPadding * 2 -
       MediaQuery.paddingOf(context).horizontal;
 
+  Future<void> _autoSaveExamRecords() async {
+    final autoSaveFailedExamNames =
+        await _examOverviewCubit.autoSaveExamRecords();
+
+    if (autoSaveFailedExamNames == null ||
+        autoSaveFailedExamNames.isEmpty ||
+        !mounted) {
+      return;
+    }
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${ExamOverviewPage.routeName}/auto_save_failed_dialog',
+      ),
+      builder: (context) {
+        final examRecordLimit =
+            _appCubit.state.freeProductBenefit.examRecordLimit;
+        final examsCount = _exams.length;
+
+        return AlertDialog(
+          title: const Text(
+            '시험 종료 후 자동 저장 기능 이용 제한 안내',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          content: SingleChildScrollView(
+            child: Text(
+              examsCount > 1
+                  ? '''
+실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${widget.examDetail.timetableName}에 포함된 $examsCount개의 과목들 중 다음 과목들은 자동으로 저장되지 않았어요.
+
+${autoSaveFailedExamNames.join(', ')}
+
+$examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢'''
+                  : '''
+실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${_exams.first.name} 과목의 기록은 자동으로 저장되지 않았어요.
+
+$examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢''',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
     _showExitConfirmDialog();
@@ -213,6 +266,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         'exam_detail': widget.examDetail.toString(),
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _autoSaveExamRecords();
   }
 
   @override

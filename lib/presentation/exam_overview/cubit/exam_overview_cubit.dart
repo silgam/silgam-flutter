@@ -30,7 +30,6 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     this._examRecordRepository,
   ) : super(const ExamOverviewState()) {
     updateLapTimeItemGroups();
-    _autoSaveExamRecords();
   }
 
   final ExamDetail _examDetail;
@@ -39,20 +38,34 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   final SharedPreferences _sharedPreferences;
   final ExamRecordRepository _examRecordRepository;
 
-  Future<void> _autoSaveExamRecords() async {
+  void updateLapTimeItemGroups() {
+    if (_appCubit.state.productBenefit.isLapTimeAvailable) {
+      _updateLapTimeItemGroups(
+        lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
+      );
+    } else {
+      _updateLapTimeItemGroupsUsingExample();
+    }
+  }
+
+  Future<List<String>?> autoSaveExamRecords() async {
     final userId = _appCubit.state.me?.id;
-    if (userId == null) return;
+    if (userId == null) return null;
 
     final isAutoSaveRecordsEnabled =
         _sharedPreferences.getBool(PreferenceKey.useAutoSaveRecords) ?? true;
-    if (!isAutoSaveRecordsEnabled) return;
+    if (!isAutoSaveRecordsEnabled) return null;
 
     emit(state.copyWith(isAutoSavingRecords: true));
 
-    // TODO: 기록 저장 가능 개수 제한 확인
-    final List<ExamRecord> savedRecords = [];
+    final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
+    final recordsCountToSave = examRecordLimit == -1
+        ? _examDetail.exams.length
+        : (examRecordLimit - _recordListCubit.state.originalRecords.length)
+            .clamp(0, _examDetail.exams.length);
 
-    for (final exam in _examDetail.exams) {
+    final List<ExamRecord> savedRecords = [];
+    for (final exam in _examDetail.exams.take(recordsCountToSave)) {
       final examStartedTime = _examDetail.examStartedTimes[exam];
       final examFinishedTime = _examDetail.examFinishedTimes[exam];
       final examDurationMinutes = examStartedTime != null &&
@@ -86,16 +99,15 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
         for (final record in savedRecords) record.exam: record.id,
       },
     ));
-  }
 
-  void updateLapTimeItemGroups() {
-    if (_appCubit.state.productBenefit.isLapTimeAvailable) {
-      _updateLapTimeItemGroups(
-        lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
-      );
-    } else {
-      _updateLapTimeItemGroupsUsingExample();
-    }
+    final autoSaveFailedExamNames = _examDetail.exams.reversed
+        .take(_examDetail.exams.length - recordsCountToSave)
+        .map((exam) => exam.name)
+        .toList()
+        .reversed
+        .toList();
+
+    return autoSaveFailedExamNames;
   }
 
   void examRecorded(Exam exam, String recordId) {
