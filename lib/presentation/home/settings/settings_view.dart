@@ -15,6 +15,7 @@ import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../announcement_setting/announcement_setting_page.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../../app/cubit/iap_cubit.dart';
 import '../../common/ad_tile.dart';
 import '../../common/custom_card.dart';
 import '../../common/dialog.dart';
@@ -29,6 +30,8 @@ import '../../my/my_page.dart';
 import '../../noise_setting/noise_setting_page.dart';
 import '../../notification_setting/notification_setting_page.dart';
 import '../../offline/offline_guide_page.dart';
+import '../../purchase/purchase_page.dart';
+import '../record_list/cubit/record_list_cubit.dart';
 import 'setting_tile.dart';
 
 class SettingsView extends StatefulWidget {
@@ -41,6 +44,7 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   final AppCubit _appCubit = getIt.get();
+  final RecordListCubit _recordListCubit = getIt.get();
 
   @override
   Widget build(BuildContext context) {
@@ -81,20 +85,33 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       const Subtitle(text: '기본 설정', margin: EdgeInsets.zero),
-      appState.isSignedIn
-          ? const SettingTile(
-              title: '시험 종료 후 자동 저장',
-              description:
-                  '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
-              preferenceKey: PreferenceKey.useAutoSaveRecords,
-            )
-          : SettingTile(
-              onTap: _onAutoSaveRecordsUnavailableButtonTap,
-              title: '시험 종료 후 자동 저장',
-              description:
-                  '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
-              showArrow: true,
-            ),
+      BlocProvider.value(
+        value: _recordListCubit,
+        child: BlocBuilder<RecordListCubit, RecordListState>(
+          builder: (context, recordListState) {
+            final examRecordLimit = appState.productBenefit.examRecordLimit;
+            final isExamRecordLimitReached = examRecordLimit != -1 &&
+                recordListState.originalRecords.length >= examRecordLimit;
+
+            if (appState.isSignedIn && !isExamRecordLimitReached) {
+              return const SettingTile(
+                title: '시험 종료 후 자동 저장',
+                description:
+                    '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+                preferenceKey: PreferenceKey.useAutoSaveRecords,
+              );
+            } else {
+              return SettingTile(
+                onTap: _onAutoSaveRecordsUnavailableButtonTap,
+                title: '시험 종료 후 자동 저장',
+                description:
+                    '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+                showArrow: true,
+              );
+            }
+          },
+        ),
+      ),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
               title: '랩타임 기능 사용',
@@ -479,12 +496,73 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void _onAutoSaveRecordsUnavailableButtonTap() {
-    Navigator.pushNamed(context, LoginPage.routeName);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('로그인 후 사용할 수 있는 기능이에요.'),
-      ),
-    );
+    if (_appCubit.state.isNotSignedIn) {
+      Navigator.pushNamed(context, LoginPage.routeName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로그인 후 사용할 수 있는 기능이에요.'),
+        ),
+      );
+      return;
+    } else {
+      showDialog(
+        context: context,
+        routeSettings: const RouteSettings(
+          name: '/auto_save_records_limit_info_dialog',
+        ),
+        builder: (context) {
+          return BlocBuilder<AppCubit, AppState>(
+            builder: (context, appState) {
+              return BlocBuilder<IapCubit, IapState>(
+                builder: (context, iapState) {
+                  final examRecordLimit =
+                      appState.freeProductBenefit.examRecordLimit;
+                  final sellingProduct = iapState.sellingProduct;
+
+                  return AlertDialog(
+                    title: const Text(
+                      '시험 종료 후 자동 저장 기능 이용 제한 안내',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    content: Text(
+                      '실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. ($examRecordLimit개 미만까지 삭제시 자동 저장 기능 이용 가능)',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                        ),
+                        child: const Text('확인'),
+                      ),
+                      if (sellingProduct != null)
+                        TextButton(
+                          onPressed: () {
+                            AnalyticsManager.logEvent(
+                              name: '[HomePage-list] Check pass button tapped',
+                            );
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushNamed(
+                              PurchasePage.routeName,
+                              arguments: PurchasePageArguments(
+                                product: sellingProduct,
+                              ),
+                            );
+                          },
+                          child: const Text('실감패스 확인하러 가기'),
+                        ),
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        },
+      );
+      return;
+    }
   }
 
   void _onLapTimeSettingButtonTap() {
