@@ -132,7 +132,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
-    title = recordToEdit.title;
+    title = recordToEdit.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '');
     _selectedExam = recordToEdit.exam;
     _examStartedTime = recordToEdit.examStartedTime;
     _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
@@ -832,8 +832,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
 
     final userId = _appCubit.state.me!.id;
-    ExamRecord record = ExamRecord(
-      id: '$userId-${DateTime.now().millisecondsSinceEpoch}',
+    ExamRecord record = ExamRecord.create(
       userId: userId,
       title: title,
       exam: _selectedExam,
@@ -848,7 +847,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
       wrongProblems: _wrongProblems,
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
-      createdAt: DateTime.now().toUtc(),
     );
 
     if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
@@ -863,7 +861,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (_isEditingMode) {
       final oldRecord = widget.arguments.recordToEdit!;
       record = await _recordRepository.updateExamRecord(
-        userId: _appCubit.state.me!.id,
         oldRecord: oldRecord,
         newRecord: record.copyWith(
           id: oldRecord.id,
@@ -873,10 +870,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _recordListCubit.onRecordUpdated(record);
       if (mounted) Navigator.pop(context);
     } else {
-      record = await _recordRepository.addExamRecord(
-        userId: _appCubit.state.me!.id,
-        record: record,
-      );
+      record = await _recordRepository.addExamRecord(record);
       _recordListCubit.onRecordCreated(record);
       if (mounted) {
         Navigator.pushReplacementNamed(

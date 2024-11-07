@@ -74,6 +74,59 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       _horizontalPadding * 2 -
       MediaQuery.paddingOf(context).horizontal;
 
+  Future<void> _autoSaveExamRecords() async {
+    final autoSaveFailedExamNames =
+        await _examOverviewCubit.autoSaveExamRecords();
+
+    if (autoSaveFailedExamNames == null ||
+        autoSaveFailedExamNames.isEmpty ||
+        !mounted) {
+      return;
+    }
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${ExamOverviewPage.routeName}/auto_save_failed_dialog',
+      ),
+      builder: (context) {
+        final examRecordLimit =
+            _appCubit.state.freeProductBenefit.examRecordLimit;
+        final examsCount = _exams.length;
+
+        return AlertDialog(
+          title: const Text(
+            '시험 종료 후 자동 저장 기능 이용 제한 안내',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          content: SingleChildScrollView(
+            child: Text(
+              examsCount > 1
+                  ? '''
+실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${widget.examDetail.timetableName}에 포함된 $examsCount개의 과목들 중 다음 과목들은 자동으로 저장되지 않았어요.
+
+${autoSaveFailedExamNames.join(', ')}
+
+$examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢'''
+                  : '''
+실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${_exams.first.name} 과목의 기록은 자동으로 저장되지 않았어요.
+
+$examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢''',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
     _showExitConfirmDialog();
@@ -181,20 +234,13 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
       return;
     }
 
-    final isSignedIn = _appCubit.state.isSignedIn;
-    final lapTimeItemGroups =
-        _examOverviewCubit.state.examToLapTimeItemGroups[exam] ?? [];
-    final isUsingExample =
-        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
-
-    if (isSignedIn) {
+    if (_appCubit.state.isSignedIn) {
       final arguments = EditRecordPageArguments(
         inputExam: exam,
         examStartedTime: widget.examDetail.examStartedTimes[exam],
         examFinishedTime: widget.examDetail.examFinishedTimes[exam],
-        prefillFeedback: (lapTimeItemGroups.isEmpty || isUsingExample)
-            ? null
-            : lapTimeItemGroups.toCopyableString(),
+        prefillFeedback:
+            _examOverviewCubit.state.getPrefillFeedbackForExamRecord(exam),
       );
       final ExamRecord? examRecord = await Navigator.pushNamed<ExamRecord>(
         context,
@@ -206,9 +252,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         _examOverviewCubit.examRecorded(exam, examRecord.id);
       }
     } else {
-      Navigator.pushNamed(
-        context,
-        LoginPage.routeName,
+      Navigator.pushNamed(context, LoginPage.routeName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로그인 후 사용할 수 있는 기능이에요.'),
+        ),
       );
     }
 
@@ -218,6 +266,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         'exam_detail': widget.examDetail.toString(),
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _autoSaveExamRecords();
   }
 
   @override
@@ -896,9 +950,11 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   Widget _buildRecordExamButton(Exam exam) {
     return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
       buildWhen: (previous, current) =>
+          previous.isAutoSavingRecords != current.isAutoSavingRecords ||
           previous.examToRecordIds != current.examToRecordIds,
       builder: (context, state) {
         final isRecorded = state.examToRecordIds.containsKey(exam);
+        final isAutoSaving = !isRecorded && state.isAutoSavingRecords;
 
         return Material(
           color: isRecorded ? Colors.grey.shade100 : Color(exam.color),
@@ -913,7 +969,8 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
           elevation: 5,
           shadowColor: Colors.black26,
           child: InkWell(
-            onTap: () => _onRecordExamButtonPressed(exam),
+            onTap:
+                isAutoSaving ? () {} : () => _onRecordExamButtonPressed(exam),
             splashFactory: NoSplash.splashFactory,
             child: Container(
               width: _floatingButtonWidth,
@@ -929,7 +986,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                       child: Text(
                         isRecorded
                             ? '${exam.name} 기록 확인하기'
-                            : '${exam.name} 기록하기',
+                            : isAutoSaving
+                                ? '${exam.name} 자동 저장 중'
+                                : '${exam.name} 기록하기',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
@@ -941,11 +1000,21 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
                   ),
                   Positioned(
                     right: 0,
-                    child: Icon(
-                      isRecorded ? Icons.check : Icons.chevron_right,
-                      color: isRecorded ? Color(exam.color) : Colors.white,
-                      size: 24,
-                    ),
+                    child: isAutoSaving
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Icon(
+                            isRecorded ? Icons.check : Icons.chevron_right,
+                            color:
+                                isRecorded ? Color(exam.color) : Colors.white,
+                            size: 24,
+                          ),
                   )
                 ],
               ),

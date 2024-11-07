@@ -56,6 +56,7 @@ class _SettingTileState extends State<SettingTile> {
       _isSwitchEnabled =
           _sharedPreferences.getBool(preferenceKey) ?? widget.defaultValue;
     }
+
     return InkWell(
       onTap: widget.preferenceKey == null
           ? _onTap

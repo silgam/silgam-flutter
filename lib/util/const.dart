@@ -24,6 +24,7 @@ final String interstitialAdId = Platform.isAndroid
     : "ca-app-pub-5293956621132135/5094413305";
 
 abstract class PreferenceKey {
+  static const useAutoSaveRecords = 'useAutoSaveRecords';
   static const useLapTime = 'useLapTime';
   static const noisePreset = 'noisePreset';
   static const useWhiteNoise = 'whiteNoise';

@@ -18,11 +18,8 @@ class ExamRecordRepository {
   final Reference _problemImagesRef =
       FirebaseStorage.instance.ref('problem_images');
 
-  Future<ExamRecord> addExamRecord({
-    required String userId,
-    required ExamRecord record,
-  }) async {
-    await _uploadProblemImages(userId, record);
+  Future<ExamRecord> addExamRecord(ExamRecord record) async {
+    await _uploadProblemImages(record.userId, record);
     _recordsRef.doc(record.id).set(record);
     return record;
   }
@@ -51,7 +48,6 @@ class ExamRecordRepository {
   }
 
   Future<ExamRecord> updateExamRecord({
-    required String userId,
     required ExamRecord oldRecord,
     required ExamRecord newRecord,
   }) async {
@@ -65,7 +61,7 @@ class ExamRecordRepository {
       final isImageRemoved = !newImages.contains(oldImage);
       if (isImageRemoved) await _deleteImage(oldImage);
     }
-    await _uploadProblemImages(userId, newRecord);
+    await _uploadProblemImages(newRecord.userId, newRecord);
     _recordsRef.doc(newRecord.id).update(newRecord.toJson());
     return newRecord;
   }
