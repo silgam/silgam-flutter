@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -37,16 +38,56 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   final ExamRecordRepository _recordRepository = getIt.get();
   final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
-  late ExamRecord _record = _getRecord();
+
+  ExamRecord? _record;
   bool _isDeleting = false;
 
-  ExamRecord _getRecord() {
-    return _recordListCubit.state.originalRecords
-        .firstWhere((r) => r.id == widget.arguments.recordId);
+  Future<void> _refreshRecord() async {
+    ExamRecord? getRecord() {
+      return _recordListCubit.state.originalRecords
+          .firstWhereOrNull((r) => r.id == widget.arguments.recordId);
+    }
+
+    ExamRecord? record = getRecord();
+
+    if (record == null) {
+      await _recordListCubit.refresh();
+      record = getRecord();
+    }
+
+    setState(() {
+      _record = record;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshRecord();
   }
 
   @override
   Widget build(BuildContext context) {
+    final record = _record;
+
+    if (record == null) {
+      return const Scaffold(
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomMenuBar(),
+              Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(strokeWidth: 3),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: ProgressOverlay(
         isProgressing: _isDeleting,
@@ -60,17 +101,17 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                   ActionButton(
                     icon: const Icon(Icons.download),
                     tooltip: '이미지 저장',
-                    onPressed: _onSaveImageButtonPressed,
+                    onPressed: () => _onSaveImageButtonPressed(record),
                   ),
                   ActionButton(
                     icon: const Icon(Icons.edit),
                     tooltip: '수정',
-                    onPressed: _onEditButtonPressed,
+                    onPressed: () => _onEditButtonPressed(record),
                   ),
                   ActionButton(
                     icon: const Icon(Icons.delete),
                     tooltip: '삭제',
-                    onPressed: _onDeleteButtonPressed,
+                    onPressed: () => _onDeleteButtonPressed(record),
                   ),
                 ],
               ),
@@ -82,7 +123,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: _buildContent(),
+                          child: _buildContent(record),
                         ),
                       ),
                     ),
@@ -109,7 +150,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(ExamRecord record) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -119,20 +160,20 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             children: [
               Container(
                 width: 2,
-                color: Color(_record.getGradeColor()),
+                color: Color(record.getGradeColor()),
               ),
               const SizedBox(width: 12),
               Flexible(
-                child: _buildTitle(),
+                child: _buildTitle(record),
               ),
             ],
           ),
         ),
-        if (_record.score != null ||
-            _record.grade != null ||
-            _record.percentile != null ||
-            _record.standardScore != null ||
-            _record.examDurationMinutes != null)
+        if (record.score != null ||
+            record.grade != null ||
+            record.percentile != null ||
+            record.standardScore != null ||
+            record.examDurationMinutes != null)
           Column(
             children: [
               const SizedBox(height: 32),
@@ -140,13 +181,13 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 child: SingleChildScrollView(
                   clipBehavior: Clip.none,
                   scrollDirection: Axis.horizontal,
-                  child: _buildScoreBoard(),
+                  child: _buildScoreBoard(record),
                 ),
               ),
               const SizedBox(height: 8),
             ],
           ),
-        if (_record.wrongProblems.isNotEmpty)
+        if (record.wrongProblems.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -156,7 +197,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 spacing: 8,
                 runSpacing: -8,
                 children: [
-                  for (final wrongProblem in _record.wrongProblems)
+                  for (final wrongProblem in record.wrongProblems)
                     Chip(
                       label: Text('${wrongProblem.problemNumber}번'),
                       backgroundColor: Theme.of(context).primaryColor,
@@ -169,7 +210,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               ),
             ],
           ),
-        if (_record.feedback.isNotEmpty)
+        if (record.feedback.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,13 +224,13 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  _record.feedback,
+                  record.feedback,
                   style: const TextStyle(height: 1.2),
                 ),
               ),
             ],
           ),
-        if (_record.reviewProblems.isNotEmpty)
+        if (record.reviewProblems.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -204,7 +245,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  for (final problem in _record.reviewProblems)
+                  for (final problem in record.reviewProblems)
                     ReviewProblemCard(
                       problem: problem,
                       onTap: () => _onReviewProblemCardTap(problem),
@@ -236,12 +277,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(ExamRecord record) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          DateFormat.yMEd('ko_KR').add_Hm().format(_record.examStartedTime),
+          DateFormat.yMEd('ko_KR').add_Hm().format(record.examStartedTime),
           style: TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: 12,
@@ -255,7 +296,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             children: [
               Flexible(
                 child: Text(
-                  _record.title,
+                  record.title,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
@@ -264,9 +305,9 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               ),
               const SizedBox(width: 6),
               Text(
-                _record.exam.name,
+                record.exam.name,
                 style: TextStyle(
-                  color: Color(_record.exam.color),
+                  color: Color(record.exam.color),
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
                 ),
@@ -278,12 +319,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  Widget _buildScoreBoard() {
-    int? score = _record.score;
-    int? grade = _record.grade;
-    int? percentile = _record.percentile;
-    int? standardScore = _record.standardScore;
-    int? examDurationMinutes = _record.examDurationMinutes;
+  Widget _buildScoreBoard(ExamRecord record) {
+    int? score = record.score;
+    int? grade = record.grade;
+    int? percentile = record.percentile;
+    int? standardScore = record.standardScore;
+    int? examDurationMinutes = record.examDurationMinutes;
 
     final List<Widget> scoreItems = [
       if (score != null) _buildScoreItem('점수', score),
@@ -335,25 +376,24 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  void _onSaveImageButtonPressed() async {
-    final arguments = SaveImagePageArguments(recordToSave: _record);
+  void _onSaveImageButtonPressed(ExamRecord record) async {
+    final arguments = SaveImagePageArguments(recordToSave: record);
     await Navigator.pushNamed(context, SaveImagePage.routeName,
         arguments: arguments);
   }
 
-  void _onEditButtonPressed() async {
-    final arguments = EditRecordPageArguments(recordToEdit: _record);
+  void _onEditButtonPressed(ExamRecord record) async {
+    final arguments = EditRecordPageArguments(recordToEdit: record);
     await Navigator.pushNamed(
       context,
       EditRecordPage.routeName,
       arguments: arguments,
     );
-    setState(() {
-      _record = _getRecord();
-    });
+
+    await _refreshRecord();
   }
 
-  void _onDeleteButtonPressed() {
+  void _onDeleteButtonPressed(ExamRecord record) {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'delete_record_confirm_dialog'),
@@ -363,7 +403,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             '정말 이 기록을 삭제하실 건가요?',
             style: TextStyle(fontWeight: FontWeight.w700),
           ),
-          content: Text(_record.title),
+          content: Text(record.title),
           actions: [
             TextButton(
               onPressed: () {
@@ -378,7 +418,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                _deleteRecord();
+                _deleteRecord(record);
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text(
@@ -392,9 +432,9 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  Future<void> _deleteRecord() async {
+  Future<void> _deleteRecord(ExamRecord record) async {
     if (_appCubit.state.isOffline &&
-        _record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
+        record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
       EasyLoading.showToast(
         '오프라인 상태에서는 복습할 문제 사진을 포함한 기록을 삭제할 수 없어요.',
         dismissOnTap: true,
@@ -405,8 +445,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     setState(() {
       _isDeleting = true;
     });
-    await _recordRepository.deleteExamRecord(_record);
-    _recordListCubit.onRecordDeleted(_record);
+    await _recordRepository.deleteExamRecord(record);
+    _recordListCubit.onRecordDeleted(record);
 
     if (mounted) Navigator.pop(context, RecordDetailPageResult.deleted);
 
