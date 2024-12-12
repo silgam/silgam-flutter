@@ -299,7 +299,7 @@ class _StatViewState extends State<StatView> {
         filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
-        .whereNotNull()
+        .nonNulls
         .averageOrNull
         ?.toStringAsFixed(1);
     return CustomCard(
@@ -495,7 +495,7 @@ class _StatViewState extends State<StatView> {
                     examValueType.getValue(record.first)!.toDouble() *
                         examValueType.reverseMultiple,
                   );
-          }).whereNotNull(),
+          }).nonNulls,
         ],
       );
     }).toList();
@@ -883,7 +883,7 @@ class _StatViewState extends State<StatView> {
       text: Duration(
         minutes: filteredRecords.values.flattened
             .map((e) => e.examDurationMinutes)
-            .whereNotNull()
+            .nonNulls
             .sum,
       ).toStringFormat(),
     );
