@@ -15,7 +15,7 @@ class FreeUserBlockOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: overlayColor ?? Colors.white.withOpacity(0.65),
+      color: overlayColor ?? Colors.white.withAlpha(166),
       alignment: Alignment.center,
       padding: const EdgeInsets.all(20),
       child: Column(

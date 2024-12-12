@@ -467,8 +467,8 @@ class _StatViewState extends State<StatView> {
           show: true,
           gradient: LinearGradient(
             colors: [
-              color.withOpacity(0.3),
-              color.withOpacity(0),
+              color.withAlpha(77),
+              color.withAlpha(0),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -829,7 +829,7 @@ class _StatViewState extends State<StatView> {
               monthFontSize: 10,
               weekFontSize: 10,
               fontSize: 10,
-              defaultColor: Colors.black.withOpacity(0.04),
+              defaultColor: Colors.black.withAlpha(10),
               textColor: Colors.grey,
               secondaryTextColor: Colors.white,
               weekTextColor: Colors.grey,

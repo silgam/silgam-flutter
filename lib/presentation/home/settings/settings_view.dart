@@ -641,7 +641,7 @@ class SettingDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Divider(
-      color: Colors.black.withOpacity(0.06),
+      color: Colors.black.withAlpha(15),
       height: 0.5,
       thickness: 0.5,
       indent: 20,

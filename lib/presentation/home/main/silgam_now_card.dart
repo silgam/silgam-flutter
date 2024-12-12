@@ -98,7 +98,7 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                         fontSize: 14,
                         shadows: [
                           Shadow(
-                            color: Colors.red.withOpacity(0.2),
+                            color: Colors.red.withAlpha(51),
                             blurRadius: 6,
                           ),
                         ],
@@ -113,7 +113,7 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                         color: Colors.red,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.red.withOpacity(0.2),
+                            color: Colors.red.withAlpha(51),
                             blurRadius: 6,
                           ),
                         ],
