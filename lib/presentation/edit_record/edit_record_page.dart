@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -739,9 +740,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _onWrongProblemAdded(int problemNumber) {
-    if (_wrongProblems.where((problem) {
-      return problem.problemNumber == problemNumber;
-    }).isNotEmpty) return;
+    final existingProblem = _wrongProblems.firstWhereOrNull(
+      (problem) => problem.problemNumber == problemNumber,
+    );
+    if (existingProblem != null) return;
 
     setState(() {
       _wrongProblems.add(WrongProblem(problemNumber));
