@@ -433,7 +433,9 @@ class _StatViewState extends State<StatView> {
         final sameDateLength = records
             .take(index)
             .where((element) => element.examStartedTime.toDate() == date)
-            .length;
+            .length
+            .toString()
+            .padLeft(3, '0');
         final monthString = date.month.toString().padLeft(2, '0');
         final dayString = date.day.toString().padLeft(2, '0');
         final key = '${date.year}.$monthString.$dayString.$sameDateLength';
