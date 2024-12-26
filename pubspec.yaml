@@ -14,11 +14,7 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.10+1
-  just_audio:
-    git:
-      url: https://github.com/ryanheise/just_audio
-      path: just_audio
-      ref: 3d3815f4eabc54daf316bca8d020ed201952a42c
+  just_audio: ^0.9.42
   firebase_core: ^3.7.0
   firebase_analytics: ^11.3.4
   firebase_crashlytics: ^4.1.4
