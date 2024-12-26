@@ -38,7 +38,9 @@ class DDayUtil {
     final DDay? nextMockTest = _getNextTest(today, _dDays);
     if (previousMockTest == null ||
         nextMockTest == null ||
-        nextMockTest.testType == DDayType.suneung) return null;
+        nextMockTest.testType == DDayType.suneung) {
+      return null;
+    }
 
     final remainingDays = nextMockTest.date.difference(today).inDays;
     final totalDays =

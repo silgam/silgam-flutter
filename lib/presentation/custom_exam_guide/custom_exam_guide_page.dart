@@ -99,8 +99,8 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
               end: Alignment.bottomCenter,
               stops: const [0, 660 / 1062],
               colors: [
-                Colors.black.withOpacity(0.8),
-                Colors.black.withOpacity(0),
+                Colors.black.withAlpha(204),
+                Colors.black.withAlpha(0),
               ],
             ),
           ),

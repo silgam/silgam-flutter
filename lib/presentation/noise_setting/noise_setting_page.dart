@@ -133,11 +133,11 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
               colors: isSelected
                   ? [
                       Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0),
+                      Theme.of(context).primaryColor.withAlpha(0),
                     ]
                   : [
                       const Color(0xFF303030),
-                      const Color(0xFF303030).withOpacity(0),
+                      const Color(0xFF303030).withAlpha(0),
                     ],
             ),
           ),

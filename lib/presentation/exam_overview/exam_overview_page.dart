@@ -319,7 +319,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
       distance: 52,
       type: ExpandableFabType.up,
       overlayStyle: ExpandableFabOverlayStyle(
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withAlpha(51),
         blur: 8,
       ),
       childrenOffset: Offset(rightOffset, 8),
@@ -813,7 +813,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                 if (isUsingExample)
                   Positioned.fill(
                     child: FreeUserBlockOverlay(
-                      overlayColor: Colors.white.withOpacity(0.8),
+                      overlayColor: Colors.white.withAlpha(204),
                       text: '예시 데이터입니다.\n랩타임 기능은 실감패스 사용자만 이용 가능해요.',
                     ),
                   )

@@ -299,7 +299,7 @@ class _StatViewState extends State<StatView> {
         filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
-        .whereNotNull()
+        .nonNulls
         .averageOrNull
         ?.toStringAsFixed(1);
     return CustomCard(
@@ -469,8 +469,8 @@ class _StatViewState extends State<StatView> {
           show: true,
           gradient: LinearGradient(
             colors: [
-              color.withOpacity(0.3),
-              color.withOpacity(0),
+              color.withAlpha(77),
+              color.withAlpha(0),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -497,7 +497,7 @@ class _StatViewState extends State<StatView> {
                     examValueType.getValue(record.first)!.toDouble() *
                         examValueType.reverseMultiple,
                   );
-          }).whereNotNull(),
+          }).nonNulls,
         ],
       );
     }).toList();
@@ -831,7 +831,7 @@ class _StatViewState extends State<StatView> {
               monthFontSize: 10,
               weekFontSize: 10,
               fontSize: 10,
-              defaultColor: Colors.black.withOpacity(0.04),
+              defaultColor: Colors.black.withAlpha(10),
               textColor: Colors.grey,
               secondaryTextColor: Colors.white,
               weekTextColor: Colors.grey,
@@ -885,7 +885,7 @@ class _StatViewState extends State<StatView> {
       text: Duration(
         minutes: filteredRecords.values.flattened
             .map((e) => e.examDurationMinutes)
-            .whereNotNull()
+            .nonNulls
             .sum,
       ).toStringFormat(),
     );

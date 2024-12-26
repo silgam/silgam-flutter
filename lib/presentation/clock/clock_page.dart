@@ -430,7 +430,7 @@ class _ClockPageState extends State<ClockPage> {
           ),
           foregroundColor: WidgetStateProperty.all(Colors.grey.shade700),
           overlayColor: WidgetStateProperty.all(
-            Colors.white.withOpacity(0.4),
+            Colors.white.withAlpha(102),
           ),
         ),
         child: Text(
