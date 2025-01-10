@@ -37,6 +37,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
   bool _isTitleEmpty = true;
   bool _isTitleFirstEdit = true;
+  bool _isChanged = false;
 
   @override
   void initState() {
@@ -51,129 +52,175 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     }
   }
 
+  void _onPopInvokedWithResult(bool value, _) {
+    if (value) return;
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: 'edit_review_problem_dialog/exit_confirm_dialog',
+      ),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            '아직 저장하지 않았어요!',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          content: const Text('저장하지 않고 나가시겠어요?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade600,
+              ),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('저장하지 않고 나가기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       contentPadding: EdgeInsets.zero,
       backgroundColor: SilgamApp.backgroundColor,
-      content: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(left: 24, right: 24, top: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '복습할 문제 추가',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _titleEditingController,
-                onChanged: _onTitleChanged,
-                decoration: InputDecoration(
-                  hintText: '제목 (문제 번호)',
-                  isCollapsed: true,
-                  contentPadding: const EdgeInsets.all(12),
-                  errorStyle: const TextStyle(fontSize: 0, height: 0),
-                  errorText: _isTitleEmpty && !_isTitleFirstEdit ? '' : null,
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  errorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.red,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(6)),
-                  ),
-                  focusedErrorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.red,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(6)),
-                  ),
-                  hintStyle: const TextStyle(fontWeight: FontWeight.w300),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _memoEditingController,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                minLines: 2,
-                decoration: InputDecoration(
-                  hintText: '메모 (이 문제를 틀린 이유, 복습할 점을 적어보세요.)',
-                  hintMaxLines: 3,
-                  isCollapsed: true,
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  contentPadding: const EdgeInsets.all(12),
-                  hintStyle: const TextStyle(
-                    fontWeight: FontWeight.w300,
-                    height: 1.2,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '사진',
-                style: TextStyle(
-                    color: Colors.grey.shade500,
+      content: PopScope(
+        canPop: !_isChanged,
+        onPopInvokedWithResult: _onPopInvokedWithResult,
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(left: 24, right: 24, top: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '복습할 문제 추가',
+                  style: TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.w500,
-                    fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              SingleChildScrollView(
-                child: _buildImages(),
-              ),
-            ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _titleEditingController,
+                  onChanged: _onTitleChanged,
+                  decoration: InputDecoration(
+                    hintText: '제목 (문제 번호)',
+                    isCollapsed: true,
+                    contentPadding: const EdgeInsets.all(12),
+                    errorStyle: const TextStyle(fontSize: 0, height: 0),
+                    errorText: _isTitleEmpty && !_isTitleFirstEdit ? '' : null,
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.grey.shade300,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.grey.shade300,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    errorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.red,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                    ),
+                    focusedErrorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.red,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                    ),
+                    hintStyle: const TextStyle(fontWeight: FontWeight.w300),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _memoEditingController,
+                  onChanged: _onMemoChanged,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  minLines: 2,
+                  decoration: InputDecoration(
+                    hintText: '메모 (이 문제를 틀린 이유, 복습할 점을 적어보세요.)',
+                    hintMaxLines: 3,
+                    isCollapsed: true,
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.grey.shade300,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.grey.shade300,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0.5,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    contentPadding: const EdgeInsets.all(12),
+                    hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w300,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '사진',
+                  style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  child: _buildImages(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -301,6 +348,13 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
   void _onTitleChanged(String title) {
     _isTitleFirstEdit = false;
+
+    if (!_isChanged) {
+      setState(() {
+        _isChanged = true;
+      });
+    }
+
     if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
       setState(() {
         _isTitleEmpty = false;
@@ -315,6 +369,14 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     }
   }
 
+  void _onMemoChanged(_) {
+    if (!_isChanged) {
+      setState(() {
+        _isChanged = true;
+      });
+    }
+  }
+
   void _onImageTapped(String imagePath) {
     if (_appCubit.state.isOffline) {
       EasyLoading.showToast(
@@ -325,6 +387,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     }
 
     setState(() {
+      _isChanged = true;
       _tempImagePaths.remove(imagePath);
     });
   }
@@ -341,6 +404,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     final picker = ImagePicker();
     List<XFile> files = await picker.pickMultiImage();
     setState(() {
+      _isChanged = true;
       _tempImagePaths.addAll(files.map((e) => e.path));
     });
   }
@@ -362,7 +426,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onCancelButtonPressed() {
-    Navigator.pop(context);
+    Navigator.maybePop(context);
   }
 
   void _onConfirmButtonPressed() {
