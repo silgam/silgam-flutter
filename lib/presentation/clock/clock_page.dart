@@ -105,6 +105,7 @@ class _ClockPageState extends State<ClockPage> {
                         scaleEnabled: state.isUiVisible,
                         transformationController: _clockTransformController,
                         minScale: 0.5,
+                        maxScale: 5,
                         clipBehavior: Clip.none,
                         boundaryMargin: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width,
