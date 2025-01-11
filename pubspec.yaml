@@ -11,94 +11,119 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
-  cupertino_icons: ^1.0.8
-  flutter_svg: ^2.0.10+1
-  just_audio: ^0.9.42
-  firebase_core: ^3.7.0
+  # State Management and DI
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.6
+  get_it: ^7.7.0
+  injectable: ^2.4.4
+
+  # Firebase and Authentication
+  cloud_firestore: ^5.4.5
   firebase_analytics: ^11.3.4
+  firebase_auth: ^5.3.2
+  firebase_core: ^3.7.0
   firebase_crashlytics: ^4.1.4
   firebase_database: ^11.1.5
   firebase_messaging: ^15.1.4
-  firebase_auth: ^5.3.2
   firebase_storage: ^12.3.5
-  cloud_firestore: ^5.4.5
-  google_sign_in: ^6.2.1
   flutter_facebook_auth: ^7.0.1
-  sign_in_with_apple: ^6.1.1
-  image_picker: ^1.1.2
-  intl: ^0.19.0
-  json_annotation: ^4.9.0
-  uuid: ^3.0.7
-  package_info_plus: ^8.0.2
-  in_app_review: ^2.0.9
-  url_launcher: ^6.3.0
-  crypto: ^3.0.4
-  shared_preferences: ^2.3.1
+  google_sign_in: ^6.2.1
   kakao_flutter_sdk: ^1.9.5
-  http: ^1.2.2
+  sign_in_with_apple: ^6.1.1
+
+  # UI and Design
+  carousel_slider: ^5.0.0
+  cupertino_icons: ^1.0.8
+  dotted_line: ^3.2.2
+  fl_chart: ^0.68.0
+  flutter_easyloading: ^3.0.5
+  flutter_expandable_fab: ^2.3.0
+  flutter_form_builder: ^9.4.1
+  flutter_heatmap_calendar:
+    git:
+      url: https://github.com/silgam/flutter_heatmap_calendar.git
+  flutter_svg: ^2.0.10+1
+  form_builder_validators: ^11.0.0
+  photo_view: ^0.15.0
   rich_text_controller: ^2.0.1
-  screenshot: ^3.0.0
-  path_provider: ^2.1.4
-  share_plus: ^10.0.0
+  smooth_page_indicator: ^1.2.0+3
+  visibility_detector: ^0.4.0+2
+  webview_flutter: ^4.8.0
+
+  # Code Generation
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Network and API
+  cached_network_image: ^3.3.1
+  connectivity_plus: ^6.0.5
+  dio: ^5.6.0
+  http: ^1.2.2
+  pretty_dio_logger: ^1.4.0
+  retrofit: ^4.2.0
+
+  # Storage and Data
   image_gallery_saver:
     git:
       url: https://github.com/knottx/image_gallery_saver.git
       ref: knottx
-  carousel_slider: ^5.0.0
-  smooth_page_indicator: ^1.2.0+3
-  google_mobile_ads: ^5.1.0
-  mixpanel_flutter: ^2.2.0
-  flutter_bloc: ^8.1.6
-  bloc: ^8.1.4
-  freezed_annotation: ^2.4.4
-  fl_chart: ^0.68.0
-  photo_view: ^0.15.0
-  dio: ^5.6.0
+  image_picker: ^1.1.2
+  path_provider: ^2.1.4
+  shared_preferences: ^2.3.1
+
+  # Audio and Media
   audio_session: ^0.1.21
-  cached_network_image: ^3.3.1
+  just_audio: ^0.9.42
+
+  # In-App Purchase and Ads
+  google_mobile_ads: ^5.1.0
   in_app_purchase: ^3.2.0
-  injectable: ^2.4.4
-  get_it: ^7.7.0
-  retrofit: ^4.2.0
-  pretty_dio_logger: ^1.4.0
   in_app_purchase_storekit: ^0.3.17+3
-  flutter_easyloading: ^3.0.5
-  multiple_result: ^5.1.0
+  in_app_review: ^2.0.9
+
+  # Utils
   collection: ^1.18.0
-  webview_flutter: ^4.8.0
-  dotted_line: ^3.2.2
-  flutter_heatmap_calendar:
-    git:
-      url: https://github.com/silgam/flutter_heatmap_calendar.git
-  connectivity_plus: ^6.0.5
+  crypto: ^3.0.4
+  intl: ^0.19.0
+  multiple_result: ^5.1.0
+  mixpanel_flutter: ^2.2.0
+  package_info_plus: ^8.0.2
+  screenshot: ^3.0.0
+  share_plus: ^10.0.0
+  url_launcher: ^6.3.0
+  uuid: ^3.0.7
   wakelock_plus: ^1.2.8
-  flutter_localizations:
-    sdk: flutter
-  visibility_detector: ^0.4.0+2
-  flutter_form_builder: ^9.4.1
-  form_builder_validators: ^11.0.0
-  flutter_expandable_fab: ^2.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^4.0.0
-  flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.4.1
+  # Code Generation
   build_runner: ^2.4.12
-  json_serializable: ^6.8.0
   freezed: ^2.5.7
   injectable_generator: ^2.6.2
+  json_serializable: ^6.8.0
   retrofit_generator: ^8.2.0
+
+  # Linting and Analysis
+  flutter_lints: ^4.0.0
+
+  # App Assets
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
 
 flutter:
   uses-material-design: true
+
   assets:
     - assets/
     - assets/announcements/
     - assets/app_icon/
     - assets/noises/
+
   fonts:
     - family: NanumSquare
       fonts:
