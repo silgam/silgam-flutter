@@ -37,7 +37,7 @@ class LoginButton extends StatelessWidget {
                     const Text(
                       '로그인',
                       style: TextStyle(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         fontSize: 18,
                         color: Colors.white,
                       ),
@@ -48,6 +48,7 @@ class LoginButton extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withAlpha(200),
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],

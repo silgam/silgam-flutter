@@ -52,7 +52,7 @@ class ScaffoldBody extends StatelessWidget {
             title: Text(
               title,
               style: const TextStyle(
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w800,
                 fontSize: 28,
                 color: Colors.black,
               ),

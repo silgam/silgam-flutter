@@ -85,7 +85,7 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                       '실감',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                         fontSize: 14,
                       ),
                     ),
@@ -94,7 +94,7 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                       'NOW',
                       style: TextStyle(
                         color: Colors.red,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                         fontSize: 14,
                         shadows: [
                           Shadow(
@@ -130,10 +130,9 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                     text: TextSpan(
                       style: const TextStyle(
                         height: 1.2,
-                        fontWeight: FontWeight.w700,
                         color: Colors.black,
                         fontSize: 13,
-                        fontFamily: 'NanumSquare',
+                        fontFamily: 'Pretendard',
                       ),
                       children: [
                         TextSpan(
@@ -141,10 +140,15 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontSize: 14,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const TextSpan(text: '이 실감과 공부하고 있어요 🔥'),
+                        const TextSpan(
+                          text: '이 실감과 공부하고 있어요 🔥',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -125,12 +125,17 @@ flutter:
     - assets/noises/
 
   fonts:
-    - family: NanumSquare
+    - family: Pretendard
       fonts:
-        - asset: fonts/NanumSquareL.otf
-        - asset: fonts/NanumSquareR.otf
-        - asset: fonts/NanumSquareB.otf
-        - asset: fonts/NanumSquareEB.otf
+        - asset: fonts/Pretendard-Thin.otf
+        - asset: fonts/Pretendard-ExtraLight.otf
+        - asset: fonts/Pretendard-Light.otf
+        - asset: fonts/Pretendard-Regular.otf
+        - asset: fonts/Pretendard-Medium.otf
+        - asset: fonts/Pretendard-SemiBold.otf
+        - asset: fonts/Pretendard-Bold.otf
+        - asset: fonts/Pretendard-ExtraBold.otf
+        - asset: fonts/Pretendard-Black.otf
     - family: EstablishRetrosans
       fonts:
         - asset: fonts/EstablishRetrosans.otf

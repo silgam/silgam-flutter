@@ -107,7 +107,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                   Text(
                     title,
                     style: const TextStyle(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
                   ),
@@ -126,6 +126,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                         badgeText,
                         style: TextStyle(
                           fontSize: 10,
+                          fontWeight: FontWeight.w300,
                           color: Theme.of(context).primaryColor,
                           height: 1.2,
                         ),
@@ -137,7 +138,10 @@ class _TimetableStartCardState extends State<TimetableStartCard>
               Text(
                 content,
                 textWidthBasis: TextWidthBasis.longestLine,
-                style: const TextStyle(fontSize: 12),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300,
+                ),
               ),
             ],
           ),
@@ -214,7 +218,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
               child: const Text(
                 '시험 시작',
                 style: TextStyle(
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                   color: Colors.white,
                   fontSize: 18,
                 ),
@@ -251,7 +255,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                   labelColor: Theme.of(context).primaryColor,
                   unselectedLabelColor: disabledColor,
                   labelStyle:
-                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
+                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w800),
                   unselectedLabelStyle:
                       defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
                   tabs: widget.timetables

@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
             '3초만에 가입 / 로그인',
             style: TextStyle(
               fontSize: 28,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 12),
@@ -255,7 +255,7 @@ class _LoginButton extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: lightText ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

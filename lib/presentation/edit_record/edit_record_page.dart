@@ -1,8 +1,8 @@
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/exam.dart';
@@ -558,7 +558,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           text,
           style: TextStyle(
             color: Colors.grey.shade500,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w300,
           ),
         ),
         if (isRequired)
@@ -566,7 +566,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             ' *',
             style: TextStyle(
               color: Colors.red,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w300,
             ),
           ),
       ],
@@ -611,20 +611,18 @@ class _EditRecordPageState extends State<EditRecordPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              'assets/add.svg',
-              width: 36,
-              colorFilter: ColorFilter.mode(
-                Colors.grey.shade800,
-                BlendMode.srcIn,
-              ),
+            Icon(
+              CupertinoIcons.add,
+              size: 24,
+              color: Colors.grey.shade600,
             ),
+            const SizedBox(width: 4),
             Text(
               '추가하기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.w100,
-                color: Colors.grey.shade800,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade600,
               ),
             ),
           ],

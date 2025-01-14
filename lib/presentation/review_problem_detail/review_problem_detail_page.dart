@@ -146,6 +146,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                         problem.memo,
                         style: const TextStyle(
                           color: Colors.white,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                     ),

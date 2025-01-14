@@ -225,7 +225,10 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 ),
                 child: Text(
                   record.feedback,
-                  style: const TextStyle(height: 1.2),
+                  style: TextStyle(
+                    height: 1.2,
+                    color: Colors.grey.shade700,
+                  ),
                 ),
               ),
             ],
@@ -298,7 +301,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 child: Text(
                   record.title,
                   style: const TextStyle(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     fontSize: 18,
                   ),
                 ),
@@ -308,7 +311,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 record.exam.name,
                 style: TextStyle(
                   color: Color(record.exam.color),
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w500,
                   fontSize: 12,
                 ),
               ),
@@ -403,7 +406,10 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             '정말 이 기록을 삭제하실 건가요?',
             style: TextStyle(fontWeight: FontWeight.w700),
           ),
-          content: Text(record.title),
+          content: Text(
+            record.title,
+            style: const TextStyle(fontWeight: FontWeight.w300),
+          ),
           actions: [
             TextButton(
               onPressed: () {

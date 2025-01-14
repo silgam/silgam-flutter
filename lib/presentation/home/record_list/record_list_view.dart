@@ -168,7 +168,11 @@ class _RecordListViewState extends State<RecordListView> {
                   SizedBox(width: horizontalPadding),
                   Text(
                     '${state.records.length}개${examRecordLimit == -1 ? '' : ' (최대 $examRecordLimit개)'}',
-                    style: const TextStyle(color: Colors.grey, height: 1.2),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      height: 1.2,
+                      fontWeight: FontWeight.w300,
+                    ),
                   ),
                   const SizedBox(width: 2),
                   if (examRecordLimit != -1)

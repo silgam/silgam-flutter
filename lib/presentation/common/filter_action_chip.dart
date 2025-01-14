@@ -26,6 +26,7 @@ class FilterActionChip extends StatelessWidget {
         width: 0.4,
       ),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      labelStyle: const TextStyle(fontWeight: FontWeight.w400),
     );
   }
 }

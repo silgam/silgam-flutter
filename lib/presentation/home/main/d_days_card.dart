@@ -38,7 +38,7 @@ class DDaysCard extends StatelessWidget {
               style: TextStyle(
                 height: 0.4,
                 color: primaryColor,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 fontSize: 24,
               ),
             ),

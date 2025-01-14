@@ -144,7 +144,11 @@ class _SaveImagePageState extends State<SaveImagePage> {
           child: Text(
             '추후에 다양한 테마와 커스터마이징 기능이 추가될 예정입니다.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+              fontWeight: FontWeight.w300,
+            ),
           ),
         ),
       ],
@@ -192,7 +196,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
                       .format(widget.examRecord.examStartedTime),
                   style: const TextStyle(
                     color: Colors.grey,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                     fontSize: 11,
                   ),
                 ),
@@ -206,7 +210,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
                     Text(
                       widget.examRecord.title,
                       style: TextStyle(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: Colors.grey.shade800,
                         fontSize: 13,
                       ),
@@ -217,6 +221,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
                       style: TextStyle(
                         color: Color(widget.examRecord.exam.color),
                         fontSize: 9,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -376,7 +381,7 @@ class _InfoBox extends StatelessWidget {
       expands: expands,
       style: TextStyle(
         fontSize: longText ? 12 : 14,
-        fontWeight: longText ? FontWeight.w500 : FontWeight.w500,
+        fontWeight: longText ? FontWeight.w400 : FontWeight.w500,
         color: Colors.grey.shade800,
       ),
       decoration: InputDecoration(
@@ -390,7 +395,7 @@ class _InfoBox extends StatelessWidget {
         labelText: title,
         labelStyle: TextStyle(
           fontSize: 12,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           color: Theme.of(context).primaryColor,
         ),
         contentPadding: EdgeInsets.only(
@@ -428,7 +433,7 @@ class _ChoiceChip extends StatelessWidget {
         selectedColor: Theme.of(context).primaryColor,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           color: selected ? Colors.white : Colors.black,
         ),
         pressElevation: 0,

@@ -28,7 +28,7 @@ class ExamFilterChip extends StatelessWidget {
             exam.name,
             style: TextStyle(
               color: isSelected ? Colors.white : _darkColor,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w300,
             ),
           ),
           onSelected: (_) => onSelected(),

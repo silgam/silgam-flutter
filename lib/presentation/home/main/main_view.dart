@@ -78,7 +78,7 @@ class _MainViewState extends State<MainView> {
             // cspell:disable-next-line
             DateFormat.MMMMEEEEd('ko_KR').format(today),
             style: TextStyle(
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w800,
               fontSize: isTablet ? 28 : 24,
             ),
           ),

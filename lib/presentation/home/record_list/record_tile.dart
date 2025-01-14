@@ -65,10 +65,10 @@ class RecordTileState extends State<RecordTile> {
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 12,
-                  color: Colors.grey.shade600,
+                  color: Colors.grey.shade500,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -88,21 +88,22 @@ class RecordTileState extends State<RecordTile> {
                     widget.record.exam.name,
                     style: TextStyle(
                       color: Color(widget.record.exam.color),
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12,
                     ),
                   ),
                 ],
               ),
-              if (widget.record.feedback.isNotEmpty) const SizedBox(height: 6),
+              if (widget.record.feedback.isNotEmpty) const SizedBox(height: 4),
               if (widget.record.feedback.isNotEmpty)
                 Text(
                   widget.record.feedback,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w300,
-                    fontSize: 11,
+                    color: Colors.grey.shade700,
+                    fontSize: 12,
                   ),
                 )
             ],
@@ -152,7 +153,7 @@ class RecordTileState extends State<RecordTile> {
       textAlign: TextAlign.end,
       text: TextSpan(
         style: defaultTextStyle?.copyWith(
-          fontWeight: FontWeight.w300,
+          fontWeight: FontWeight.w200,
           fontSize: 18,
           color: Colors.black,
         ),

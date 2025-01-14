@@ -182,7 +182,7 @@ class SilgamApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: false,
           primarySwatch: indigoSwatch,
-          fontFamily: 'NanumSquare',
+          fontFamily: 'Pretendard',
           scaffoldBackgroundColor: SilgamApp.backgroundColor,
           sliderTheme: SliderTheme.of(context).copyWith(
             trackHeight: 3,
@@ -195,15 +195,15 @@ class SilgamApp extends StatelessWidget {
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
               textStyle: const TextStyle(
-                fontFamily: 'NanumSquare',
-                fontWeight: FontWeight.w700,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
               textStyle: const TextStyle(
-                fontFamily: 'NanumSquare',
+                fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w700,
               ),
             ),

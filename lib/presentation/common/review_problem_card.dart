@@ -126,7 +126,7 @@ class ReviewProblemCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
@@ -135,9 +135,10 @@ class ReviewProblemCard extends StatelessWidget {
                     imageCountText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w300,
+                      color: Colors.grey.shade700,
                     ),
                   ),
                 ],
@@ -150,10 +151,10 @@ class ReviewProblemCard extends StatelessWidget {
                   problem.memo.replaceAll('\n', ' '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w300,
+                  style: TextStyle(
                     fontSize: 13,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.grey.shade800,
                   ),
                 ),
               ),

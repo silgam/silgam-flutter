@@ -113,7 +113,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                   '복습할 문제 추가',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 16),

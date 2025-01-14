@@ -38,7 +38,7 @@ class ProgressOverlay extends StatelessWidget {
                         Text(
                           description,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
