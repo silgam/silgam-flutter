@@ -223,8 +223,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 return Align(
                   alignment: Alignment.topLeft,
                   child: Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                    margin: const EdgeInsets.symmetric(vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -238,7 +237,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                     ),
                     constraints: BoxConstraints(
                       maxHeight: 200,
-                      maxWidth: constraints.maxWidth - 40,
+                      maxWidth: constraints.maxWidth,
                     ),
                     child: ListView.separated(
                       shrinkWrap: true,
