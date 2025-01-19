@@ -185,30 +185,9 @@ class SilgamApp extends StatelessWidget {
           primarySwatch: indigoSwatch,
           fontFamily: fontFamily,
           scaffoldBackgroundColor: SilgamApp.backgroundColor,
-          sliderTheme: SliderTheme.of(context).copyWith(
-            trackHeight: 3,
-            trackShape: const RectangularSliderTrackShape(),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-            overlayColor: Colors.transparent,
-            thumbShape: SliderComponentShape.noThumb,
-            showValueIndicator: ShowValueIndicator.always,
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              textStyle: const TextStyle(
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-              textStyle: const TextStyle(
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
+          textButtonTheme: textButtonTheme,
+          outlinedButtonTheme: outlinedButtonTheme,
+          sliderTheme: getSliderTheme(context),
         ),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           physics: const BouncingScrollPhysics(),
