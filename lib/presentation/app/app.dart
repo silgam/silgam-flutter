@@ -11,6 +11,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/exam_record.dart';
 import '../../util/analytics_manager.dart';
@@ -182,7 +183,7 @@ class SilgamApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: false,
           primarySwatch: indigoSwatch,
-          fontFamily: 'NanumSquare',
+          fontFamily: fontFamily,
           scaffoldBackgroundColor: SilgamApp.backgroundColor,
           sliderTheme: SliderTheme.of(context).copyWith(
             trackHeight: 3,
@@ -195,7 +196,7 @@ class SilgamApp extends StatelessWidget {
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
               textStyle: const TextStyle(
-                fontFamily: 'NanumSquare',
+                fontFamily: fontFamily,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -203,7 +204,7 @@ class SilgamApp extends StatelessWidget {
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
               textStyle: const TextStyle(
-                fontFamily: 'NanumSquare',
+                fontFamily: fontFamily,
                 fontWeight: FontWeight.w700,
               ),
             ),

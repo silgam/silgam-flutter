@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ui/ui.dart';
 
 import '../../app/cubit/app_cubit.dart';
 import '../../common/custom_card.dart';
@@ -133,7 +134,7 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                         fontWeight: FontWeight.w700,
                         color: Colors.black,
                         fontSize: 13,
-                        fontFamily: 'NanumSquare',
+                        fontFamily: fontFamily,
                       ),
                       children: [
                         TextSpan(

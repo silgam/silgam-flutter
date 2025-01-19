@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:ui/ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repository/feedback/feedback_repository.dart';
@@ -459,7 +460,7 @@ void showSendFeedbackDialog(BuildContext context) {
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey.shade800,
-                        fontFamily: 'NanumSquare',
+                        fontFamily: fontFamily,
                       ),
                       children: [
                         const TextSpan(
