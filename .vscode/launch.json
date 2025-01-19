@@ -7,18 +7,21 @@
     {
       "name": "silgam-flutter",
       "request": "launch",
-      "type": "dart"
+      "type": "dart",
+      "program": "lib/main.dart"
     },
     {
       "name": "silgam-flutter (profile mode)",
       "request": "launch",
       "type": "dart",
+      "program": "lib/main.dart",
       "flutterMode": "profile"
     },
     {
       "name": "silgam-flutter (release mode)",
       "request": "launch",
       "type": "dart",
+      "program": "lib/main.dart",
       "flutterMode": "release"
     }
   ]

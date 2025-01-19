@@ -1,0 +1,46 @@
+{
+  "folders": [
+    {
+      "path": "..",
+      "name": "Root"
+    },
+    {
+      "path": "../packages/ui",
+      "name": "UI"
+    }
+  ],
+  "settings": {
+    "prettier.singleQuote": true,
+    "cSpell.spellCheckOnlyWorkspaceFiles": true,
+    "cSpell.words": [
+      "Admob",
+      "ARGB",
+      "Autovalidate",
+      "colorsets",
+      "Cupertino",
+      "Datas",
+      "dday",
+      "ddays",
+      "easyloading",
+      "firestore",
+      "kakao",
+      "kakaotalk",
+      "Millis",
+      "Nanum",
+      "Openchat",
+      "paperplane",
+      "Retrosans",
+      "Roboto",
+      "signin",
+      "silgam",
+      "silgampass",
+      "storekit",
+      "suneung",
+      "unfocus",
+      "unfreezed",
+      "vsync",
+      "wakelock",
+      "writeln"
+    ]
+  }
+}
