@@ -8,11 +8,17 @@ environment:
   sdk: 3.6.1
   flutter: 3.27.2
 
+workspace:
+  - packages/ui
+
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+
+  # Local packages
+  ui: 0.0.1
 
   # State Management and DI
   bloc: ^8.1.4
@@ -109,7 +115,7 @@ dev_dependencies:
   retrofit_generator: ^8.2.0
 
   # Linting and Analysis
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
   # App Assets
   flutter_launcher_icons: ^0.13.1
