@@ -28,26 +28,21 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
           return BlocBuilder<IapCubit, IapState>(
             builder: (context, iapState) {
               final sellingProduct = iapState.sellingProduct;
-              return AlertDialog(
-                title: const Text(
-                  '모의고사 기록 개수 제한 안내',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                content: Text(
-                  '실감패스를 이용하기 전까지는 모의고사 기록을 ${appState.freeProductBenefit.examRecordLimit}개까지만 추가/수정할 수 있어요. (${appState.freeProductBenefit.examRecordLimit}개 미만까지 삭제 시 추가/수정 가능)',
-                ),
+
+              return CustomAlertDialog(
+                title: '모의고사 기록 개수 제한 안내',
+                content:
+                    '실감패스를 이용하기 전까지는 모의고사 기록을 ${appState.freeProductBenefit.examRecordLimit}개까지만 추가/수정할 수 있어요. (${appState.freeProductBenefit.examRecordLimit}개 미만까지 삭제 시 추가/수정 가능)',
                 actions: [
-                  TextButton(
+                  SecondaryAction(
+                    text: '확인',
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey,
-                    ),
-                    child: const Text('확인'),
                   ),
                   if (sellingProduct != null)
-                    TextButton(
+                    PrimaryAction(
+                      text: '실감패스 확인하러 가기',
                       onPressed: () {
                         AnalyticsManager.logEvent(
                           name: '[HomePage-list] Check pass button tapped',
@@ -60,7 +55,6 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
                           ),
                         );
                       },
-                      child: const Text('실감패스 확인하러 가기'),
                     ),
                 ],
               );
@@ -82,26 +76,21 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
       return BlocBuilder<IapCubit, IapState>(
         builder: (context, iapState) {
           final sellingProduct = iapState.sellingProduct;
-          return AlertDialog(
-            title: const Text(
-              '랩타임 기능 이용 제한 안내',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-            content: const Text(
-              '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
-            ),
+
+          return CustomAlertDialog(
+            title: '랩타임 기능 이용 제한 안내',
+            content:
+                '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
             actions: [
-              TextButton(
+              SecondaryAction(
+                text: '확인',
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey,
-                ),
-                child: const Text('확인'),
               ),
               if (sellingProduct != null)
-                TextButton(
+                PrimaryAction(
+                  text: '실감패스 확인하러 가기',
                   onPressed: () {
                     AnalyticsManager.logEvent(
                       name: '[LapTimeLimitHelpDialog] Check pass button tapped',
@@ -112,7 +101,6 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
                       arguments: PurchasePageArguments(product: sellingProduct),
                     );
                   },
-                  child: const Text('실감패스 확인하러 가기'),
                 ),
             ],
           );
@@ -132,25 +120,18 @@ void showCustomExamNotAvailableDialog(
       name: '/custom_exam_not_available_dialog',
     ),
     builder: (context) {
-      return AlertDialog(
-        title: const Text(
-          '나만의 과목 이용 제한 안내',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: const Text(
-          '나만의 과목은 실감패스 구매 후에 이용 가능해요. (자세한 내용은 안내 페이지 참고)',
-        ),
+      return CustomAlertDialog(
+        title: '나만의 과목 이용 제한 안내',
+        content: '나만의 과목은 실감패스 구매 후에 이용 가능해요. (자세한 내용은 안내 페이지 참고)',
         actions: [
-          TextButton(
+          SecondaryAction(
+            text: '확인',
             onPressed: () {
               Navigator.of(context).pop();
             },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey,
-            ),
-            child: const Text('확인'),
           ),
-          TextButton(
+          PrimaryAction(
+            text: '자세히 알아보기',
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushNamed(
@@ -160,7 +141,6 @@ void showCustomExamNotAvailableDialog(
                 ),
               );
             },
-            child: const Text('자세히 알아보기'),
           ),
         ],
       );
@@ -178,26 +158,21 @@ void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
       return BlocBuilder<IapCubit, IapState>(
         builder: (context, iapState) {
           final sellingProduct = iapState.sellingProduct;
-          return AlertDialog(
-            title: const Text(
-              '전과목 연속 응시 기능 이용 제한 안내',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-            content: const Text(
-              '전과목 연속 응시 기능은 실감패스 구매 후에 이용 가능해요. (전과목 연속 응시 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
-            ),
+
+          return CustomAlertDialog(
+            title: '전과목 연속 응시 기능 이용 제한 안내',
+            content:
+                '전과목 연속 응시 기능은 실감패스 구매 후에 이용 가능해요. (전과목 연속 응시 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
             actions: [
-              TextButton(
+              SecondaryAction(
+                text: '확인',
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey,
-                ),
-                child: const Text('확인'),
               ),
               if (sellingProduct != null)
-                TextButton(
+                PrimaryAction(
+                  text: '실감패스 확인하러 가기',
                   onPressed: () {
                     AnalyticsManager.logEvent(
                       name:
@@ -209,7 +184,6 @@ void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
                       arguments: PurchasePageArguments(product: sellingProduct),
                     );
                   },
-                  child: const Text('실감패스 확인하러 가기'),
                 ),
             ],
           );

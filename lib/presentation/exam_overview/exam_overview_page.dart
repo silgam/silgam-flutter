@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:intl/intl.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/exam.dart';
 import '../../model/exam_detail.dart';
@@ -94,34 +95,28 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
             _appCubit.state.freeProductBenefit.examRecordLimit;
         final examsCount = _exams.length;
 
-        return AlertDialog(
-          title: const Text(
-            '시험 종료 후 자동 저장 기능 이용 제한 안내',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-          content: SingleChildScrollView(
-            child: Text(
-              examsCount > 1
-                  ? '''
+        return CustomAlertDialog(
+          title: '시험 종료 후 자동 저장 기능 이용 제한 안내',
+          content: examsCount > 1
+              ? '''
 실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${widget.examDetail.timetableName}에 포함된 $examsCount개의 과목들 중 다음 과목들은 자동으로 저장되지 않았어요.
 
 ${autoSaveFailedExamNames.join(', ')}
 
 $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢'''
-                  : '''
+              : '''
 실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${_exams.first.name} 과목의 기록은 자동으로 저장되지 않았어요.
 
 $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢''',
-            ),
-          ),
           actions: [
-            TextButton(
+            PrimaryAction(
+              text: '확인',
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('확인'),
             ),
           ],
+          scrollable: true,
         );
       },
     );
@@ -143,28 +138,18 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
       context: context,
       routeSettings: const RouteSettings(name: '/exam_overview/close_dialog'),
       builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            '아직 시험 기록이 저장되지 않았어요!',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          content: Text(content),
+        return CustomAlertDialog(
+          title: '아직 시험 기록이 저장되지 않았어요!',
+          content: content,
           actions: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey.shade600,
-                  ),
-                  child: const Text('취소'),
-                ),
-              ],
+            SecondaryAction(
+              text: '취소',
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-            TextButton(
+            DestructiveAction(
+              text: '나가기',
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -176,10 +161,6 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                   },
                 );
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
-              child: const Text('나가기'),
             ),
           ],
         );

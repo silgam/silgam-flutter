@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ui/ui.dart';
 
 import '../../repository/noise/noise_repository.dart';
 import '../../util/analytics_manager.dart';
@@ -344,26 +345,18 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         return BlocBuilder<IapCubit, IapState>(
           builder: (context, iapState) {
             final sellingProduct = iapState.sellingProduct;
-            return AlertDialog(
-              content: const Text('실감패스 사용자만 이용 가능한 소음이에요.'),
-              contentPadding: const EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: 0,
-              ),
+            return CustomAlertDialog(
+              content: '실감패스 사용자만 이용 가능한 소음이에요.',
               actions: [
-                TextButton(
+                SecondaryAction(
+                  text: '확인',
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey,
-                  ),
-                  child: const Text('확인'),
                 ),
                 if (sellingProduct != null)
-                  TextButton(
+                  PrimaryAction(
+                    text: '실감패스 확인하러 가기',
                     onPressed: () {
                       AnalyticsManager.logEvent(
                         name: '[NoiseSettingPage] Check pass button tapped',
@@ -376,7 +369,6 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                         ),
                       );
                     },
-                    child: const Text('실감패스 확인하러 가기'),
                   ),
               ],
             );

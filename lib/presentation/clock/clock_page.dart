@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:ui/ui.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../model/exam_detail.dart';
@@ -526,30 +527,22 @@ class _ClockPageState extends State<ClockPage> {
       context: context,
       routeSettings: const RouteSettings(name: 'finish_exam_dialog'),
       builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            '아직 시험이 끝나지 않았어요!',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          content: const Text('시험을 종료하실 건가요?'),
+        return CustomAlertDialog(
+          title: '아직 시험이 끝나지 않았어요!',
+          content: '시험을 종료하실 건가요?',
           actions: [
-            TextButton(
+            SecondaryAction(
+              text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text(
-                '취소',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                ),
-              ),
             ),
-            TextButton(
+            PrimaryAction(
+              text: '시험 종료',
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              child: const Text('시험 종료'),
             ),
           ],
         );

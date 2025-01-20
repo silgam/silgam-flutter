@@ -4,6 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/exam.dart';
 import '../../repository/exam/exam_repository.dart';
@@ -122,31 +123,22 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         name: '${CustomExamEditPage.routeName}/exit_confirm_dialog',
       ),
       builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            '아직 저장하지 않았어요!',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          content: const Text('저장하지 않고 나가시겠어요?'),
+        return CustomAlertDialog(
+          title: '아직 저장하지 않았어요!',
+          content: '저장하지 않고 나가시겠어요?',
           actions: [
-            TextButton(
+            SecondaryAction(
+              text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey.shade600,
-              ),
-              child: const Text('취소'),
             ),
-            TextButton(
+            DestructiveAction(
+              text: '저장하지 않고 나가기',
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
-              child: const Text('저장하지 않고 나가기'),
             ),
           ],
         );
@@ -211,22 +203,22 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       if (mounted) {
         final recordNames =
             examRecordsUsing.map((record) => '• ${record.title}').join('\n');
+
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            scrollable: true,
-            title: const Text('과목을 삭제할 수 없어요!'),
-            content: Text(
-              '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
-            ),
+          builder: (context) => CustomAlertDialog(
+            title: '과목을 삭제할 수 없어요!',
+            content:
+                '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
             actions: [
-              TextButton(
+              PrimaryAction(
+                text: '확인',
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('확인'),
               ),
             ],
+            scrollable: true,
           ),
         );
       }
@@ -245,27 +237,22 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         name: '${CustomExamEditPage.routeName}/delete_confirm_dialog',
       ),
       builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            '정말 이 과목을 삭제하실 건가요?',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-          content: Text(examToDelete.name),
+        return CustomAlertDialog(
+          title: '정말 이 과목을 삭제하실 건가요?',
+          content: examToDelete.name,
           actions: [
-            TextButton(
+            SecondaryAction(
+              text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
-              style: TextButton.styleFrom(foregroundColor: Colors.grey),
-              child: const Text('취소'),
             ),
-            TextButton(
+            DestructiveAction(
+              text: '삭제',
               onPressed: () {
                 Navigator.pop(context);
                 _deleteExam(examToDelete);
               },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('삭제'),
             ),
           ],
         );

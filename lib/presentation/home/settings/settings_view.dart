@@ -7,6 +7,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ui/ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/user.dart';
@@ -407,31 +408,24 @@ class _SettingsViewState extends State<SettingsView> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'logout_confirm_dialog'),
-      builder: (_) => AlertDialog(
-        title: const Text(
-          '로그아웃하실 건가요?',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
+      builder: (_) => CustomAlertDialog(
+        title: '로그아웃하실 건가요?',
         actions: [
-          TextButton(
+          SecondaryAction(
+            text: '취소',
             onPressed: () {
               Navigator.pop(context);
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.grey),
-            child: const Text(
-              '취소',
-              style: TextStyle(color: Colors.grey),
-            ),
           ),
-          TextButton(
+          PrimaryAction(
+            text: '로그아웃',
             onPressed: () async {
               await getIt<AppCubit>().onLogout();
               if (mounted) Navigator.pop(context);
               await AnalyticsManager.logEvent(
                   name: '[HomePage-settings] Logout');
             },
-            child: const Text('로그아웃'),
-          )
+          ),
         ],
       ),
     );
@@ -449,21 +443,18 @@ class _SettingsViewState extends State<SettingsView> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'account_delete_confirm_dialog'),
-      builder: (_) => AlertDialog(
-        title: const Text(
-          '탈퇴하시겠습니까?',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: const Text('탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.'),
+      builder: (_) => CustomAlertDialog(
+        title: '탈퇴하시겠습니까?',
+        content: '탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.',
         actions: [
-          TextButton(
+          SecondaryAction(
+            text: '취소',
             onPressed: () {
               Navigator.pop(context);
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.grey),
-            child: const Text('취소'),
           ),
-          TextButton(
+          DestructiveAction(
+            text: '계정 탈퇴',
             onPressed: () async {
               Navigator.pop(context);
               try {
@@ -487,9 +478,7 @@ class _SettingsViewState extends State<SettingsView> {
               await AnalyticsManager.logEvent(
                   name: '[HomePage-settings] Delete account');
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('계정 탈퇴'),
-          )
+          ),
         ],
       ),
     );
@@ -519,26 +508,20 @@ class _SettingsViewState extends State<SettingsView> {
                       appState.freeProductBenefit.examRecordLimit;
                   final sellingProduct = iapState.sellingProduct;
 
-                  return AlertDialog(
-                    title: const Text(
-                      '시험 종료 후 자동 저장 기능 이용 제한 안내',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    content: Text(
-                      '실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. ($examRecordLimit개 미만까지 삭제시 자동 저장 기능 이용 가능)',
-                    ),
+                  return CustomAlertDialog(
+                    title: '시험 종료 후 자동 저장 기능 이용 제한 안내',
+                    content:
+                        '실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. ($examRecordLimit개 미만까지 삭제시 자동 저장 기능 이용 가능)',
                     actions: [
-                      TextButton(
+                      SecondaryAction(
+                        text: '확인',
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey,
-                        ),
-                        child: const Text('확인'),
                       ),
                       if (sellingProduct != null)
-                        TextButton(
+                        PrimaryAction(
+                          text: '실감패스 확인하러 가기',
                           onPressed: () {
                             AnalyticsManager.logEvent(
                               name: '[HomePage-list] Check pass button tapped',
@@ -551,7 +534,6 @@ class _SettingsViewState extends State<SettingsView> {
                               ),
                             );
                           },
-                          child: const Text('실감패스 확인하러 가기'),
                         ),
                     ],
                   );

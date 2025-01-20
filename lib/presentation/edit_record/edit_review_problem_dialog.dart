@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/problem.dart';
 import '../../util/injection.dart';
@@ -61,31 +62,22 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
         name: 'edit_review_problem_dialog/exit_confirm_dialog',
       ),
       builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            '아직 저장하지 않았어요!',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          content: const Text('저장하지 않고 나가시겠어요?'),
+        return CustomAlertDialog(
+          title: '아직 저장하지 않았어요!',
+          content: '저장하지 않고 나가시겠어요?',
           actions: [
-            TextButton(
+            SecondaryAction(
+              text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey.shade600,
-              ),
-              child: const Text('취소'),
             ),
-            TextButton(
+            DestructiveAction(
+              text: '저장하지 않고 나가기',
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
-              child: const Text('저장하지 않고 나가기'),
             ),
           ],
         );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
@@ -398,33 +399,22 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       context: context,
       routeSettings: const RouteSettings(name: 'delete_record_confirm_dialog'),
       builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            '정말 이 기록을 삭제하실 건가요?',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-          content: Text(record.title),
+        return CustomAlertDialog(
+          title: '정말 이 기록을 삭제하실 건가요?',
+          content: record.title,
           actions: [
-            TextButton(
+            SecondaryAction(
+              text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
-              style: TextButton.styleFrom(foregroundColor: Colors.grey),
-              child: const Text(
-                '취소',
-                style: TextStyle(color: Colors.grey),
-              ),
             ),
-            TextButton(
+            DestructiveAction(
+              text: '삭제',
               onPressed: () {
                 Navigator.pop(context);
                 _deleteRecord(record);
               },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text(
-                '삭제',
-                style: TextStyle(color: Colors.red),
-              ),
             ),
           ],
         );
