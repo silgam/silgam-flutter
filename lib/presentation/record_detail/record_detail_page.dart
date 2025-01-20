@@ -403,13 +403,13 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           title: '정말 이 기록을 삭제하실 건가요?',
           content: record.title,
           actions: [
-            SecondaryAction(
+            CustomTextButton.secondary(
               text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            DestructiveAction(
+            CustomTextButton.destructive(
               text: '삭제',
               onPressed: () {
                 Navigator.pop(context);

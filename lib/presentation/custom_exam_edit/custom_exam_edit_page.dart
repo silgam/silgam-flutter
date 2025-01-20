@@ -127,13 +127,13 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           title: '아직 저장하지 않았어요!',
           content: '저장하지 않고 나가시겠어요?',
           actions: [
-            SecondaryAction(
+            CustomTextButton.secondary(
               text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            DestructiveAction(
+            CustomTextButton.destructive(
               text: '저장하지 않고 나가기',
               onPressed: () {
                 Navigator.pop(context);
@@ -211,7 +211,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
             content:
                 '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
             actions: [
-              PrimaryAction(
+              CustomTextButton.primary(
                 text: '확인',
                 onPressed: () {
                   Navigator.pop(context);
@@ -241,13 +241,13 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           title: '정말 이 과목을 삭제하실 건가요?',
           content: examToDelete.name,
           actions: [
-            SecondaryAction(
+            CustomTextButton.secondary(
               text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            DestructiveAction(
+            CustomTextButton.destructive(
               text: '삭제',
               onPressed: () {
                 Navigator.pop(context);

@@ -34,14 +34,14 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
                 content:
                     '실감패스를 이용하기 전까지는 모의고사 기록을 ${appState.freeProductBenefit.examRecordLimit}개까지만 추가/수정할 수 있어요. (${appState.freeProductBenefit.examRecordLimit}개 미만까지 삭제 시 추가/수정 가능)',
                 actions: [
-                  SecondaryAction(
+                  CustomTextButton.secondary(
                     text: '확인',
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   if (sellingProduct != null)
-                    PrimaryAction(
+                    CustomTextButton.primary(
                       text: '실감패스 확인하러 가기',
                       onPressed: () {
                         AnalyticsManager.logEvent(
@@ -82,14 +82,14 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
             content:
                 '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
             actions: [
-              SecondaryAction(
+              CustomTextButton.secondary(
                 text: '확인',
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               if (sellingProduct != null)
-                PrimaryAction(
+                CustomTextButton.primary(
                   text: '실감패스 확인하러 가기',
                   onPressed: () {
                     AnalyticsManager.logEvent(
@@ -124,13 +124,13 @@ void showCustomExamNotAvailableDialog(
         title: '나만의 과목 이용 제한 안내',
         content: '나만의 과목은 실감패스 구매 후에 이용 가능해요. (자세한 내용은 안내 페이지 참고)',
         actions: [
-          SecondaryAction(
+          CustomTextButton.secondary(
             text: '확인',
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
-          PrimaryAction(
+          CustomTextButton.primary(
             text: '자세히 알아보기',
             onPressed: () {
               Navigator.of(context).pop();
@@ -164,14 +164,14 @@ void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
             content:
                 '전과목 연속 응시 기능은 실감패스 구매 후에 이용 가능해요. (전과목 연속 응시 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
             actions: [
-              SecondaryAction(
+              CustomTextButton.secondary(
                 text: '확인',
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               if (sellingProduct != null)
-                PrimaryAction(
+                CustomTextButton.primary(
                   text: '실감패스 확인하러 가기',
                   onPressed: () {
                     AnalyticsManager.logEvent(

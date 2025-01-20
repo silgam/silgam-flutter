@@ -66,13 +66,13 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           title: '아직 저장하지 않았어요!',
           content: '저장하지 않고 나가시겠어요?',
           actions: [
-            SecondaryAction(
+            CustomTextButton.secondary(
               text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            DestructiveAction(
+            CustomTextButton.destructive(
               text: '저장하지 않고 나가기',
               onPressed: () {
                 Navigator.pop(context);

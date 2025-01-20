@@ -109,7 +109,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
 
 $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢''',
           actions: [
-            PrimaryAction(
+            CustomTextButton.primary(
               text: '확인',
               onPressed: () {
                 Navigator.of(context).pop();
@@ -142,13 +142,13 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
           title: '아직 시험 기록이 저장되지 않았어요!',
           content: content,
           actions: [
-            SecondaryAction(
+            CustomTextButton.secondary(
               text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            DestructiveAction(
+            CustomTextButton.destructive(
               text: '나가기',
               onPressed: () {
                 Navigator.pop(context);

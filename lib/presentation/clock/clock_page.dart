@@ -531,13 +531,13 @@ class _ClockPageState extends State<ClockPage> {
           title: '아직 시험이 끝나지 않았어요!',
           content: '시험을 종료하실 건가요?',
           actions: [
-            SecondaryAction(
+            CustomTextButton.secondary(
               text: '취소',
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            PrimaryAction(
+            CustomTextButton.primary(
               text: '시험 종료',
               onPressed: () {
                 Navigator.pop(context);

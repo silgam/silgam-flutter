@@ -411,13 +411,13 @@ class _SettingsViewState extends State<SettingsView> {
       builder: (_) => CustomAlertDialog(
         title: '로그아웃하실 건가요?',
         actions: [
-          SecondaryAction(
+          CustomTextButton.secondary(
             text: '취소',
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          PrimaryAction(
+          CustomTextButton.primary(
             text: '로그아웃',
             onPressed: () async {
               await getIt<AppCubit>().onLogout();
@@ -447,13 +447,13 @@ class _SettingsViewState extends State<SettingsView> {
         title: '탈퇴하시겠습니까?',
         content: '탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.',
         actions: [
-          SecondaryAction(
+          CustomTextButton.secondary(
             text: '취소',
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          DestructiveAction(
+          CustomTextButton.destructive(
             text: '계정 탈퇴',
             onPressed: () async {
               Navigator.pop(context);
@@ -513,14 +513,14 @@ class _SettingsViewState extends State<SettingsView> {
                     content:
                         '실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. ($examRecordLimit개 미만까지 삭제시 자동 저장 기능 이용 가능)',
                     actions: [
-                      SecondaryAction(
+                      CustomTextButton.secondary(
                         text: '확인',
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                       ),
                       if (sellingProduct != null)
-                        PrimaryAction(
+                        CustomTextButton.primary(
                           text: '실감패스 확인하러 가기',
                           onPressed: () {
                             AnalyticsManager.logEvent(

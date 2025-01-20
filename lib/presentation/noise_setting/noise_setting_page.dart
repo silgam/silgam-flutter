@@ -348,14 +348,14 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
             return CustomAlertDialog(
               content: '실감패스 사용자만 이용 가능한 소음이에요.',
               actions: [
-                SecondaryAction(
+                CustomTextButton.secondary(
                   text: '확인',
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 if (sellingProduct != null)
-                  PrimaryAction(
+                  CustomTextButton.primary(
                     text: '실감패스 확인하러 가기',
                     onPressed: () {
                       AnalyticsManager.logEvent(
