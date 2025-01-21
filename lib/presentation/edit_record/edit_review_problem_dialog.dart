@@ -229,6 +229,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             height: 50,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: GestureDetector(
               onTap: () => _onImageTapped(imagePath),
@@ -283,6 +284,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           height: 50,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(6),
             color: Colors.white,
           ),
           child: IconButton(
