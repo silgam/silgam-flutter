@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ui/ui.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../model/product.dart';
@@ -293,17 +294,14 @@ class _PurchasePageState extends State<PurchasePage> {
                 top: 16,
               ),
               actions: [
-                TextButton(
+                CustomTextButton.secondary(
+                  text: '취소',
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                  child: const Text(
-                    '취소',
-                    style: TextStyle(color: Colors.grey),
-                  ),
                 ),
-                TextButton(
+                CustomTextButton.primary(
+                  text: '시작',
                   onPressed: () {
                     AnalyticsManager.logEvent(
                       name: '[PurchasePage] Start free trial button tapped',
@@ -315,9 +313,6 @@ class _PurchasePageState extends State<PurchasePage> {
                     iapCubit.startFreeTrialProcess(widget.product);
                     Navigator.pop(context);
                   },
-                  child: const Text(
-                    '시작',
-                  ),
                 ),
               ],
             );

@@ -601,12 +601,9 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                                 vertical: 4,
                                 horizontal: 20,
                               ),
-                              child: TextButton(
+                              child: CustomTextButton.destructive(
+                                text: '삭제하기',
                                 onPressed: _onDeleteButtonPressed,
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.red,
-                                ),
-                                child: const Text('삭제하기'),
                               ),
                             )
                           : const SizedBox(height: 28),

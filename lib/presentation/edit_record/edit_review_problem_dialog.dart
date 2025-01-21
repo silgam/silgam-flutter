@@ -218,37 +218,17 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
       ),
       actions: [
         if (widget.reviewProblemEditModeParams != null)
-          TextButton(
+          CustomTextButton.destructive(
+            text: '삭제',
             onPressed: _onDeleteButtonPressed,
-            child: Text(
-              '삭제',
-              style: TextStyle(color: Colors.red.shade600),
-            ),
           ),
-        TextButton(
+        CustomTextButton.secondary(
+          text: '취소',
           onPressed: _onCancelButtonPressed,
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.grey,
-          ),
-          child: Text(
-            '취소',
-            style: TextStyle(
-              color: Colors.grey.shade600,
-            ),
-          ),
         ),
-        TextButton(
+        CustomTextButton.primary(
+          text: widget.reviewProblemAddModeParams == null ? '수정' : '추가',
           onPressed: _onConfirmButtonPressed,
-          style: TextButton.styleFrom(
-            foregroundColor:
-                _isTitleEmpty ? Colors.grey : Theme.of(context).primaryColor,
-          ),
-          child: Text(
-            widget.reviewProblemAddModeParams == null ? '수정' : '추가',
-            style: TextStyle(
-              color: _isTitleEmpty ? Colors.grey.shade600 : null,
-            ),
-          ),
         ),
       ],
     );
