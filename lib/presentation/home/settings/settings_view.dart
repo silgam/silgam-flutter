@@ -377,7 +377,7 @@ class _SettingsViewState extends State<SettingsView> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
-      builder: (_) => AlertDialog(
+      builder: (_) => CustomAlertDialog.customContent(
         content: SelectableText(
           user.id,
           onTap: () {

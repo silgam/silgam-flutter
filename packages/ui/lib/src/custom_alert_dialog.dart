@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CustomAlertDialog extends StatelessWidget {
-  const CustomAlertDialog({
+  CustomAlertDialog({
+    super.key,
+    this.title,
+    String? content,
+    this.actions,
+    this.scrollable = false,
+  }) : content = content != null ? Text(content) : null;
+
+  const CustomAlertDialog.customContent({
     super.key,
     this.title,
     this.content,
@@ -10,7 +18,7 @@ class CustomAlertDialog extends StatelessWidget {
   });
 
   final String? title;
-  final String? content;
+  final Widget? content;
   final List<Widget>? actions;
   final bool scrollable;
 
@@ -26,7 +34,7 @@ class CustomAlertDialog extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.w700),
             )
           : null,
-      content: content != null ? Text(content) : null,
+      content: content,
       actions: actions,
       scrollable: scrollable,
     );

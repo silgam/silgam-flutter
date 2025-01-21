@@ -269,15 +269,9 @@ class _PurchasePageState extends State<PurchasePage> {
           routeSettings:
               const RouteSettings(name: '/purchase/trial_confirm_dialog'),
           builder: (context) {
-            return AlertDialog(
-              title: Text(
-                '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
-              ),
+            return CustomAlertDialog.customContent(
+              title:
+                  '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -287,11 +281,6 @@ class _PurchasePageState extends State<PurchasePage> {
                     '무료 체험 기간이 끝나는 시점까지 작성되어있는 모의고사 기록이 ${appCubit.state.freeProductBenefit.examRecordLimit}개를 초과하면, 체험 기간 후에는 모의고사 기록을 열람 및 삭제만 할 수 있습니다. (${appCubit.state.freeProductBenefit.examRecordLimit}개 미만까지 삭제할 시에만 추가/수정 가능)',
                   ),
                 ],
-              ),
-              contentPadding: const EdgeInsets.only(
-                left: 24,
-                right: 24,
-                top: 16,
               ),
               actions: [
                 CustomTextButton.secondary(
@@ -315,6 +304,7 @@ class _PurchasePageState extends State<PurchasePage> {
                   },
                 ),
               ],
+              scrollable: true,
             );
           },
         );

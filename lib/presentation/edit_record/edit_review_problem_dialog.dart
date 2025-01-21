@@ -9,7 +9,6 @@ import 'package:ui/ui.dart';
 
 import '../../model/problem.dart';
 import '../../util/injection.dart';
-import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 
 class EditReviewProblemDialog extends StatefulWidget {
@@ -87,28 +86,18 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: EdgeInsets.zero,
-      backgroundColor: SilgamApp.backgroundColor,
+    return CustomAlertDialog.customContent(
+      title: '복습할 문제 추가',
       content: PopScope(
         canPop: !_isChanged,
         onPopInvokedWithResult: _onPopInvokedWithResult,
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 24, right: 24, top: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '복습할 문제 추가',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 16),
                 TextField(
                   controller: _titleEditingController,
                   onChanged: _onTitleChanged,
@@ -122,14 +111,12 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        width: 0.5,
                         color: Colors.grey.shade300,
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(6)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        width: 0.5,
                         color: Colors.grey.shade300,
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(6)),
@@ -173,14 +160,12 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        width: 0.5,
                         color: Colors.grey.shade300,
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(6)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        width: 0.5,
                         color: Colors.grey.shade300,
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(6)),
@@ -244,7 +229,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300, width: 0.5),
+              border: Border.all(color: Colors.grey.shade300),
             ),
             child: GestureDetector(
               onTap: () => _onImageTapped(imagePath),
@@ -298,7 +283,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300, width: 0.5),
+            border: Border.all(color: Colors.grey.shade300),
             color: Colors.white,
           ),
           child: IconButton(

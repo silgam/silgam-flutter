@@ -6,7 +6,7 @@ void main() {
   group('CustomAlertDialog', () {
     testWidgets('renders without parameters', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: CustomAlertDialog(),
         ),
       );
@@ -19,7 +19,7 @@ void main() {
       const title = 'Test Title';
 
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: CustomAlertDialog(title: title),
         ),
       );
@@ -32,7 +32,7 @@ void main() {
       const content = 'Test Content';
 
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: CustomAlertDialog(content: content),
         ),
       );
@@ -61,7 +61,7 @@ void main() {
     testWidgets('scrollable parameter is respected',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: CustomAlertDialog(
             scrollable: true,
             content: 'Test Content',
@@ -95,6 +95,28 @@ void main() {
       expect(find.byType(TextButton), findsOneWidget);
       final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
       expect(dialog.scrollable, isTrue);
+    });
+
+    testWidgets('renders with custom content widget',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomAlertDialog.customContent(
+            title: 'Test Title',
+            content: Text(
+              'Custom Widget Content',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Test Title'), findsOneWidget);
+      expect(find.text('Custom Widget Content'), findsOneWidget);
+      final textWidget =
+          tester.widget<Text>(find.text('Custom Widget Content'));
+      expect(textWidget.style?.fontSize, 20);
+      expect(textWidget.style?.fontWeight, FontWeight.bold);
     });
   });
 }
