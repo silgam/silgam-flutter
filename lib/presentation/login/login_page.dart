@@ -5,12 +5,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:silgam/presentation/app/app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
+import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/custom_menu_bar.dart';
 import '../common/progress_overlay.dart';
