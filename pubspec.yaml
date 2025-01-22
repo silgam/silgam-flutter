@@ -47,7 +47,7 @@ dependencies:
   fl_chart: ^0.68.0
   flutter_easyloading: ^3.0.5
   flutter_expandable_fab: ^2.3.0
-  flutter_form_builder: ^9.4.1
+  flutter_form_builder: ^9.7.0
   flutter_heatmap_calendar:
     git:
       url: https://github.com/silgam/flutter_heatmap_calendar.git
