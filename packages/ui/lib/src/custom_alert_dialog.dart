@@ -37,6 +37,10 @@ class CustomAlertDialog extends StatelessWidget {
       content: content,
       actions: actions,
       scrollable: scrollable,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
     );
   }
 }
