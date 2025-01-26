@@ -324,103 +324,117 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     onChanged: _onDefaultExamChanged,
                   ),
                 ),
-                FormItem(
-                  label: '시험 시작 시간',
-                  child: FormBuilderField<TimeOfDay>(
-                    name: _startTimeFieldName,
-                    initialValue: _startTimeInitialValue,
-                    builder: (field) => GestureDetector(
-                      onTap: () async {
-                        final time = await showTimePicker(
-                          context: context,
-                          initialTime: field.value ?? TimeOfDay.now(),
-                        );
-                        if (time == null) return;
-                        field.didChange(time);
-                      },
-                      child: InputDecorator(
-                        decoration: defaultInputDecoration,
-                        child: Text(
-                          DateFormat.jm('ko_KR').format(
-                              field.value?.toDateTime() ?? DateTime.now()),
-                          style: const TextStyle(
-                            fontSize: 17,
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 20,
+                  children: [
+                    FormItem(
+                      label: '시험 시작 시간',
+                      width: 108,
+                      child: FormBuilderField<TimeOfDay>(
+                        name: _startTimeFieldName,
+                        initialValue: _startTimeInitialValue,
+                        builder: (field) => GestureDetector(
+                          onTap: () async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: field.value ?? TimeOfDay.now(),
+                            );
+                            if (time == null) return;
+                            field.didChange(time);
+                          },
+                          child: InputDecorator(
+                            decoration: defaultInputDecoration,
+                            child: Text(
+                              DateFormat.jm('ko_KR').format(
+                                  field.value?.toDateTime() ?? DateTime.now()),
+                              style: const TextStyle(
+                                fontSize: 17,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                FormItem(
-                  label: '시험 시간',
-                  child: FormTextField(
-                    name: _durationFieldName,
-                    initialValue: _durationInitialValue,
-                    suffixText: '분',
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(3),
-                    ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                          errorText: '시험 시간을 입력해주세요.'),
-                      FormBuilderValidators.numeric(
-                          errorText: '시험 시간은 숫자만 입력해주세요.'),
-                      FormBuilderValidators.min(5,
-                          errorText: '시험 시간을 5분 이상으로 입력해주세요.'),
-                      FormBuilderValidators.max(300,
-                          errorText: '시험 시간을 300분 이하로 입력해주세요.'),
-                    ]),
-                  ),
-                ),
-                FormItem(
-                  label: '문제 수',
-                  child: FormTextField(
-                    name: _numberOfQuestionsFieldName,
-                    initialValue: _numberOfQuestionsInitialValue,
-                    suffixText: '문제',
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(3),
-                    ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                          errorText: '문제 수를 입력해주세요.'),
-                      FormBuilderValidators.numeric(
-                          errorText: '문제 수는 숫자만 입력해주세요.'),
-                      FormBuilderValidators.min(1,
-                          errorText: '문제 수를 1 이상 입력해주세요.'),
-                      FormBuilderValidators.max(300,
-                          errorText: '문제 수를 300 이하로 입력해주세요.'),
-                    ]),
-                  ),
-                ),
-                FormItem(
-                  label: '만점',
-                  child: FormTextField(
-                    name: _perfectScoreFieldName,
-                    initialValue: _perfectScoreInitialValue,
-                    suffixText: '점',
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(3),
-                    ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(errorText: '만점을 입력해주세요.'),
-                      FormBuilderValidators.numeric(
-                          errorText: '만점은 숫자만 입력해주세요.'),
-                      FormBuilderValidators.min(1,
-                          errorText: '만점을 1 이상 입력해주세요.'),
-                      FormBuilderValidators.max(999,
-                          errorText: '만점을 999 이하로 입력해주세요.'),
-                    ]),
-                  ),
+                    FormItem(
+                      label: '시험 시간',
+                      width: 75,
+                      child: FormTextField(
+                        name: _durationFieldName,
+                        initialValue: _durationInitialValue,
+                        suffixText: '분',
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.number,
+                        hideError: true,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: '시험 시간을 입력해주세요.'),
+                          FormBuilderValidators.numeric(
+                              errorText: '시험 시간은 숫자만 입력해주세요.'),
+                          FormBuilderValidators.min(5,
+                              errorText: '시험 시간을 5분 이상으로 입력해주세요.'),
+                          FormBuilderValidators.max(300,
+                              errorText: '시험 시간을 300분 이하로 입력해주세요.'),
+                        ]),
+                      ),
+                    ),
+                    FormItem(
+                      label: '문제 수',
+                      width: 90,
+                      child: FormTextField(
+                        name: _numberOfQuestionsFieldName,
+                        initialValue: _numberOfQuestionsInitialValue,
+                        suffixText: '문제',
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.number,
+                        hideError: true,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: '문제 수를 입력해주세요.'),
+                          FormBuilderValidators.numeric(
+                              errorText: '문제 수는 숫자만 입력해주세요.'),
+                          FormBuilderValidators.min(1,
+                              errorText: '문제 수를 1 이상 입력해주세요.'),
+                          FormBuilderValidators.max(300,
+                              errorText: '문제 수를 300 이하로 입력해주세요.'),
+                        ]),
+                      ),
+                    ),
+                    FormItem(
+                      label: '만점',
+                      width: 75,
+                      child: FormTextField(
+                        name: _perfectScoreFieldName,
+                        initialValue: _perfectScoreInitialValue,
+                        suffixText: '점',
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.number,
+                        hideError: true,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: '만점을 입력해주세요.'),
+                          FormBuilderValidators.numeric(
+                              errorText: '만점은 숫자만 입력해주세요.'),
+                          FormBuilderValidators.min(1,
+                              errorText: '만점을 1 이상 입력해주세요.'),
+                          FormBuilderValidators.max(999,
+                              errorText: '만점을 999 이하로 입력해주세요.'),
+                        ]),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -5,16 +5,18 @@ class FormItem extends StatelessWidget {
     super.key,
     required this.label,
     required this.child,
+    this.width,
     this.tooltip,
   });
 
   final String label;
   final Widget child;
+  final double? width;
   final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final itemWidget = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _FormLabel(label: label, tooltip: tooltip),
@@ -22,6 +24,12 @@ class FormItem extends StatelessWidget {
         child,
       ],
     );
+
+    if (width == null) {
+      return itemWidget;
+    }
+
+    return SizedBox(width: width, child: itemWidget);
   }
 }
 

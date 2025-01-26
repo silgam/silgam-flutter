@@ -13,6 +13,7 @@ class FormTextField extends StatelessWidget {
     this.inputFormatters,
     this.textInputAction,
     this.keyboardType,
+    this.hideError = false,
   });
 
   final String name;
@@ -23,6 +24,7 @@ class FormTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
+  final bool hideError;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class FormTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         suffixText: suffixText,
+        errorStyle: hideError ? TextStyle(height: 0.001) : null,
         hintStyle: TextStyle(color: Colors.grey.shade500),
         contentPadding: const EdgeInsets.all(12),
         isCollapsed: true,
