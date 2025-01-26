@@ -47,7 +47,7 @@ class _FormLabel extends StatelessWidget {
     final labelWidget = Text(
       label,
       style: TextStyle(
-        color: Colors.grey.shade500,
+        color: Colors.grey.shade900,
         fontWeight: FontWeight.w500,
       ),
     );
@@ -68,8 +68,8 @@ class _FormLabel extends StatelessWidget {
           verticalOffset: 8,
           child: Icon(
             Icons.help_outline,
-            color: Colors.grey.shade500,
-            size: 18,
+            color: Colors.grey.shade700,
+            size: 16,
           ),
         ),
       ],
