@@ -12,7 +12,6 @@ import '../../../util/const.dart';
 import '../../../util/injection.dart';
 import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
-import '../../common/ad_tile.dart';
 import 'ads_card.dart';
 import 'cubit/main_cubit.dart';
 import 'd_days_card.dart';
@@ -150,27 +149,6 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildAd() {
-    return BlocBuilder<AppCubit, AppState>(
-      buildWhen: (previous, current) =>
-          previous.productBenefit.isAdsRemoved !=
-          current.productBenefit.isAdsRemoved,
-      builder: (context, appState) {
-        if (isAdmobDisabled || appState.productBenefit.isAdsRemoved) {
-          return const SizedBox.shrink();
-        }
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return AdTile(
-              width: constraints.maxWidth.toInt(),
-              margin: const EdgeInsets.symmetric(vertical: 8),
-            );
-          },
-        );
-      },
-    );
-  }
-
   Widget _buildTabletLayout() {
     final screenWidth = MediaQuery.of(context).size.width;
     final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
@@ -219,7 +197,6 @@ class _MainViewState extends State<MainView> {
                   )
                 ],
               ),
-              _buildAd(),
               const SizedBox(height: 20),
             ],
           ),
@@ -250,7 +227,6 @@ class _MainViewState extends State<MainView> {
               const SilgamNowCard(),
               _buildTimetableStartCard(),
               const QuickLauncherCard(),
-              _buildAd(),
               const SizedBox(height: 20),
             ],
           ),
