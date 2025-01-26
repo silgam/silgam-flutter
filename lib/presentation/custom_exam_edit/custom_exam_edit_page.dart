@@ -311,17 +311,16 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                 FormItem(
                   label: '기본 과목',
                   tooltip: '시험 시뮬레이션에서 표시될 교시와 재생될 타종 소리의 기준이 되는 과목입니다.',
-                  child: FormBuilderDropdown<Exam>(
+                  child: FormDropdown<Exam>(
                     name: _baseExamFieldName,
                     initialValue: _baseExamInitialValue,
+                    onChanged: _onDefaultExamChanged,
                     items: _defaultExams
                         .map((exam) => DropdownMenuItem(
                               value: exam,
                               child: Text(exam.name),
                             ))
                         .toList(),
-                    decoration: defaultInputDecoration,
-                    onChanged: _onDefaultExamChanged,
                   ),
                 ),
                 Wrap(
