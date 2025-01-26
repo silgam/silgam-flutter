@@ -34,24 +34,23 @@ class _FormLabel extends StatelessWidget {
   final String label;
   final String? tooltip;
 
-  Widget _buildLabel() {
-    return Text(
+  @override
+  Widget build(BuildContext context) {
+    final labelWidget = Text(
       label,
       style: TextStyle(
         color: Colors.grey.shade500,
         fontWeight: FontWeight.w500,
       ),
     );
-  }
 
-  @override
-  Widget build(BuildContext context) {
     if (tooltip == null) {
-      return _buildLabel();
+      return labelWidget;
     }
+
     return Row(
       children: [
-        _buildLabel(),
+        labelWidget,
         const SizedBox(width: 4),
         Tooltip(
           message: tooltip,
