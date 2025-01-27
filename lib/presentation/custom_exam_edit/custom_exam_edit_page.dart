@@ -3,13 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
 import '../../model/exam.dart';
 import '../../repository/exam/exam_repository.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
-import '../../util/date_time_extension.dart';
 import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
@@ -330,29 +328,9 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     FormItem(
                       label: '시험 시작 시간',
                       width: 108,
-                      child: FormBuilderField<TimeOfDay>(
+                      child: FormTimePicker(
                         name: _startTimeFieldName,
                         initialValue: _startTimeInitialValue,
-                        builder: (field) => GestureDetector(
-                          onTap: () async {
-                            final time = await showTimePicker(
-                              context: context,
-                              initialTime: field.value ?? TimeOfDay.now(),
-                            );
-                            if (time == null) return;
-                            field.didChange(time);
-                          },
-                          child: InputDecorator(
-                            decoration: defaultInputDecoration,
-                            child: Text(
-                              DateFormat.jm('ko_KR').format(
-                                  field.value?.toDateTime() ?? DateTime.now()),
-                              style: const TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ),
-                        ),
                       ),
                     ),
                     FormItem(
