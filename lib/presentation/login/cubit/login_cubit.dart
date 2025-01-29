@@ -106,6 +106,7 @@ class LoginCubit extends Cubit<LoginState> {
       nonce: rawNonce.toSha256(),
     );
     final credential = OAuthProvider('apple.com').credential(
+      accessToken: appleCredential.authorizationCode,
       idToken: appleCredential.identityToken,
       rawNonce: rawNonce,
     );
