@@ -302,15 +302,14 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                   children: [
                     FormItem(
                       label: '시험 시작 시간',
-                      width: 108,
                       child: FormTimePicker(
                         name: _startTimeFieldName,
                         initialValue: _startTimeInitialValue,
+                        autoWidth: true,
                       ),
                     ),
                     FormItem(
                       label: '시험 시간',
-                      width: 75,
                       child: FormTextField(
                         name: _durationFieldName,
                         initialValue: _durationInitialValue,
@@ -318,6 +317,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
                         hideError: true,
+                        autoWidth: true,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(3),
@@ -336,7 +336,6 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     ),
                     FormItem(
                       label: '문제 수',
-                      width: 90,
                       child: FormTextField(
                         name: _numberOfQuestionsFieldName,
                         initialValue: _numberOfQuestionsInitialValue,
@@ -344,6 +343,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
                         hideError: true,
+                        autoWidth: true,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(3),
@@ -362,7 +362,6 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     ),
                     FormItem(
                       label: '만점',
-                      width: 75,
                       child: FormTextField(
                         name: _perfectScoreFieldName,
                         initialValue: _perfectScoreInitialValue,
@@ -370,6 +369,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
                         hideError: true,
+                        autoWidth: true,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(3),
@@ -475,12 +475,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                               ),
                             )
                           : const SizedBox(height: 28),
-                      MediaQuery(
-                        data: MediaQuery.of(context).copyWith(
-                          textScaler: const TextScaler.linear(1.0),
-                        ),
-                        child: _buildForm(),
-                      ),
+                      _buildForm(),
                       const SizedBox(height: 28),
                     ],
                   ),

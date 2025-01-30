@@ -14,6 +14,7 @@ class FormTextField extends StatelessWidget {
     this.textInputAction,
     this.keyboardType,
     this.hideError = false,
+    this.autoWidth = false,
   });
 
   final String name;
@@ -25,10 +26,11 @@ class FormTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
   final bool hideError;
+  final bool autoWidth;
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilderTextField(
+    final fieldWidget = FormBuilderTextField(
       name: name,
       initialValue: initialValue,
       validator: validator,
@@ -64,5 +66,11 @@ class FormTextField extends StatelessWidget {
         ),
       ),
     );
+
+    if (autoWidth) {
+      return IntrinsicWidth(child: fieldWidget);
+    }
+
+    return fieldWidget;
   }
 }

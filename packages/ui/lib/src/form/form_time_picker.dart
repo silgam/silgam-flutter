@@ -7,14 +7,16 @@ class FormTimePicker extends StatelessWidget {
     super.key,
     required this.name,
     this.initialValue,
+    this.autoWidth = false,
   });
 
   final String name;
   final TimeOfDay? initialValue;
+  final bool autoWidth;
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilderField<TimeOfDay>(
+    final fieldWidget = FormBuilderField<TimeOfDay>(
       name: name,
       initialValue: initialValue,
       builder: (field) {
@@ -54,5 +56,11 @@ class FormTimePicker extends StatelessWidget {
         );
       },
     );
+
+    if (autoWidth) {
+      return IntrinsicWidth(child: fieldWidget);
+    }
+
+    return fieldWidget;
   }
 }
