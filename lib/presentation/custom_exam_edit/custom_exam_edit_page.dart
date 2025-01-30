@@ -70,30 +70,6 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isChanged = false;
 
-  late final defaultInputDecoration = InputDecoration(
-    hintStyle: TextStyle(color: Colors.grey.shade500),
-    filled: true,
-    fillColor: Colors.white,
-    contentPadding: const EdgeInsets.all(12),
-    isCollapsed: true,
-    enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
-      borderRadius: const BorderRadius.all(Radius.circular(6)),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
-      borderRadius: const BorderRadius.all(Radius.circular(6)),
-    ),
-    errorBorder: const OutlineInputBorder(
-      borderSide: BorderSide(width: 0.5, color: Colors.red),
-      borderRadius: BorderRadius.all(Radius.circular(6)),
-    ),
-    focusedErrorBorder: const OutlineInputBorder(
-      borderSide: BorderSide(width: 0.5, color: Colors.red),
-      borderRadius: BorderRadius.all(Radius.circular(6)),
-    ),
-  );
-
   @override
   void initState() {
     super.initState();
