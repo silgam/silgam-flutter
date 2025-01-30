@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_form_builder: ^9.7.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
