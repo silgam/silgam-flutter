@@ -13,7 +13,6 @@ import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
-import '../home/settings/setting_tile.dart';
 import 'cubit/custom_exam_edit_cubit.dart';
 
 const int _maxCustomExams = 100;
@@ -417,25 +416,11 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
             ),
           ),
           const SizedBox(height: 20),
-          FormBuilderSwitch(
+          FormSwitch(
             name: _isBeforeFinishAnnouncementEnabledFieldName,
             initialValue: _isBeforeFinishAnnouncementEnabledInitialValue,
-            title: const Text(
-              '종료 전 안내방송',
-              style: settingTitleTextStyle,
-            ),
-            subtitle: const Text(
-              '종료 10분 전 또는 종료 5분 전 안내방송 재생 여부를 선택할 수 있어요.',
-              style: settingDescriptionTextStyle,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 20,
-            ),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-            ),
+            title: '종료 전 안내방송',
+            subtitle: '종료 10분 전 또는 종료 5분 전 안내방송 재생 여부를 선택할 수 있어요.',
           ),
         ],
       ),
