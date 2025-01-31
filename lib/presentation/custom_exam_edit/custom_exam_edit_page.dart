@@ -236,14 +236,12 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   void _onDefaultExamChanged(Exam? exam) {
     if (exam == null) return;
 
-    _formKey.currentState?.fields[_startTimeFieldName]
-        ?.didChange(TimeOfDay.fromDateTime(exam.startTime));
-    _formKey.currentState?.fields[_durationFieldName]
-        ?.didChange(exam.durationMinutes.toString());
-    _formKey.currentState?.fields[_numberOfQuestionsFieldName]
-        ?.didChange(exam.numberOfQuestions.toString());
-    _formKey.currentState?.fields[_perfectScoreFieldName]
-        ?.didChange(exam.perfectScore.toString());
+    _formKey.currentState?.patchValue({
+      _startTimeFieldName: TimeOfDay.fromDateTime(exam.startTime),
+      _durationFieldName: exam.durationMinutes.toString(),
+      _numberOfQuestionsFieldName: exam.numberOfQuestions.toString(),
+      _perfectScoreFieldName: exam.perfectScore.toString(),
+    });
   }
 
   Widget _buildForm() {
