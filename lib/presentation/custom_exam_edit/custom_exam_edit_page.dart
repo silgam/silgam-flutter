@@ -268,6 +268,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               children: [
                 FormItem(
                   label: '과목 이름',
+                  isRequired: true,
                   child: FormTextField(
                     name: _examNameFieldName,
                     initialValue: _examNameInitialValue,
