@@ -15,6 +15,9 @@ class FormTextField extends StatelessWidget {
     this.keyboardType,
     this.hideError = false,
     this.autoWidth = false,
+    this.controller,
+    this.focusNode,
+    this.onSubmitted,
   });
 
   final String name;
@@ -27,6 +30,9 @@ class FormTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool hideError;
   final bool autoWidth;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final ValueChanged<String?>? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +43,9 @@ class FormTextField extends StatelessWidget {
       inputFormatters: inputFormatters,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
+      controller: controller,
+      focusNode: focusNode,
+      onSubmitted: onSubmitted,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         hintText: hintText,
