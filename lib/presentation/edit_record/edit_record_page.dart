@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
 import '../../model/exam.dart';
@@ -304,35 +303,16 @@ class _EditRecordPageState extends State<EditRecordPage> {
             spacing: 12,
             runSpacing: 20,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSubTitle('응시 일자'),
-                  const SizedBox(height: 6),
-                  GestureDetector(
-                    onTap: _onExamStartedDateTextTapped,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 9,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                          width: 0.5,
-                        ),
-                      ),
-                      child: Text(
-                        DateFormat.yMEd('ko_KR').format(_examStartedTime),
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              FormItem(
+                label: '응시 일자',
+                child: FormDatePicker(
+                  name: 'examStartedDate',
+                  initialValue: _examStartedTime,
+                  firstDate:
+                      _examStartedTime.subtract(const Duration(days: 365 * 20)),
+                  lastDate: _examStartedTime.add(const Duration(days: 365)),
+                  autoWidth: true,
+                ),
               ),
               FormItem(
                 label: '응시 시작 시각',
