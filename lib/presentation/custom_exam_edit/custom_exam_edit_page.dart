@@ -257,6 +257,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         });
       },
       child: Column(
+        spacing: 20,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -390,7 +391,6 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
           FormSwitch(
             name: _isBeforeFinishAnnouncementEnabledFieldName,
             initialValue: _isBeforeFinishAnnouncementEnabledInitialValue,
