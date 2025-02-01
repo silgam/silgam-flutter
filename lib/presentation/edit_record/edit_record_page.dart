@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
@@ -172,47 +173,43 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   Widget _buildBody() {
-    return MediaQuery(
-      data: MediaQuery.of(context)
-          .copyWith(textScaler: const TextScaler.linear(1.0)),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          SafeArea(
-            child: _buildForm(),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).padding.bottom,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(
-                    color: Colors.grey.shade100,
-                  ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        SafeArea(
+          child: _buildForm(),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey.shade100,
                 ),
               ),
-              child: _buildBottomButtons(),
             ),
+            child: _buildBottomButtons(),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildForm() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      children: [
-        const SizedBox(height: 28),
-        _buildSubTitle('모의고사 이름', isRequired: true),
-        const SizedBox(height: 6),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            return Autocomplete(
+    return FormBuilder(
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          const SizedBox(height: 28),
+          FormItem(
+            label: '모의고사 이름',
+            isRequired: true,
+            child: CustomAutocomplete(
               initialValue: TextEditingValue(text: title),
               displayStringForOption: (option) => option.title,
               optionsBuilder: (textEditingValue) {
@@ -220,331 +217,234 @@ class _EditRecordPageState extends State<EditRecordPage> {
                   return element.title.contains(textEditingValue.text);
                 }).toList();
               },
-              optionsViewBuilder: (context, onSelected, options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(13),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    constraints: BoxConstraints(
-                      maxHeight: 200,
-                      maxWidth: constraints.maxWidth,
-                    ),
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: options.length,
-                      itemBuilder: (context, index) {
-                        final option = options.elementAt(index);
-
-                        return ListTile(
-                          title: Text(option.title),
-                          onTap: () {
-                            onSelected(option);
-                            _onTitleChanged(option.title);
-                            _onSelectedExamChanged(option.exam);
-                          },
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(height: 1);
-                      },
-                    ),
-                  ),
-                );
-              },
               fieldViewBuilder: (context, textEditingController, focusNode,
                   onFieldSubmitted) {
-                return TextField(
+                return FormTextField(
+                  name: 'title',
+                  hintText: '실감 모의고사 시즌1 1회',
+                  textInputAction: TextInputAction.next,
                   controller: textEditingController,
                   focusNode: focusNode,
-                  onChanged: _onTitleChanged,
                   onSubmitted: (_) => onFieldSubmitted(),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '실감 모의고사 시즌1 1회',
-                    hintStyle: TextStyle(color: Colors.grey.shade500),
-                    filled: true,
-                    fillColor: Colors.white,
-                    isCollapsed: true,
-                    contentPadding: const EdgeInsets.all(12),
-                    border: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 0.5, color: Colors.grey.shade300),
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 0.5, color: Colors.grey.shade300),
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 0.5,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    ),
-                  ),
                 );
               },
-            );
-          },
-        ),
-        const SizedBox(height: 12),
-        _buildDivider(),
-        const SizedBox(height: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSubTitle('과목'),
-            const SizedBox(height: 6),
-            Container(
-              height: 36,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 3,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                  width: 0.5,
-                ),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton(
-                  isExpanded: true,
-                  borderRadius: BorderRadius.circular(6),
-                  value: _selectedExam,
-                  onChanged: _onSelectedExamChanged,
-                  items: _exams.map((exam) {
-                    return DropdownMenuItem(
-                      value: exam,
-                      child: Text(
-                        exam.name,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 20,
-          runSpacing: 12,
-          children: [
-            _buildNumberInputWithTitle(
-              _scoreEditingController,
-              '점수',
-              '점',
-              63,
-              maxLength: 3,
-            ),
-            _buildNumberInputWithTitle(
-              _gradeEditingController,
-              '등급',
-              '등급',
-              55,
-              maxLength: 1,
-            ),
-            _buildNumberInputWithTitle(
-              _percentileEditingController,
-              '백분위',
-              '%',
-              63,
-              maxLength: 3,
-            ),
-            _buildNumberInputWithTitle(
-              _standardScoreEditingController,
-              '표준점수',
-              '점',
-              63,
-              maxLength: 3,
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Wrap(
-          spacing: 20,
-          runSpacing: 12,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSubTitle('응시 일자'),
-                const SizedBox(height: 6),
-                GestureDetector(
-                  onTap: _onExamStartedDateTextTapped,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 9,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Text(
-                      DateFormat.yMEd('ko_KR').format(_examStartedTime),
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSubTitle('응시 시작 시각'),
-                const SizedBox(height: 6),
-                GestureDetector(
-                  onTap: _onExamStartedTimeTextTapped,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 9,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Text(
-                      DateFormat.jm('ko_KR').format(_examStartedTime),
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            _buildNumberInputWithTitle(
-              _examDurationEditingController,
-              '응시 시간',
-              '분',
-              63,
-              maxLength: 3,
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        _buildSubTitle('틀린 문제'),
-        Wrap(
-          spacing: 8,
-          runSpacing: -8,
-          children: [
-            for (final problem in _wrongProblems)
-              Chip(
-                label: Text('${problem.problemNumber}번'),
-                onDeleted: () => _onWrongProblemChipDeleted(problem),
-                labelPadding: const EdgeInsets.only(left: 8, right: 2),
-                deleteIconColor: Colors.white54,
-                backgroundColor: Theme.of(context).primaryColor,
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 9),
-              width: 80,
-              child: ContinuousNumberField(
-                onSubmit: _onWrongProblemAdded,
-                onDelete: _onWrongProblemDeleted,
-                maxDigits: _selectedExam.numberOfQuestions > 99 ? 3 : 2,
-              ),
-            )
-          ],
-        ),
-        const SizedBox(height: 12),
-        _buildSubTitle('피드백'),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _feedbackEditingController,
-          keyboardType: TextInputType.multiline,
-          maxLines: null,
-          minLines: 2,
-          style: const TextStyle(height: 1.2),
-          decoration: InputDecoration(
-            hintText:
-                '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
-            hintMaxLines: 10,
-            hintStyle: TextStyle(
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w300,
-            ),
-            isCollapsed: true,
-            contentPadding: const EdgeInsets.all(12),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
-              borderRadius: const BorderRadius.all(Radius.circular(6)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
-              borderRadius: const BorderRadius.all(Radius.circular(6)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                width: 0.5,
-                color: Theme.of(context).primaryColor,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(6)),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-        _buildSubTitle('복습할 문제'),
-        const SizedBox(height: 2),
-        GridView.extent(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          maxCrossAxisExtent: 400,
-          childAspectRatio: 1.5,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            for (final problem in _reviewProblems)
-              ReviewProblemCard(
-                problem: problem,
-                onTap: () => _onReviewProblemCardTapped(problem),
+          const SizedBox(height: 20),
+          FormItem(
+            label: '과목',
+            child: FormDropdown(
+              name: 'exam',
+              initialValue: _selectedExam,
+              onChanged: _onSelectedExamChanged,
+              items: _exams.map((exam) {
+                return DropdownMenuItem(
+                  value: exam,
+                  child: Text(
+                    exam.name,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Wrap(
+            spacing: 12,
+            runSpacing: 20,
+            children: [
+              FormItem(
+                label: '점수',
+                child: FormTextField(
+                  name: 'score',
+                  suffixText: '점',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                ),
               ),
-            _buildReviewProblemAddCard(),
-          ],
-        ),
-        const SizedBox(height: 68),
-      ],
+              FormItem(
+                label: '등급',
+                child: FormTextField(
+                  name: 'grade',
+                  suffixText: '등급',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                ),
+              ),
+              FormItem(
+                label: '백분위',
+                child: FormTextField(
+                  name: 'percentile',
+                  suffixText: '%',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                ),
+              ),
+              FormItem(
+                label: '표준점수',
+                child: FormTextField(
+                  name: 'standardScore',
+                  suffixText: '점',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Wrap(
+            spacing: 12,
+            runSpacing: 20,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSubTitle('응시 일자'),
+                  const SizedBox(height: 6),
+                  GestureDetector(
+                    onTap: _onExamStartedDateTextTapped,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 9,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: Colors.grey.shade300,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Text(
+                        DateFormat.yMEd('ko_KR').format(_examStartedTime),
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              FormItem(
+                label: '응시 시작 시각',
+                child: FormTimePicker(
+                  name: 'examStartedTime',
+                  initialValue: TimeOfDay.fromDateTime(_examStartedTime),
+                  autoWidth: true,
+                ),
+              ),
+              FormItem(
+                label: '응시 시간',
+                child: FormTextField(
+                  name: 'examDuration',
+                  suffixText: '분',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildSubTitle('틀린 문제'),
+          Wrap(
+            spacing: 8,
+            runSpacing: -8,
+            children: [
+              for (final problem in _wrongProblems)
+                Chip(
+                  label: Text('${problem.problemNumber}번'),
+                  onDeleted: () => _onWrongProblemChipDeleted(problem),
+                  labelPadding: const EdgeInsets.only(left: 8, right: 2),
+                  deleteIconColor: Colors.white54,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  labelStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 9),
+                width: 80,
+                child: ContinuousNumberField(
+                  onSubmit: _onWrongProblemAdded,
+                  onDelete: _onWrongProblemDeleted,
+                  maxDigits: _selectedExam.numberOfQuestions > 99 ? 3 : 2,
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildSubTitle('피드백'),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _feedbackEditingController,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            minLines: 2,
+            style: const TextStyle(height: 1.2),
+            decoration: InputDecoration(
+              hintText:
+                  '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
+              hintMaxLines: 10,
+              hintStyle: TextStyle(
+                color: Colors.grey.shade500,
+                fontWeight: FontWeight.w300,
+              ),
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.all(12),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Theme.of(context).primaryColor,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildSubTitle('복습할 문제'),
+          const SizedBox(height: 2),
+          GridView.extent(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            maxCrossAxisExtent: 400,
+            childAspectRatio: 1.5,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              for (final problem in _reviewProblems)
+                ReviewProblemCard(
+                  problem: problem,
+                  onTap: () => _onReviewProblemCardTapped(problem),
+                ),
+              _buildReviewProblemAddCard(),
+            ],
+          ),
+          const SizedBox(height: 68),
+        ],
+      ),
     );
   }
 
@@ -573,8 +473,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
       ],
     );
   }
-
-  Widget _buildDivider() => const Divider(indent: 12, endIndent: 12);
 
   Widget _buildNumberInputWithTitle(
     TextEditingController controller,
