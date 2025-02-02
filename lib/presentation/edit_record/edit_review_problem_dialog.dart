@@ -11,19 +11,46 @@ import '../../model/problem.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 
+typedef ReviewProblemAddCallback = Function(ReviewProblem reviewProblem);
+
+typedef ReviewProblemAddModeParams = ({
+  ReviewProblemAddCallback onReviewProblemAdd,
+});
+
+typedef ReviewProblemEditCallback = Function(
+  ReviewProblem oldReviewProblem,
+  ReviewProblem newReviewProblem,
+);
+
+typedef ReviewProblemDeleteCallback = Function(ReviewProblem reviewProblem);
+
+typedef ReviewProblemEditModeParams = ({
+  ReviewProblem initialData,
+  ReviewProblemEditCallback onReviewProblemEdit,
+  ReviewProblemDeleteCallback onReviewProblemDelete,
+});
+
 class EditReviewProblemDialog extends StatefulWidget {
   final ReviewProblemAddModeParams? reviewProblemAddModeParams;
   final ReviewProblemEditModeParams? reviewProblemEditModeParams;
 
-  const EditReviewProblemDialog.add(
-    this.reviewProblemAddModeParams, {
+  const EditReviewProblemDialog.add({
     super.key,
-  }) : reviewProblemEditModeParams = null;
+    required ReviewProblemAddCallback onReviewProblemAdd,
+  })  : reviewProblemAddModeParams = (onReviewProblemAdd: onReviewProblemAdd),
+        reviewProblemEditModeParams = null;
 
-  const EditReviewProblemDialog.edit(
-    this.reviewProblemEditModeParams, {
+  const EditReviewProblemDialog.edit({
     super.key,
-  }) : reviewProblemAddModeParams = null;
+    required ReviewProblem initialData,
+    required ReviewProblemEditCallback onReviewProblemEdit,
+    required ReviewProblemDeleteCallback onReviewProblemDelete,
+  })  : reviewProblemAddModeParams = null,
+        reviewProblemEditModeParams = (
+          initialData: initialData,
+          onReviewProblemEdit: onReviewProblemEdit,
+          onReviewProblemDelete: onReviewProblemDelete,
+        );
 
   @override
   EditReviewProblemDialogState createState() => EditReviewProblemDialogState();
@@ -378,7 +405,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
     final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
     reviewProblemEditModeParams
-        ?.onReviewProblemDeleted(reviewProblemEditModeParams.initialData);
+        ?.onReviewProblemDelete(reviewProblemEditModeParams.initialData);
 
     Navigator.pop(context);
   }
@@ -404,31 +431,10 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     final reviewProblemAddModeParams = widget.reviewProblemAddModeParams;
     final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
 
-    reviewProblemAddModeParams?.onReviewProblemAdded(newProblem);
-    reviewProblemEditModeParams?.onReviewProblemEdited(
+    reviewProblemAddModeParams?.onReviewProblemAdd(newProblem);
+    reviewProblemEditModeParams?.onReviewProblemEdit(
         reviewProblemEditModeParams.initialData, newProblem);
 
     Navigator.pop(context);
   }
-}
-
-class ReviewProblemAddModeParams {
-  final Function(ReviewProblem) onReviewProblemAdded;
-
-  const ReviewProblemAddModeParams({
-    required this.onReviewProblemAdded,
-  });
-}
-
-class ReviewProblemEditModeParams {
-  final Function(ReviewProblem oldProblem, ReviewProblem newProblem)
-      onReviewProblemEdited;
-  final Function(ReviewProblem) onReviewProblemDeleted;
-  final ReviewProblem initialData;
-
-  const ReviewProblemEditModeParams({
-    required this.onReviewProblemEdited,
-    required this.onReviewProblemDeleted,
-    required this.initialData,
-  });
 }

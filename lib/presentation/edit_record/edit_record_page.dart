@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/ui.dart';
 
 import '../../model/exam.dart';
@@ -16,10 +15,9 @@ import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
-import '../common/review_problem_card.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../record_detail/record_detail_page.dart';
-import 'edit_review_problem_dialog.dart';
+import 'widgets/form_review_problems_field.dart';
 
 class EditRecordPage extends StatefulWidget {
   static const routeName = '/edit_record';
@@ -355,61 +353,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
             ),
           ),
           const SizedBox(height: 20),
-          _buildSubTitle('복습할 문제'),
-          const SizedBox(height: 2),
-          GridView.extent(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            maxCrossAxisExtent: 400,
-            childAspectRatio: 1.5,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              for (final problem in _reviewProblems)
-                ReviewProblemCard(
-                  problem: problem,
-                  onTap: () => _onReviewProblemCardTapped(problem),
-                ),
-              _buildReviewProblemAddCard(),
-            ],
+          FormItem(
+            label: '복습할 문제',
+            child: FormReviewProblemsField(
+              name: 'reviewProblems',
+            ),
           ),
           const SizedBox(height: 68),
         ],
-      ),
-    );
-  }
-
-  Widget _buildReviewProblemAddCard() {
-    return GestureDetector(
-      onTap: _onReviewProblemAddCardTapped,
-      child: Card(
-        margin: const EdgeInsets.all(0),
-        elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/add.svg',
-              width: 36,
-              colorFilter: ColorFilter.mode(
-                Colors.grey.shade800,
-                BlendMode.srcIn,
-              ),
-            ),
-            Text(
-              '추가하기',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w100,
-                color: Colors.grey.shade800,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -510,53 +461,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
         time.hour,
         time.minute,
       );
-    });
-  }
-
-  void _onReviewProblemCardTapped(ReviewProblem problem) {
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(name: 'review_problem_view_dialog'),
-      builder: (context) {
-        return EditReviewProblemDialog.edit(ReviewProblemEditModeParams(
-          onReviewProblemEdited: _onReviewProblemEdited,
-          onReviewProblemDeleted: _onReviewProblemDeleted,
-          initialData: problem,
-        ));
-      },
-    );
-  }
-
-  void _onReviewProblemEdited(
-      ReviewProblem oldProblem, ReviewProblem newProblem) {
-    final oldProblemIndex = _reviewProblems.indexOf(oldProblem);
-    if (oldProblemIndex == -1) return;
-    setState(() {
-      _reviewProblems[oldProblemIndex] = newProblem;
-    });
-  }
-
-  void _onReviewProblemDeleted(ReviewProblem deletedProblem) {
-    setState(() {
-      _reviewProblems.remove(deletedProblem);
-    });
-  }
-
-  void _onReviewProblemAddCardTapped() {
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(name: 'review_problem_add_dialog'),
-      builder: (context) {
-        return EditReviewProblemDialog.add(ReviewProblemAddModeParams(
-          onReviewProblemAdded: _onReviewProblemAdded,
-        ));
-      },
-    );
-  }
-
-  void _onReviewProblemAdded(ReviewProblem problem) {
-    setState(() {
-      _reviewProblems.add(problem);
     });
   }
 
