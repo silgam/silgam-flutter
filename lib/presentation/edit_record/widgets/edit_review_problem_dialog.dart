@@ -7,9 +7,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ui/ui.dart';
 
-import '../../model/problem.dart';
-import '../../util/injection.dart';
-import '../app/cubit/app_cubit.dart';
+import '../../../model/problem.dart';
+import '../../../util/injection.dart';
+import '../../app/cubit/app_cubit.dart';
 
 typedef ReviewProblemAddCallback = Function(ReviewProblem reviewProblem);
 

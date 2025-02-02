@@ -4,7 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../../../model/problem.dart';
 import '../../common/review_problem_card.dart';
-import '../edit_review_problem_dialog.dart';
+import 'edit_review_problem_dialog.dart';
 
 typedef _FormFieldState = FormFieldState<List<ReviewProblem>>;
 
