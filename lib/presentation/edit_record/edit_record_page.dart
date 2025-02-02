@@ -345,41 +345,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
             ),
           ),
           const SizedBox(height: 20),
-          _buildSubTitle('피드백'),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _feedbackEditingController,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            minLines: 2,
-            style: const TextStyle(height: 1.2),
-            decoration: InputDecoration(
+          FormItem(
+            label: '피드백',
+            child: FormTextField(
+              name: 'feedback',
               hintText:
                   '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
-              hintMaxLines: 10,
-              hintStyle: TextStyle(
-                color: Colors.grey.shade500,
-                fontWeight: FontWeight.w300,
-              ),
-              isCollapsed: true,
-              contentPadding: const EdgeInsets.all(12),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Theme.of(context).primaryColor,
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-              ),
+              minLines: 2,
+              maxLines: null,
             ),
           ),
           const SizedBox(height: 20),

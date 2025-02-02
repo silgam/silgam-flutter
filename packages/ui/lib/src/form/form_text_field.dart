@@ -18,6 +18,8 @@ class FormTextField extends StatelessWidget {
     this.controller,
     this.focusNode,
     this.onSubmitted,
+    this.minLines,
+    this.maxLines,
   });
 
   final String name;
@@ -33,6 +35,8 @@ class FormTextField extends StatelessWidget {
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final ValueChanged<String?>? onSubmitted;
+  final int? minLines;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,8 @@ class FormTextField extends StatelessWidget {
       controller: controller,
       focusNode: focusNode,
       onSubmitted: onSubmitted,
+      minLines: minLines,
+      maxLines: maxLines,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         hintText: hintText,
