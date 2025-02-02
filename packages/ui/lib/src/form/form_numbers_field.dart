@@ -21,7 +21,7 @@ class FormNumbersField extends StatelessWidget {
   final FormNumbersFieldNumberToString displayStringForNumber;
 
   void _onNumberSubmit(FormFieldState<List<int>> field, int number) {
-    final newNumbers = List<int>.of(field.value ?? []);
+    final newNumbers = [...?field.value];
 
     if (newNumbers.contains(number)) {
       newNumbers
@@ -35,7 +35,7 @@ class FormNumbersField extends StatelessWidget {
   }
 
   void _onNumberDelete(FormFieldState<List<int>> field, [int? number]) {
-    final newNumbers = List<int>.of(field.value ?? []);
+    final newNumbers = [...?field.value];
 
     if (number != null) {
       newNumbers.remove(number);
