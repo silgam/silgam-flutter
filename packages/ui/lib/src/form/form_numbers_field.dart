@@ -96,7 +96,7 @@ class _NumberItem extends StatelessWidget {
         child: InputDecorator(
           decoration: InputDecoration(
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             isCollapsed: true,
             filled: true,
             fillColor: Theme.of(context).primaryColor,
@@ -217,7 +217,7 @@ class _NumberFieldState extends State<_NumberField> {
             hintStyle: TextStyle(color: Colors.grey.shade500),
             isCollapsed: true,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             filled: true,
             fillColor: Colors.white,
             enabledBorder: OutlineInputBorder(
