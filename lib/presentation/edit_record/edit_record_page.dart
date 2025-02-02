@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,7 +19,6 @@ import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../record_detail/record_detail_page.dart';
-import 'continuous_number_field.dart';
 import 'edit_review_problem_dialog.dart';
 import 'outlined_text_field.dart';
 
@@ -336,35 +334,17 @@ class _EditRecordPageState extends State<EditRecordPage> {
             ],
           ),
           const SizedBox(height: 20),
-          _buildSubTitle('틀린 문제'),
-          Wrap(
-            spacing: 8,
-            runSpacing: -8,
-            children: [
-              for (final problem in _wrongProblems)
-                Chip(
-                  label: Text('${problem.problemNumber}번'),
-                  onDeleted: () => _onWrongProblemChipDeleted(problem),
-                  labelPadding: const EdgeInsets.only(left: 8, right: 2),
-                  deleteIconColor: Colors.white54,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  labelStyle: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 9),
-                width: 80,
-                child: ContinuousNumberField(
-                  onSubmit: _onWrongProblemAdded,
-                  onDelete: _onWrongProblemDeleted,
-                  maxDigits: _selectedExam.numberOfQuestions > 99 ? 3 : 2,
-                ),
-              )
-            ],
+          FormItem(
+            label: '틀린 문제',
+            child: FormNumbersField(
+              name: 'wrongProblems',
+              initialValue: _wrongProblems.map((e) => e.problemNumber).toList(),
+              hintText: '번호 입력',
+              maxDigits: _selectedExam.numberOfQuestions.toString().length,
+              displayStringForNumber: (number) => '$number번',
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           _buildSubTitle('피드백'),
           const SizedBox(height: 8),
           TextField(
@@ -608,29 +588,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
         time.hour,
         time.minute,
       );
-    });
-  }
-
-  void _onWrongProblemChipDeleted(WrongProblem problem) {
-    setState(() {
-      _wrongProblems.remove(problem);
-    });
-  }
-
-  void _onWrongProblemAdded(int problemNumber) {
-    final existingProblem = _wrongProblems.firstWhereOrNull(
-      (problem) => problem.problemNumber == problemNumber,
-    );
-    if (existingProblem != null) return;
-
-    setState(() {
-      _wrongProblems.add(WrongProblem(problemNumber));
-    });
-  }
-
-  void _onWrongProblemDeleted() {
-    setState(() {
-      _wrongProblems.removeLast();
     });
   }
 
