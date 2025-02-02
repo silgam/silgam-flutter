@@ -20,7 +20,6 @@ import '../common/review_problem_card.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../record_detail/record_detail_page.dart';
 import 'edit_review_problem_dialog.dart';
-import 'outlined_text_field.dart';
 
 class EditRecordPage extends StatefulWidget {
   static const routeName = '/edit_record';
@@ -378,56 +377,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
           const SizedBox(height: 68),
         ],
       ),
-    );
-  }
-
-  Widget _buildSubTitle(
-    String text, {
-    bool isRequired = false,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.grey.shade500,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        if (isRequired)
-          const Text(
-            ' *',
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildNumberInputWithTitle(
-    TextEditingController controller,
-    String title,
-    String suffix,
-    double width, {
-    int? maxLength,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSubTitle(title),
-        const SizedBox(height: 6),
-        SizedBox(
-          width: width,
-          child: OutlinedTextField(
-            controller: controller,
-            suffix: suffix,
-            maxLength: maxLength,
-          ),
-        ),
-      ],
     );
   }
 
