@@ -1,7 +1,9 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:ui/ui.dart';
 
 import '../../model/exam.dart';
@@ -20,13 +22,14 @@ import '../record_detail/record_detail_page.dart';
 import 'widgets/form_review_problems_field.dart';
 
 class EditRecordPage extends StatefulWidget {
-  static const routeName = '/edit_record';
-  final EditRecordPageArguments arguments;
-
   const EditRecordPage({
     super.key,
     required this.arguments,
   });
+
+  static const routeName = '/edit_record';
+
+  final EditRecordPageArguments arguments;
 
   @override
   State<EditRecordPage> createState() => _EditRecordPageState();
@@ -39,14 +42,28 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   late final List<Exam> _exams = _appCubit.state.getAllExams();
 
-  String title = '';
+  final String _titleFieldName = 'title';
+  final String _examFieldName = 'exam';
+  final String _scoreFieldName = 'score';
+  final String _gradeFieldName = 'grade';
+  final String _percentileFieldName = 'percentile';
+  final String _standardScoreFieldName = 'standardScore';
+
+  late final ExamRecord? _recordToEdit = widget.arguments.recordToEdit;
+
+  late final String _initialTitle =
+      _recordToEdit?.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '') ??
+          '';
+  late final Exam _initialExam =
+      _recordToEdit?.exam ?? widget.arguments.inputExam ?? _exams.first;
+  late final String _initialScore = _recordToEdit?.score?.toString() ?? '';
+  late final String _initialGrade = _recordToEdit?.grade?.toString() ?? '';
+  late final String _initialPercentile =
+      _recordToEdit?.percentile?.toString() ?? '';
+  late final String _initialStandardScore =
+      _recordToEdit?.standardScore?.toString() ?? '';
+
   final TextEditingController _examDurationEditingController =
-      TextEditingController();
-  final TextEditingController _scoreEditingController = TextEditingController();
-  final TextEditingController _gradeEditingController = TextEditingController();
-  final TextEditingController _percentileEditingController =
-      TextEditingController();
-  final TextEditingController _standardScoreEditingController =
       TextEditingController();
   final TextEditingController _feedbackEditingController =
       TextEditingController();
@@ -54,7 +71,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
 
-  late Exam _selectedExam = _exams.first;
   DateTime _examStartedTime = DateTime.now();
   bool _isEditingMode = false;
   bool _isSaving = false;
@@ -66,15 +82,19 @@ class _EditRecordPageState extends State<EditRecordPage> {
       .toList();
 
   Map<String, dynamic> get _defaultLogProperties => {
-        'exam_name': _selectedExam.name,
-        'exam_id': _selectedExam.id,
-        'subject': _selectedExam.subject.name,
+        // 'exam_name': _selectedExam.name, // TODO
+        // 'exam_id': _selectedExam.id,
+        // 'subject': _selectedExam.subject.name,
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.arguments.inputExam != null,
       };
 
   @override
   void initState() {
+    super.initState();
+
+    AnalyticsManager.eventStartTime(name: '[EditExamRecordPage] Edit finished');
+
     if (_appCubit.state.isNotSignedIn) {
       Navigator.pop(context);
       return;
@@ -84,7 +104,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _checkIfRecordLimitExceeded();
     });
 
-    _onSelectedExamChanged(null);
     final recordToEdit = widget.arguments.recordToEdit;
     if (recordToEdit == null) {
       _isEditingMode = false;
@@ -93,23 +112,20 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _isEditingMode = true;
       _initializeEditMode(recordToEdit);
     }
-
-    AnalyticsManager.eventStartTime(name: '[EditExamRecordPage] Edit finished');
-    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     AnalyticsManager.logEvent(
       name: '[EditExamRecordPage] Edit finished',
       properties: _defaultLogProperties,
     );
+
+    super.dispose();
   }
 
   void _initializeCreateMode() {
     final exam = widget.arguments.inputExam;
-    _selectedExam = exam ?? _selectedExam;
 
     _feedbackEditingController.text = widget.arguments.prefillFeedback ?? '';
 
@@ -129,278 +145,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
-    title = recordToEdit.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '');
-    _selectedExam = recordToEdit.exam;
     _examStartedTime = recordToEdit.examStartedTime;
-    _scoreEditingController.text = recordToEdit.score?.toString() ?? '';
-    _gradeEditingController.text = recordToEdit.grade?.toString() ?? '';
-    _percentileEditingController.text =
-        recordToEdit.percentile?.toString() ?? '';
-    _standardScoreEditingController.text =
-        recordToEdit.standardScore?.toString() ?? '';
     _examDurationEditingController.text =
         recordToEdit.examDurationMinutes?.toString() ?? '';
     _wrongProblems.addAll(recordToEdit.wrongProblems);
     _feedbackEditingController.text = recordToEdit.feedback;
     _reviewProblems.addAll(recordToEdit.reviewProblems);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: _onPopInvokedWithResult,
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: AnnotatedRegion(
-          value: defaultSystemUiOverlayStyle,
-          child: Scaffold(
-            body: ProgressOverlay(
-              isProgressing: _isSaving,
-              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-              child: _buildBody(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBody() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        SafeArea(
-          child: _buildForm(),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey.shade100,
-                ),
-              ),
-            ),
-            child: _buildBottomButtons(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildForm() {
-    return FormBuilder(
-      child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          const SizedBox(height: 28),
-          FormItem(
-            label: '모의고사 이름',
-            isRequired: true,
-            child: CustomAutocomplete(
-              initialValue: TextEditingValue(text: title),
-              displayStringForOption: (option) => option.title,
-              optionsBuilder: (textEditingValue) {
-                return _autocompleteRecords.where((element) {
-                  return element.title.contains(textEditingValue.text);
-                }).toList();
-              },
-              fieldViewBuilder: (context, textEditingController, focusNode,
-                  onFieldSubmitted) {
-                return FormTextField(
-                  name: 'title',
-                  hintText: '실감 모의고사 시즌1 1회',
-                  textInputAction: TextInputAction.next,
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  onSubmitted: (_) => onFieldSubmitted(),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 20),
-          FormItem(
-            label: '과목',
-            child: FormDropdown(
-              name: 'exam',
-              initialValue: _selectedExam,
-              onChanged: _onSelectedExamChanged,
-              items: _exams.map((exam) {
-                return DropdownMenuItem(
-                  value: exam,
-                  child: Text(
-                    exam.name,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 12,
-            runSpacing: 20,
-            children: [
-              FormItem(
-                label: '점수',
-                child: FormTextField(
-                  name: 'score',
-                  suffixText: '점',
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  hideError: true,
-                  autoWidth: true,
-                ),
-              ),
-              FormItem(
-                label: '등급',
-                child: FormTextField(
-                  name: 'grade',
-                  suffixText: '등급',
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  hideError: true,
-                  autoWidth: true,
-                ),
-              ),
-              FormItem(
-                label: '백분위',
-                child: FormTextField(
-                  name: 'percentile',
-                  suffixText: '%',
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  hideError: true,
-                  autoWidth: true,
-                ),
-              ),
-              FormItem(
-                label: '표준점수',
-                child: FormTextField(
-                  name: 'standardScore',
-                  suffixText: '점',
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  hideError: true,
-                  autoWidth: true,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 12,
-            runSpacing: 20,
-            children: [
-              FormItem(
-                label: '응시 일자',
-                child: FormDatePicker(
-                  name: 'examStartedDate',
-                  initialValue: _examStartedTime,
-                  firstDate:
-                      _examStartedTime.subtract(const Duration(days: 365 * 20)),
-                  lastDate: _examStartedTime.add(const Duration(days: 365)),
-                  autoWidth: true,
-                ),
-              ),
-              FormItem(
-                label: '응시 시작 시각',
-                child: FormTimePicker(
-                  name: 'examStartedTime',
-                  initialValue: TimeOfDay.fromDateTime(_examStartedTime),
-                  autoWidth: true,
-                ),
-              ),
-              FormItem(
-                label: '응시 시간',
-                child: FormTextField(
-                  name: 'examDuration',
-                  suffixText: '분',
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  hideError: true,
-                  autoWidth: true,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          FormItem(
-            label: '틀린 문제',
-            child: FormNumbersField(
-              name: 'wrongProblems',
-              initialValue: _wrongProblems.map((e) => e.problemNumber).toList(),
-              hintText: '번호 입력',
-              maxDigits: _selectedExam.numberOfQuestions.toString().length,
-              displayStringForNumber: (number) => '$number번',
-            ),
-          ),
-          const SizedBox(height: 20),
-          FormItem(
-            label: '피드백',
-            child: FormTextField(
-              name: 'feedback',
-              hintText:
-                  '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
-              minLines: 2,
-              maxLines: null,
-            ),
-          ),
-          const SizedBox(height: 20),
-          FormItem(
-            label: '복습할 문제',
-            child: FormReviewProblemsField(
-              name: 'reviewProblems',
-            ),
-          ),
-          const SizedBox(height: 68),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: TextButton(
-            onPressed: _onCancelPressed,
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              foregroundColor: Colors.grey,
-            ),
-            child: Text(
-              '취소',
-              style: TextStyle(color: Colors.grey.shade600),
-            ),
-          ),
-        ),
-        Expanded(
-          child: TextButton(
-            onPressed: _onSavePressed,
-            style: TextButton.styleFrom(
-              foregroundColor:
-                  title.isEmpty ? Colors.grey : Theme.of(context).primaryColor,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              _isEditingMode ? '수정' : '저장',
-              style: TextStyle(
-                color: title.isEmpty ? Colors.grey.shade600 : null,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   void _checkIfRecordLimitExceeded() {
@@ -415,52 +165,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
     }
   }
 
-  void _onTitleChanged(String text) {
-    setState(() {
-      title = text;
-    });
-  }
-
   void _onSelectedExamChanged(Exam? newExam) {
     setState(() {
-      _selectedExam = newExam ?? _exams.first;
-      _examDurationEditingController.text =
-          _selectedExam.durationMinutes.toString();
-    });
-  }
-
-  void _onExamStartedDateTextTapped() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _examStartedTime,
-      firstDate: _examStartedTime.subtract(const Duration(days: 4000)),
-      lastDate: _examStartedTime.add(const Duration(days: 365)),
-      locale: const Locale('ko'),
-    );
-    if (date == null) return;
-    setState(() {
-      _examStartedTime = _examStartedTime.copyWith(
-        year: date.year,
-        month: date.month,
-        day: date.day,
-      );
-    });
-  }
-
-  void _onExamStartedTimeTextTapped() async {
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_examStartedTime),
-    );
-    if (time == null) return;
-    setState(() {
-      _examStartedTime = DateTime(
-        _examStartedTime.year,
-        _examStartedTime.month,
-        _examStartedTime.day,
-        time.hour,
-        time.minute,
-      );
+      // _examDurationEditingController.text = // TODO
+      //     _selectedExam.durationMinutes.toString();
     });
   }
 
@@ -475,16 +183,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _onSavePressed() async {
     _checkIfRecordLimitExceeded();
 
-    if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('모의고사 이름을 입력해주세요.'),
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 1),
-        ),
-      );
-      return;
-    }
     await _saveRecord();
   }
 
@@ -497,16 +195,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
     final userId = _appCubit.state.me!.id;
     ExamRecord record = ExamRecord.create(
       userId: userId,
-      title: title,
-      exam: _selectedExam,
+      title: '', // TODO
+      exam: _initialExam, // TODO
       examStartedTime: _examStartedTime,
       examDurationMinutes:
           _acceptPositiveInteger(_examDurationEditingController.text),
-      score: _acceptPositiveInteger(_scoreEditingController.text),
-      grade: _acceptPositiveInteger(_gradeEditingController.text),
-      percentile: _acceptPositiveInteger(_percentileEditingController.text),
-      standardScore:
-          _acceptPositiveInteger(_standardScoreEditingController.text),
+      score: 0, // TODO
+      grade: 0, // TODO
+      percentile: 0, // TODO
+      standardScore: 0, // TODO
       wrongProblems: _wrongProblems,
       feedback: _feedbackEditingController.text,
       reviewProblems: _reviewProblems,
@@ -589,6 +286,350 @@ class _EditRecordPageState extends State<EditRecordPage> {
     final intValue = int.tryParse(text);
     if (intValue == null || intValue <= 0) return null;
     return intValue;
+  }
+
+  Widget _buildBody() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        SafeArea(
+          child: _buildForm(),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey.shade100,
+                ),
+              ),
+            ),
+            child: _buildBottomButtons(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildForm() {
+    return FormBuilder(
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          const SizedBox(height: 28),
+          FormItem(
+            label: '모의고사 이름',
+            isRequired: true,
+            child: CustomAutocomplete(
+              initialValue: TextEditingValue(text: _initialTitle),
+              displayStringForOption: (option) => option.title,
+              optionsBuilder: (textEditingValue) {
+                return _autocompleteRecords.where((element) {
+                  return element.title.contains(textEditingValue.text);
+                }).toList();
+              },
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  onFieldSubmitted) {
+                return FormTextField(
+                  name: _titleFieldName,
+                  hintText: '실감 모의고사 시즌1 1회',
+                  textInputAction: TextInputAction.next,
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  onSubmitted: (_) => onFieldSubmitted(),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(
+                        errorText: '모의고사 이름을 입력해주세요.'),
+                    FormBuilderValidators.maxLength(100,
+                        errorText: '100자 이하로 입력해주세요.'),
+                  ]),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
+          FormItem(
+            label: '과목',
+            child: FormDropdown(
+              name: _examFieldName,
+              initialValue: _initialExam,
+              onChanged: _onSelectedExamChanged,
+              items: _exams.map((exam) {
+                return DropdownMenuItem(
+                  value: exam,
+                  child: Text(exam.name),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Wrap(
+            spacing: 12,
+            runSpacing: 20,
+            children: [
+              FormItem(
+                label: '점수',
+                child: FormTextField(
+                  name: _scoreFieldName,
+                  initialValue: _initialScore,
+                  hintText: '      ',
+                  suffixText: '점',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.numeric(
+                      errorText: '점수는 숫자만 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.min(
+                      0,
+                      errorText: '점수를 0 이상 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.max(
+                      999,
+                      errorText: '점수를 999 이하로 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                  ]),
+                ),
+              ),
+              FormItem(
+                label: '등급',
+                child: FormTextField(
+                  name: _gradeFieldName,
+                  initialValue: _initialGrade,
+                  hintText: '   ',
+                  suffixText: '등급',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(1),
+                  ],
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.numeric(
+                      errorText: '등급은 숫자만 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.min(
+                      1,
+                      errorText: '등급을 1 이상 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.max(
+                      9,
+                      errorText: '등급을 9 이하로 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                  ]),
+                ),
+              ),
+              FormItem(
+                label: '백분위',
+                child: FormTextField(
+                  name: _percentileFieldName,
+                  initialValue: _initialPercentile,
+                  hintText: '      ',
+                  suffixText: '%',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.numeric(
+                      errorText: '백분위는 숫자만 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.min(
+                      0,
+                      errorText: '백분위를 0 이상 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.max(
+                      100,
+                      errorText: '백분위를 100 이하로 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                  ]),
+                ),
+              ),
+              FormItem(
+                label: '표준점수',
+                child: FormTextField(
+                  name: _standardScoreFieldName,
+                  initialValue: _initialStandardScore,
+                  hintText: '      ',
+                  suffixText: '점',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.numeric(
+                      errorText: '표준점수는 숫자만 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.min(
+                      0,
+                      errorText: '표준점수를 0 이상 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.max(
+                      200,
+                      errorText: '표준점수를 200 이하로 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                  ]),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Wrap(
+            spacing: 12,
+            runSpacing: 20,
+            children: [
+              FormItem(
+                label: '응시 일자',
+                child: FormDatePicker(
+                  name: 'examStartedDate',
+                  initialValue: _examStartedTime,
+                  firstDate:
+                      _examStartedTime.subtract(const Duration(days: 365 * 20)),
+                  lastDate: _examStartedTime.add(const Duration(days: 365)),
+                  autoWidth: true,
+                ),
+              ),
+              FormItem(
+                label: '응시 시작 시각',
+                child: FormTimePicker(
+                  name: 'examStartedTime',
+                  initialValue: TimeOfDay.fromDateTime(_examStartedTime),
+                  autoWidth: true,
+                ),
+              ),
+              FormItem(
+                label: '응시 시간',
+                child: FormTextField(
+                  name: 'examDuration',
+                  suffixText: '분',
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  hideError: true,
+                  autoWidth: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          FormItem(
+            label: '틀린 문제',
+            child: FormNumbersField(
+              name: 'wrongProblems',
+              initialValue: _wrongProblems.map((e) => e.problemNumber).toList(),
+              hintText: '번호 입력',
+              // maxDigits: _selectedExam.numberOfQuestions.toString().length, // TODO
+              displayStringForNumber: (number) => '$number번',
+            ),
+          ),
+          const SizedBox(height: 20),
+          FormItem(
+            label: '피드백',
+            child: FormTextField(
+              name: 'feedback',
+              hintText:
+                  '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
+              minLines: 2,
+              maxLines: null,
+            ),
+          ),
+          const SizedBox(height: 20),
+          FormItem(
+            label: '복습할 문제',
+            child: FormReviewProblemsField(
+              name: 'reviewProblems',
+            ),
+          ),
+          const SizedBox(height: 68),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextButton(
+            onPressed: _onCancelPressed,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              foregroundColor: Colors.grey,
+            ),
+            child: Text(
+              '취소',
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            onPressed: _onSavePressed,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              _isEditingMode ? '수정' : '저장',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: _onPopInvokedWithResult,
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: AnnotatedRegion(
+          value: defaultSystemUiOverlayStyle,
+          child: Scaffold(
+            body: ProgressOverlay(
+              isProgressing: _isSaving,
+              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+              child: _buildBody(),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
