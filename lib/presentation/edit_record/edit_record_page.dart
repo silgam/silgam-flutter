@@ -11,6 +11,7 @@ import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
+import '../../util/duration_extension.dart';
 import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
@@ -49,29 +50,29 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final String _standardScoreFieldName = 'standardScore';
   final String _examStartedDateFieldName = 'examStartedDate';
   final String _examStartedTimeFieldName = 'examStartedTime';
+  final String _examDurationMinutesFieldName = 'examDurationMinutes';
 
   late final ExamRecord? _recordToEdit = widget.arguments.recordToEdit;
 
-  late final String _initialTitle =
-      _recordToEdit?.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '') ??
-          '';
+  late final String? _initialTitle =
+      _recordToEdit?.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '');
   late final Exam _initialExam =
       _recordToEdit?.exam ?? widget.arguments.inputExam ?? _exams.first;
-  late final String _initialScore = _recordToEdit?.score?.toString() ?? '';
-  late final String _initialGrade = _recordToEdit?.grade?.toString() ?? '';
-  late final String _initialPercentile =
-      _recordToEdit?.percentile?.toString() ?? '';
-  late final String _initialStandardScore =
-      _recordToEdit?.standardScore?.toString() ?? '';
+  late final int? _initialScore = _recordToEdit?.score;
+  late final int? _initialGrade = _recordToEdit?.grade;
+  late final int? _initialPercentile = _recordToEdit?.percentile;
+  late final int? _initialStandardScore = _recordToEdit?.standardScore;
   late final DateTime _initialExamStartedDate =
       _recordToEdit?.examStartedTime ??
           widget.arguments.examStartedTime ??
           DateTime.now();
   late final TimeOfDay _initialExamStartedTime =
       TimeOfDay.fromDateTime(_initialExamStartedDate);
+  late final int _initialExamDurationMinutes =
+      _recordToEdit?.examDurationMinutes ??
+          widget.arguments.examDurationMinutes ??
+          _initialExam.durationMinutes;
 
-  final TextEditingController _examDurationEditingController =
-      TextEditingController();
   final TextEditingController _feedbackEditingController =
       TextEditingController();
 
@@ -131,27 +132,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _initializeCreateMode() {
-    final exam = widget.arguments.inputExam;
-
     _feedbackEditingController.text = widget.arguments.prefillFeedback ?? '';
-
-    final examStartedTime = widget.arguments.examStartedTime;
-
-    final examFinishedTime = widget.arguments.examFinishedTime;
-
-    if (examStartedTime != null && examFinishedTime != null) {
-      // _examDurationEditingController.text = examFinishedTime // TODO
-      //     .difference(_examStartedTime)
-      //     .inMinutesWithCorrection
-      //     .toString();
-    } else if (exam != null) {
-      _examDurationEditingController.text = exam.durationMinutes.toString();
-    }
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
-    _examDurationEditingController.text =
-        recordToEdit.examDurationMinutes?.toString() ?? '';
     _wrongProblems.addAll(recordToEdit.wrongProblems);
     _feedbackEditingController.text = recordToEdit.feedback;
     _reviewProblems.addAll(recordToEdit.reviewProblems);
@@ -202,8 +186,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       title: '', // TODO
       exam: _initialExam, // TODO
       examStartedTime: DateTime.now(), // TODO
-      examDurationMinutes:
-          _acceptPositiveInteger(_examDurationEditingController.text),
+      examDurationMinutes: 0, // TODO
       score: 0, // TODO
       grade: 0, // TODO
       percentile: 0, // TODO
@@ -286,12 +269,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  int? _acceptPositiveInteger(String text) {
-    final intValue = int.tryParse(text);
-    if (intValue == null || intValue <= 0) return null;
-    return intValue;
-  }
-
   Widget _buildBody() {
     return Stack(
       fit: StackFit.expand,
@@ -330,7 +307,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             label: '모의고사 이름',
             isRequired: true,
             child: CustomAutocomplete(
-              initialValue: TextEditingValue(text: _initialTitle),
+              initialValue: TextEditingValue(text: _initialTitle ?? ''),
               displayStringForOption: (option) => option.title,
               optionsBuilder: (textEditingValue) {
                 return _autocompleteRecords.where((element) {
@@ -380,7 +357,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '점수',
                 child: FormTextField(
                   name: _scoreFieldName,
-                  initialValue: _initialScore,
+                  initialValue: _initialScore?.toString(),
                   hintText: '      ',
                   suffixText: '점',
                   textInputAction: TextInputAction.next,
@@ -413,7 +390,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '등급',
                 child: FormTextField(
                   name: _gradeFieldName,
-                  initialValue: _initialGrade,
+                  initialValue: _initialGrade?.toString(),
                   hintText: '   ',
                   suffixText: '등급',
                   textInputAction: TextInputAction.next,
@@ -446,7 +423,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '백분위',
                 child: FormTextField(
                   name: _percentileFieldName,
-                  initialValue: _initialPercentile,
+                  initialValue: _initialPercentile?.toString(),
                   hintText: '      ',
                   suffixText: '%',
                   textInputAction: TextInputAction.next,
@@ -479,7 +456,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '표준점수',
                 child: FormTextField(
                   name: _standardScoreFieldName,
-                  initialValue: _initialStandardScore,
+                  initialValue: _initialStandardScore?.toString(),
                   hintText: '      ',
                   suffixText: '점',
                   textInputAction: TextInputAction.next,
@@ -538,12 +515,34 @@ class _EditRecordPageState extends State<EditRecordPage> {
               FormItem(
                 label: '응시 시간',
                 child: FormTextField(
-                  name: 'examDuration',
+                  name: _examDurationMinutesFieldName,
+                  initialValue: _initialExamDurationMinutes.toString(),
+                  hintText: '      ',
                   suffixText: '분',
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
                   hideError: true,
                   autoWidth: true,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.numeric(
+                      errorText: '응시 시간은 숫자만 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.min(
+                      0,
+                      errorText: '응시 시간을 0 이상 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                    FormBuilderValidators.max(
+                      999,
+                      errorText: '응시 시간을 999 이하로 입력해주세요.',
+                      checkNullOrEmpty: false,
+                    ),
+                  ]),
                 ),
               ),
             ],
@@ -639,17 +638,22 @@ class _EditRecordPageState extends State<EditRecordPage> {
 }
 
 class EditRecordPageArguments {
-  final Exam? inputExam;
-  final DateTime? examStartedTime;
-  final DateTime? examFinishedTime;
-  final ExamRecord? recordToEdit;
-  final String? prefillFeedback;
-
   EditRecordPageArguments({
     this.inputExam,
     this.examStartedTime,
     this.examFinishedTime,
     this.recordToEdit,
     this.prefillFeedback,
-  });
+  }) : examDurationMinutes = examStartedTime != null && examFinishedTime != null
+            ? examFinishedTime
+                .difference(examStartedTime)
+                .inMinutesWithCorrection
+            : null;
+
+  final Exam? inputExam;
+  final DateTime? examStartedTime;
+  final DateTime? examFinishedTime;
+  final ExamRecord? recordToEdit;
+  final String? prefillFeedback;
+  final int? examDurationMinutes;
 }
