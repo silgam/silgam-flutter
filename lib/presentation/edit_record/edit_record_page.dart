@@ -11,7 +11,6 @@ import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
-import '../../util/duration_extension.dart';
 import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
@@ -48,6 +47,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final String _gradeFieldName = 'grade';
   final String _percentileFieldName = 'percentile';
   final String _standardScoreFieldName = 'standardScore';
+  final String _examStartedDateFieldName = 'examStartedDate';
+  final String _examStartedTimeFieldName = 'examStartedTime';
 
   late final ExamRecord? _recordToEdit = widget.arguments.recordToEdit;
 
@@ -62,6 +63,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _recordToEdit?.percentile?.toString() ?? '';
   late final String _initialStandardScore =
       _recordToEdit?.standardScore?.toString() ?? '';
+  late final DateTime _initialExamStartedDate =
+      _recordToEdit?.examStartedTime ??
+          widget.arguments.examStartedTime ??
+          DateTime.now();
+  late final TimeOfDay _initialExamStartedTime =
+      TimeOfDay.fromDateTime(_initialExamStartedDate);
 
   final TextEditingController _examDurationEditingController =
       TextEditingController();
@@ -71,7 +78,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final List<WrongProblem> _wrongProblems = [];
   final List<ReviewProblem> _reviewProblems = [];
 
-  DateTime _examStartedTime = DateTime.now();
   bool _isEditingMode = false;
   bool _isSaving = false;
 
@@ -130,22 +136,20 @@ class _EditRecordPageState extends State<EditRecordPage> {
     _feedbackEditingController.text = widget.arguments.prefillFeedback ?? '';
 
     final examStartedTime = widget.arguments.examStartedTime;
-    _examStartedTime = examStartedTime ?? _examStartedTime;
 
     final examFinishedTime = widget.arguments.examFinishedTime;
 
     if (examStartedTime != null && examFinishedTime != null) {
-      _examDurationEditingController.text = examFinishedTime
-          .difference(_examStartedTime)
-          .inMinutesWithCorrection
-          .toString();
+      // _examDurationEditingController.text = examFinishedTime // TODO
+      //     .difference(_examStartedTime)
+      //     .inMinutesWithCorrection
+      //     .toString();
     } else if (exam != null) {
       _examDurationEditingController.text = exam.durationMinutes.toString();
     }
   }
 
   void _initializeEditMode(ExamRecord recordToEdit) {
-    _examStartedTime = recordToEdit.examStartedTime;
     _examDurationEditingController.text =
         recordToEdit.examDurationMinutes?.toString() ?? '';
     _wrongProblems.addAll(recordToEdit.wrongProblems);
@@ -197,7 +201,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       userId: userId,
       title: '', // TODO
       exam: _initialExam, // TODO
-      examStartedTime: _examStartedTime,
+      examStartedTime: DateTime.now(), // TODO
       examDurationMinutes:
           _acceptPositiveInteger(_examDurationEditingController.text),
       score: 0, // TODO
@@ -514,19 +518,20 @@ class _EditRecordPageState extends State<EditRecordPage> {
               FormItem(
                 label: '응시 일자',
                 child: FormDatePicker(
-                  name: 'examStartedDate',
-                  initialValue: _examStartedTime,
-                  firstDate:
-                      _examStartedTime.subtract(const Duration(days: 365 * 20)),
-                  lastDate: _examStartedTime.add(const Duration(days: 365)),
+                  name: _examStartedDateFieldName,
+                  initialValue: _initialExamStartedDate,
+                  firstDate: _initialExamStartedDate
+                      .subtract(const Duration(days: 365 * 20)),
+                  lastDate:
+                      _initialExamStartedDate.add(const Duration(days: 365)),
                   autoWidth: true,
                 ),
               ),
               FormItem(
                 label: '응시 시작 시각',
                 child: FormTimePicker(
-                  name: 'examStartedTime',
-                  initialValue: TimeOfDay.fromDateTime(_examStartedTime),
+                  name: _examStartedTimeFieldName,
+                  initialValue: _initialExamStartedTime,
                   autoWidth: true,
                 ),
               ),
