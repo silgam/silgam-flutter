@@ -6,10 +6,8 @@ import '../../../model/problem.dart';
 import '../../common/review_problem_card.dart';
 import 'edit_review_problem_dialog.dart';
 
-typedef _FormFieldState = FormFieldState<List<ReviewProblem>>;
-
 class FormReviewProblemsField extends StatelessWidget {
-  const FormReviewProblemsField({
+  FormReviewProblemsField({
     super.key,
     required this.name,
     this.initialValue = const [],
@@ -18,9 +16,10 @@ class FormReviewProblemsField extends StatelessWidget {
   final String name;
   final List<ReviewProblem> initialValue;
 
+  final GlobalKey<FormFieldState<List<ReviewProblem>>> _fieldKey = GlobalKey();
+
   void _onReviewProblemCardTap(
     BuildContext context,
-    _FormFieldState field,
     ReviewProblem reviewProblem,
   ) {
     showDialog(
@@ -28,10 +27,8 @@ class FormReviewProblemsField extends StatelessWidget {
       routeSettings: const RouteSettings(name: 'review_problem_view_dialog'),
       builder: (context) {
         return EditReviewProblemDialog.edit(
-          onReviewProblemEdit: (oldReviewProblem, newReviewProblem) =>
-              _onReviewProblemEdit(field, oldReviewProblem, newReviewProblem),
-          onReviewProblemDelete: (reviewProblem) =>
-              _onReviewProblemDelete(field, reviewProblem),
+          onReviewProblemEdit: _onReviewProblemEdit,
+          onReviewProblemDelete: _onReviewProblemDelete,
           initialData: reviewProblem,
         );
       },
@@ -39,47 +36,46 @@ class FormReviewProblemsField extends StatelessWidget {
   }
 
   void _onReviewProblemEdit(
-    _FormFieldState field,
     ReviewProblem oldReviewProblem,
     ReviewProblem newReviewProblem,
   ) {
-    final newReviewProblems = [...?field.value];
+    final field = _fieldKey.currentState;
+    final newReviewProblems = [...?field?.value];
     final oldReviewProblemIndex = newReviewProblems.indexOf(oldReviewProblem);
     if (oldReviewProblemIndex == -1) return;
 
     newReviewProblems[oldReviewProblemIndex] = newReviewProblem;
-    field.didChange(newReviewProblems);
+    field?.didChange(newReviewProblems);
   }
 
-  void _onReviewProblemDelete(
-    _FormFieldState field,
-    ReviewProblem reviewProblem,
-  ) {
-    final newReviewProblems = [...?field.value];
+  void _onReviewProblemDelete(ReviewProblem reviewProblem) {
+    final field = _fieldKey.currentState;
+    final newReviewProblems = [...?field?.value];
     newReviewProblems.remove(reviewProblem);
-    field.didChange(newReviewProblems);
+    field?.didChange(newReviewProblems);
   }
 
-  void _onReviewProblemAddCardTap(BuildContext context, _FormFieldState field) {
+  void _onReviewProblemAddCardTap(BuildContext context) {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'review_problem_add_dialog'),
       builder: (context) {
         return EditReviewProblemDialog.add(
-          onReviewProblemAdd: (reviewProblem) =>
-              _onReviewProblemAdd(field, reviewProblem),
+          onReviewProblemAdd: _onReviewProblemAdd,
         );
       },
     );
   }
 
-  void _onReviewProblemAdd(_FormFieldState field, ReviewProblem reviewProblem) {
-    field.didChange([...?field.value, reviewProblem]);
+  void _onReviewProblemAdd(ReviewProblem reviewProblem) {
+    final field = _fieldKey.currentState;
+    field?.didChange([...?field.value, reviewProblem]);
   }
 
   @override
   Widget build(BuildContext context) {
     return FormBuilderField<List<ReviewProblem>>(
+      key: _fieldKey,
       name: name,
       initialValue: initialValue,
       builder: (field) {
@@ -94,10 +90,10 @@ class FormReviewProblemsField extends StatelessWidget {
             for (final problem in field.value ?? [])
               ReviewProblemCard(
                 problem: problem,
-                onTap: () => _onReviewProblemCardTap(context, field, problem),
+                onTap: () => _onReviewProblemCardTap(context, problem),
               ),
             _ReviewProblemAddCard(
-              onTap: () => _onReviewProblemAddCardTap(context, field),
+              onTap: () => _onReviewProblemAddCardTap(context),
             ),
           ],
         );

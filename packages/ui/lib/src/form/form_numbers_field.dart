@@ -5,7 +5,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 typedef FormNumbersFieldNumberToString = String Function(int number);
 
 class FormNumbersField extends StatelessWidget {
-  const FormNumbersField({
+  FormNumbersField({
     super.key,
     required this.name,
     this.initialValue = const [],
@@ -20,8 +20,11 @@ class FormNumbersField extends StatelessWidget {
   final int maxDigits;
   final FormNumbersFieldNumberToString displayStringForNumber;
 
-  void _onNumberSubmit(FormFieldState<List<int>> field, int number) {
-    final newNumbers = [...?field.value];
+  final GlobalKey<FormFieldState<List<int>>> _fieldKey = GlobalKey();
+
+  void _onNumberSubmit(int number) {
+    final field = _fieldKey.currentState;
+    final newNumbers = [...?field?.value];
 
     if (newNumbers.contains(number)) {
       newNumbers
@@ -31,11 +34,12 @@ class FormNumbersField extends StatelessWidget {
       newNumbers.add(number);
     }
 
-    field.didChange(newNumbers);
+    field?.didChange(newNumbers);
   }
 
-  void _onNumberDelete(FormFieldState<List<int>> field, [int? number]) {
-    final newNumbers = [...?field.value];
+  void _onNumberDelete([int? number]) {
+    final field = _fieldKey.currentState;
+    final newNumbers = [...?field?.value];
 
     if (number != null) {
       newNumbers.remove(number);
@@ -43,12 +47,13 @@ class FormNumbersField extends StatelessWidget {
       newNumbers.removeLast();
     }
 
-    field.didChange(newNumbers);
+    field?.didChange(newNumbers);
   }
 
   @override
   Widget build(BuildContext context) {
     return FormBuilderField<List<int>>(
+      key: _fieldKey,
       name: name,
       initialValue: initialValue,
       builder: (field) {
@@ -60,13 +65,13 @@ class FormNumbersField extends StatelessWidget {
               _NumberItem(
                 number: number,
                 displayStringForNumber: displayStringForNumber,
-                onTap: () => _onNumberDelete(field, number),
+                onTap: () => _onNumberDelete(number),
               ),
             _NumberField(
               hintText: hintText,
               maxDigits: maxDigits,
-              onSubmit: (number) => _onNumberSubmit(field, number),
-              onDelete: () => _onNumberDelete(field),
+              onSubmit: _onNumberSubmit,
+              onDelete: _onNumberDelete,
             )
           ],
         );
