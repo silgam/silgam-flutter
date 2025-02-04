@@ -71,6 +71,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   late final List<Exam> _exams = _appCubit.state.getAllExams();
 
+  final GlobalKey<FormBuilderState> _formKey = GlobalKey();
+
   final String _titleFieldName = 'title';
   final String _examFieldName = 'exam';
   final String _scoreFieldName = 'score';
@@ -113,6 +115,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   late final bool _isEditingMode = _recordToEdit != null;
   bool _isSaving = false;
+  late Exam _previousExam = _initialExam;
 
   late final List<ExamRecord> _autocompleteRecords = (LinkedHashSet<ExamRecord>(
     equals: (a, b) => a.title == b.title,
@@ -166,11 +169,18 @@ class _EditRecordPageState extends State<EditRecordPage> {
     }
   }
 
-  void _onSelectedExamChanged(Exam? newExam) {
-    setState(() {
-      // _examDurationEditingController.text = // TODO
-      //     _selectedExam.durationMinutes.toString();
-    });
+  void _onExamChanged(Exam? exam) {
+    if (exam == null) return;
+
+    final examDurationMinutesField =
+        _formKey.currentState?.fields[_examDurationMinutesFieldName];
+    if (_previousExam.durationMinutes ==
+        int.tryParse(examDurationMinutesField?.value)) {
+      // TODO tryParse 사용하지 않도록 수정
+      examDurationMinutesField?.didChange(exam.durationMinutes.toString());
+    }
+
+    _previousExam = exam;
   }
 
   void _onCancelPressed() {
@@ -312,6 +322,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   Widget _buildForm() {
     return FormBuilder(
+      key: _formKey,
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
@@ -352,7 +363,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             child: FormDropdown(
               name: _examFieldName,
               initialValue: _initialExam,
-              onChanged: _onSelectedExamChanged,
+              onChanged: _onExamChanged,
               items: _exams.map((exam) {
                 return DropdownMenuItem(
                   value: exam,
