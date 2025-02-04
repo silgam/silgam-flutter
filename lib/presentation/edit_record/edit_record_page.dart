@@ -116,6 +116,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   late final bool _isEditingMode = _recordToEdit != null;
   bool _isSaving = false;
   late Exam _previousExam = _initialExam;
+  late int _wrongProblemMaxDigits =
+      _initialExam.numberOfQuestions.toString().length;
 
   late final List<ExamRecord> _autocompleteRecords = (LinkedHashSet<ExamRecord>(
     equals: (a, b) => a.title == b.title,
@@ -176,11 +178,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
         _formKey.currentState?.fields[_examDurationMinutesFieldName];
     if (_previousExam.durationMinutes ==
         int.tryParse(examDurationMinutesField?.value)) {
-      // TODO tryParse 사용하지 않도록 수정
       examDurationMinutesField?.didChange(exam.durationMinutes.toString());
     }
 
     _previousExam = exam;
+
+    setState(() {
+      _wrongProblemMaxDigits = exam.numberOfQuestions.toString().length;
+    });
   }
 
   void _onCancelPressed() {
@@ -579,7 +584,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
               initialValue:
                   _initialWrongProblems.map((e) => e.problemNumber).toList(),
               hintText: '번호 입력',
-              // maxDigits: _selectedExam.numberOfQuestions.toString().length, // TODO
+              maxDigits: _wrongProblemMaxDigits,
               displayStringForNumber: (number) => '$number번',
             ),
           ),
