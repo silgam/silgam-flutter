@@ -125,14 +125,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
   )..addAll(_recordListCubit.state.originalRecords))
       .toList();
 
-  Map<String, dynamic> get _defaultLogProperties => {
-        // 'exam_name': _selectedExam.name, // TODO
-        // 'exam_id': _selectedExam.id,
-        // 'subject': _selectedExam.subject.name,
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.inputExam != null,
-      };
-
   @override
   void initState() {
     super.initState();
@@ -151,10 +143,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   void dispose() {
-    AnalyticsManager.logEvent(
-      name: '[EditExamRecordPage] Edit finished',
-      properties: _defaultLogProperties,
-    );
+    _logEvent('[EditExamRecordPage] Edit finished');
 
     super.dispose();
   }
@@ -169,6 +158,23 @@ class _EditRecordPageState extends State<EditRecordPage> {
       Navigator.pop(context);
       showExamRecordLimitInfoDialog(context);
     }
+  }
+
+  void _logEvent(String name) {
+    final Exam? exam = _formKey.currentState?.fields[_examFieldName]?.value;
+
+    AnalyticsManager.logEvent(
+      name: name,
+      properties: {
+        if (exam != null) ...{
+          'exam_name': exam.name,
+          'exam_id': exam.id,
+          'subject': exam.subject.name,
+        },
+        'is_editing_mode': _isEditingMode,
+        'input_exam_existed': widget.inputExam != null,
+      },
+    );
   }
 
   void _onExamChanged(Exam? exam) {
@@ -190,10 +196,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   void _onCancelPressed() {
     Navigator.maybePop(context);
-    AnalyticsManager.logEvent(
-      name: '[EditExamRecordPage] Cancel button tapped',
-      properties: _defaultLogProperties,
-    );
+    _logEvent('[EditExamRecordPage] Cancel button tapped');
   }
 
   void _onSavePressed() async {
@@ -257,10 +260,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       }
     }
 
-    AnalyticsManager.logEvent(
-      name: '[EditExamRecordPage] Exam record saved',
-      properties: _defaultLogProperties,
-    );
+    _logEvent('[EditExamRecordPage] Exam record saved');
 
     return record;
   }
