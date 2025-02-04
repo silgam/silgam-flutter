@@ -118,6 +118,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   late Exam _previousExam = _initialExam;
   late int _wrongProblemMaxDigits =
       _initialExam.numberOfQuestions.toString().length;
+  bool _isChanged = false;
 
   late final List<ExamRecord> _autocompleteRecords = (LinkedHashSet<ExamRecord>(
     equals: (a, b) => a.title == b.title,
@@ -300,6 +301,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
   Widget _buildForm() {
     return FormBuilder(
       key: _formKey,
+      canPop: !_isChanged,
+      onPopInvokedWithResult: _onPopInvokedWithResult,
+      onChanged: () {
+        if (_isChanged) return;
+
+        setState(() {
+          _isChanged = true;
+        });
+      },
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
@@ -649,19 +659,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: _onPopInvokedWithResult,
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: AnnotatedRegion(
-          value: defaultSystemUiOverlayStyle,
-          child: Scaffold(
-            body: ProgressOverlay(
-              isProgressing: _isSaving,
-              description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-              child: _buildBody(),
-            ),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: AnnotatedRegion(
+        value: defaultSystemUiOverlayStyle,
+        child: Scaffold(
+          body: ProgressOverlay(
+            isProgressing: _isSaving,
+            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+            child: _buildBody(),
           ),
         ),
       ),
