@@ -118,9 +118,15 @@ class SilgamApp extends StatelessWidget {
                 settings: settings,
               );
             case EditRecordPage.routeName:
-              final args = settings.arguments as EditRecordPageArguments;
+              final args = settings.arguments as EditRecordPageArguments?;
               return MaterialPageRoute<ExamRecord>(
-                builder: (_) => EditRecordPage(arguments: args),
+                builder: (_) => EditRecordPage(
+                  recordToEdit: args?.recordToEdit,
+                  inputExam: args?.inputExam,
+                  prefillFeedback: args?.prefillFeedback,
+                  examStartedTime: args?.examStartedTime,
+                  examFinishedTime: args?.examFinishedTime,
+                ),
                 settings: settings,
               );
             case RecordDetailPage.routeName:

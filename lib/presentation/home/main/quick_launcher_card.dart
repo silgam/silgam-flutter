@@ -35,11 +35,7 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
   void _onRecordItemTap() async {
     final isSignedIn = context.read<AppCubit>().state.isSignedIn;
     if (isSignedIn) {
-      await Navigator.pushNamed(
-        context,
-        EditRecordPage.routeName,
-        arguments: EditRecordPageArguments(),
-      );
+      await Navigator.pushNamed(context, EditRecordPage.routeName);
     }
     if (mounted) {
       context.read<HomeCubit>().changeTabByTitle(RecordListView.title);

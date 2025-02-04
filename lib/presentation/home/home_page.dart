@@ -214,12 +214,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onAddExamRecordButtonPressed() async {
-    final args = EditRecordPageArguments();
-    await Navigator.pushNamed(
-      context,
-      EditRecordPage.routeName,
-      arguments: args,
-    );
+    await Navigator.pushNamed(context, EditRecordPage.routeName);
   }
 
   void _onOfflineMessageTap() {

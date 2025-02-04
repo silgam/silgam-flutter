@@ -21,15 +21,44 @@ import '../home/record_list/cubit/record_list_cubit.dart';
 import '../record_detail/record_detail_page.dart';
 import 'widgets/form_review_problems_field.dart';
 
-class EditRecordPage extends StatefulWidget {
-  const EditRecordPage({
-    super.key,
-    required this.arguments,
+class EditRecordPageArguments {
+  EditRecordPageArguments({
+    this.recordToEdit,
+    this.inputExam,
+    this.prefillFeedback,
+    this.examStartedTime,
+    this.examFinishedTime,
   });
+
+  final ExamRecord? recordToEdit;
+  final Exam? inputExam;
+  final String? prefillFeedback;
+  final DateTime? examStartedTime;
+  final DateTime? examFinishedTime;
+}
+
+class EditRecordPage extends StatefulWidget {
+  EditRecordPage({
+    super.key,
+    this.recordToEdit,
+    this.inputExam,
+    this.prefillFeedback,
+    this.examStartedTime,
+    this.examFinishedTime,
+  }) : examDurationMinutes = examStartedTime != null && examFinishedTime != null
+            ? examFinishedTime
+                .difference(examStartedTime)
+                .inMinutesWithCorrection
+            : null;
 
   static const routeName = '/edit_record';
 
-  final EditRecordPageArguments arguments;
+  final ExamRecord? recordToEdit;
+  final Exam? inputExam;
+  final String? prefillFeedback;
+  final DateTime? examStartedTime;
+  final DateTime? examFinishedTime;
+  final int? examDurationMinutes;
 
   @override
   State<EditRecordPage> createState() => _EditRecordPageState();
@@ -55,30 +84,30 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final String _feedbackFieldName = 'feedback';
   final String _reviewProblemsFieldName = 'reviewProblems';
 
-  late final ExamRecord? _recordToEdit = widget.arguments.recordToEdit;
+  late final ExamRecord? _recordToEdit = widget.recordToEdit;
 
   late final String? _initialTitle =
       _recordToEdit?.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '');
   late final Exam _initialExam =
-      _recordToEdit?.exam ?? widget.arguments.inputExam ?? _exams.first;
+      _recordToEdit?.exam ?? widget.inputExam ?? _exams.first;
   late final int? _initialScore = _recordToEdit?.score;
   late final int? _initialGrade = _recordToEdit?.grade;
   late final int? _initialPercentile = _recordToEdit?.percentile;
   late final int? _initialStandardScore = _recordToEdit?.standardScore;
   late final DateTime _initialExamStartedDate =
       _recordToEdit?.examStartedTime ??
-          widget.arguments.examStartedTime ??
+          widget.examStartedTime ??
           DateTime.now();
   late final TimeOfDay _initialExamStartedTime =
       TimeOfDay.fromDateTime(_initialExamStartedDate);
   late final int _initialExamDurationMinutes =
       _recordToEdit?.examDurationMinutes ??
-          widget.arguments.examDurationMinutes ??
+          widget.examDurationMinutes ??
           _initialExam.durationMinutes;
   late final List<WrongProblem> _initialWrongProblems =
       _recordToEdit?.wrongProblems ?? [];
   late final String? _initialFeedback =
-      _recordToEdit?.feedback ?? widget.arguments.prefillFeedback;
+      _recordToEdit?.feedback ?? widget.prefillFeedback;
   late final List<ReviewProblem> _initialReviewProblems =
       _recordToEdit?.reviewProblems ?? [];
 
@@ -96,7 +125,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
         // 'exam_id': _selectedExam.id,
         // 'subject': _selectedExam.subject.name,
         'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.arguments.inputExam != null,
+        'input_exam_existed': widget.inputExam != null,
       };
 
   @override
@@ -189,8 +218,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
       return null;
     }
 
-    if (_isEditingMode) {
-      final oldRecord = widget.arguments.recordToEdit!;
+    final oldRecord = widget.recordToEdit;
+    if (oldRecord != null) {
       record = await _recordRepository.updateExamRecord(
         oldRecord: oldRecord,
         newRecord: record.copyWith(
@@ -622,25 +651,4 @@ class _EditRecordPageState extends State<EditRecordPage> {
       ),
     );
   }
-}
-
-class EditRecordPageArguments {
-  EditRecordPageArguments({
-    this.inputExam,
-    this.examStartedTime,
-    this.examFinishedTime,
-    this.recordToEdit,
-    this.prefillFeedback,
-  }) : examDurationMinutes = examStartedTime != null && examFinishedTime != null
-            ? examFinishedTime
-                .difference(examStartedTime)
-                .inMinutesWithCorrection
-            : null;
-
-  final Exam? inputExam;
-  final DateTime? examStartedTime;
-  final DateTime? examFinishedTime;
-  final ExamRecord? recordToEdit;
-  final String? prefillFeedback;
-  final int? examDurationMinutes;
 }

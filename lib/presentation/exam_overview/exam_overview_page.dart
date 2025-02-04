@@ -218,10 +218,10 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
     if (_appCubit.state.isSignedIn) {
       final arguments = EditRecordPageArguments(
         inputExam: exam,
-        examStartedTime: widget.examDetail.examStartedTimes[exam],
-        examFinishedTime: widget.examDetail.examFinishedTimes[exam],
         prefillFeedback:
             _examOverviewCubit.state.getPrefillFeedbackForExamRecord(exam),
+        examStartedTime: widget.examDetail.examStartedTimes[exam],
+        examFinishedTime: widget.examDetail.examFinishedTimes[exam],
       );
       final ExamRecord? examRecord = await Navigator.pushNamed<ExamRecord>(
         context,
