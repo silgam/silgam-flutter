@@ -51,6 +51,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final String _examStartedDateFieldName = 'examStartedDate';
   final String _examStartedTimeFieldName = 'examStartedTime';
   final String _examDurationMinutesFieldName = 'examDurationMinutes';
+  final String _wrongProblemsFieldName = 'wrongProblems';
+  final String _feedbackFieldName = 'feedback';
+  final String _reviewProblemsFieldName = 'reviewProblems';
 
   late final ExamRecord? _recordToEdit = widget.arguments.recordToEdit;
 
@@ -72,14 +75,14 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _recordToEdit?.examDurationMinutes ??
           widget.arguments.examDurationMinutes ??
           _initialExam.durationMinutes;
+  late final List<WrongProblem> _initialWrongProblems =
+      _recordToEdit?.wrongProblems ?? [];
+  late final String? _initialFeedback =
+      _recordToEdit?.feedback ?? widget.arguments.prefillFeedback;
+  late final List<ReviewProblem> _initialReviewProblems =
+      _recordToEdit?.reviewProblems ?? [];
 
-  final TextEditingController _feedbackEditingController =
-      TextEditingController();
-
-  final List<WrongProblem> _wrongProblems = [];
-  final List<ReviewProblem> _reviewProblems = [];
-
-  bool _isEditingMode = false;
+  late final bool _isEditingMode = _recordToEdit != null;
   bool _isSaving = false;
 
   late final List<ExamRecord> _autocompleteRecords = (LinkedHashSet<ExamRecord>(
@@ -110,15 +113,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkIfRecordLimitExceeded();
     });
-
-    final recordToEdit = widget.arguments.recordToEdit;
-    if (recordToEdit == null) {
-      _isEditingMode = false;
-      _initializeCreateMode();
-    } else {
-      _isEditingMode = true;
-      _initializeEditMode(recordToEdit);
-    }
   }
 
   @override
@@ -129,16 +123,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
 
     super.dispose();
-  }
-
-  void _initializeCreateMode() {
-    _feedbackEditingController.text = widget.arguments.prefillFeedback ?? '';
-  }
-
-  void _initializeEditMode(ExamRecord recordToEdit) {
-    _wrongProblems.addAll(recordToEdit.wrongProblems);
-    _feedbackEditingController.text = recordToEdit.feedback;
-    _reviewProblems.addAll(recordToEdit.reviewProblems);
   }
 
   void _checkIfRecordLimitExceeded() {
@@ -191,9 +175,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
       grade: 0, // TODO
       percentile: 0, // TODO
       standardScore: 0, // TODO
-      wrongProblems: _wrongProblems,
-      feedback: _feedbackEditingController.text,
-      reviewProblems: _reviewProblems,
+      wrongProblems: [], // TODO
+      feedback: '', // TODO
+      reviewProblems: [], // TODO
     );
 
     if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
@@ -551,8 +535,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
           FormItem(
             label: '틀린 문제',
             child: FormNumbersField(
-              name: 'wrongProblems',
-              initialValue: _wrongProblems.map((e) => e.problemNumber).toList(),
+              name: _wrongProblemsFieldName,
+              initialValue:
+                  _initialWrongProblems.map((e) => e.problemNumber).toList(),
               hintText: '번호 입력',
               // maxDigits: _selectedExam.numberOfQuestions.toString().length, // TODO
               displayStringForNumber: (number) => '$number번',
@@ -562,7 +547,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
           FormItem(
             label: '피드백',
             child: FormTextField(
-              name: 'feedback',
+              name: _feedbackFieldName,
+              initialValue: _initialFeedback,
               hintText:
                   '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
               minLines: 2,
@@ -573,7 +559,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
           FormItem(
             label: '복습할 문제',
             child: FormReviewProblemsField(
-              name: 'reviewProblems',
+              name: _reviewProblemsFieldName,
+              initialValue: _initialReviewProblems,
             ),
           ),
           const SizedBox(height: 68),
