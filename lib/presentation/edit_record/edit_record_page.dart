@@ -297,34 +297,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildBody() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        SafeArea(
-          child: _buildForm(),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey.shade100,
-                ),
-              ),
-            ),
-            child: _buildBottomButtons(),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildForm() {
     return FormBuilder(
       key: _formKey,
@@ -641,6 +613,34 @@ class _EditRecordPageState extends State<EditRecordPage> {
             child: Text(
               _isEditingMode ? '수정' : '저장',
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBody() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        SafeArea(
+          child: _buildForm(),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey.shade100,
+                ),
+              ),
+            ),
+            child: _buildBottomButtons(),
           ),
         ),
       ],
