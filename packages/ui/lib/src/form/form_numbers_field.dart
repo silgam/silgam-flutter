@@ -4,8 +4,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 typedef FormNumbersFieldNumberToString = String Function(int number);
 
-class FormNumbersField extends StatelessWidget {
-  FormNumbersField({
+class FormNumbersField extends StatefulWidget {
+  const FormNumbersField({
     super.key,
     required this.name,
     this.initialValue = const [],
@@ -20,6 +20,13 @@ class FormNumbersField extends StatelessWidget {
   final int maxDigits;
   final FormNumbersFieldNumberToString displayStringForNumber;
 
+  @override
+  State<FormNumbersField> createState() => _FormNumbersFieldState();
+
+  static String defaultStringForNumber(int number) => number.toString();
+}
+
+class _FormNumbersFieldState extends State<FormNumbersField> {
   final GlobalKey<FormFieldState<List<int>>> _fieldKey = GlobalKey();
 
   void _onNumberSubmit(int number) {
@@ -54,8 +61,8 @@ class FormNumbersField extends StatelessWidget {
   Widget build(BuildContext context) {
     return FormBuilderField<List<int>>(
       key: _fieldKey,
-      name: name,
-      initialValue: initialValue,
+      name: widget.name,
+      initialValue: widget.initialValue,
       builder: (field) {
         return Wrap(
           spacing: 8,
@@ -64,12 +71,12 @@ class FormNumbersField extends StatelessWidget {
             for (final number in field.value ?? [])
               _NumberItem(
                 number: number,
-                displayStringForNumber: displayStringForNumber,
+                displayStringForNumber: widget.displayStringForNumber,
                 onTap: () => _onNumberDelete(number),
               ),
             _NumberField(
-              hintText: hintText,
-              maxDigits: maxDigits,
+              hintText: widget.hintText,
+              maxDigits: widget.maxDigits,
               onSubmit: _onNumberSubmit,
               onDelete: _onNumberDelete,
             )
@@ -78,8 +85,6 @@ class FormNumbersField extends StatelessWidget {
       },
     );
   }
-
-  static String defaultStringForNumber(int number) => number.toString();
 }
 
 class _NumberItem extends StatelessWidget {

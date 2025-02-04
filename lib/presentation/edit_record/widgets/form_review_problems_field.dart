@@ -6,8 +6,8 @@ import '../../../model/problem.dart';
 import '../../common/review_problem_card.dart';
 import 'edit_review_problem_dialog.dart';
 
-class FormReviewProblemsField extends StatelessWidget {
-  FormReviewProblemsField({
+class FormReviewProblemsField extends StatefulWidget {
+  const FormReviewProblemsField({
     super.key,
     required this.name,
     this.initialValue = const [],
@@ -16,6 +16,12 @@ class FormReviewProblemsField extends StatelessWidget {
   final String name;
   final List<ReviewProblem> initialValue;
 
+  @override
+  State<FormReviewProblemsField> createState() =>
+      _FormReviewProblemsFieldState();
+}
+
+class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
   final GlobalKey<FormFieldState<List<ReviewProblem>>> _fieldKey = GlobalKey();
 
   void _onReviewProblemCardTap(
@@ -76,8 +82,8 @@ class FormReviewProblemsField extends StatelessWidget {
   Widget build(BuildContext context) {
     return FormBuilderField<List<ReviewProblem>>(
       key: _fieldKey,
-      name: name,
-      initialValue: initialValue,
+      name: widget.name,
+      initialValue: widget.initialValue,
       builder: (field) {
         return GridView.extent(
           maxCrossAxisExtent: 400,
