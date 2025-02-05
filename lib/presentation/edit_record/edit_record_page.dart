@@ -201,41 +201,65 @@ class _EditRecordPageState extends State<EditRecordPage> {
   }
 
   void _onSavePressed() async {
+    if (_isSaving) return;
+
     _checkIfRecordLimitExceeded();
 
-    await _saveRecord();
-  }
+    final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isFormValid) {
+      final firstErrorMessage =
+          _formKey.currentState?.errors.entries.first.value;
+      if (firstErrorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+            content: Text(firstErrorMessage),
+          ),
+        );
+      }
+      return;
+    }
 
-  Future<ExamRecord?> _saveRecord() async {
-    if (_isSaving) return null;
+    final String? userId = _appCubit.state.me?.id;
+    final Map<String, dynamic>? values = _formKey.currentState?.value;
+    if (userId == null || values == null) return;
+
+    final Exam exam = values[_examFieldName];
+    if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
+        exam.isCustomExam) {
+      showCustomExamNotAvailableDialog(context);
+      return;
+    }
+
+    final DateTime examStartedDate = values[_examStartedDateFieldName];
+    final TimeOfDay examStartedTime = values[_examStartedTimeFieldName];
+    final List<int> wrongProblemNumbers = values[_wrongProblemsFieldName];
+
+    ExamRecord record = ExamRecord.create(
+      userId: userId,
+      title: values[_titleFieldName],
+      exam: exam,
+      examStartedTime: DateTime(
+        examStartedDate.year,
+        examStartedDate.month,
+        examStartedDate.day,
+        examStartedTime.hour,
+        examStartedTime.minute,
+      ),
+      examDurationMinutes: int.tryParse(values[_examDurationMinutesFieldName]),
+      score: int.tryParse(values[_scoreFieldName]),
+      grade: int.tryParse(values[_gradeFieldName]),
+      percentile: int.tryParse(values[_percentileFieldName]),
+      standardScore: int.tryParse(values[_standardScoreFieldName]),
+      wrongProblems: wrongProblemNumbers.map(WrongProblem.new).toList(),
+      feedback: values[_feedbackFieldName],
+      reviewProblems: values[_reviewProblemsFieldName],
+    );
+
     setState(() {
       _isSaving = true;
     });
-
-    final userId = _appCubit.state.me!.id;
-    ExamRecord record = ExamRecord.create(
-      userId: userId,
-      title: '', // TODO
-      exam: _initialExam, // TODO
-      examStartedTime: DateTime.now(), // TODO
-      examDurationMinutes: 0, // TODO
-      score: 0, // TODO
-      grade: 0, // TODO
-      percentile: 0, // TODO
-      standardScore: 0, // TODO
-      wrongProblems: [], // TODO
-      feedback: '', // TODO
-      reviewProblems: [], // TODO
-    );
-
-    if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
-        record.exam.isCustomExam) {
-      showCustomExamNotAvailableDialog(context);
-      setState(() {
-        _isSaving = false;
-      });
-      return null;
-    }
 
     final oldRecord = widget.recordToEdit;
     if (oldRecord != null) {
@@ -247,23 +271,24 @@ class _EditRecordPageState extends State<EditRecordPage> {
         ),
       );
       _recordListCubit.onRecordUpdated(record);
+
       if (mounted) Navigator.pop(context);
-    } else {
-      record = await _recordRepository.addExamRecord(record);
-      _recordListCubit.onRecordCreated(record);
-      if (mounted) {
-        Navigator.pushReplacementNamed(
-          context,
-          RecordDetailPage.routeName,
-          arguments: RecordDetailPageArguments(recordId: record.id),
-          result: record,
-        );
-      }
+      return;
+    }
+
+    record = await _recordRepository.addExamRecord(record);
+    _recordListCubit.onRecordCreated(record);
+
+    if (mounted) {
+      Navigator.pushReplacementNamed(
+        context,
+        RecordDetailPage.routeName,
+        arguments: RecordDetailPageArguments(recordId: record.id),
+        result: record,
+      );
     }
 
     _logEvent('[EditExamRecordPage] Exam record saved');
-
-    return record;
   }
 
   void _onPopInvokedWithResult(bool didPop, _) {
@@ -368,7 +393,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '점수',
                 child: FormTextField(
                   name: _scoreFieldName,
-                  initialValue: _initialScore?.toString(),
+                  initialValue: _initialScore?.toString() ?? '',
                   hintText: '      ',
                   suffixText: '점',
                   textInputAction: TextInputAction.next,
@@ -401,7 +426,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '등급',
                 child: FormTextField(
                   name: _gradeFieldName,
-                  initialValue: _initialGrade?.toString(),
+                  initialValue: _initialGrade?.toString() ?? '',
                   hintText: '   ',
                   suffixText: '등급',
                   textInputAction: TextInputAction.next,
@@ -434,7 +459,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '백분위',
                 child: FormTextField(
                   name: _percentileFieldName,
-                  initialValue: _initialPercentile?.toString(),
+                  initialValue: _initialPercentile?.toString() ?? '',
                   hintText: '      ',
                   suffixText: '%',
                   textInputAction: TextInputAction.next,
@@ -467,7 +492,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '표준점수',
                 child: FormTextField(
                   name: _standardScoreFieldName,
-                  initialValue: _initialStandardScore?.toString(),
+                  initialValue: _initialStandardScore?.toString() ?? '',
                   hintText: '      ',
                   suffixText: '점',
                   textInputAction: TextInputAction.next,
