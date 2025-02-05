@@ -124,28 +124,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   }
 
   void _onSaveButtonPressed() {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      if (!_appCubit.state.productBenefit.isCustomExamAvailable) {
-        showCustomExamNotAvailableDialog(context);
-        return;
-      }
-
-      final values = _formKey.currentState?.value;
-      if (values == null) return;
-
-      _customExamEditCubit.save(
-        examToEdit: _examToEdit,
-        examName: values[_examNameFieldName],
-        baseExam: values[_baseExamFieldName],
-        startTime: values[_startTimeFieldName],
-        duration: int.parse(values[_durationFieldName]),
-        numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
-        perfectScore: int.parse(values[_perfectScoreFieldName]),
-        isBeforeFinishAnnouncementEnabled:
-            values[_isBeforeFinishAnnouncementEnabledFieldName],
-      );
-      Navigator.pop(context, true);
-    } else {
+    final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isFormValid) {
       final firstErrorMessage =
           _formKey.currentState?.errors.entries.first.value;
       if (firstErrorMessage != null) {
@@ -157,7 +137,30 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           ),
         );
       }
+      return;
     }
+
+    if (!_appCubit.state.productBenefit.isCustomExamAvailable) {
+      showCustomExamNotAvailableDialog(context);
+      return;
+    }
+
+    final values = _formKey.currentState?.value;
+    if (values == null) return;
+
+    _customExamEditCubit.save(
+      examToEdit: _examToEdit,
+      examName: values[_examNameFieldName],
+      baseExam: values[_baseExamFieldName],
+      startTime: values[_startTimeFieldName],
+      duration: int.parse(values[_durationFieldName]),
+      numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
+      perfectScore: int.parse(values[_perfectScoreFieldName]),
+      isBeforeFinishAnnouncementEnabled:
+          values[_isBeforeFinishAnnouncementEnabledFieldName],
+    );
+
+    Navigator.pop(context, true);
   }
 
   void _deleteExam(Exam examToDelete) async {
