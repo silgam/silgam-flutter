@@ -107,9 +107,9 @@ class ReviewProblemCard extends StatelessWidget {
                 ),
               ),
             Divider(
-              height: 0.5,
-              thickness: 0.5,
-              color: Colors.grey.shade300,
+              height: 1,
+              thickness: 1,
+              color: Colors.grey.shade200,
             ),
             const SizedBox(height: 2),
             Padding(
