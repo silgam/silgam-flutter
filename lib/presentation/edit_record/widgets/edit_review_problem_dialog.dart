@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ui/ui.dart';
@@ -123,7 +123,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     field?.didChange(newImagePaths);
   }
 
-  void _onImageAddButtonPressed() async {
+  void _onImageAddButtonTap() async {
     if (_appCubit.state.isOffline) {
       EasyLoading.showToast(
         '오프라인 상태에서는 사진을 추가할 수 없어요.',
@@ -222,22 +222,23 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
               Container(
                 width: 50,
                 height: 50,
+                clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(width: 0.5, color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(6),
+                  color: Colors.white,
                 ),
                 child: GestureDetector(
                   onTap: () => _onImageRemove(imagePath),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Builder(builder: (context) {
-                        if (imagePath.startsWith('http')) {
-                          return CachedNetworkImage(
-                            imageUrl: imagePath,
-                            fit: BoxFit.cover,
-                            progressIndicatorBuilder: (_, __, progress) =>
-                                Center(
+                      if (imagePath.startsWith('http'))
+                        CachedNetworkImage(
+                          imageUrl: imagePath,
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder: (_, __, progress) {
+                            return Center(
                               child: SizedBox(
                                 width: 20,
                                 height: 20,
@@ -246,54 +247,55 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
                                   strokeWidth: 2,
                                 ),
                               ),
-                            ),
-                            errorWidget: (_, __, ___) => Center(
+                            );
+                          },
+                          errorWidget: (_, __, ___) {
+                            return Center(
                               child: Icon(
                                 Icons.image_not_supported_outlined,
                                 size: 18,
-                                color: Colors.grey.shade200,
+                                color: Colors.grey.shade400,
                               ),
-                            ),
-                          );
-                        } else {
-                          return Image.file(
-                            File(imagePath),
-                            fit: BoxFit.cover,
-                          );
-                        }
-                      }),
+                            );
+                          },
+                        )
+                      else
+                        Image.file(
+                          File(imagePath),
+                          fit: BoxFit.cover,
+                        ),
                       Container(
                         alignment: Alignment.topLeft,
                         padding: const EdgeInsets.all(2),
                         child: Icon(
                           Icons.clear,
                           size: 16,
-                          color: Colors.black.withAlpha(180),
+                          color: Colors.black87,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border.all(width: 0.5, color: Colors.grey.shade300),
+            Material(
+              clipBehavior: Clip.hardEdge,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
-                color: Colors.white,
+                side: BorderSide(width: 0.5, color: Colors.grey.shade300),
               ),
-              child: IconButton(
-                onPressed: _onImageAddButtonPressed,
-                icon: SvgPicture.asset(
-                  'assets/add.svg',
-                  colorFilter: ColorFilter.mode(
-                    Colors.grey.shade600,
-                    BlendMode.srcIn,
+              child: InkWell(
+                onTap: _onImageAddButtonTap,
+                splashFactory: NoSplash.splashFactory,
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: Icon(
+                    CupertinoIcons.add,
+                    size: 20,
+                    color: Colors.grey.shade400,
                   ),
                 ),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
               ),
             ),
           ],
@@ -361,24 +363,24 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
         title: widget.reviewProblemAddModeParams == null
             ? '복습할 문제 수정'
             : '복습할 문제 추가',
-      scrollable: true,
-      dimmedBackground: true,
+        scrollable: true,
+        dimmedBackground: true,
         content: _buildForm(),
-      actions: [
-        if (widget.reviewProblemEditModeParams != null)
-          CustomTextButton.destructive(
-            text: '삭제',
-            onPressed: _onDeleteButtonPressed,
+        actions: [
+          if (widget.reviewProblemEditModeParams != null)
+            CustomTextButton.destructive(
+              text: '삭제',
+              onPressed: _onDeleteButtonPressed,
+            ),
+          CustomTextButton.secondary(
+            text: '취소',
+            onPressed: _onCancelButtonPressed,
           ),
-        CustomTextButton.secondary(
-          text: '취소',
-          onPressed: _onCancelButtonPressed,
-        ),
-        CustomTextButton.primary(
-          text: widget.reviewProblemAddModeParams == null ? '수정' : '추가',
-          onPressed: _onConfirmButtonPressed,
-        ),
-      ],
+          CustomTextButton.primary(
+            text: widget.reviewProblemAddModeParams == null ? '수정' : '추가',
+            onPressed: _onConfirmButtonPressed,
+          ),
+        ],
       ),
     );
   }
