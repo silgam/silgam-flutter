@@ -355,15 +355,15 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomAlertDialog.customContent(
-      title:
-          widget.reviewProblemAddModeParams == null ? '복습할 문제 수정' : '복습할 문제 추가',
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: CustomAlertDialog.customContent(
+        title: widget.reviewProblemAddModeParams == null
+            ? '복습할 문제 수정'
+            : '복습할 문제 추가',
       scrollable: true,
       dimmedBackground: true,
-      content: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: _buildForm(),
-      ),
+        content: _buildForm(),
       actions: [
         if (widget.reviewProblemEditModeParams != null)
           CustomTextButton.destructive(
@@ -379,6 +379,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           onPressed: _onConfirmButtonPressed,
         ),
       ],
+      ),
     );
   }
 }
