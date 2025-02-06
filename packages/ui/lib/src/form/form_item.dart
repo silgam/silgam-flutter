@@ -49,6 +49,7 @@ class _FormLabel extends StatelessWidget {
       style: TextStyle(
         color: Colors.grey.shade900,
         fontWeight: FontWeight.w500,
+        fontSize: 15,
       ),
     );
 
