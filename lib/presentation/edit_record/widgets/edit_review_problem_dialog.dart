@@ -111,6 +111,199 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     );
   }
 
+  void _onTitleChanged(String title) {
+    _isTitleFirstEdit = false;
+
+    if (!_isChanged) {
+      setState(() {
+        _isChanged = true;
+      });
+    }
+
+    if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
+      setState(() {
+        _isTitleEmpty = false;
+      });
+      return;
+    }
+    if (!_isTitleEmpty && _titleEditingController.text.isEmpty) {
+      setState(() {
+        _isTitleEmpty = true;
+      });
+      return;
+    }
+  }
+
+  void _onMemoChanged(_) {
+    if (!_isChanged) {
+      setState(() {
+        _isChanged = true;
+      });
+    }
+  }
+
+  void _onImageTapped(String imagePath) {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진을 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
+    setState(() {
+      _isChanged = true;
+      _tempImagePaths.remove(imagePath);
+    });
+  }
+
+  void _onImageAddButtonPressed() async {
+    if (_appCubit.state.isOffline) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진을 추가할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
+    final picker = ImagePicker();
+    List<XFile> files = await picker.pickMultiImage();
+    setState(() {
+      _isChanged = true;
+      _tempImagePaths.addAll(files.map((e) => e.path));
+    });
+  }
+
+  void _onDeleteButtonPressed() {
+    if (_appCubit.state.isOffline && _tempImagePaths.isNotEmpty) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
+    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
+    reviewProblemEditModeParams
+        ?.onReviewProblemDelete(reviewProblemEditModeParams.initialData);
+
+    Navigator.pop(context);
+  }
+
+  void _onCancelButtonPressed() {
+    Navigator.maybePop(context);
+  }
+
+  void _onConfirmButtonPressed() {
+    if (_isTitleEmpty) {
+      setState(() {
+        _isTitleFirstEdit = false;
+      });
+      return;
+    }
+
+    final newProblem = ReviewProblem(
+      title: _titleEditingController.text,
+      memo: _memoEditingController.text,
+      imagePaths: _tempImagePaths,
+    );
+
+    final reviewProblemAddModeParams = widget.reviewProblemAddModeParams;
+    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
+
+    reviewProblemAddModeParams?.onReviewProblemAdd(newProblem);
+    reviewProblemEditModeParams?.onReviewProblemEdit(
+        reviewProblemEditModeParams.initialData, newProblem);
+
+    Navigator.pop(context);
+  }
+
+  Widget _buildImages() {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (String imagePath in _tempImagePaths)
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: GestureDetector(
+              onTap: () => _onImageTapped(imagePath),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Builder(builder: (context) {
+                    if (imagePath.startsWith('http')) {
+                      return CachedNetworkImage(
+                        imageUrl: imagePath,
+                        fit: BoxFit.cover,
+                        progressIndicatorBuilder: (_, __, progress) => Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              value: progress.progress,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 18,
+                            color: Colors.grey.shade200,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Image.file(
+                        File(imagePath),
+                        fit: BoxFit.cover,
+                      );
+                    }
+                  }),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    padding: const EdgeInsets.all(2),
+                    child: Icon(
+                      Icons.clear,
+                      size: 16,
+                      color: Colors.black.withAlpha(180),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(6),
+            color: Colors.white,
+          ),
+          child: IconButton(
+            onPressed: _onImageAddButtonPressed,
+            icon: SvgPicture.asset(
+              'assets/add.svg',
+              colorFilter: ColorFilter.mode(
+                Colors.grey.shade600,
+                BlendMode.srcIn,
+              ),
+            ),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomAlertDialog.customContent(
@@ -243,198 +436,5 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
       ],
       scrollable: true,
     );
-  }
-
-  Widget _buildImages() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        for (String imagePath in _tempImagePaths)
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: GestureDetector(
-              onTap: () => _onImageTapped(imagePath),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Builder(builder: (context) {
-                    if (imagePath.startsWith('http')) {
-                      return CachedNetworkImage(
-                        imageUrl: imagePath,
-                        fit: BoxFit.cover,
-                        progressIndicatorBuilder: (_, __, progress) => Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              value: progress.progress,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => Center(
-                          child: Icon(
-                            Icons.image_not_supported_outlined,
-                            size: 18,
-                            color: Colors.grey.shade200,
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Image.file(
-                        File(imagePath),
-                        fit: BoxFit.cover,
-                      );
-                    }
-                  }),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    padding: const EdgeInsets.all(2),
-                    child: Icon(
-                      Icons.clear,
-                      size: 16,
-                      color: Colors.black.withAlpha(180),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(6),
-            color: Colors.white,
-          ),
-          child: IconButton(
-            onPressed: _onImageAddButtonPressed,
-            icon: SvgPicture.asset(
-              'assets/add.svg',
-              colorFilter: ColorFilter.mode(
-                Colors.grey.shade600,
-                BlendMode.srcIn,
-              ),
-            ),
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _onTitleChanged(String title) {
-    _isTitleFirstEdit = false;
-
-    if (!_isChanged) {
-      setState(() {
-        _isChanged = true;
-      });
-    }
-
-    if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
-      setState(() {
-        _isTitleEmpty = false;
-      });
-      return;
-    }
-    if (!_isTitleEmpty && _titleEditingController.text.isEmpty) {
-      setState(() {
-        _isTitleEmpty = true;
-      });
-      return;
-    }
-  }
-
-  void _onMemoChanged(_) {
-    if (!_isChanged) {
-      setState(() {
-        _isChanged = true;
-      });
-    }
-  }
-
-  void _onImageTapped(String imagePath) {
-    if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진을 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
-      return;
-    }
-
-    setState(() {
-      _isChanged = true;
-      _tempImagePaths.remove(imagePath);
-    });
-  }
-
-  void _onImageAddButtonPressed() async {
-    if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진을 추가할 수 없어요.',
-        dismissOnTap: true,
-      );
-      return;
-    }
-
-    final picker = ImagePicker();
-    List<XFile> files = await picker.pickMultiImage();
-    setState(() {
-      _isChanged = true;
-      _tempImagePaths.addAll(files.map((e) => e.path));
-    });
-  }
-
-  void _onDeleteButtonPressed() {
-    if (_appCubit.state.isOffline && _tempImagePaths.isNotEmpty) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
-      return;
-    }
-
-    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
-    reviewProblemEditModeParams
-        ?.onReviewProblemDelete(reviewProblemEditModeParams.initialData);
-
-    Navigator.pop(context);
-  }
-
-  void _onCancelButtonPressed() {
-    Navigator.maybePop(context);
-  }
-
-  void _onConfirmButtonPressed() {
-    if (_isTitleEmpty) {
-      setState(() {
-        _isTitleFirstEdit = false;
-      });
-      return;
-    }
-
-    final newProblem = ReviewProblem(
-      title: _titleEditingController.text,
-      memo: _memoEditingController.text,
-      imagePaths: _tempImagePaths,
-    );
-
-    final reviewProblemAddModeParams = widget.reviewProblemAddModeParams;
-    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
-
-    reviewProblemAddModeParams?.onReviewProblemAdd(newProblem);
-    reviewProblemEditModeParams?.onReviewProblemEdit(
-        reviewProblemEditModeParams.initialData, newProblem);
-
-    Navigator.pop(context);
   }
 }
