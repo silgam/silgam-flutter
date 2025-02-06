@@ -54,6 +54,8 @@ class EditReviewProblemDialog extends StatefulWidget {
           onReviewProblemDelete: onReviewProblemDelete,
         );
 
+  static const String routeName = 'edit_review_problem_dialog';
+
   @override
   EditReviewProblemDialogState createState() => EditReviewProblemDialogState();
 }
@@ -80,7 +82,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(
-        name: 'edit_review_problem_dialog/exit_confirm_dialog',
+        name: '${EditReviewProblemDialog.routeName}/exit_confirm_dialog',
       ),
       builder: (context) {
         return CustomAlertDialog(
@@ -149,11 +151,37 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
       return;
     }
 
-    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
-    reviewProblemEditModeParams
-        ?.onReviewProblemDelete(reviewProblemEditModeParams.initialData);
-
-    Navigator.pop(context);
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${EditReviewProblemDialog.routeName}/delete_confirm_dialog',
+      ),
+      builder: (context) {
+        return CustomAlertDialog(
+          title: '정말 이 복습할 문제를 삭제하실 건가요?',
+          content: _formKey.currentState?.fields[_titleFieldName]?.value,
+          actions: [
+            CustomTextButton.secondary(
+              text: '취소',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            CustomTextButton.destructive(
+              text: '삭제',
+              onPressed: () {
+                final reviewProblemEditModeParams =
+                    widget.reviewProblemEditModeParams;
+                reviewProblemEditModeParams?.onReviewProblemDelete(
+                    reviewProblemEditModeParams.initialData);
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _onCancelButtonPressed() {
