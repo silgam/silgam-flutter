@@ -38,18 +38,14 @@ class EditRecordPageArguments {
 }
 
 class EditRecordPage extends StatefulWidget {
-  EditRecordPage({
+  const EditRecordPage({
     super.key,
     this.recordToEdit,
     this.inputExam,
     this.prefillFeedback,
     this.examStartedTime,
     this.examFinishedTime,
-  }) : examDurationMinutes = examStartedTime != null && examFinishedTime != null
-            ? examFinishedTime
-                .difference(examStartedTime)
-                .inMinutesWithCorrection
-            : null;
+  });
 
   static const routeName = '/edit_record';
 
@@ -58,7 +54,6 @@ class EditRecordPage extends StatefulWidget {
   final String? prefillFeedback;
   final DateTime? examStartedTime;
   final DateTime? examFinishedTime;
-  final int? examDurationMinutes;
 
   @override
   State<EditRecordPage> createState() => _EditRecordPageState();
@@ -69,7 +64,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final AppCubit _appCubit = getIt.get();
   final RecordListCubit _recordListCubit = getIt.get();
 
+  late final ExamRecord? _recordToEdit = widget.recordToEdit;
+  late final bool _isEditingMode = _recordToEdit != null;
   late final List<Exam> _exams = _appCubit.state.getAllExams();
+  late final List<ExamRecord> _titleAutocompleteRecords =
+      (LinkedHashSet<ExamRecord>(
+    equals: (a, b) => a.title == b.title,
+    hashCode: (a) => a.title.hashCode,
+  )..addAll(_recordListCubit.state.originalRecords))
+          .toList();
 
   final GlobalKey<FormBuilderState> _formKey = GlobalKey();
 
@@ -85,8 +88,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final String _wrongProblemsFieldName = 'wrongProblems';
   final String _feedbackFieldName = 'feedback';
   final String _reviewProblemsFieldName = 'reviewProblems';
-
-  late final ExamRecord? _recordToEdit = widget.recordToEdit;
 
   late final String? _initialTitle =
       _recordToEdit?.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '');
@@ -104,8 +105,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
       TimeOfDay.fromDateTime(_initialExamStartedDate);
   late final int _initialExamDurationMinutes =
       _recordToEdit?.examDurationMinutes ??
-          widget.examDurationMinutes ??
-          _initialExam.durationMinutes;
+          (widget.examStartedTime != null && widget.examFinishedTime != null
+              ? widget.examFinishedTime!
+                  .difference(widget.examStartedTime!)
+                  .inMinutesWithCorrection
+              : _initialExam.durationMinutes);
   late final List<WrongProblem> _initialWrongProblems =
       _recordToEdit?.wrongProblems ?? [];
   late final String? _initialFeedback =
@@ -113,19 +117,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
   late final List<ReviewProblem> _initialReviewProblems =
       _recordToEdit?.reviewProblems ?? [];
 
-  late final bool _isEditingMode = _recordToEdit != null;
-
   bool _isChanged = false;
   bool _isSaving = false;
   late Exam _previousExam = _initialExam;
   late int _wrongProblemMaxDigits =
       _initialExam.numberOfQuestions.toString().length;
-
-  late final List<ExamRecord> _autocompleteRecords = (LinkedHashSet<ExamRecord>(
-    equals: (a, b) => a.title == b.title,
-    hashCode: (a) => a.title.hashCode,
-  )..addAll(_recordListCubit.state.originalRecords))
-      .toList();
 
   @override
   void initState() {
@@ -294,13 +290,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _isSaving = true;
     });
 
-    final oldRecord = widget.recordToEdit;
-    if (oldRecord != null) {
+    if (_recordToEdit != null) {
       record = await _recordRepository.updateExamRecord(
-        oldRecord: oldRecord,
+        oldRecord: _recordToEdit,
         newRecord: record.copyWith(
-          id: oldRecord.id,
-          createdAt: oldRecord.createdAt,
+          id: _recordToEdit.id,
+          createdAt: _recordToEdit.createdAt,
         ),
       );
       _recordListCubit.onRecordUpdated(record);
@@ -347,7 +342,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
               initialValue: TextEditingValue(text: _initialTitle ?? ''),
               displayStringForOption: (option) => option.title,
               optionsBuilder: (textEditingValue) {
-                return _autocompleteRecords.where((element) {
+                return _titleAutocompleteRecords.where((element) {
                   return element.title.contains(textEditingValue.text);
                 }).toList();
               },
