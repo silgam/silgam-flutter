@@ -51,16 +51,15 @@ class ExamRecordRepository {
     required ExamRecord oldRecord,
     required ExamRecord newRecord,
   }) async {
-    List<String> oldImages = oldRecord.reviewProblems
-        .expand((element) => element.imagePaths)
-        .toList();
-    List<String> newImages = newRecord.reviewProblems
-        .expand((element) => element.imagePaths)
-        .toList();
-    for (final oldImage in oldImages) {
-      final isImageRemoved = !newImages.contains(oldImage);
-      if (isImageRemoved) await _deleteImage(oldImage);
-    }
+    final oldImages =
+        oldRecord.reviewProblems.expand((element) => element.imagePaths);
+    final newImages =
+        newRecord.reviewProblems.expand((element) => element.imagePaths);
+
+    final removedImages =
+        oldImages.where((image) => !newImages.contains(image));
+    await _deleteImages(removedImages);
+
     await _uploadProblemImages(newRecord.userId, newRecord);
     _recordsRef.doc(newRecord.id).update(newRecord.toJson());
     return newRecord;
@@ -69,21 +68,27 @@ class ExamRecordRepository {
   Future<void> deleteExamRecord(ExamRecord examRecord) async {
     final allImages =
         examRecord.reviewProblems.expand((element) => element.imagePaths);
-    for (final imageUrl in allImages) {
-      await _deleteImage(imageUrl);
-    }
+    await _deleteImages(allImages);
+
     _recordsRef.doc(examRecord.id).delete();
   }
 
   Future<void> _uploadProblemImages(String userId, ExamRecord record) async {
+    final List<Future> futures = [];
+
     for (final reviewProblem in record.reviewProblems) {
-      for (int i = 0; i < reviewProblem.imagePaths.length; i++) {
-        if (reviewProblem.imagePaths[i].startsWith('http')) continue;
-        final imageUrl =
-            await _uploadImage(userId, reviewProblem.imagePaths[i]);
-        reviewProblem.imagePaths[i] = imageUrl;
+      for (final (index, imagePath) in reviewProblem.imagePaths.indexed) {
+        if (imagePath.startsWith('http')) continue;
+
+        futures.add(
+          _uploadImage(userId, imagePath).then((imageUrl) {
+            reviewProblem.imagePaths[index] = imageUrl;
+          }),
+        );
       }
     }
+
+    await Future.wait(futures);
   }
 
   Future<String> _uploadImage(String userId, String imagePath) async {
@@ -95,8 +100,11 @@ class ExamRecordRepository {
     return url;
   }
 
+  Future<void> _deleteImages(Iterable<String> imagePaths) async {
+    await Future.wait(imagePaths.map(_deleteImage));
+  }
+
   Future<void> _deleteImage(String imagePath) async {
-    final reference = FirebaseStorage.instance.refFromURL(imagePath);
-    return await reference.delete();
+    await FirebaseStorage.instance.refFromURL(imagePath).delete();
   }
 }
