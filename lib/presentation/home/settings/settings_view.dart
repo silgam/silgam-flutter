@@ -113,6 +113,7 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       ),
+      const SettingDivider(),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
               title: '랩타임 기능 사용',
