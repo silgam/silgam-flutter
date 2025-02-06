@@ -114,11 +114,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
       _recordToEdit?.reviewProblems ?? [];
 
   late final bool _isEditingMode = _recordToEdit != null;
+
+  bool _isChanged = false;
   bool _isSaving = false;
   late Exam _previousExam = _initialExam;
   late int _wrongProblemMaxDigits =
       _initialExam.numberOfQuestions.toString().length;
-  bool _isChanged = false;
 
   late final List<ExamRecord> _autocompleteRecords = (LinkedHashSet<ExamRecord>(
     equals: (a, b) => a.title == b.title,
@@ -174,6 +175,38 @@ class _EditRecordPageState extends State<EditRecordPage> {
         },
         'is_editing_mode': _isEditingMode,
         'input_exam_existed': widget.inputExam != null,
+      },
+    );
+  }
+
+  void _onPopInvokedWithResult(bool didPop, _) {
+    if (didPop) return;
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${EditRecordPage.routeName}/exit_confirm_dialog',
+      ),
+      builder: (context) {
+        return CustomAlertDialog(
+          title: '아직 저장하지 않았어요!',
+          content: '저장하지 않고 나가시겠어요?',
+          actions: [
+            CustomTextButton.secondary(
+              text: '취소',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            CustomTextButton.destructive(
+              text: '저장하지 않고 나가기',
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -289,38 +322,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     }
 
     _logEvent('[EditExamRecordPage] Exam record saved');
-  }
-
-  void _onPopInvokedWithResult(bool didPop, _) {
-    if (didPop) return;
-
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(
-        name: '${EditRecordPage.routeName}/exit_confirm_dialog',
-      ),
-      builder: (context) {
-        return CustomAlertDialog(
-          title: '아직 저장하지 않았어요!',
-          content: '저장하지 않고 나가시겠어요?',
-          actions: [
-            CustomTextButton.secondary(
-              text: '취소',
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            CustomTextButton.destructive(
-              text: '저장하지 않고 나가기',
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Widget _buildForm() {
