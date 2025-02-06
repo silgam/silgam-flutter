@@ -7,6 +7,7 @@ class CustomAlertDialog extends StatelessWidget {
     String? content,
     this.actions,
     this.scrollable = false,
+    this.dimmedBackground = false,
   }) : content = content != null ? Text(content) : null;
 
   const CustomAlertDialog.customContent({
@@ -15,12 +16,14 @@ class CustomAlertDialog extends StatelessWidget {
     this.content,
     this.actions,
     this.scrollable = false,
+    this.dimmedBackground = false,
   });
 
   final String? title;
   final Widget? content;
   final List<Widget>? actions;
   final bool scrollable;
+  final bool dimmedBackground;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +40,8 @@ class CustomAlertDialog extends StatelessWidget {
       content: content,
       actions: actions,
       scrollable: scrollable,
+      backgroundColor:
+          dimmedBackground ? Theme.of(context).scaffoldBackgroundColor : null,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),

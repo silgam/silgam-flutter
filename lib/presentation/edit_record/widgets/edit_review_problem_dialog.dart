@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ui/ui.dart';
 
@@ -58,29 +60,22 @@ class EditReviewProblemDialog extends StatefulWidget {
 
 class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   final AppCubit _appCubit = getIt.get();
-  final _titleEditingController = TextEditingController();
-  final _memoEditingController = TextEditingController();
-  final List<String> _tempImagePaths = [];
+  final GlobalKey<FormBuilderState> _formKey = GlobalKey();
 
-  bool _isTitleEmpty = true;
-  bool _isTitleFirstEdit = true;
+  final String _titleFieldName = 'title';
+  final String _memoFieldName = 'memo';
+  final String _imagePathsFieldName = 'imagePaths';
+
+  late final ReviewProblem? _initialData =
+      widget.reviewProblemEditModeParams?.initialData;
+  late final String? _initialTitle = _initialData?.title;
+  late final String? _initialMemo = _initialData?.memo;
+  late final List<String> _initialImagePaths = _initialData?.imagePaths ?? [];
+
   bool _isChanged = false;
 
-  @override
-  void initState() {
-    super.initState();
-
-    final editModeParams = widget.reviewProblemEditModeParams;
-    if (editModeParams != null) {
-      _titleEditingController.text = editModeParams.initialData.title;
-      _memoEditingController.text = editModeParams.initialData.memo;
-      _tempImagePaths.addAll(editModeParams.initialData.imagePaths);
-      _isTitleEmpty = _titleEditingController.text.isEmpty;
-    }
-  }
-
-  void _onPopInvokedWithResult(bool value, _) {
-    if (value) return;
+  void _onPopInvokedWithResult(bool didPop, _) {
+    if (didPop) return;
 
     showDialog(
       context: context,
@@ -111,38 +106,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     );
   }
 
-  void _onTitleChanged(String title) {
-    _isTitleFirstEdit = false;
-
-    if (!_isChanged) {
-      setState(() {
-        _isChanged = true;
-      });
-    }
-
-    if (_isTitleEmpty && _titleEditingController.text.isNotEmpty) {
-      setState(() {
-        _isTitleEmpty = false;
-      });
-      return;
-    }
-    if (!_isTitleEmpty && _titleEditingController.text.isEmpty) {
-      setState(() {
-        _isTitleEmpty = true;
-      });
-      return;
-    }
-  }
-
-  void _onMemoChanged(_) {
-    if (!_isChanged) {
-      setState(() {
-        _isChanged = true;
-      });
-    }
-  }
-
-  void _onImageTapped(String imagePath) {
+  void _onImageRemove(String imagePath) {
     if (_appCubit.state.isOffline) {
       EasyLoading.showToast(
         '오프라인 상태에서는 사진을 삭제할 수 없어요.',
@@ -151,10 +115,10 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
       return;
     }
 
-    setState(() {
-      _isChanged = true;
-      _tempImagePaths.remove(imagePath);
-    });
+    final field = _formKey.currentState?.fields[_imagePathsFieldName];
+    final List<String> newImagePaths = [...?field?.value];
+    newImagePaths.remove(imagePath);
+    field?.didChange(newImagePaths);
   }
 
   void _onImageAddButtonPressed() async {
@@ -168,14 +132,16 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
 
     final picker = ImagePicker();
     List<XFile> files = await picker.pickMultiImage();
-    setState(() {
-      _isChanged = true;
-      _tempImagePaths.addAll(files.map((e) => e.path));
-    });
+    if (files.isEmpty) return;
+
+    final field = _formKey.currentState?.fields[_imagePathsFieldName];
+    final List<String> newImagePaths = [...?field?.value];
+    newImagePaths.addAll(files.map((e) => e.path));
+    field?.didChange(newImagePaths);
   }
 
   void _onDeleteButtonPressed() {
-    if (_appCubit.state.isOffline && _tempImagePaths.isNotEmpty) {
+    if (_appCubit.state.isOffline && _initialImagePaths.isNotEmpty) {
       EasyLoading.showToast(
         '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
         dismissOnTap: true,
@@ -195,229 +161,180 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   }
 
   void _onConfirmButtonPressed() {
-    if (_isTitleEmpty) {
-      setState(() {
-        _isTitleFirstEdit = false;
-      });
-      return;
-    }
+    final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isFormValid) return;
+
+    final Map<String, dynamic>? values = _formKey.currentState?.value;
 
     final newProblem = ReviewProblem(
-      title: _titleEditingController.text,
-      memo: _memoEditingController.text,
-      imagePaths: _tempImagePaths,
+      title: values?[_titleFieldName],
+      memo: values?[_memoFieldName] ?? '',
+      imagePaths: values?[_imagePathsFieldName],
     );
 
-    final reviewProblemAddModeParams = widget.reviewProblemAddModeParams;
-    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
+    widget.reviewProblemAddModeParams?.onReviewProblemAdd(newProblem);
 
-    reviewProblemAddModeParams?.onReviewProblemAdd(newProblem);
+    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
     reviewProblemEditModeParams?.onReviewProblemEdit(
         reviewProblemEditModeParams.initialData, newProblem);
 
     Navigator.pop(context);
   }
 
-  Widget _buildImages() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        for (String imagePath in _tempImagePaths)
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: GestureDetector(
-              onTap: () => _onImageTapped(imagePath),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Builder(builder: (context) {
-                    if (imagePath.startsWith('http')) {
-                      return CachedNetworkImage(
-                        imageUrl: imagePath,
-                        fit: BoxFit.cover,
-                        progressIndicatorBuilder: (_, __, progress) => Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              value: progress.progress,
-                              strokeWidth: 2,
+  Widget _buildImagesField() {
+    return FormBuilderField(
+      name: _imagePathsFieldName,
+      initialValue: _initialImagePaths,
+      builder: (field) {
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final String imagePath in field.value ?? [])
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: GestureDetector(
+                  onTap: () => _onImageRemove(imagePath),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Builder(builder: (context) {
+                        if (imagePath.startsWith('http')) {
+                          return CachedNetworkImage(
+                            imageUrl: imagePath,
+                            fit: BoxFit.cover,
+                            progressIndicatorBuilder: (_, __, progress) =>
+                                Center(
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  value: progress.progress,
+                                  strokeWidth: 2,
+                                ),
+                              ),
                             ),
-                          ),
+                            errorWidget: (_, __, ___) => Center(
+                              child: Icon(
+                                Icons.image_not_supported_outlined,
+                                size: 18,
+                                color: Colors.grey.shade200,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Image.file(
+                            File(imagePath),
+                            fit: BoxFit.cover,
+                          );
+                        }
+                      }),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.all(2),
+                        child: Icon(
+                          Icons.clear,
+                          size: 16,
+                          color: Colors.black.withAlpha(180),
                         ),
-                        errorWidget: (_, __, ___) => Center(
-                          child: Icon(
-                            Icons.image_not_supported_outlined,
-                            size: 18,
-                            color: Colors.grey.shade200,
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Image.file(
-                        File(imagePath),
-                        fit: BoxFit.cover,
-                      );
-                    }
-                  }),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    padding: const EdgeInsets.all(2),
-                    child: Icon(
-                      Icons.clear,
-                      size: 16,
-                      color: Colors.black.withAlpha(180),
-                    ),
-                  )
-                ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border.all(width: 0.5, color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(6),
+                color: Colors.white,
+              ),
+              child: IconButton(
+                onPressed: _onImageAddButtonPressed,
+                icon: SvgPicture.asset(
+                  'assets/add.svg',
+                  colorFilter: ColorFilter.mode(
+                    Colors.grey.shade600,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
               ),
             ),
-          ),
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(6),
-            color: Colors.white,
-          ),
-          child: IconButton(
-            onPressed: _onImageAddButtonPressed,
-            icon: SvgPicture.asset(
-              'assets/add.svg',
-              colorFilter: ColorFilter.mode(
-                Colors.grey.shade600,
-                BlendMode.srcIn,
-              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildForm() {
+    return FormBuilder(
+      key: _formKey,
+      canPop: !_isChanged,
+      onPopInvokedWithResult: _onPopInvokedWithResult,
+      onChanged: () {
+        if (_isChanged) return;
+
+        setState(() {
+          _isChanged = true;
+        });
+      },
+      child: Column(
+        spacing: 20,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FormItem(
+            label: '제목',
+            isRequired: true,
+            child: FormTextField(
+              name: _titleFieldName,
+              initialValue: _initialTitle,
+              hintText: '1번, 3~5번',
+              textInputAction: TextInputAction.next,
+              validator: FormBuilderValidators.compose([
+                FormBuilderValidators.required(errorText: '제목을 입력해주세요.'),
+                FormBuilderValidators.maxLength(100,
+                    errorText: '100자 이하로 입력해주세요.'),
+              ]),
             ),
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
           ),
-        ),
-      ],
+          FormItem(
+            label: '메모',
+            child: FormTextField(
+              name: _memoFieldName,
+              initialValue: _initialMemo,
+              hintText: '이 문제를 틀린 이유, 복습할 점을 적어보세요.',
+              minLines: 2,
+              maxLines: null,
+            ),
+          ),
+          FormItem(
+            label: '사진',
+            child: _buildImagesField(),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomAlertDialog.customContent(
-      title: '복습할 문제 추가',
-      content: PopScope(
-        canPop: !_isChanged,
-        onPopInvokedWithResult: _onPopInvokedWithResult,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: _titleEditingController,
-                onChanged: _onTitleChanged,
-                decoration: InputDecoration(
-                  hintText: '제목 (문제 번호)',
-                  isCollapsed: true,
-                  contentPadding: const EdgeInsets.all(12),
-                  errorStyle: const TextStyle(fontSize: 0, height: 0),
-                  errorText: _isTitleEmpty && !_isTitleFirstEdit ? '' : null,
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  errorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.red,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(6)),
-                  ),
-                  focusedErrorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.red,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(6)),
-                  ),
-                  hintStyle: const TextStyle(fontWeight: FontWeight.w300),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _memoEditingController,
-                onChanged: _onMemoChanged,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                minLines: 2,
-                decoration: InputDecoration(
-                  hintText: '메모 (이 문제를 틀린 이유, 복습할 점을 적어보세요.)',
-                  hintMaxLines: 3,
-                  isCollapsed: true,
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                  ),
-                  contentPadding: const EdgeInsets.all(12),
-                  hintStyle: const TextStyle(
-                    fontWeight: FontWeight.w300,
-                    height: 1.2,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '사진',
-                style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              SingleChildScrollView(
-                child: _buildImages(),
-              ),
-            ],
-          ),
-        ),
+      title:
+          widget.reviewProblemAddModeParams == null ? '복습할 문제 수정' : '복습할 문제 추가',
+      scrollable: true,
+      dimmedBackground: true,
+      content: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: _buildForm(),
       ),
       actions: [
         if (widget.reviewProblemEditModeParams != null)
@@ -434,7 +351,6 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           onPressed: _onConfirmButtonPressed,
         ),
       ],
-      scrollable: true,
     );
   }
 }
