@@ -113,6 +113,7 @@ class _SettingsViewState extends State<SettingsView> {
           },
         ),
       ),
+      const SettingDivider(),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
               title: '랩타임 기능 사용',
@@ -623,11 +624,11 @@ class SettingDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Divider(
-      color: Colors.black.withAlpha(15),
-      height: 0.5,
-      thickness: 0.5,
-      indent: 20,
-      endIndent: 20,
+      color: Colors.grey.shade200,
+      height: 1,
+      thickness: 1,
+      indent: 12,
+      endIndent: 12,
     );
   }
 }
