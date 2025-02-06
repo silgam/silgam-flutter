@@ -19,7 +19,7 @@ class FormTextField extends StatelessWidget {
     this.focusNode,
     this.onSubmitted,
     this.minLines,
-    this.maxLines,
+    this.maxLines = 1,
   });
 
   final String name;
