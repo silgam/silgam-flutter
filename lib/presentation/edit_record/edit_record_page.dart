@@ -15,7 +15,6 @@ import '../../util/duration_extension.dart';
 import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/custom_menu_bar.dart';
 import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
@@ -616,79 +615,23 @@ class _EditRecordPageState extends State<EditRecordPage> {
     );
   }
 
-  Widget _buildBody() {
-    return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CustomMenuBar(
-            title: _isEditingMode ? '기록 수정' : '기록 작성',
-          ),
-          Expanded(
-            child: Stack(
-              children: [
-                _buildForm(),
-                Positioned.fill(
-                  top: null,
-                  child: IgnorePointer(
-                    child: Container(
-                      height: 24,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          stops: [0, 0.4, 1],
-                          colors: [
-                            Theme.of(context)
-                                .scaffoldBackgroundColor
-                                .withAlpha(0),
-                            Theme.of(context)
-                                .scaffoldBackgroundColor
-                                .withAlpha(70),
-                            Theme.of(context).scaffoldBackgroundColor,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: FilledButton(
-              onPressed: _onSavePressed,
-              style: FilledButton.styleFrom(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                textStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              child: const Text('저장'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
-        child: Scaffold(
-          body: ProgressOverlay(
-            isProgressing: _isSaving,
-            description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-            child: _buildBody(),
+        child: ProgressOverlay(
+          isProgressing: _isSaving,
+          description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
+          child: PageLayout(
+            title: _isEditingMode ? '기록 수정' : '기록 작성',
+            onBackPressed: _onCancelPressed,
+            bottomAction: PageLayoutBottomAction(
+              label: '저장',
+              onPressed: _onSavePressed,
+            ),
+            child: _buildForm(),
           ),
         ),
       ),
