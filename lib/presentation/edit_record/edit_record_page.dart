@@ -15,6 +15,7 @@ import '../../util/duration_extension.dart';
 import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
+import '../common/custom_menu_bar.dart';
 import '../common/dialog.dart';
 import '../common/progress_overlay.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
@@ -332,9 +333,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
         });
       },
       child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.all(20),
         children: [
-          const SizedBox(height: 28),
           FormItem(
             label: '모의고사 이름',
             isRequired: true,
@@ -611,70 +611,70 @@ class _EditRecordPageState extends State<EditRecordPage> {
               initialValue: _initialReviewProblems,
             ),
           ),
-          const SizedBox(height: 68),
         ],
       ),
     );
   }
 
-  Widget _buildBottomButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: TextButton(
-            onPressed: _onCancelPressed,
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              foregroundColor: Colors.grey,
-            ),
-            child: Text(
-              '취소',
-              style: TextStyle(color: Colors.grey.shade600),
-            ),
-          ),
-        ),
-        Expanded(
-          child: TextButton(
-            onPressed: _onSavePressed,
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              _isEditingMode ? '수정' : '저장',
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildBody() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        SafeArea(
-          child: _buildForm(),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom,
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          CustomMenuBar(
+            title: _isEditingMode ? '기록 수정' : '기록 작성',
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                _buildForm(),
+                Positioned.fill(
+                  top: null,
+                  child: IgnorePointer(
+                    child: Container(
+                      height: 24,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: [0, 0.4, 1],
+                          colors: [
+                            Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .withAlpha(0),
+                            Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .withAlpha(70),
+                            Theme.of(context).scaffoldBackgroundColor,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey.shade100,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: FilledButton(
+              onPressed: _onSavePressed,
+              style: FilledButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
+              child: const Text('저장'),
             ),
-            child: _buildBottomButtons(),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
