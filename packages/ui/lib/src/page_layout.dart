@@ -35,9 +35,7 @@ class _PageLayoutState extends State<PageLayout> {
   double _lastBottomInset = 0;
   bool _isKeyboardVisible = false;
 
-  @override
-  Widget build(BuildContext context) {
-    final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+  void _updateKeyboardVisibility(double bottomInset) {
     if (bottomInset > _maxBottomInset) {
       _maxBottomInset = bottomInset;
     }
@@ -51,6 +49,12 @@ class _PageLayoutState extends State<PageLayout> {
     }
 
     _lastBottomInset = bottomInset;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    _updateKeyboardVisibility(bottomInset);
 
     final bottomAction = widget.bottomAction;
 
