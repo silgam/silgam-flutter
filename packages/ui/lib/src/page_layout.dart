@@ -10,7 +10,7 @@ class PageLayoutBottomAction {
   final VoidCallback? onPressed;
 }
 
-class PageLayout extends StatelessWidget {
+class PageLayout extends StatefulWidget {
   const PageLayout({
     super.key,
     this.title,
@@ -27,8 +27,32 @@ class PageLayout extends StatelessWidget {
   final Widget child;
 
   @override
+  State<PageLayout> createState() => _PageLayoutState();
+}
+
+class _PageLayoutState extends State<PageLayout> {
+  double _maxBottomInset = 0;
+  double _lastBottomInset = 0;
+  bool _isKeyboardVisible = false;
+
+  @override
   Widget build(BuildContext context) {
-    final bottomAction = this.bottomAction;
+    final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    if (bottomInset > _maxBottomInset) {
+      _maxBottomInset = bottomInset;
+    }
+
+    final bool isKeyboardShowingUp = bottomInset > _lastBottomInset;
+    final double keyboardVisibleRatio = bottomInset / _maxBottomInset;
+    if (isKeyboardShowingUp && keyboardVisibleRatio > 0.3) {
+      _isKeyboardVisible = true;
+    } else if (!isKeyboardShowingUp && keyboardVisibleRatio < 0.7) {
+      _isKeyboardVisible = false;
+    }
+
+    _lastBottomInset = bottomInset;
+
+    final bottomAction = widget.bottomAction;
 
     return Scaffold(
       body: SafeArea(
@@ -36,38 +60,25 @@ class PageLayout extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _AppBar(
-              title: title,
-              onBackPressed: onBackPressed,
-              actions: appBarActions,
+              title: widget.title,
+              onBackPressed: widget.onBackPressed,
+              actions: widget.appBarActions,
             ),
             Expanded(
               child: bottomAction != null
                   ? Stack(
                       children: [
-                        child,
+                        widget.child,
                         _BottomFadeGradient(),
                       ],
                     )
-                  : child,
+                  : widget.child,
             ),
             if (bottomAction != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: FilledButton(
-                  onPressed: bottomAction.onPressed,
-                  style: FilledButton.styleFrom(
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  child: Text(bottomAction.label),
-                ),
+              _BottomButton(
+                label: bottomAction.label,
+                isKeyboardVisible: _isKeyboardVisible,
+                onPressed: bottomAction.onPressed,
               ),
           ],
         ),
@@ -99,6 +110,50 @@ class _BottomFadeGradient extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _BottomButton extends StatelessWidget {
+  const _BottomButton({
+    required this.label,
+    required this.isKeyboardVisible,
+    this.onPressed,
+  });
+
+  static const _animationDuration = Duration(milliseconds: 50);
+
+  final String label;
+  final bool isKeyboardVisible;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedPadding(
+      duration: _animationDuration,
+      padding: EdgeInsets.symmetric(horizontal: isKeyboardVisible ? 0 : 16),
+      child: TweenAnimationBuilder(
+        duration: _animationDuration,
+        tween: Tween<double>(begin: 12, end: isKeyboardVisible ? 0 : 12),
+        builder: (context, value, child) {
+          return FilledButton(
+            onPressed: onPressed,
+            style: FilledButton.styleFrom(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(value),
+              ),
+              textStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            child: child,
+          );
+        },
+        child: Text(label),
       ),
     );
   }
