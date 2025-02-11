@@ -35,6 +35,16 @@ class _PageLayoutState extends State<PageLayout> {
   double _lastBottomInset = 0;
   bool _isKeyboardVisible = false;
 
+  /// [_BottomButton]에 전달될 [_isKeyboardVisible] 값을 계산하기 위한 함수.
+  ///
+  /// 키보드가 올라온 경우에는 [_BottomButton]이 키보드 바로 위에 위치하기 때문에 디자인 변경이 필요.
+  ///
+  /// 구현 참고:
+  ///
+  /// * 키보드 종류에 따라 높이가 다를 수 있음.
+  ///   (iOS에서 텍스트, 숫자, 이모지 키보드의 높이가 각각 다름)
+  /// * 키보드 올라오는, 내려가는 애니메이션이 없거나 기기마다 다를 수 있음.
+  /// * 키보드가 다 올라간 후 또는 다 내려간 후에 [_isKeyboardVisible] 값이 변경되면 어색함.
   void _updateKeyboardVisibility(double bottomInset) {
     if (bottomInset > _maxBottomInset) {
       _maxBottomInset = bottomInset;
