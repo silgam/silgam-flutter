@@ -189,67 +189,76 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
       name: _imagePathsFieldName,
       initialValue: _initialImagePaths,
       builder: (field) {
-        return Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        return GridView.extent(
+          maxCrossAxisExtent: 280,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             for (final String imagePath in field.value ?? [])
               Container(
-                width: 50,
-                height: 50,
                 clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
                   border: Border.all(width: 0.5, color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(6),
                   color: Colors.white,
                 ),
-                child: GestureDetector(
-                  onTap: () => _onImageRemove(imagePath),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if (imagePath.startsWith('http'))
-                        CachedNetworkImage(
-                          imageUrl: imagePath,
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder: (_, __, progress) {
-                            return Center(
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  value: progress.progress,
-                                  strokeWidth: 2,
-                                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (imagePath.startsWith('http'))
+                      CachedNetworkImage(
+                        imageUrl: imagePath,
+                        fit: BoxFit.cover,
+                        progressIndicatorBuilder: (_, __, progress) {
+                          return Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                value: progress.progress,
+                                strokeWidth: 2,
                               ),
-                            );
-                          },
-                          errorWidget: (_, __, ___) {
-                            return Center(
-                              child: Icon(
-                                Icons.image_not_supported_outlined,
-                                size: 18,
-                                color: Colors.grey.shade400,
-                              ),
-                            );
-                          },
-                        )
-                      else
-                        Image.file(
-                          File(imagePath),
-                          fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                        errorWidget: (_, __, ___) {
+                          return Center(
+                            child: Icon(
+                              Icons.image_not_supported_outlined,
+                              size: 18,
+                              color: Colors.grey.shade400,
+                            ),
+                          );
+                        },
+                      )
+                    else
+                      Image.file(
+                        File(imagePath),
+                        fit: BoxFit.cover,
+                      ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Material(
+                        color: Colors.white54,
+                        clipBehavior: Clip.hardEdge,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
                         ),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        padding: const EdgeInsets.all(2),
-                        child: Icon(
-                          Icons.clear,
-                          size: 16,
-                          color: Colors.black87,
+                        child: InkWell(
+                          onTap: () => _onImageRemove(imagePath),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: Icon(
+                              Icons.clear,
+                            ),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             Material(
@@ -262,14 +271,10 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
               child: InkWell(
                 onTap: _onImageAddButtonTap,
                 splashFactory: NoSplash.splashFactory,
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Icon(
-                    CupertinoIcons.add,
-                    size: 20,
-                    color: Colors.grey.shade400,
-                  ),
+                child: Icon(
+                  CupertinoIcons.add,
+                  size: 24,
+                  color: Colors.grey.shade600,
                 ),
               ),
             ),
