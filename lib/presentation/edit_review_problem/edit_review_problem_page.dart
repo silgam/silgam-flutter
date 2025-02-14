@@ -9,9 +9,9 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ui/ui.dart';
 
-import '../../../model/problem.dart';
-import '../../../util/injection.dart';
-import '../../app/cubit/app_cubit.dart';
+import '../../model/problem.dart';
+import '../../util/injection.dart';
+import '../app/cubit/app_cubit.dart';
 
 typedef ReviewProblemAddCallback = Function(ReviewProblem reviewProblem);
 
@@ -32,17 +32,17 @@ typedef ReviewProblemEditModeParams = ({
   ReviewProblemDeleteCallback onReviewProblemDelete,
 });
 
-class EditReviewProblemDialog extends StatefulWidget {
+class EditReviewProblemPage extends StatefulWidget {
   final ReviewProblemAddModeParams? reviewProblemAddModeParams;
   final ReviewProblemEditModeParams? reviewProblemEditModeParams;
 
-  const EditReviewProblemDialog.add({
+  const EditReviewProblemPage.add({
     super.key,
     required ReviewProblemAddCallback onReviewProblemAdd,
   })  : reviewProblemAddModeParams = (onReviewProblemAdd: onReviewProblemAdd),
         reviewProblemEditModeParams = null;
 
-  const EditReviewProblemDialog.edit({
+  const EditReviewProblemPage.edit({
     super.key,
     required ReviewProblem initialData,
     required ReviewProblemEditCallback onReviewProblemEdit,
@@ -54,13 +54,13 @@ class EditReviewProblemDialog extends StatefulWidget {
           onReviewProblemDelete: onReviewProblemDelete,
         );
 
-  static const String routeName = 'edit_review_problem_dialog';
+  static const String routeName = '/edit_review_problem';
 
   @override
-  EditReviewProblemDialogState createState() => EditReviewProblemDialogState();
+  EditReviewProblemPageState createState() => EditReviewProblemPageState();
 }
 
-class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
+class EditReviewProblemPageState extends State<EditReviewProblemPage> {
   final AppCubit _appCubit = getIt.get();
   final GlobalKey<FormBuilderState> _formKey = GlobalKey();
 
@@ -82,7 +82,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(
-        name: '${EditReviewProblemDialog.routeName}/exit_confirm_dialog',
+        name: '${EditReviewProblemPage.routeName}/exit_confirm_dialog',
       ),
       builder: (context) {
         return CustomAlertDialog(
@@ -154,7 +154,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(
-        name: '${EditReviewProblemDialog.routeName}/delete_confirm_dialog',
+        name: '${EditReviewProblemPage.routeName}/delete_confirm_dialog',
       ),
       builder: (context) {
         return CustomAlertDialog(
@@ -316,10 +316,8 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
           _isChanged = true;
         });
       },
-      child: Column(
-        spacing: 20,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
+        padding: const EdgeInsets.all(20),
         children: [
           FormItem(
             label: '제목',
@@ -336,6 +334,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
               ]),
             ),
           ),
+          const SizedBox(height: 20),
           FormItem(
             label: '메모',
             child: FormTextField(
@@ -346,6 +345,7 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
               maxLines: null,
             ),
           ),
+          const SizedBox(height: 20),
           FormItem(
             label: '사진',
             child: _buildImagesField(),
@@ -359,28 +359,24 @@ class EditReviewProblemDialogState extends State<EditReviewProblemDialog> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: CustomAlertDialog.customContent(
+      child: PageLayout(
         title: widget.reviewProblemAddModeParams == null
             ? '복습할 문제 수정'
             : '복습할 문제 추가',
-        scrollable: true,
-        dimmedBackground: true,
-        content: _buildForm(),
-        actions: [
+        onBackPressed: _onCancelButtonPressed,
+        appBarActions: [
           if (widget.reviewProblemEditModeParams != null)
-            CustomTextButton.destructive(
-              text: '삭제',
+            AppBarAction(
+              iconData: Icons.delete,
+              tooltip: '삭제',
               onPressed: _onDeleteButtonPressed,
             ),
-          CustomTextButton.secondary(
-            text: '취소',
-            onPressed: _onCancelButtonPressed,
-          ),
-          CustomTextButton.primary(
-            text: widget.reviewProblemAddModeParams == null ? '수정' : '추가',
-            onPressed: _onConfirmButtonPressed,
-          ),
         ],
+        bottomAction: PageLayoutBottomAction(
+          label: widget.reviewProblemAddModeParams == null ? '수정' : '추가',
+          onPressed: _onConfirmButtonPressed,
+        ),
+        child: _buildForm(),
       ),
     );
   }

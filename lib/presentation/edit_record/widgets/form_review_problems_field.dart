@@ -4,7 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../../../model/problem.dart';
 import '../../common/review_problem_card.dart';
-import 'edit_review_problem_dialog.dart';
+import '../../edit_review_problem/edit_review_problem_page.dart';
 
 class FormReviewProblemsField extends StatefulWidget {
   const FormReviewProblemsField({
@@ -28,16 +28,18 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
     BuildContext context,
     ReviewProblem reviewProblem,
   ) {
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(name: 'review_problem_view_dialog'),
-      builder: (context) {
-        return EditReviewProblemDialog.edit(
-          onReviewProblemEdit: _onReviewProblemEdit,
-          onReviewProblemDelete: _onReviewProblemDelete,
-          initialData: reviewProblem,
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: const RouteSettings(name: EditReviewProblemPage.routeName),
+        builder: (context) {
+          return EditReviewProblemPage.edit(
+            onReviewProblemEdit: _onReviewProblemEdit,
+            onReviewProblemDelete: _onReviewProblemDelete,
+            initialData: reviewProblem,
+          );
+        },
+      ),
     );
   }
 
@@ -62,14 +64,16 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
   }
 
   void _onReviewProblemAddCardTap(BuildContext context) {
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(name: 'review_problem_add_dialog'),
-      builder: (context) {
-        return EditReviewProblemDialog.add(
-          onReviewProblemAdd: _onReviewProblemAdd,
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: const RouteSettings(name: EditReviewProblemPage.routeName),
+        builder: (context) {
+          return EditReviewProblemPage.add(
+            onReviewProblemAdd: _onReviewProblemAdd,
+          );
+        },
+      ),
     );
   }
 
