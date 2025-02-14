@@ -38,20 +38,36 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
 
     switch (result) {
       case EditReviewProblemPageSave():
-        _onReviewProblemEdit(
+        _editReviewProblem(
           oldReviewProblem: reviewProblem,
           newReviewProblem: result.newReviewProblem,
         );
         break;
       case EditReviewProblemPageDelete():
-        _onReviewProblemDelete(reviewProblem);
+        _deleteReviewProblem(reviewProblem);
         break;
       case null:
         break;
     }
   }
 
-  void _onReviewProblemEdit({
+  Future<void> _onReviewProblemAddCardTap(BuildContext context) async {
+    final result = await Navigator.pushNamed<EditReviewProblemPageResult>(
+      context,
+      EditReviewProblemPage.routeName,
+    );
+
+    switch (result) {
+      case EditReviewProblemPageSave():
+        _addReviewProblem(result.newReviewProblem);
+        break;
+      case EditReviewProblemPageDelete():
+      case null:
+        break;
+    }
+  }
+
+  void _editReviewProblem({
     required ReviewProblem oldReviewProblem,
     required ReviewProblem newReviewProblem,
   }) {
@@ -64,30 +80,14 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
     field?.didChange(newReviewProblems);
   }
 
-  void _onReviewProblemDelete(ReviewProblem reviewProblem) {
+  void _deleteReviewProblem(ReviewProblem reviewProblem) {
     final field = _fieldKey.currentState;
     final newReviewProblems = [...?field?.value];
     newReviewProblems.remove(reviewProblem);
     field?.didChange(newReviewProblems);
   }
 
-  Future<void> _onReviewProblemAddCardTap(BuildContext context) async {
-    final result = await Navigator.pushNamed<EditReviewProblemPageResult>(
-      context,
-      EditReviewProblemPage.routeName,
-    );
-
-    switch (result) {
-      case EditReviewProblemPageSave():
-        _onReviewProblemAdd(result.newReviewProblem);
-        break;
-      case EditReviewProblemPageDelete():
-      case null:
-        break;
-    }
-  }
-
-  void _onReviewProblemAdd(ReviewProblem reviewProblem) {
+  void _addReviewProblem(ReviewProblem reviewProblem) {
     final field = _fieldKey.currentState;
     field?.didChange([...?field.value, reviewProblem]);
   }

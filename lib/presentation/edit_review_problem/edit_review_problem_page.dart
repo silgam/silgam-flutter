@@ -58,6 +58,66 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   bool _isChanged = false;
 
+  void _onBackPressed() {
+    Navigator.maybePop(context);
+  }
+
+  void _onDeleteButtonPressed() {
+    if (_appCubit.state.isOffline && _initialImagePaths.isNotEmpty) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
+        dismissOnTap: true,
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${EditReviewProblemPage.routeName}/delete_confirm_dialog',
+      ),
+      builder: (context) {
+        return CustomAlertDialog(
+          title: '정말 이 복습할 문제를 삭제하실 건가요?',
+          content: _formKey.currentState?.fields[_titleFieldName]?.value,
+          actions: [
+            CustomTextButton.secondary(
+              text: '취소',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            CustomTextButton.destructive(
+              text: '삭제',
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context, EditReviewProblemPageDelete());
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onSaveButtonPressed() {
+    final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isFormValid) return;
+
+    final Map<String, dynamic>? values = _formKey.currentState?.value;
+
+    final newReviewProblem = ReviewProblem(
+      title: values?[_titleFieldName],
+      memo: values?[_memoFieldName] ?? '',
+      imagePaths: values?[_imagePathsFieldName],
+    );
+
+    Navigator.pop(
+      context,
+      EditReviewProblemPageSave(newReviewProblem: newReviewProblem),
+    );
+  }
+
   void _onPopInvokedWithResult(bool didPop, _) {
     if (didPop) return;
 
@@ -122,66 +182,6 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
     final List<String> newImagePaths = [...?field?.value];
     newImagePaths.addAll(files.map((e) => e.path));
     field?.didChange(newImagePaths);
-  }
-
-  void _onDeleteButtonPressed() {
-    if (_appCubit.state.isOffline && _initialImagePaths.isNotEmpty) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
-      return;
-    }
-
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(
-        name: '${EditReviewProblemPage.routeName}/delete_confirm_dialog',
-      ),
-      builder: (context) {
-        return CustomAlertDialog(
-          title: '정말 이 복습할 문제를 삭제하실 건가요?',
-          content: _formKey.currentState?.fields[_titleFieldName]?.value,
-          actions: [
-            CustomTextButton.secondary(
-              text: '취소',
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            CustomTextButton.destructive(
-              text: '삭제',
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context, EditReviewProblemPageDelete());
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _onBackPressed() {
-    Navigator.maybePop(context);
-  }
-
-  void _onConfirmButtonPressed() {
-    final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
-    if (!isFormValid) return;
-
-    final Map<String, dynamic>? values = _formKey.currentState?.value;
-
-    final newReviewProblem = ReviewProblem(
-      title: values?[_titleFieldName],
-      memo: values?[_memoFieldName] ?? '',
-      imagePaths: values?[_imagePathsFieldName],
-    );
-
-    Navigator.pop(
-      context,
-      EditReviewProblemPageSave(newReviewProblem: newReviewProblem),
-    );
   }
 
   Widget _buildImagesField() {
@@ -347,7 +347,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
         ],
         bottomAction: PageLayoutBottomAction(
           label: widget.reviewProblemToEdit == null ? '추가' : '수정',
-          onPressed: _onConfirmButtonPressed,
+          onPressed: _onSaveButtonPressed,
         ),
         child: _buildForm(),
       ),
