@@ -24,29 +24,37 @@ class FormReviewProblemsField extends StatefulWidget {
 class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
   final GlobalKey<FormFieldState<List<ReviewProblem>>> _fieldKey = GlobalKey();
 
-  void _onReviewProblemCardTap(
+  Future<void> _onReviewProblemCardTap(
     BuildContext context,
     ReviewProblem reviewProblem,
-  ) {
-    Navigator.push(
+  ) async {
+    final result = await Navigator.pushNamed<EditReviewProblemPageResult>(
       context,
-      MaterialPageRoute(
-        settings: const RouteSettings(name: EditReviewProblemPage.routeName),
-        builder: (context) {
-          return EditReviewProblemPage.edit(
-            onReviewProblemEdit: _onReviewProblemEdit,
-            onReviewProblemDelete: _onReviewProblemDelete,
-            initialData: reviewProblem,
-          );
-        },
+      EditReviewProblemPage.routeName,
+      arguments: EditReviewProblemPageArguments(
+        reviewProblemToEdit: reviewProblem,
       ),
     );
+
+    switch (result) {
+      case EditReviewProblemPageSave():
+        _onReviewProblemEdit(
+          oldReviewProblem: reviewProblem,
+          newReviewProblem: result.newReviewProblem,
+        );
+        break;
+      case EditReviewProblemPageDelete():
+        _onReviewProblemDelete(reviewProblem);
+        break;
+      case null:
+        break;
+    }
   }
 
-  void _onReviewProblemEdit(
-    ReviewProblem oldReviewProblem,
-    ReviewProblem newReviewProblem,
-  ) {
+  void _onReviewProblemEdit({
+    required ReviewProblem oldReviewProblem,
+    required ReviewProblem newReviewProblem,
+  }) {
     final field = _fieldKey.currentState;
     final newReviewProblems = [...?field?.value];
     final oldReviewProblemIndex = newReviewProblems.indexOf(oldReviewProblem);
@@ -63,18 +71,20 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
     field?.didChange(newReviewProblems);
   }
 
-  void _onReviewProblemAddCardTap(BuildContext context) {
-    Navigator.push(
+  Future<void> _onReviewProblemAddCardTap(BuildContext context) async {
+    final result = await Navigator.pushNamed<EditReviewProblemPageResult>(
       context,
-      MaterialPageRoute(
-        settings: const RouteSettings(name: EditReviewProblemPage.routeName),
-        builder: (context) {
-          return EditReviewProblemPage.add(
-            onReviewProblemAdd: _onReviewProblemAdd,
-          );
-        },
-      ),
+      EditReviewProblemPage.routeName,
     );
+
+    switch (result) {
+      case EditReviewProblemPageSave():
+        _onReviewProblemAdd(result.newReviewProblem);
+        break;
+      case EditReviewProblemPageDelete():
+      case null:
+        break;
+    }
   }
 
   void _onReviewProblemAdd(ReviewProblem reviewProblem) {

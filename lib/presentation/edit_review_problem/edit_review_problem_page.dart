@@ -13,46 +13,29 @@ import '../../model/problem.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 
-typedef ReviewProblemAddCallback = Function(ReviewProblem reviewProblem);
+class EditReviewProblemPageArguments {
+  final ReviewProblem? reviewProblemToEdit;
 
-typedef ReviewProblemAddModeParams = ({
-  ReviewProblemAddCallback onReviewProblemAdd,
-});
+  EditReviewProblemPageArguments({this.reviewProblemToEdit});
+}
 
-typedef ReviewProblemEditCallback = Function(
-  ReviewProblem oldReviewProblem,
-  ReviewProblem newReviewProblem,
-);
+sealed class EditReviewProblemPageResult {}
 
-typedef ReviewProblemDeleteCallback = Function(ReviewProblem reviewProblem);
+class EditReviewProblemPageSave extends EditReviewProblemPageResult {
+  final ReviewProblem newReviewProblem;
 
-typedef ReviewProblemEditModeParams = ({
-  ReviewProblem initialData,
-  ReviewProblemEditCallback onReviewProblemEdit,
-  ReviewProblemDeleteCallback onReviewProblemDelete,
-});
+  EditReviewProblemPageSave({required this.newReviewProblem});
+}
+
+class EditReviewProblemPageDelete extends EditReviewProblemPageResult {}
 
 class EditReviewProblemPage extends StatefulWidget {
-  final ReviewProblemAddModeParams? reviewProblemAddModeParams;
-  final ReviewProblemEditModeParams? reviewProblemEditModeParams;
-
-  const EditReviewProblemPage.add({
+  const EditReviewProblemPage({
     super.key,
-    required ReviewProblemAddCallback onReviewProblemAdd,
-  })  : reviewProblemAddModeParams = (onReviewProblemAdd: onReviewProblemAdd),
-        reviewProblemEditModeParams = null;
+    this.reviewProblemToEdit,
+  });
 
-  const EditReviewProblemPage.edit({
-    super.key,
-    required ReviewProblem initialData,
-    required ReviewProblemEditCallback onReviewProblemEdit,
-    required ReviewProblemDeleteCallback onReviewProblemDelete,
-  })  : reviewProblemAddModeParams = null,
-        reviewProblemEditModeParams = (
-          initialData: initialData,
-          onReviewProblemEdit: onReviewProblemEdit,
-          onReviewProblemDelete: onReviewProblemDelete,
-        );
+  final ReviewProblem? reviewProblemToEdit;
 
   static const String routeName = '/edit_review_problem';
 
@@ -68,11 +51,10 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
   final String _memoFieldName = 'memo';
   final String _imagePathsFieldName = 'imagePaths';
 
-  late final ReviewProblem? _initialData =
-      widget.reviewProblemEditModeParams?.initialData;
-  late final String? _initialTitle = _initialData?.title;
-  late final String? _initialMemo = _initialData?.memo;
-  late final List<String> _initialImagePaths = _initialData?.imagePaths ?? [];
+  late final String? _initialTitle = widget.reviewProblemToEdit?.title;
+  late final String? _initialMemo = widget.reviewProblemToEdit?.memo;
+  late final List<String> _initialImagePaths =
+      widget.reviewProblemToEdit?.imagePaths ?? [];
 
   bool _isChanged = false;
 
@@ -170,12 +152,8 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
             CustomTextButton.destructive(
               text: '삭제',
               onPressed: () {
-                final reviewProblemEditModeParams =
-                    widget.reviewProblemEditModeParams;
-                reviewProblemEditModeParams?.onReviewProblemDelete(
-                    reviewProblemEditModeParams.initialData);
                 Navigator.pop(context);
-                Navigator.pop(context);
+                Navigator.pop(context, EditReviewProblemPageDelete());
               },
             ),
           ],
@@ -184,7 +162,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
     );
   }
 
-  void _onCancelButtonPressed() {
+  void _onBackPressed() {
     Navigator.maybePop(context);
   }
 
@@ -194,19 +172,16 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
     final Map<String, dynamic>? values = _formKey.currentState?.value;
 
-    final newProblem = ReviewProblem(
+    final newReviewProblem = ReviewProblem(
       title: values?[_titleFieldName],
       memo: values?[_memoFieldName] ?? '',
       imagePaths: values?[_imagePathsFieldName],
     );
 
-    widget.reviewProblemAddModeParams?.onReviewProblemAdd(newProblem);
-
-    final reviewProblemEditModeParams = widget.reviewProblemEditModeParams;
-    reviewProblemEditModeParams?.onReviewProblemEdit(
-        reviewProblemEditModeParams.initialData, newProblem);
-
-    Navigator.pop(context);
+    Navigator.pop(
+      context,
+      EditReviewProblemPageSave(newReviewProblem: newReviewProblem),
+    );
   }
 
   Widget _buildImagesField() {
@@ -360,12 +335,10 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: PageLayout(
-        title: widget.reviewProblemAddModeParams == null
-            ? '복습할 문제 수정'
-            : '복습할 문제 추가',
-        onBackPressed: _onCancelButtonPressed,
+        title: widget.reviewProblemToEdit == null ? '복습할 문제 추가' : '복습할 문제 수정',
+        onBackPressed: _onBackPressed,
         appBarActions: [
-          if (widget.reviewProblemEditModeParams != null)
+          if (widget.reviewProblemToEdit != null)
             AppBarAction(
               iconData: Icons.delete,
               tooltip: '삭제',
@@ -373,7 +346,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
             ),
         ],
         bottomAction: PageLayoutBottomAction(
-          label: widget.reviewProblemAddModeParams == null ? '수정' : '추가',
+          label: widget.reviewProblemToEdit == null ? '추가' : '수정',
           onPressed: _onConfirmButtonPressed,
         ),
         child: _buildForm(),
