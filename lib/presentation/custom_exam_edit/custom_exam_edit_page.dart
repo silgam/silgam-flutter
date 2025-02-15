@@ -462,24 +462,26 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
             child: Column(
               children: [
                 Expanded(
-                  child: ListView(
-                    children: [
-                      _isEditMode
-                          ? Container(
-                              alignment: Alignment.topRight,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4,
-                                horizontal: 20,
-                              ),
-                              child: CustomTextButton.destructive(
-                                text: '삭제하기',
-                                onPressed: _onDeleteButtonPressed,
-                              ),
-                            )
-                          : const SizedBox(height: 28),
-                      _buildForm(),
-                      const SizedBox(height: 28),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _isEditMode
+                            ? Container(
+                                alignment: Alignment.topRight,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                  horizontal: 20,
+                                ),
+                                child: CustomTextButton.destructive(
+                                  text: '삭제하기',
+                                  onPressed: _onDeleteButtonPressed,
+                                ),
+                              )
+                            : const SizedBox(height: 28),
+                        _buildForm(),
+                        const SizedBox(height: 28),
+                      ],
+                    ),
                   ),
                 ),
                 _buildBottomButtons(),

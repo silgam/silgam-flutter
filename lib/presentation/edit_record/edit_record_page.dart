@@ -331,8 +331,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
           _isChanged = true;
         });
       },
-      child: ListView(
-        padding: const EdgeInsets.all(20),
+      child: Column(
+        spacing: 20,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FormItem(
             label: '모의고사 이름',
@@ -364,7 +365,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
               },
             ),
           ),
-          const SizedBox(height: 20),
           FormItem(
             label: '과목',
             child: FormDropdown(
@@ -379,7 +379,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 20),
           Wrap(
             spacing: 12,
             runSpacing: 20,
@@ -518,7 +517,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
           Wrap(
             spacing: 12,
             runSpacing: 20,
@@ -578,7 +576,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
           FormItem(
             label: '틀린 문제',
             child: FormNumbersField(
@@ -590,7 +587,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
               displayStringForNumber: (number) => '$number번',
             ),
           ),
-          const SizedBox(height: 20),
           FormItem(
             label: '피드백',
             child: FormTextField(
@@ -602,7 +598,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
               maxLines: null,
             ),
           ),
-          const SizedBox(height: 20),
           FormItem(
             label: '복습할 문제',
             child: FormReviewProblemsField(
@@ -629,7 +624,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
             label: '저장',
             onPressed: _onSavePressed,
           ),
-          child: _buildForm(),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: _buildForm(),
+          ),
         ),
       ),
     );

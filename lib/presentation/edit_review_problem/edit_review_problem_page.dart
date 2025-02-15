@@ -296,8 +296,8 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
           _isChanged = true;
         });
       },
-      child: ListView(
-        padding: const EdgeInsets.all(20),
+      child: Column(
+        spacing: 20,
         children: [
           FormItem(
             label: '제목',
@@ -314,7 +314,6 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
               ]),
             ),
           ),
-          const SizedBox(height: 20),
           FormItem(
             label: '메모',
             child: FormTextField(
@@ -325,7 +324,6 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
               maxLines: null,
             ),
           ),
-          const SizedBox(height: 20),
           FormItem(
             label: '사진',
             description: '한 개의 복습할 문제에 여러 장의 사진을 추가할 수 있어요.',
@@ -355,7 +353,10 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
           label: widget.reviewProblemToEdit == null ? '추가' : '수정',
           onPressed: _onSaveButtonPressed,
         ),
-        child: _buildForm(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: _buildForm(),
+        ),
       ),
     );
   }
