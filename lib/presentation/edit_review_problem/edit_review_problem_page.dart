@@ -328,6 +328,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
           const SizedBox(height: 20),
           FormItem(
             label: '사진',
+            description: '한 개의 복습할 문제에 여러 장의 사진을 추가할 수 있어요.',
             child: _buildImagesField(),
           ),
         ],

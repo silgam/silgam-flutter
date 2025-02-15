@@ -7,24 +7,36 @@ class FormItem extends StatelessWidget {
     required this.child,
     this.isRequired = false,
     this.tooltip,
+    this.description,
   });
 
   final String label;
   final Widget child;
   final bool isRequired;
   final String? tooltip;
+  final String? description;
 
   @override
   Widget build(BuildContext context) {
+    final description = this.description;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 6,
       children: [
         _FormLabel(
           label: label,
           isRequired: isRequired,
           tooltip: tooltip,
         ),
-        const SizedBox(height: 6),
+        if (description != null)
+          Text(
+            description,
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 14,
+            ),
+          ),
         child,
       ],
     );
