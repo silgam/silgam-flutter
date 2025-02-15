@@ -64,6 +64,9 @@ class _FormNumbersFieldState extends State<FormNumbersField> {
       name: widget.name,
       initialValue: widget.initialValue,
       builder: (field) {
+        final state = field
+            as FormBuilderFieldState<FormBuilderField<List<int>>, List<int>>;
+
         return Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -72,13 +75,14 @@ class _FormNumbersFieldState extends State<FormNumbersField> {
               _NumberItem(
                 number: number,
                 displayStringForNumber: widget.displayStringForNumber,
-                onTap: () => _onNumberDelete(number),
+                onTap: state.enabled ? () => _onNumberDelete(number) : null,
               ),
             _NumberField(
+              enabled: state.enabled,
+              onSubmit: state.enabled ? _onNumberSubmit : null,
+              onDelete: state.enabled ? _onNumberDelete : null,
               hintText: widget.hintText,
               maxDigits: widget.maxDigits,
-              onSubmit: _onNumberSubmit,
-              onDelete: _onNumberDelete,
             )
           ],
         );
@@ -141,14 +145,16 @@ class _NumberItem extends StatelessWidget {
 
 class _NumberField extends StatefulWidget {
   const _NumberField({
-    required this.onSubmit,
-    required this.onDelete,
+    required this.enabled,
+    this.onSubmit,
+    this.onDelete,
     this.hintText,
     this.maxDigits = 2,
   });
 
-  final Function(int number) onSubmit;
-  final Function() onDelete;
+  final bool enabled;
+  final Function(int number)? onSubmit;
+  final Function()? onDelete;
   final String? hintText;
   final int maxDigits;
 
@@ -195,14 +201,14 @@ class _NumberFieldState extends State<_NumberField> {
     int inputNumber = int.tryParse(text) ?? -1;
     if (inputNumber <= 0) return;
 
-    widget.onSubmit(inputNumber);
+    widget.onSubmit?.call(inputNumber);
   }
 
   void _onKeyEvent(KeyEvent event) {
     if (event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.backspace &&
         _editingController.text.isEmpty) {
-      widget.onDelete();
+      widget.onDelete?.call();
     }
   }
 
@@ -214,6 +220,7 @@ class _NumberFieldState extends State<_NumberField> {
       child: IntrinsicWidth(
         child: TextField(
           controller: _editingController,
+          enabled: widget.enabled,
           onChanged: _onChanged,
           onSubmitted: _onSubmitted,
           keyboardType: const TextInputType.numberWithOptions(signed: true),
@@ -231,6 +238,10 @@ class _NumberFieldState extends State<_NumberField> {
             filled: true,
             fillColor: Colors.white,
             enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            disabledBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(100),
             ),

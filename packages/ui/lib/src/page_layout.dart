@@ -17,6 +17,7 @@ class PageLayout extends StatefulWidget {
     this.onBackPressed,
     this.appBarActions = const [],
     this.bottomAction,
+    this.isBottomActionLoading = false,
     required this.child,
   });
 
@@ -24,6 +25,7 @@ class PageLayout extends StatefulWidget {
   final VoidCallback? onBackPressed;
   final List<AppBarAction> appBarActions;
   final PageLayoutBottomAction? bottomAction;
+  final bool isBottomActionLoading;
   final Widget child;
 
   @override
@@ -92,6 +94,7 @@ class _PageLayoutState extends State<PageLayout> {
               _BottomButton(
                 label: bottomAction.label,
                 isKeyboardVisible: _isKeyboardVisible,
+                isLoading: widget.isBottomActionLoading,
                 onPressed: bottomAction.onPressed,
               ),
           ],
@@ -133,6 +136,7 @@ class _BottomButton extends StatelessWidget {
   const _BottomButton({
     required this.label,
     required this.isKeyboardVisible,
+    required this.isLoading,
     this.onPressed,
   });
 
@@ -140,6 +144,7 @@ class _BottomButton extends StatelessWidget {
 
   final String label;
   final bool isKeyboardVisible;
+  final bool isLoading;
   final VoidCallback? onPressed;
 
   @override
@@ -151,8 +156,8 @@ class _BottomButton extends StatelessWidget {
         duration: _animationDuration,
         tween: Tween<double>(begin: 12, end: isKeyboardVisible ? 0 : 12),
         builder: (context, value, child) {
-          return FilledButton(
-            onPressed: onPressed,
+          return FilledButton.icon(
+            onPressed: isLoading ? null : onPressed,
             style: FilledButton.styleFrom(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -163,11 +168,27 @@ class _BottomButton extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),
+              disabledBackgroundColor: isLoading
+                  ? Theme.of(context).primaryColor.withAlpha(220)
+                  : null,
+              disabledForegroundColor: isLoading ? Colors.white : null,
             ),
-            child: child,
+            icon: isLoading
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: const CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  )
+                : null,
+            label: Text(label),
           );
         },
-        child: Text(label),
       ),
     );
   }

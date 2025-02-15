@@ -16,7 +16,6 @@ import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
-import '../common/progress_overlay.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
 import '../record_detail/record_detail_page.dart';
 import 'widgets/form_review_problems_field.dart';
@@ -322,6 +321,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   Widget _buildForm() {
     return FormBuilder(
       key: _formKey,
+      enabled: !_isSaving,
       canPop: !_isChanged,
       onPopInvokedWithResult: _onPopInvokedWithResult,
       onChanged: () {
@@ -621,18 +621,15 @@ class _EditRecordPageState extends State<EditRecordPage> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
-        child: ProgressOverlay(
-          isProgressing: _isSaving,
-          description: '저장할 문제 사진이 많으면 오래 걸릴 수 있습니다.',
-          child: PageLayout(
-            title: _isEditingMode ? '기록 수정' : '기록 작성',
-            onBackPressed: _onCancelPressed,
-            bottomAction: PageLayoutBottomAction(
-              label: '저장',
-              onPressed: _onSavePressed,
-            ),
-            child: _buildForm(),
+        child: PageLayout(
+          title: _isEditingMode ? '기록 수정' : '기록 작성',
+          onBackPressed: _onCancelPressed,
+          isBottomActionLoading: _isSaving,
+          bottomAction: PageLayoutBottomAction(
+            label: '저장',
+            onPressed: _onSavePressed,
           ),
+          child: _buildForm(),
         ),
       ),
     );

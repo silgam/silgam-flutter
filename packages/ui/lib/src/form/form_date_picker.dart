@@ -25,19 +25,23 @@ class FormDatePicker extends StatelessWidget {
       initialValue: initialValue,
       builder: (field) {
         final value = field.value;
+        final state = field
+            as FormBuilderFieldState<FormBuilderField<DateTime>, DateTime>;
 
         return GestureDetector(
-          onTap: () async {
-            final date = await showDatePicker(
-              context: context,
-              initialDate: value,
-              firstDate: firstDate,
-              lastDate: lastDate,
-            );
-            if (date == null) return;
+          onTap: state.enabled
+              ? () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: value,
+                    firstDate: firstDate,
+                    lastDate: lastDate,
+                  );
+                  if (date == null) return;
 
-            field.didChange(date);
-          },
+                  field.didChange(date);
+                }
+              : null,
           child: InputDecorator(
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(12),
@@ -51,9 +55,10 @@ class FormDatePicker extends StatelessWidget {
             ),
             child: Text(
               value != null ? DateFormat.yMEd('ko_KR').format(value) : '',
-              style: const TextStyle(
-                fontSize: 17,
-              ),
+              style: TextTheme.of(context).titleMedium?.copyWith(
+                    color:
+                        state.enabled ? null : Theme.of(context).disabledColor,
+                  ),
             ),
           ),
         );

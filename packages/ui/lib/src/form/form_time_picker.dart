@@ -21,17 +21,21 @@ class FormTimePicker extends StatelessWidget {
       initialValue: initialValue,
       builder: (field) {
         final value = field.value;
+        final state = field
+            as FormBuilderFieldState<FormBuilderField<TimeOfDay>, TimeOfDay>;
 
         return GestureDetector(
-          onTap: () async {
-            final time = await showTimePicker(
-              context: context,
-              initialTime: value ?? TimeOfDay.now(),
-            );
-            if (time == null) return;
+          onTap: state.enabled
+              ? () async {
+                  final time = await showTimePicker(
+                    context: context,
+                    initialTime: value ?? TimeOfDay.now(),
+                  );
+                  if (time == null) return;
 
-            field.didChange(time);
-          },
+                  field.didChange(time);
+                }
+              : null,
           child: InputDecorator(
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(12),
@@ -48,9 +52,10 @@ class FormTimePicker extends StatelessWidget {
                   ? DateFormat.jm('ko_KR')
                       .format(DateTime(0, 0, 0, value.hour, value.minute))
                   : '',
-              style: const TextStyle(
-                fontSize: 17,
-              ),
+              style: TextTheme.of(context).titleMedium?.copyWith(
+                    color:
+                        state.enabled ? null : Theme.of(context).disabledColor,
+                  ),
             ),
           ),
         );

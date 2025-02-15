@@ -99,6 +99,9 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
       name: widget.name,
       initialValue: widget.initialValue,
       builder: (field) {
+        final state = field as FormBuilderFieldState<
+            FormBuilderField<List<ReviewProblem>>, List<ReviewProblem>>;
+
         return GridView.extent(
           maxCrossAxisExtent: 400,
           childAspectRatio: 1.5,
@@ -110,10 +113,14 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
             for (final problem in field.value ?? [])
               ReviewProblemCard(
                 problem: problem,
-                onTap: () => _onReviewProblemCardTap(context, problem),
+                onTap: state.enabled
+                    ? () => _onReviewProblemCardTap(context, problem)
+                    : null,
               ),
             _ReviewProblemAddCard(
-              onTap: () => _onReviewProblemAddCardTap(context),
+              onTap: state.enabled
+                  ? () => _onReviewProblemAddCardTap(context)
+                  : null,
             ),
           ],
         );
