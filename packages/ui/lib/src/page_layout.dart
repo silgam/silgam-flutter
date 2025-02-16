@@ -19,6 +19,7 @@ class PageLayout extends StatefulWidget {
     this.appBarActions = const [],
     this.bottomAction,
     this.isBottomActionLoading = false,
+    this.unfocusOnTapBackground = false,
     required this.child,
   });
 
@@ -27,6 +28,7 @@ class PageLayout extends StatefulWidget {
   final List<AppBarAction> appBarActions;
   final PageLayoutBottomAction? bottomAction;
   final bool isBottomActionLoading;
+  final bool unfocusOnTapBackground;
   final Widget child;
 
   @override
@@ -80,7 +82,7 @@ class _PageLayoutState extends State<PageLayout> {
 
     final bottomAction = widget.bottomAction;
 
-    return AnnotatedRegion(
+    final resultWidget = AnnotatedRegion(
       value: _defaultSystemUiOverlayStyle,
       child: Scaffold(
         body: SafeArea(
@@ -114,6 +116,15 @@ class _PageLayoutState extends State<PageLayout> {
         ),
       ),
     );
+
+    if (widget.unfocusOnTapBackground) {
+      return GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: resultWidget,
+      );
+    }
+
+    return resultWidget;
   }
 }
 
