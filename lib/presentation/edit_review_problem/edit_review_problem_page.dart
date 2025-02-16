@@ -336,27 +336,25 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: PageLayout(
-        title: widget.reviewProblemToEdit == null ? '복습할 문제 추가' : '복습할 문제 수정',
-        onBackPressed: _onBackPressed,
-        appBarActions: [
-          if (widget.reviewProblemToEdit != null)
-            AppBarAction(
-              iconData: Icons.delete,
-              tooltip: '삭제',
-              onPressed: _onDeleteButtonPressed,
-            ),
-        ],
-        bottomAction: PageLayoutBottomAction(
-          label: widget.reviewProblemToEdit == null ? '추가' : '수정',
-          onPressed: _onSaveButtonPressed,
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: _buildForm(),
-        ),
+    return PageLayout(
+      title: widget.reviewProblemToEdit == null ? '복습할 문제 추가' : '복습할 문제 수정',
+      onBackPressed: _onBackPressed,
+      appBarActions: [
+        if (widget.reviewProblemToEdit != null)
+          AppBarAction(
+            iconData: Icons.delete,
+            tooltip: '삭제',
+            onPressed: _onDeleteButtonPressed,
+          ),
+      ],
+      bottomAction: PageLayoutBottomAction(
+        label: widget.reviewProblemToEdit == null ? '추가' : '수정',
+        onPressed: _onSaveButtonPressed,
+      ),
+      unfocusOnTapBackground: true,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: _buildForm(),
       ),
     );
   }
