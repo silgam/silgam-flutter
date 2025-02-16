@@ -90,7 +90,8 @@ class SilgamApp extends StatelessWidget {
           MyPage.routeName: (_) => const MyPage(),
           NotificationSettingPage.routeName: (_) =>
               const NotificationSettingPage(),
-          CustomizeSubjectNamePage.routeName: (_) => CustomizeSubjectNamePage(),
+          CustomizeSubjectNamePage.routeName: (_) =>
+              const CustomizeSubjectNamePage(),
           OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
           SilgampassPage.routeName: (_) => const SilgampassPage(),
           CustomExamListPage.routeName: (_) => const CustomExamListPage(),
