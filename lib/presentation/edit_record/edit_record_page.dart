@@ -222,7 +222,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
-  void _onCancelPressed() {
+  void _onBackPressed() {
     Navigator.maybePop(context);
     _logEvent('[EditExamRecordPage] Cancel button tapped');
   }
@@ -613,7 +613,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   Widget build(BuildContext context) {
     return PageLayout(
       title: _isEditingMode ? '기록 수정' : '기록 작성',
-      onBackPressed: _onCancelPressed,
+      onBackPressed: _onBackPressed,
       bottomAction: PageLayoutBottomAction(
         label: '저장',
         onPressed: _onSavePressed,
