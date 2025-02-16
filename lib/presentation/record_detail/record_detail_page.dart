@@ -11,10 +11,8 @@ import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
-import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
-import '../common/custom_menu_bar.dart';
 import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record/edit_record_page.dart';
@@ -72,80 +70,39 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     final record = _record;
 
     if (record == null) {
-      return const Scaffold(
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomMenuBar(),
-              Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(strokeWidth: 3),
-                ),
-              ),
-            ],
-          ),
+      return PageLayout(
+        onBackPressed: () => Navigator.of(context).pop(),
+        child: Center(
+          child: CircularProgressIndicator(strokeWidth: 3),
         ),
       );
     }
 
-    return Scaffold(
-      body: ProgressOverlay(
+    return PageLayout(
+      onBackPressed: () => Navigator.of(context).pop(),
+      appBarActions: [
+        AppBarAction(
+          iconData: Icons.download,
+          tooltip: '이미지 저장',
+          onPressed: () => _onSaveImageButtonPressed(record),
+        ),
+        AppBarAction(
+          iconData: Icons.edit,
+          tooltip: '수정',
+          onPressed: () => _onEditButtonPressed(record),
+        ),
+        AppBarAction(
+          iconData: Icons.delete,
+          tooltip: '삭제',
+          onPressed: () => _onDeleteButtonPressed(record),
+        ),
+      ],
+      child: ProgressOverlay(
         isProgressing: _isDeleting,
         description: '삭제하는 중',
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomMenuBar(
-                actionButtons: [
-                  ActionButton(
-                    icon: const Icon(Icons.download),
-                    tooltip: '이미지 저장',
-                    onPressed: () => _onSaveImageButtonPressed(record),
-                  ),
-                  ActionButton(
-                    icon: const Icon(Icons.edit),
-                    tooltip: '수정',
-                    onPressed: () => _onEditButtonPressed(record),
-                  ),
-                  ActionButton(
-                    icon: const Icon(Icons.delete),
-                    tooltip: '삭제',
-                    onPressed: () => _onDeleteButtonPressed(record),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: _buildContent(record),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            SilgamApp.backgroundColor,
-                            SilgamApp.backgroundColor.withAlpha(0),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: _buildContent(record),
         ),
       ),
     );
@@ -378,12 +335,16 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   void _onSaveImageButtonPressed(ExamRecord record) async {
+    if (_isDeleting) return;
+
     final arguments = SaveImagePageArguments(recordToSave: record);
     await Navigator.pushNamed(context, SaveImagePage.routeName,
         arguments: arguments);
   }
 
   void _onEditButtonPressed(ExamRecord record) async {
+    if (_isDeleting) return;
+
     final arguments = EditRecordPageArguments(recordToEdit: record);
     await Navigator.pushNamed(
       context,
@@ -395,6 +356,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   void _onDeleteButtonPressed(ExamRecord record) {
+    if (_isDeleting) return;
+
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'delete_record_confirm_dialog'),

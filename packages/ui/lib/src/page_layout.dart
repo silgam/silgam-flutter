@@ -222,11 +222,13 @@ class _BottomButton extends StatelessWidget {
 }
 
 class AppBarAction {
+  final Key? key;
   final IconData iconData;
   final String tooltip;
   final VoidCallback? onPressed;
 
   const AppBarAction({
+    this.key,
     required this.iconData,
     required this.tooltip,
     this.onPressed,
@@ -280,6 +282,7 @@ class _AppBar extends StatelessWidget {
             const Spacer(),
           for (AppBarAction action in actions)
             IconButton(
+              key: action.key,
               onPressed: action.onPressed,
               tooltip: action.tooltip,
               splashRadius: 20,

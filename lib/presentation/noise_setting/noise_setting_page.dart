@@ -8,7 +8,6 @@ import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
-import '../common/custom_menu_bar.dart';
 import '../common/subtitle.dart';
 import '../home/settings/setting_tile.dart';
 import '../home/settings/settings_view.dart';
@@ -31,21 +30,14 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              const CustomMenuBar(title: '백색 소음, 시험장 소음 설정'),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: BlocBuilder<NoiseSettingCubit, NoiseSettingState>(
-                    builder: (context, state) {
-                      return _buildSettingBody(state);
-                    },
-                  ),
-                ),
-              ),
-            ],
+      child: PageLayout(
+        title: '백색 소음, 시험장 소음 설정',
+        onBackPressed: () => Navigator.of(context).pop(),
+        child: SingleChildScrollView(
+          child: BlocBuilder<NoiseSettingCubit, NoiseSettingState>(
+            builder: (context, state) {
+              return _buildSettingBody(state);
+            },
           ),
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/product.dart';
 import '../../model/user.dart';
@@ -14,7 +15,6 @@ import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
 import '../common/bullet_text.dart';
 import '../common/custom_card.dart';
-import '../common/custom_menu_bar.dart';
 import '../common/purchase_button.dart';
 
 class MyPage extends StatelessWidget {
@@ -25,157 +25,147 @@ class MyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const CustomMenuBar(
-              title: '마이페이지',
-            ),
-            Expanded(
-              child: BlocBuilder<AppCubit, AppState>(
-                buildWhen: (previous, current) =>
-                    previous.me != current.me ||
-                    previous.productBenefit != current.productBenefit,
-                builder: (context, appState) {
-                  final me = appState.me;
-                  if (me == null) {
-                    return const Center(
-                      child: CircularProgressIndicator(strokeWidth: 3),
-                    );
-                  }
-                  return ListView(
-                    physics: const BouncingScrollPhysics(),
-                    children: [
+    return PageLayout(
+      title: '마이페이지',
+      onBackPressed: () => Navigator.of(context).pop(),
+      child: BlocBuilder<AppCubit, AppState>(
+        buildWhen: (previous, current) =>
+            previous.me != current.me ||
+            previous.productBenefit != current.productBenefit,
+        builder: (context, appState) {
+          final me = appState.me;
+          if (me == null) {
+            return const Center(
+              child: CircularProgressIndicator(strokeWidth: 3),
+            );
+          }
+          return ListView(
+            physics: const BouncingScrollPhysics(),
+            children: [
+              Container(
+                color: Theme.of(context).primaryColor,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 40,
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      '나의 패스',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      '현재 사용 중인 패스를 확인할 수 있어요.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    if (me.activeProduct.id != ProductId.free)
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: _cardMaxWidth,
+                        ),
+                        child: _buildPass(context, me),
+                      ),
+                    if (me.activeProduct.id == ProductId.free)
                       Container(
-                        color: Theme.of(context).primaryColor,
+                        width: double.infinity,
+                        alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 40,
+                          horizontal: 24,
+                          vertical: 16,
                         ),
-                        child: Column(
-                          children: [
-                            const Text(
-                              '나의 패스',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              '현재 사용 중인 패스를 확인할 수 있어요.',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            if (me.activeProduct.id != ProductId.free)
-                              ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  maxWidth: _cardMaxWidth,
-                                ),
-                                child: _buildPass(context, me),
-                              ),
-                            if (me.activeProduct.id == ProductId.free)
-                              Container(
-                                width: double.infinity,
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
-                                ),
-                                constraints: const BoxConstraints(
-                                  maxWidth: _cardMaxWidth,
-                                  minHeight: 120,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: const Text(
-                                  '앗! 사용 중인 패스가 없어요 :(',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              )
-                          ],
+                        constraints: const BoxConstraints(
+                          maxWidth: _cardMaxWidth,
+                          minHeight: 120,
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      BlocBuilder<IapCubit, IapState>(
-                        buildWhen: (previous, current) =>
-                            previous.products != current.products,
-                        builder: (context, iapState) {
-                          return Column(
-                            children: [
-                              if (!me.isPurchasedUser)
-                                buildPurchaseButtonOr(
-                                  margin: const EdgeInsets.only(
-                                    left: 24,
-                                    right: 24,
-                                    bottom: 40,
-                                  ),
-                                ),
-                              if (me.receipts.isNotEmpty)
-                                const Text(
-                                  '사용 내역',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              const SizedBox(height: 8),
-                              ...me.receipts.reversed.map((receipt) {
-                                final product =
-                                    iapState.products.firstWhereOrNull(
-                                  (product) => product.id == receipt.productId,
-                                );
-                                if (product == null) {
-                                  return const SizedBox.shrink();
-                                }
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        child: const Text(
+                          '앗! 사용 중인 패스가 없어요 :(',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              BlocBuilder<IapCubit, IapState>(
+                buildWhen: (previous, current) =>
+                    previous.products != current.products,
+                builder: (context, iapState) {
+                  return Column(
+                    children: [
+                      if (!me.isPurchasedUser)
+                        buildPurchaseButtonOr(
+                          margin: const EdgeInsets.only(
+                            left: 24,
+                            right: 24,
+                            bottom: 40,
+                          ),
+                        ),
+                      if (me.receipts.isNotEmpty)
+                        const Text(
+                          '사용 내역',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      const SizedBox(height: 8),
+                      ...me.receipts.reversed.map((receipt) {
+                        final product = iapState.products.firstWhereOrNull(
+                          (product) => product.id == receipt.productId,
+                        );
+                        if (product == null) {
+                          return const SizedBox.shrink();
+                        }
 
-                                return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    maxWidth: _cardMaxWidth,
-                                  ),
-                                  child: _buildReceipt(receipt, product),
-                                );
-                              }),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      _buildInfo(
-                          '상세한 결제 내역은 ${!kIsWeb && Platform.isAndroid ? '플레이스토어' : '앱스토어'} 내에서 확인이 가능합니다.'),
-                      _buildInfo('결제 및 구매 취소 관련 문의는 실감 카카오톡 채널을 이용해주세요.'),
-                      _buildInfo(
-                        '구독기간 이후에는 자동으로 서비스 권한이 만료되며, 추가 결제가 발생하지 않습니다.',
-                      ),
-                      _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
-                      _buildInfo(
-                        '실감패스 이용 기간 중 작성한 모의고사 기록이 ${appState.freeProductBenefit.examRecordLimit}개를 초과할 경우, 실감패스 이용 기간 이후에는 기록을 추가하거나 기존의 기록을 수정할 수 없습니다. (열람 및 삭제만 가능) 단, 기록이 ${appState.freeProductBenefit.examRecordLimit}개 이하가 되도록 일부 기록을 삭제할 경우 추가 및 수정이 가능합니다.',
-                      ),
-                      _buildInfo(
-                        '구매 취소 및 환불은 구입일로부터 7일 이내에만 가능하며, 환불 절차는 스토어의 운영 정책을 따릅니다.',
-                      ),
-                      const SizedBox(height: 60),
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                          ),
+                          constraints: const BoxConstraints(
+                            maxWidth: _cardMaxWidth,
+                          ),
+                          child: _buildReceipt(receipt, product),
+                        );
+                      }),
                     ],
                   );
                 },
               ),
-            )
-          ],
-        ),
+              const SizedBox(height: 20),
+              _buildInfo(
+                  '상세한 결제 내역은 ${!kIsWeb && Platform.isAndroid ? '플레이스토어' : '앱스토어'} 내에서 확인이 가능합니다.'),
+              _buildInfo('결제 및 구매 취소 관련 문의는 실감 카카오톡 채널을 이용해주세요.'),
+              _buildInfo(
+                '구독기간 이후에는 자동으로 서비스 권한이 만료되며, 추가 결제가 발생하지 않습니다.',
+              ),
+              _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
+              _buildInfo(
+                '실감패스 이용 기간 중 작성한 모의고사 기록이 ${appState.freeProductBenefit.examRecordLimit}개를 초과할 경우, 실감패스 이용 기간 이후에는 기록을 추가하거나 기존의 기록을 수정할 수 없습니다. (열람 및 삭제만 가능) 단, 기록이 ${appState.freeProductBenefit.examRecordLimit}개 이하가 되도록 일부 기록을 삭제할 경우 추가 및 수정이 가능합니다.',
+              ),
+              _buildInfo(
+                '구매 취소 및 환불은 구입일로부터 7일 이내에만 가능하며, 환불 절차는 스토어의 운영 정책을 따릅니다.',
+              ),
+              const SizedBox(height: 60),
+            ],
+          );
+        },
       ),
     );
   }
