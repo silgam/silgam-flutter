@@ -24,6 +24,7 @@ import '../custom_exam_guide/custom_exam_guide_page.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 import '../customize_subject_name/customize_subject_name_page.dart';
 import '../edit_record/edit_record_page.dart';
+import '../edit_review_problem/edit_review_problem_page.dart';
 import '../exam_overview/exam_overview_page.dart';
 import '../home/home_page.dart';
 import '../login/login_page.dart';
@@ -118,9 +119,24 @@ class SilgamApp extends StatelessWidget {
                 settings: settings,
               );
             case EditRecordPage.routeName:
-              final args = settings.arguments as EditRecordPageArguments;
+              final args = settings.arguments as EditRecordPageArguments?;
               return MaterialPageRoute<ExamRecord>(
-                builder: (_) => EditRecordPage(arguments: args),
+                builder: (_) => EditRecordPage(
+                  recordToEdit: args?.recordToEdit,
+                  inputExam: args?.inputExam,
+                  prefillFeedback: args?.prefillFeedback,
+                  examStartedTime: args?.examStartedTime,
+                  examFinishedTime: args?.examFinishedTime,
+                ),
+                settings: settings,
+              );
+            case EditReviewProblemPage.routeName:
+              final args =
+                  settings.arguments as EditReviewProblemPageArguments?;
+              return MaterialPageRoute<EditReviewProblemPageResult>(
+                builder: (_) => EditReviewProblemPage(
+                  reviewProblemToEdit: args?.reviewProblemToEdit,
+                ),
                 settings: settings,
               );
             case RecordDetailPage.routeName:

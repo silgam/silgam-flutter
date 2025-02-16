@@ -124,28 +124,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   }
 
   void _onSaveButtonPressed() {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      if (!_appCubit.state.productBenefit.isCustomExamAvailable) {
-        showCustomExamNotAvailableDialog(context);
-        return;
-      }
-
-      final values = _formKey.currentState?.value;
-      if (values == null) return;
-
-      _customExamEditCubit.save(
-        examToEdit: _examToEdit,
-        examName: values[_examNameFieldName],
-        baseExam: values[_baseExamFieldName],
-        startTime: values[_startTimeFieldName],
-        duration: int.parse(values[_durationFieldName]),
-        numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
-        perfectScore: int.parse(values[_perfectScoreFieldName]),
-        isBeforeFinishAnnouncementEnabled:
-            values[_isBeforeFinishAnnouncementEnabledFieldName],
-      );
-      Navigator.pop(context, true);
-    } else {
+    final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isFormValid) {
       final firstErrorMessage =
           _formKey.currentState?.errors.entries.first.value;
       if (firstErrorMessage != null) {
@@ -157,7 +137,30 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           ),
         );
       }
+      return;
     }
+
+    if (!_appCubit.state.productBenefit.isCustomExamAvailable) {
+      showCustomExamNotAvailableDialog(context);
+      return;
+    }
+
+    final values = _formKey.currentState?.value;
+    if (values == null) return;
+
+    _customExamEditCubit.save(
+      examToEdit: _examToEdit,
+      examName: values[_examNameFieldName],
+      baseExam: values[_baseExamFieldName],
+      startTime: values[_startTimeFieldName],
+      duration: int.parse(values[_durationFieldName]),
+      numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
+      perfectScore: int.parse(values[_perfectScoreFieldName]),
+      isBeforeFinishAnnouncementEnabled:
+          values[_isBeforeFinishAnnouncementEnabledFieldName],
+    );
+
+    Navigator.pop(context, true);
   }
 
   void _deleteExam(Exam examToDelete) async {
@@ -257,6 +260,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         });
       },
       child: Column(
+        spacing: 20,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -282,7 +286,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                 ),
                 FormItem(
                   label: '기본 과목',
-                  tooltip: '시험 시뮬레이션에서 표시될 교시와 재생될 타종 소리의 기준이 되는 과목입니다.',
+                  description: '시험 시뮬레이션에서 표시될 교시와 재생될 타종 소리의 기준이 되는 과목입니다.',
                   child: FormDropdown<Exam>(
                     name: _baseExamFieldName,
                     initialValue: _baseExamInitialValue,
@@ -390,7 +394,6 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
           FormSwitch(
             name: _isBeforeFinishAnnouncementEnabledFieldName,
             initialValue: _isBeforeFinishAnnouncementEnabledInitialValue,
@@ -459,24 +462,26 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
             child: Column(
               children: [
                 Expanded(
-                  child: ListView(
-                    children: [
-                      _isEditMode
-                          ? Container(
-                              alignment: Alignment.topRight,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4,
-                                horizontal: 20,
-                              ),
-                              child: CustomTextButton.destructive(
-                                text: '삭제하기',
-                                onPressed: _onDeleteButtonPressed,
-                              ),
-                            )
-                          : const SizedBox(height: 28),
-                      _buildForm(),
-                      const SizedBox(height: 28),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _isEditMode
+                            ? Container(
+                                alignment: Alignment.topRight,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                  horizontal: 20,
+                                ),
+                                child: CustomTextButton.destructive(
+                                  text: '삭제하기',
+                                  onPressed: _onDeleteButtonPressed,
+                                ),
+                              )
+                            : const SizedBox(height: 28),
+                        _buildForm(),
+                        const SizedBox(height: 28),
+                      ],
+                    ),
                   ),
                 ),
                 _buildBottomButtons(),

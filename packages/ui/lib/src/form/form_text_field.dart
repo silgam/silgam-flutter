@@ -15,6 +15,11 @@ class FormTextField extends StatelessWidget {
     this.keyboardType,
     this.hideError = false,
     this.autoWidth = false,
+    this.controller,
+    this.focusNode,
+    this.onSubmitted,
+    this.minLines,
+    this.maxLines = 1,
   });
 
   final String name;
@@ -27,6 +32,11 @@ class FormTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool hideError;
   final bool autoWidth;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final ValueChanged<String?>? onSubmitted;
+  final int? minLines;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +47,11 @@ class FormTextField extends StatelessWidget {
       inputFormatters: inputFormatters,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
+      controller: controller,
+      focusNode: focusNode,
+      onSubmitted: onSubmitted,
+      minLines: minLines,
+      maxLines: maxLines,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         hintText: hintText,
@@ -48,6 +63,10 @@ class FormTextField extends StatelessWidget {
         filled: true,
         fillColor: Colors.white,
         enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
+        ),
+        disabledBorder: OutlineInputBorder(
           borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
           borderRadius: const BorderRadius.all(Radius.circular(6)),
         ),
