@@ -13,7 +13,6 @@ import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/duration_extension.dart';
 import '../../util/injection.dart';
-import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
@@ -614,20 +613,17 @@ class _EditRecordPageState extends State<EditRecordPage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: AnnotatedRegion(
-        value: defaultSystemUiOverlayStyle,
-        child: PageLayout(
-          title: _isEditingMode ? '기록 수정' : '기록 작성',
-          onBackPressed: _onCancelPressed,
-          isBottomActionLoading: _isSaving,
-          bottomAction: PageLayoutBottomAction(
-            label: '저장',
-            onPressed: _onSavePressed,
-          ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: _buildForm(),
-          ),
+      child: PageLayout(
+        title: _isEditingMode ? '기록 수정' : '기록 작성',
+        onBackPressed: _onCancelPressed,
+        isBottomActionLoading: _isSaving,
+        bottomAction: PageLayoutBottomAction(
+          label: '저장',
+          onPressed: _onSavePressed,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: _buildForm(),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PageLayoutBottomAction {
   const PageLayoutBottomAction({
@@ -33,6 +34,15 @@ class PageLayout extends StatefulWidget {
 }
 
 class _PageLayoutState extends State<PageLayout> {
+  static const SystemUiOverlayStyle _defaultSystemUiOverlayStyle =
+      SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarIconBrightness: Brightness.dark,
+    statusBarColor: Colors.transparent,
+    statusBarBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.dark,
+  );
+
   double _maxBottomInset = 0;
   double _lastBottomInset = 0;
   bool _isKeyboardVisible = false;
@@ -70,34 +80,37 @@ class _PageLayoutState extends State<PageLayout> {
 
     final bottomAction = widget.bottomAction;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _AppBar(
-              title: widget.title,
-              onBackPressed: widget.onBackPressed,
-              actions: widget.appBarActions,
-            ),
-            Expanded(
-              child: bottomAction != null
-                  ? Stack(
-                      children: [
-                        widget.child,
-                        _BottomFadeGradient(),
-                      ],
-                    )
-                  : widget.child,
-            ),
-            if (bottomAction != null)
-              _BottomButton(
-                label: bottomAction.label,
-                isKeyboardVisible: _isKeyboardVisible,
-                isLoading: widget.isBottomActionLoading,
-                onPressed: bottomAction.onPressed,
+    return AnnotatedRegion(
+      value: _defaultSystemUiOverlayStyle,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _AppBar(
+                title: widget.title,
+                onBackPressed: widget.onBackPressed,
+                actions: widget.appBarActions,
               ),
-          ],
+              Expanded(
+                child: bottomAction != null
+                    ? Stack(
+                        children: [
+                          widget.child,
+                          _BottomFadeGradient(),
+                        ],
+                      )
+                    : widget.child,
+              ),
+              if (bottomAction != null)
+                _BottomButton(
+                  label: bottomAction.label,
+                  isKeyboardVisible: _isKeyboardVisible,
+                  isLoading: widget.isBottomActionLoading,
+                  onPressed: bottomAction.onPressed,
+                ),
+            ],
+          ),
         ),
       ),
     );
