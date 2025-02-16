@@ -21,6 +21,7 @@ class PageLayout extends StatefulWidget {
     this.isBottomActionLoading = false,
     this.unfocusOnTapBackground = false,
     required this.child,
+    this.floatingActionButton,
   });
 
   final String? title;
@@ -30,6 +31,7 @@ class PageLayout extends StatefulWidget {
   final bool isBottomActionLoading;
   final bool unfocusOnTapBackground;
   final Widget child;
+  final Widget? floatingActionButton;
 
   @override
   State<PageLayout> createState() => _PageLayoutState();
@@ -85,6 +87,7 @@ class _PageLayoutState extends State<PageLayout> {
     final resultWidget = AnnotatedRegion(
       value: _defaultSystemUiOverlayStyle,
       child: Scaffold(
+        floatingActionButton: widget.floatingActionButton,
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

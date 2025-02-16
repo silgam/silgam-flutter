@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/subject.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/custom_menu_bar.dart';
 import '../common/free_user_block_overlay.dart';
 import 'cubit/customize_subject_name_cubit.dart';
 
@@ -18,24 +18,15 @@ class CustomizeSubjectNamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _cubit,
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          body: SafeArea(
-            child: Column(
-              children: [
-                const CustomMenuBar(title: '기본 과목 이름 설정'),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      _buildBody(),
-                      _buildOverlay(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+      child: PageLayout(
+        title: '기본 과목 이름 설정',
+        onBackPressed: () => Navigator.of(context).pop(),
+        unfocusOnTapBackground: true,
+        child: Stack(
+          children: [
+            _buildBody(),
+            _buildOverlay(),
+          ],
         ),
       ),
     );
