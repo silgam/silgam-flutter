@@ -35,11 +35,11 @@ class LoginCubit extends Cubit<LoginState> {
       return;
     }
 
-    emit(state.copyWith(isProgressing: true));
+    emit(state.copyWith(isLoading: true));
     try {
       await loginFunction();
     } catch (e) {
-      emit(state.copyWith(isProgressing: false));
+      emit(state.copyWith(isLoading: false));
       log(e.toString(), name: 'LoginCubit');
     }
   }
@@ -56,7 +56,7 @@ class LoginCubit extends Cubit<LoginState> {
     final authKakaoResult = await _authRepository.authKakao(oAuthToken);
     final firebaseToken = authKakaoResult.tryGetSuccess();
     if (firebaseToken == null) {
-      emit(state.copyWith(isProgressing: false));
+      emit(state.copyWith(isLoading: false));
       return;
     }
 
@@ -70,7 +70,7 @@ class LoginCubit extends Cubit<LoginState> {
     } else {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        emit(state.copyWith(isProgressing: false));
+        emit(state.copyWith(isLoading: false));
         return;
       }
       final GoogleSignInAuthentication googleAuth =
@@ -87,7 +87,7 @@ class LoginCubit extends Cubit<LoginState> {
     final LoginResult loginResult = await FacebookAuth.instance.login();
     final AccessToken? accessToken = loginResult.accessToken;
     if (loginResult.status != LoginStatus.success || accessToken == null) {
-      emit(state.copyWith(isProgressing: false));
+      emit(state.copyWith(isLoading: false));
       return;
     }
 
