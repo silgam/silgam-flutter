@@ -96,6 +96,7 @@ class _PageLayoutState extends State<PageLayout> {
                 title: widget.title,
                 onBackPressed: widget.onBackPressed,
                 actions: widget.appBarActions,
+                ignoreButtonPress: widget.isBottomActionLoading,
               ),
               Expanded(
                 child: bottomAction != null
@@ -239,11 +240,13 @@ class _AppBar extends StatelessWidget {
     this.title,
     this.onBackPressed,
     this.actions = const [],
+    this.ignoreButtonPress = false,
   });
 
   final String? title;
   final VoidCallback? onBackPressed;
   final List<AppBarAction> actions;
+  final bool ignoreButtonPress;
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +257,7 @@ class _AppBar extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: onBackPressed,
+            onPressed: ignoreButtonPress ? () {} : onBackPressed,
             tooltip: '뒤로가기',
             splashRadius: 20,
             icon: const Icon(Icons.arrow_back),
@@ -276,7 +279,7 @@ class _AppBar extends StatelessWidget {
           for (AppBarAction action in actions)
             IconButton(
               key: action.key,
-              onPressed: action.onPressed,
+              onPressed: ignoreButtonPress ? () {} : action.onPressed,
               tooltip: action.tooltip,
               splashRadius: 20,
               icon: Icon(action.iconData),
