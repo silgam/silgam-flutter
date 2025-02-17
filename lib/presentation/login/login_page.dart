@@ -5,14 +5,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ui/ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
-import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/custom_menu_bar.dart';
 import '../common/progress_overlay.dart';
 import 'cubit/login_cubit.dart';
 
@@ -32,60 +31,40 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt.get<LoginCubit>(),
-      child: AnnotatedRegion(
-        value: darkSystemUiOverlayStyle,
-        child: Scaffold(
-          body: BlocListener<AppCubit, AppState>(
-            listenWhen: (previous, current) => previous.me != current.me,
-            listener: (_, appState) {
-              if (appState.isSignedIn && !_isPagePopped) {
-                _isPagePopped = true;
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
-                ));
-                AnalyticsManager.logEvent(
-                  name: '[LoginPage] Login',
-                  properties: {'user_id': appState.me!.id},
-                );
-              }
-            },
-            child: BlocBuilder<LoginCubit, LoginState>(
-              builder: (context, state) {
-                final cubit = context.read<LoginCubit>();
-                return ProgressOverlay(
-                  isProgressing: state.isProgressing,
-                  fast: true,
-                  description: '로그인 하는 중입니다.',
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              const Color(0xFF3F50A8),
-                              Theme.of(context).primaryColor
-                            ],
-                          ),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        child: _buildLoginLayout(cubit),
-                      ),
-                      SafeArea(
-                        child: Container(
-                          alignment: Alignment.topLeft,
-                          child: const CustomMenuBar(lightText: true),
-                        ),
-                      ),
-                    ],
+      child: BlocListener<AppCubit, AppState>(
+        listenWhen: (previous, current) => previous.me != current.me,
+        listener: (_, appState) {
+          if (appState.isSignedIn && !_isPagePopped) {
+            _isPagePopped = true;
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
+            ));
+            AnalyticsManager.logEvent(
+              name: '[LoginPage] Login',
+              properties: {'user_id': appState.me!.id},
+            );
+          }
+        },
+        child: PageLayout(
+          onBackPressed: () => Navigator.pop(context),
+          backgroundColor: Theme.of(context).primaryColor,
+          textBrightness: Brightness.light,
+          child: BlocBuilder<LoginCubit, LoginState>(
+            builder: (context, state) {
+              final cubit = context.read<LoginCubit>();
+
+              return ProgressOverlay(
+                isProgressing: state.isProgressing,
+                fast: true,
+                description: '로그인 하는 중입니다.',
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: _buildLoginLayout(cubit),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -94,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLoginLayout(LoginCubit cubit) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 72),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 32, bottom: 72),
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
