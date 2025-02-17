@@ -27,58 +27,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final LoginCubit _cubit = getIt.get();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<AppCubit, AppState>(
-      listenWhen: (previous, current) =>
-          previous.isSignedIn != current.isSignedIn,
-      listener: (context, appState) {
-        if (appState.isSignedIn) {
-          Navigator.pop(context);
-          EasyLoading.dismiss();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
-            ),
-          );
-          AnalyticsManager.logEvent(
-            name: '[LoginPage] Login',
-            properties: {'user_id': appState.me!.id},
-          );
-        }
-      },
-      child: BlocProvider(
-        create: (context) => _cubit,
-        child: PageLayout(
-          onBackPressed: () => Navigator.pop(context),
-          backgroundColor: Theme.of(context).primaryColor,
-          textBrightness: Brightness.light,
-          child: BlocConsumer<LoginCubit, LoginState>(
-            listenWhen: (previous, current) =>
-                previous.isLoading != current.isLoading,
-            listener: (context, state) {
-              if (state.isLoading) {
-                EasyLoading.show();
-              } else {
-                EasyLoading.dismiss();
-              }
-            },
-            builder: (context, state) {
-              return PopScope(
-                canPop: !state.isLoading,
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: _buildLoginLayout(),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildLoginLayout() {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, top: 32, bottom: 72),
@@ -182,15 +130,61 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AppCubit, AppState>(
+      listenWhen: (previous, current) =>
+          previous.isSignedIn != current.isSignedIn,
+      listener: (context, appState) {
+        if (appState.isSignedIn) {
+          Navigator.pop(context);
+          EasyLoading.dismiss();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
+            ),
+          );
+          AnalyticsManager.logEvent(
+            name: '[LoginPage] Login',
+            properties: {'user_id': appState.me!.id},
+          );
+        }
+      },
+      child: BlocProvider(
+        create: (context) => _cubit,
+        child: PageLayout(
+          onBackPressed: () => Navigator.pop(context),
+          backgroundColor: Theme.of(context).primaryColor,
+          textBrightness: Brightness.light,
+          child: BlocConsumer<LoginCubit, LoginState>(
+            listenWhen: (previous, current) =>
+                previous.isLoading != current.isLoading,
+            listener: (context, state) {
+              if (state.isLoading) {
+                EasyLoading.show();
+              } else {
+                EasyLoading.dismiss();
+              }
+            },
+            builder: (context, state) {
+              return PopScope(
+                canPop: !state.isLoading,
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: _buildLoginLayout(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _LoginButton extends StatelessWidget {
-  final String assetName, provider;
-  final Color color;
-  final Color borderColor;
-  final bool lightText;
-  final GestureTapCallback onTap;
-
   const _LoginButton({
     required this.onTap,
     required this.assetName,
@@ -199,6 +193,12 @@ class _LoginButton extends StatelessWidget {
     this.lightText = false,
     Color? borderColor,
   }) : borderColor = borderColor ?? color;
+
+  final String assetName, provider;
+  final Color color;
+  final Color borderColor;
+  final bool lightText;
+  final GestureTapCallback onTap;
 
   @override
   Widget build(BuildContext context) {
