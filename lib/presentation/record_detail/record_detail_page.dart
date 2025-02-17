@@ -13,7 +13,6 @@ import '../../util/const.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
-import '../common/progress_overlay.dart';
 import '../common/review_problem_card.dart';
 import '../edit_record/edit_record_page.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
@@ -129,10 +128,13 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     setState(() {
       _isDeleting = true;
     });
+    EasyLoading.show();
+
     await _recordRepository.deleteExamRecord(record);
     _recordListCubit.onRecordDeleted(record);
 
     if (mounted) Navigator.pop(context, RecordDetailPageResult.deleted);
+    EasyLoading.dismiss();
 
     await AnalyticsManager.logEvent(
         name: '[ExamRecordDetailPage] Delete exam record');
@@ -383,28 +385,27 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       );
     }
 
-    return PageLayout(
-      onBackPressed: () => Navigator.of(context).pop(),
-      appBarActions: [
-        AppBarAction(
-          iconData: Icons.download,
-          tooltip: '이미지 저장',
-          onPressed: () => _onSaveImageButtonPressed(record),
-        ),
-        AppBarAction(
-          iconData: Icons.edit,
-          tooltip: '수정',
-          onPressed: () => _onEditButtonPressed(record),
-        ),
-        AppBarAction(
-          iconData: Icons.delete,
-          tooltip: '삭제',
-          onPressed: () => _onDeleteButtonPressed(record),
-        ),
-      ],
-      child: ProgressOverlay(
-        isProgressing: _isDeleting,
-        description: '삭제하는 중',
+    return PopScope(
+      canPop: !_isDeleting,
+      child: PageLayout(
+        onBackPressed: () => Navigator.of(context).pop(),
+        appBarActions: [
+          AppBarAction(
+            iconData: Icons.download,
+            tooltip: '이미지 저장',
+            onPressed: () => _onSaveImageButtonPressed(record),
+          ),
+          AppBarAction(
+            iconData: Icons.edit,
+            tooltip: '수정',
+            onPressed: () => _onEditButtonPressed(record),
+          ),
+          AppBarAction(
+            iconData: Icons.delete,
+            tooltip: '삭제',
+            onPressed: () => _onDeleteButtonPressed(record),
+          ),
+        ],
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: _buildContent(record),
