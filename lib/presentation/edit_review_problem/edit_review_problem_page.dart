@@ -242,17 +242,17 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
                       top: 8,
                       right: 8,
                       child: Material(
-                        color: Colors.white54,
+                        color: Colors.black45,
                         clipBehavior: Clip.hardEdge,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+                        shape: const CircleBorder(),
                         child: InkWell(
                           onTap: () => _onImageRemove(imagePath),
                           child: Padding(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(4),
                             child: Icon(
                               Icons.clear,
+                              color: Colors.white,
+                              size: 22,
                             ),
                           ),
                         ),
