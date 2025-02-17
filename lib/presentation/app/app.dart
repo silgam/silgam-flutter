@@ -18,7 +18,6 @@ import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../announcement_setting/announcement_setting_page.dart';
 import '../clock/clock_page.dart';
-import '../common/progress_overlay.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
 import '../custom_exam_guide/custom_exam_guide_page.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
@@ -53,9 +52,37 @@ class SilgamApp extends StatelessWidget {
   static const backgroundColor = Color.fromARGB(255, 245, 246, 247);
   final String? _initialRoute;
 
+  void _initialize() {
+    FirebaseMessaging.instance.requestPermission();
+    initializeDateFormatting('ko_KR');
+    _initializeEasyLoading();
+  }
+
+  void _initializeEasyLoading() {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.custom
+      ..loadingStyle = EasyLoadingStyle.custom
+      ..indicatorType = EasyLoadingIndicatorType.ring
+      ..backgroundColor = Colors.transparent
+      ..boxShadow = const []
+      ..maskColor = Colors.black.withAlpha(60)
+      ..backgroundColor = Colors.black.withAlpha(180)
+      ..textStyle = const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 15,
+        color: Colors.white,
+        height: 1.4,
+      )
+      ..textColor = Colors.white
+      ..indicatorColor = Colors.white
+      ..indicatorSize = 32
+      ..lineWidth = 3;
+  }
+
   @override
   Widget build(BuildContext context) {
-    initialize();
+    _initialize();
+
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
@@ -226,12 +253,6 @@ class SilgamApp extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void initialize() {
-    FirebaseMessaging.instance.requestPermission();
-    initializeDateFormatting('ko_KR');
-    initializeEasyLoading();
   }
 }
 
