@@ -239,18 +239,14 @@ class _AppBar extends StatelessWidget {
     this.title,
     this.onBackPressed,
     this.actions = const [],
-    this.lightText = false,
   });
 
   final String? title;
   final VoidCallback? onBackPressed;
   final List<AppBarAction> actions;
-  final bool lightText;
 
   @override
   Widget build(BuildContext context) {
-    final Color textColor = lightText ? Colors.white : Colors.black;
-
     final title = this.title;
 
     return Padding(
@@ -261,7 +257,6 @@ class _AppBar extends StatelessWidget {
             onPressed: onBackPressed,
             tooltip: '뒤로가기',
             splashRadius: 20,
-            color: textColor,
             icon: const Icon(Icons.arrow_back),
           ),
           if (title != null)
@@ -273,7 +268,6 @@ class _AppBar extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: textColor,
                 ),
               ),
             )
@@ -285,7 +279,6 @@ class _AppBar extends StatelessWidget {
               onPressed: action.onPressed,
               tooltip: action.tooltip,
               splashRadius: 20,
-              color: textColor,
               icon: Icon(action.iconData),
             ),
         ],
