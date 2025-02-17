@@ -79,139 +79,149 @@ class _PurchasePageState extends State<PurchasePage> {
 
     return BlocProvider(
       create: (context) => _cubit,
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<AppCubit, AppState>(
-            listenWhen: (previous, current) => previous.me != current.me,
-            listener: (context, state) {
-              final me = state.me;
-              if (me != null && me.activeProduct.id == widget.product.id) {
-                Navigator.of(context).pop();
-                getIt.get<HomeCubit>().changeTabByTitle(SettingsView.title);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      me.isProductTrial
-                          ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
-                          : '${widget.product.name}가 시작되었어요! 열공하세요 🔥',
-                    ),
-                  ),
-                );
-              }
-            },
-          ),
-          BlocListener<IapCubit, IapState>(
-            listener: (context, state) {
-              if (state.isLoading) {
-                EasyLoading.show(status: '처리 중입니다. 앱을 닫지 마세요.');
-              } else {
-                EasyLoading.dismiss();
-              }
-            },
-          ),
-        ],
-        child: AnnotatedRegion(
-          value: defaultSystemUiOverlayStyle.copyWith(
-            statusBarColor: backgroundColor,
-            statusBarBrightness: widget.product.isPageBackgroundDark
-                ? Brightness.dark
-                : Brightness.light,
-            statusBarIconBrightness: widget.product.isPageBackgroundDark
-                ? Brightness.light
-                : Brightness.dark,
-          ),
-          child: Scaffold(
-            backgroundColor: backgroundColor,
-            body: SafeArea(
-              bottom: false,
-              child: BlocBuilder<PurchaseCubit, PurchaseState>(
-                builder: (context, state) {
-                  return Column(
-                    children: [
-                      CustomMenuBar(
-                        title: widget.product.name,
-                        lightText: widget.product.isPageBackgroundDark,
-                      ),
-                      Expanded(
-                        child: Stack(
-                          fit: StackFit.expand,
+      child: BlocListener<AppCubit, AppState>(
+        listenWhen: (previous, current) => previous.me != current.me,
+        listener: (context, state) {
+          final me = state.me;
+          if (me != null && me.activeProduct.id == widget.product.id) {
+            Navigator.of(context).pop();
+            getIt.get<HomeCubit>().changeTabByTitle(SettingsView.title);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  me.isProductTrial
+                      ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
+                      : '${widget.product.name}가 시작되었어요! 열공하세요 🔥',
+                ),
+              ),
+            );
+          }
+        },
+        child: BlocConsumer<IapCubit, IapState>(
+          listenWhen: (previous, current) =>
+              previous.isLoading != current.isLoading,
+          listener: (context, state) {
+            if (state.isLoading) {
+              EasyLoading.show(status: '처리 중입니다. 앱을 닫지 마세요.');
+            } else {
+              EasyLoading.dismiss();
+            }
+          },
+          builder: (context, state) {
+            return PopScope(
+              canPop: !state.isLoading,
+              child: AnnotatedRegion(
+                value: defaultSystemUiOverlayStyle.copyWith(
+                  statusBarColor: backgroundColor,
+                  statusBarBrightness: widget.product.isPageBackgroundDark
+                      ? Brightness.dark
+                      : Brightness.light,
+                  statusBarIconBrightness: widget.product.isPageBackgroundDark
+                      ? Brightness.light
+                      : Brightness.dark,
+                ),
+                child: Scaffold(
+                  backgroundColor: backgroundColor,
+                  body: SafeArea(
+                    bottom: false,
+                    child: BlocBuilder<PurchaseCubit, PurchaseState>(
+                      builder: (context, state) {
+                        return Column(
                           children: [
-                            Container(
-                              color: backgroundColor,
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                color: widget.product.isPageBackgroundDark
-                                    ? Colors.white
-                                    : Theme.of(context).primaryColor,
-                              ),
+                            CustomMenuBar(
+                              title: widget.product.name,
+                              lightText: widget.product.isPageBackgroundDark,
                             ),
-                            AnimatedOpacity(
-                              opacity: state.isWebviewLoading ? 0 : 1,
-                              curve: const _DelayedCurve(0.3, Curves.easeInOut),
-                              duration: const Duration(milliseconds: 500),
-                              child:
-                                  WebViewWidget(controller: _webViewController),
-                            ),
-                            AnimatedOpacity(
-                              opacity: state.isWebviewLoading ||
-                                      state.isPurchaseSectionShown
-                                  ? 0
-                                  : 1,
-                              curve: const _DelayedCurve(0.3, Curves.easeInOut),
-                              duration: const Duration(milliseconds: 300),
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  color: Colors.white,
-                                  padding: EdgeInsets.only(
-                                    left: 16,
-                                    right: 16,
-                                    top: 12,
-                                    bottom: 12 +
-                                        MediaQuery.of(context).padding.bottom,
+                            Expanded(
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Container(
+                                    color: backgroundColor,
+                                    alignment: Alignment.center,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 3,
+                                      color: widget.product.isPageBackgroundDark
+                                          ? Colors.white
+                                          : Theme.of(context).primaryColor,
+                                    ),
                                   ),
-                                  child: Material(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: InkWell(
-                                      onTap: () {
-                                        _webViewController.runJavaScript(
-                                            'scrollToPurchaseSection()');
-                                      },
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.grey.withAlpha(60),
+                                  AnimatedOpacity(
+                                    opacity: state.isWebviewLoading ? 0 : 1,
+                                    curve: const _DelayedCurve(
+                                        0.3, Curves.easeInOut),
+                                    duration: const Duration(milliseconds: 500),
+                                    child: WebViewWidget(
+                                        controller: _webViewController),
+                                  ),
+                                  AnimatedOpacity(
+                                    opacity: state.isWebviewLoading ||
+                                            state.isPurchaseSectionShown
+                                        ? 0
+                                        : 1,
+                                    curve: const _DelayedCurve(
+                                        0.3, Curves.easeInOut),
+                                    duration: const Duration(milliseconds: 300),
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
                                       child: Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 14,
+                                        color: Colors.white,
+                                        padding: EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
+                                          top: 12,
+                                          bottom: 12 +
+                                              MediaQuery.of(context)
+                                                  .padding
+                                                  .bottom,
                                         ),
-                                        child: const Text(
-                                          '구매하기 / 체험하기',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 16,
+                                        child: Material(
+                                          color: Theme.of(context).primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: InkWell(
+                                            onTap: () {
+                                              _webViewController.runJavaScript(
+                                                  'scrollToPurchaseSection()');
+                                            },
+                                            splashColor: Colors.transparent,
+                                            highlightColor:
+                                                Colors.grey.withAlpha(60),
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 20,
+                                                vertical: 14,
+                                              ),
+                                              child: const Text(
+                                                '구매하기 / 체험하기',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
