@@ -30,8 +30,8 @@ class FormItem extends StatelessWidget {
           Text(
             description,
             style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 14,
+              color: Colors.grey,
+              fontSize: 12,
             ),
           ),
         child,
