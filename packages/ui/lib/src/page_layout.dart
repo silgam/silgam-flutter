@@ -183,7 +183,7 @@ class _BottomButton extends StatelessWidget {
         duration: _animationDuration,
         tween: Tween<double>(begin: 12, end: isKeyboardVisible ? 0 : 12),
         builder: (context, value, child) {
-          return FilledButton.icon(
+          return FilledButton(
             onPressed: isLoading ? null : onPressed,
             style: FilledButton.styleFrom(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -196,11 +196,11 @@ class _BottomButton extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
               disabledBackgroundColor: isLoading
-                  ? Theme.of(context).primaryColor.withAlpha(220)
+                  ? Theme.of(context).primaryColor.withAlpha(180)
                   : null,
               disabledForegroundColor: isLoading ? Colors.white : null,
             ),
-            icon: isLoading
+            child: isLoading
                 ? Padding(
                     padding: const EdgeInsets.only(right: 4),
                     child: SizedBox(
@@ -212,8 +212,7 @@ class _BottomButton extends StatelessWidget {
                       ),
                     ),
                   )
-                : null,
-            label: Text(label),
+                : Text(label),
           );
         },
       ),
