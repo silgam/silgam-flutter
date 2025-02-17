@@ -321,7 +321,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return FormBuilder(
       key: _formKey,
       enabled: !_isSaving,
-      canPop: !_isChanged,
+      canPop: !_isChanged && !_isSaving,
       onPopInvokedWithResult: _onPopInvokedWithResult,
       onChanged: () {
         if (_isChanged) return;

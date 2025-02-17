@@ -90,7 +90,8 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
     return FormBuilder(
       key: _formKey,
       enabled: state.status != CustomizeSubjectNameStatus.saving,
-      canPop: !state.isFormChanged,
+      canPop: !state.isFormChanged &&
+          state.status != CustomizeSubjectNameStatus.saving,
       onPopInvokedWithResult: _onPopInvokedWithResult,
       onChanged: _cubit.onFormChanged,
       child: Column(
