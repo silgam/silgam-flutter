@@ -41,6 +41,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   ExamRecord? _record;
   bool _isDeleting = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _refreshRecord();
+  }
+
   Future<void> _refreshRecord() async {
     ExamRecord? getRecord() {
       return _recordListCubit.state.originalRecords
@@ -59,51 +65,180 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _refreshRecord();
+  void _onSaveImageButtonPressed(ExamRecord record) async {
+    if (_isDeleting) return;
+
+    final arguments = SaveImagePageArguments(recordToSave: record);
+    await Navigator.pushNamed(context, SaveImagePage.routeName,
+        arguments: arguments);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final record = _record;
+  void _onEditButtonPressed(ExamRecord record) async {
+    if (_isDeleting) return;
 
-    if (record == null) {
-      return PageLayout(
-        onBackPressed: () => Navigator.of(context).pop(),
-        child: Center(
-          child: CircularProgressIndicator(strokeWidth: 3),
-        ),
+    final arguments = EditRecordPageArguments(recordToEdit: record);
+    await Navigator.pushNamed(
+      context,
+      EditRecordPage.routeName,
+      arguments: arguments,
+    );
+
+    await _refreshRecord();
+  }
+
+  void _onDeleteButtonPressed(ExamRecord record) {
+    if (_isDeleting) return;
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(name: 'delete_record_confirm_dialog'),
+      builder: (context) {
+        return CustomAlertDialog(
+          title: '정말 이 기록을 삭제하실 건가요?',
+          content: record.title,
+          actions: [
+            CustomTextButton.secondary(
+              text: '취소',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            CustomTextButton.destructive(
+              text: '삭제',
+              onPressed: () {
+                Navigator.pop(context);
+                _deleteRecord(record);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteRecord(ExamRecord record) async {
+    if (_appCubit.state.isOffline &&
+        record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
+      EasyLoading.showToast(
+        '오프라인 상태에서는 복습할 문제 사진을 포함한 기록을 삭제할 수 없어요.',
+        dismissOnTap: true,
       );
+      return;
     }
 
-    return PageLayout(
-      onBackPressed: () => Navigator.of(context).pop(),
-      appBarActions: [
-        AppBarAction(
-          iconData: Icons.download,
-          tooltip: '이미지 저장',
-          onPressed: () => _onSaveImageButtonPressed(record),
+    setState(() {
+      _isDeleting = true;
+    });
+    await _recordRepository.deleteExamRecord(record);
+    _recordListCubit.onRecordDeleted(record);
+
+    if (mounted) Navigator.pop(context, RecordDetailPageResult.deleted);
+
+    await AnalyticsManager.logEvent(
+        name: '[ExamRecordDetailPage] Delete exam record');
+  }
+
+  void _onReviewProblemCardTap(ReviewProblem problem) {
+    final arguments = ReviewProblemDetailPageArguments(problem: problem);
+    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName,
+        arguments: arguments);
+  }
+
+  Widget _buildTitle(ExamRecord record) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          DateFormat.yMEd('ko_KR').add_Hm().format(record.examStartedTime),
+          style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: Colors.grey.shade700,
+          ),
         ),
-        AppBarAction(
-          iconData: Icons.edit,
-          tooltip: '수정',
-          onPressed: () => _onEditButtonPressed(record),
-        ),
-        AppBarAction(
-          iconData: Icons.delete,
-          tooltip: '삭제',
-          onPressed: () => _onDeleteButtonPressed(record),
+        Center(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Flexible(
+                child: Text(
+                  record.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                record.exam.name,
+                style: TextStyle(
+                  color: Color(record.exam.color),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
-      child: ProgressOverlay(
-        isProgressing: _isDeleting,
-        description: '삭제하는 중',
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: _buildContent(record),
-        ),
+    );
+  }
+
+  Widget _buildScoreBoard(ExamRecord record) {
+    int? score = record.score;
+    int? grade = record.grade;
+    int? percentile = record.percentile;
+    int? standardScore = record.standardScore;
+    int? examDurationMinutes = record.examDurationMinutes;
+
+    final List<Widget> scoreItems = [
+      if (score != null) _buildScoreItem('점수', score),
+      if (grade != null) _buildScoreItem('등급', grade),
+      if (percentile != null) _buildScoreItem('백분위', percentile),
+      if (standardScore != null) _buildScoreItem('표준점수', standardScore),
+      if (examDurationMinutes != null)
+        _buildScoreItem('응시 시간', examDurationMinutes),
+    ];
+
+    for (var i = scoreItems.length - 1; i >= 0; i--) {
+      if (i == 0) continue;
+      scoreItems.insert(i, const VerticalDivider(indent: 6, endIndent: 6));
+    }
+
+    return IntrinsicHeight(
+      child: Row(
+        children: scoreItems,
+      ),
+    );
+  }
+
+  Widget _buildScoreItem(String title, int value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        children: [
+          _buildSubTitle(title),
+          const SizedBox(height: 4),
+          Text(
+            value.toString(),
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubTitle(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.grey.shade700,
+        fontWeight: FontWeight.w300,
       ),
     );
   }
@@ -235,182 +370,47 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     );
   }
 
-  Widget _buildTitle(ExamRecord record) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          DateFormat.yMEd('ko_KR').add_Hm().format(record.examStartedTime),
-          style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: Colors.grey.shade700,
-          ),
+  @override
+  Widget build(BuildContext context) {
+    final record = _record;
+
+    if (record == null) {
+      return PageLayout(
+        onBackPressed: () => Navigator.of(context).pop(),
+        child: Center(
+          child: CircularProgressIndicator(strokeWidth: 3),
         ),
-        Center(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                child: Text(
-                  record.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                record.exam.name,
-                style: TextStyle(
-                  color: Color(record.exam.color),
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
+      );
+    }
+
+    return PageLayout(
+      onBackPressed: () => Navigator.of(context).pop(),
+      appBarActions: [
+        AppBarAction(
+          iconData: Icons.download,
+          tooltip: '이미지 저장',
+          onPressed: () => _onSaveImageButtonPressed(record),
+        ),
+        AppBarAction(
+          iconData: Icons.edit,
+          tooltip: '수정',
+          onPressed: () => _onEditButtonPressed(record),
+        ),
+        AppBarAction(
+          iconData: Icons.delete,
+          tooltip: '삭제',
+          onPressed: () => _onDeleteButtonPressed(record),
         ),
       ],
-    );
-  }
-
-  Widget _buildScoreBoard(ExamRecord record) {
-    int? score = record.score;
-    int? grade = record.grade;
-    int? percentile = record.percentile;
-    int? standardScore = record.standardScore;
-    int? examDurationMinutes = record.examDurationMinutes;
-
-    final List<Widget> scoreItems = [
-      if (score != null) _buildScoreItem('점수', score),
-      if (grade != null) _buildScoreItem('등급', grade),
-      if (percentile != null) _buildScoreItem('백분위', percentile),
-      if (standardScore != null) _buildScoreItem('표준점수', standardScore),
-      if (examDurationMinutes != null)
-        _buildScoreItem('응시 시간', examDurationMinutes),
-    ];
-
-    for (var i = scoreItems.length - 1; i >= 0; i--) {
-      if (i == 0) continue;
-      scoreItems.insert(i, const VerticalDivider(indent: 6, endIndent: 6));
-    }
-
-    return IntrinsicHeight(
-      child: Row(
-        children: scoreItems,
+      child: ProgressOverlay(
+        isProgressing: _isDeleting,
+        description: '삭제하는 중',
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: _buildContent(record),
+        ),
       ),
     );
-  }
-
-  Widget _buildScoreItem(String title, int value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
-        children: [
-          _buildSubTitle(title),
-          const SizedBox(height: 4),
-          Text(
-            value.toString(),
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubTitle(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Colors.grey.shade700,
-        fontWeight: FontWeight.w300,
-      ),
-    );
-  }
-
-  void _onSaveImageButtonPressed(ExamRecord record) async {
-    if (_isDeleting) return;
-
-    final arguments = SaveImagePageArguments(recordToSave: record);
-    await Navigator.pushNamed(context, SaveImagePage.routeName,
-        arguments: arguments);
-  }
-
-  void _onEditButtonPressed(ExamRecord record) async {
-    if (_isDeleting) return;
-
-    final arguments = EditRecordPageArguments(recordToEdit: record);
-    await Navigator.pushNamed(
-      context,
-      EditRecordPage.routeName,
-      arguments: arguments,
-    );
-
-    await _refreshRecord();
-  }
-
-  void _onDeleteButtonPressed(ExamRecord record) {
-    if (_isDeleting) return;
-
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(name: 'delete_record_confirm_dialog'),
-      builder: (context) {
-        return CustomAlertDialog(
-          title: '정말 이 기록을 삭제하실 건가요?',
-          content: record.title,
-          actions: [
-            CustomTextButton.secondary(
-              text: '취소',
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            CustomTextButton.destructive(
-              text: '삭제',
-              onPressed: () {
-                Navigator.pop(context);
-                _deleteRecord(record);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _deleteRecord(ExamRecord record) async {
-    if (_appCubit.state.isOffline &&
-        record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 복습할 문제 사진을 포함한 기록을 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
-      return;
-    }
-
-    setState(() {
-      _isDeleting = true;
-    });
-    await _recordRepository.deleteExamRecord(record);
-    _recordListCubit.onRecordDeleted(record);
-
-    if (mounted) Navigator.pop(context, RecordDetailPageResult.deleted);
-
-    await AnalyticsManager.logEvent(
-        name: '[ExamRecordDetailPage] Delete exam record');
-  }
-
-  void _onReviewProblemCardTap(ReviewProblem problem) {
-    final arguments = ReviewProblemDetailPageArguments(problem: problem);
-    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName,
-        arguments: arguments);
   }
 }
 
