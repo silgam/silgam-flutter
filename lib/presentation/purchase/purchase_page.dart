@@ -254,7 +254,7 @@ class _PurchasePageState extends State<PurchasePage> {
             ),
             AnimatedOpacity(
               opacity: state.isWebviewLoading ? 0 : 1,
-              curve: const _DelayedCurve(0.3, Curves.easeInOut),
+              curve: Curves.easeInOut,
               duration: const Duration(milliseconds: 500),
               child: WebViewWidget(controller: _webViewController),
             ),
@@ -264,7 +264,7 @@ class _PurchasePageState extends State<PurchasePage> {
                 ignoring: !showBottomButton,
                 child: AnimatedOpacity(
                   opacity: showBottomButton ? 1 : 0,
-                  curve: const _DelayedCurve(0.3, Curves.easeInOut),
+                  curve: Curves.easeInOut,
                   duration: const Duration(milliseconds: 300),
                   child: Container(
                     color: Colors.white,
@@ -348,20 +348,5 @@ class _PurchasePageState extends State<PurchasePage> {
         ),
       ),
     );
-  }
-}
-
-class _DelayedCurve extends Curve {
-  const _DelayedCurve(this.delay, this.curve);
-
-  final double delay;
-  final Curve curve;
-
-  @override
-  double transformInternal(double t) {
-    if (t < delay) {
-      return 0;
-    }
-    return curve.transformInternal((t - delay) / (1 - delay));
   }
 }
