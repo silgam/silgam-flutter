@@ -154,54 +154,60 @@ class _PurchasePageState extends State<PurchasePage> {
                                     child: WebViewWidget(
                                         controller: _webViewController),
                                   ),
-                                  AnimatedOpacity(
-                                    opacity: state.isWebviewLoading ||
-                                            state.isPurchaseSectionShown
-                                        ? 0
-                                        : 1,
-                                    curve: const _DelayedCurve(
-                                        0.3, Curves.easeInOut),
-                                    duration: const Duration(milliseconds: 300),
-                                    child: Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Container(
-                                        color: Colors.white,
-                                        padding: EdgeInsets.only(
-                                          left: 16,
-                                          right: 16,
-                                          top: 12,
-                                          bottom: 12 +
-                                              MediaQuery.of(context)
-                                                  .padding
-                                                  .bottom,
-                                        ),
-                                        child: Material(
-                                          color: Theme.of(context).primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: InkWell(
-                                            onTap: () {
-                                              _webViewController.runJavaScript(
-                                                  'scrollToPurchaseSection()');
-                                            },
-                                            splashColor: Colors.transparent,
-                                            highlightColor:
-                                                Colors.grey.withAlpha(60),
-                                            child: Container(
-                                              width: double.infinity,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 20,
-                                                vertical: 14,
-                                              ),
-                                              child: const Text(
-                                                '구매하기 / 체험하기',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontSize: 16,
+                                  IgnorePointer(
+                                    ignoring: state.isWebviewLoading ||
+                                        state.isPurchaseSectionShown,
+                                    child: AnimatedOpacity(
+                                      opacity: state.isWebviewLoading ||
+                                              state.isPurchaseSectionShown
+                                          ? 0
+                                          : 1,
+                                      curve: const _DelayedCurve(
+                                          0.3, Curves.easeInOut),
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                          color: Colors.white,
+                                          padding: EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            top: 12,
+                                            bottom: 12 +
+                                                MediaQuery.of(context)
+                                                    .padding
+                                                    .bottom,
+                                          ),
+                                          child: Material(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: InkWell(
+                                              onTap: () {
+                                                _webViewController.runJavaScript(
+                                                    'scrollToPurchaseSection()');
+                                              },
+                                              splashColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.grey.withAlpha(60),
+                                              child: Container(
+                                                width: double.infinity,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 20,
+                                                  vertical: 14,
+                                                ),
+                                                child: const Text(
+                                                  '구매하기 / 체험하기',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                  ),
                                                 ),
                                               ),
                                             ),
