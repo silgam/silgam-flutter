@@ -12,7 +12,6 @@ import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
-import '../common/custom_menu_bar.dart';
 import '../custom_exam_guide/custom_exam_guide_page.dart';
 import '../home/cubit/home_cubit.dart';
 import '../home/settings/settings_view.dart';
@@ -128,9 +127,13 @@ class _PurchasePageState extends State<PurchasePage> {
                       builder: (context, state) {
                         return Column(
                           children: [
-                            CustomMenuBar(
+                            CustomAppBar(
                               title: widget.product.name,
-                              lightText: widget.product.isPageBackgroundDark,
+                              onBackPressed: () => Navigator.pop(context),
+                              textBrightness:
+                                  widget.product.isPageBackgroundDark
+                                      ? Brightness.light
+                                      : Brightness.dark,
                             ),
                             Expanded(
                               child: Stack(
@@ -154,20 +157,20 @@ class _PurchasePageState extends State<PurchasePage> {
                                     child: WebViewWidget(
                                         controller: _webViewController),
                                   ),
-                                  IgnorePointer(
-                                    ignoring: state.isWebviewLoading ||
-                                        state.isPurchaseSectionShown,
-                                    child: AnimatedOpacity(
-                                      opacity: state.isWebviewLoading ||
-                                              state.isPurchaseSectionShown
-                                          ? 0
-                                          : 1,
-                                      curve: const _DelayedCurve(
-                                          0.3, Curves.easeInOut),
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      child: Align(
-                                        alignment: Alignment.bottomCenter,
+                                  Positioned.fill(
+                                    top: null,
+                                    child: IgnorePointer(
+                                      ignoring: state.isWebviewLoading ||
+                                          state.isPurchaseSectionShown,
+                                      child: AnimatedOpacity(
+                                        opacity: state.isWebviewLoading ||
+                                                state.isPurchaseSectionShown
+                                            ? 0
+                                            : 1,
+                                        curve: const _DelayedCurve(
+                                            0.3, Curves.easeInOut),
+                                        duration:
+                                            const Duration(milliseconds: 300),
                                         child: Container(
                                           color: Colors.white,
                                           padding: EdgeInsets.only(
@@ -179,38 +182,12 @@ class _PurchasePageState extends State<PurchasePage> {
                                                     .padding
                                                     .bottom,
                                           ),
-                                          child: Material(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: InkWell(
-                                              onTap: () {
-                                                _webViewController.runJavaScript(
-                                                    'scrollToPurchaseSection()');
-                                              },
-                                              splashColor: Colors.transparent,
-                                              highlightColor:
-                                                  Colors.grey.withAlpha(60),
-                                              child: Container(
-                                                width: double.infinity,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 20,
-                                                  vertical: 14,
-                                                ),
-                                                child: const Text(
-                                                  '구매하기 / 체험하기',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                          child: CustomFilledButton(
+                                            onPressed: () {
+                                              _webViewController.runJavaScript(
+                                                  'scrollToPurchaseSection()');
+                                            },
+                                            label: '구매하기 / 체험하기',
                                           ),
                                         ),
                                       ),
