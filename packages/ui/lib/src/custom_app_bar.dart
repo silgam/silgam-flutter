@@ -69,6 +69,7 @@ class CustomAppBar extends StatelessWidget {
               onPressed: ignoreButtonPress ? () {} : action.onPressed,
               tooltip: action.tooltip,
               splashRadius: 20,
+              color: textColor,
               icon: Icon(action.iconData),
             ),
         ],

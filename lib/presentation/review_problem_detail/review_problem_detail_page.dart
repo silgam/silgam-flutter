@@ -9,11 +9,11 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/problem.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/custom_menu_bar.dart';
 
 class ReviewProblemDetailPageArguments {
   ReviewProblem problem;
@@ -188,17 +188,18 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomMenuBar(
+          CustomAppBar(
             title: problem.title,
-            lightText: true,
-            actionButtons: [
-              ActionButton(
-                icon: const Icon(Icons.download),
+            onBackPressed: () => Navigator.pop(context),
+            textBrightness: Brightness.light,
+            actions: [
+              AppBarAction(
+                iconData: Icons.download,
                 tooltip: '이미지 다운로드',
                 onPressed: _onDownloadPressed,
               ),
-              ActionButton(
-                icon: const Icon(Icons.description),
+              AppBarAction(
+                iconData: Icons.description,
                 tooltip: '메모 보기/숨기기',
                 onPressed: _onMemoIconPressed,
               ),
