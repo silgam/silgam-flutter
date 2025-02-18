@@ -15,6 +15,14 @@ import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/custom_menu_bar.dart';
 
+class ReviewProblemDetailPageArguments {
+  ReviewProblem problem;
+
+  ReviewProblemDetailPageArguments({
+    required this.problem,
+  });
+}
+
 class ReviewProblemDetailPage extends StatefulWidget {
   static const routeName = '/review_problem_detail';
   final ReviewProblem reviewProblem;
@@ -31,6 +39,7 @@ class ReviewProblemDetailPage extends StatefulWidget {
 
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   final AppCubit _appCubit = getIt.get();
+
   bool _hideUi = false;
   late bool _hideMemo = widget.reviewProblem.memo.isEmpty;
   int _currentIndex = 0;
@@ -38,142 +47,21 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   double _imageY = 0;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    final problem = widget.reviewProblem;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          PhotoViewGallery.builder(
-            itemCount: problem.imagePaths.length,
-            builder: (_, index) => PhotoViewGalleryPageOptions(
-              onTapUp: (_, __, ___) => _onPhotoViewTapUp(),
-              onScaleEnd: _onPhotoViewScaleEnd,
-              imageProvider: CachedNetworkImageProvider(
-                problem.imagePaths[index],
-              ),
-              errorBuilder: (_, __, ___) {
-                return Container(
-                  padding: const EdgeInsets.all(20),
-                  alignment: Alignment.center,
-                  child: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '사진을 불러올 수 없어요.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            onPageChanged: _onPhotoChanged,
-            loadingBuilder: (context, event) => const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              ),
-            ),
-          ),
-          SafeArea(
-            top: false,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 100),
-              child: _hideUi ? const SizedBox.shrink() : _buildMenuBar(),
-            ),
-          ),
-          SafeArea(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 100),
-              child: _hideUi ? const SizedBox.shrink() : _buildPageIndicator(),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
-  Widget _buildMenuBar() {
-    final problem = widget.reviewProblem;
-    final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
-
-    return Container(
-      padding: EdgeInsets.only(top: statusBarHeight),
-      margin: const EdgeInsets.only(bottom: 40),
-      color:
-          _hideMemo ? Colors.black.withAlpha(102) : Colors.black.withAlpha(179),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomMenuBar(
-            title: problem.title,
-            lightText: true,
-            actionButtons: [
-              ActionButton(
-                icon: const Icon(Icons.download),
-                tooltip: '이미지 다운로드',
-                onPressed: _onDownloadPressed,
-              ),
-              ActionButton(
-                icon: const Icon(Icons.description),
-                tooltip: '메모 보기/숨기기',
-                onPressed: _onMemoIconPressed,
-              ),
-            ],
-          ),
-          _hideMemo
-              ? const SizedBox.shrink()
-              : Flexible(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        problem.memo,
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
   }
 
-  Widget _buildPageIndicator() {
-    return Container(
-      alignment: Alignment.bottomCenter,
-      padding: const EdgeInsets.all(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.black38,
-        ),
-        child: Text(
-          '${_currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
+  void _onPhotoChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   void _onPhotoViewTapUp() {
@@ -183,7 +71,10 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
   }
 
   void _onPhotoViewScaleEnd(
-      _, ScaleEndDetails details, PhotoViewControllerValue controllerValue) {
+    context,
+    ScaleEndDetails details,
+    PhotoViewControllerValue controllerValue,
+  ) {
     double x = controllerValue.position.dx;
     double y = controllerValue.position.dy;
     if ((x - _imageX).abs() < 2 &&
@@ -194,12 +85,6 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     }
     _imageX = x;
     _imageY = y;
-  }
-
-  void _onPhotoChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
   }
 
   void _onDownloadPressed() async {
@@ -240,17 +125,149 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     });
   }
 
-  @override
-  void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    super.dispose();
+  PhotoViewGallery _buildGallery() {
+    return PhotoViewGallery.builder(
+      onPageChanged: _onPhotoChanged,
+      itemCount: widget.reviewProblem.imagePaths.length,
+      loadingBuilder: (context, event) {
+        return const Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2,
+          ),
+        );
+      },
+      builder: (context, index) {
+        return PhotoViewGalleryPageOptions(
+          onTapUp: (context, details, controllerValue) => _onPhotoViewTapUp(),
+          onScaleEnd: _onPhotoViewScaleEnd,
+          imageProvider: CachedNetworkImageProvider(
+            widget.reviewProblem.imagePaths[index],
+          ),
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              alignment: Alignment.center,
+              child: const Column(
+                spacing: 4,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '사진을 불러올 수 없어요.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
-}
 
-class ReviewProblemDetailPageArguments {
-  ReviewProblem problem;
+  Widget _buildMenuBar() {
+    final problem = widget.reviewProblem;
+    final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
 
-  ReviewProblemDetailPageArguments({
-    required this.problem,
-  });
+    return Container(
+      padding: EdgeInsets.only(top: statusBarHeight),
+      margin: const EdgeInsets.only(bottom: 40),
+      color:
+          _hideMemo ? Colors.black.withAlpha(102) : Colors.black.withAlpha(179),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomMenuBar(
+            title: problem.title,
+            lightText: true,
+            actionButtons: [
+              ActionButton(
+                icon: const Icon(Icons.download),
+                tooltip: '이미지 다운로드',
+                onPressed: _onDownloadPressed,
+              ),
+              ActionButton(
+                icon: const Icon(Icons.description),
+                tooltip: '메모 보기/숨기기',
+                onPressed: _onMemoIconPressed,
+              ),
+            ],
+          ),
+          if (_hideMemo)
+            const SizedBox.shrink()
+          else
+            Flexible(
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    problem.memo,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageIndicator() {
+    return Container(
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.all(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: Colors.black38,
+        ),
+        child: Text(
+          '${_currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          _buildGallery(),
+          SafeArea(
+            top: false,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              child: _hideUi ? const SizedBox.shrink() : _buildMenuBar(),
+            ),
+          ),
+          SafeArea(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              child: _hideUi ? const SizedBox.shrink() : _buildPageIndicator(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
