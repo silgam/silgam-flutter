@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'custom_app_bar.dart';
+import 'custom_filled_button.dart';
+
 class PageLayoutBottomAction {
   const PageLayoutBottomAction({
     required this.label,
@@ -110,7 +113,7 @@ class _PageLayoutState extends State<PageLayout> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _AppBar(
+              CustomAppBar(
                 title: widget.title,
                 onBackPressed: widget.onBackPressed,
                 actions: widget.appBarActions,
@@ -203,114 +206,13 @@ class _BottomButton extends StatelessWidget {
         duration: _animationDuration,
         tween: Tween<double>(begin: 12, end: isKeyboardVisible ? 0 : 12),
         builder: (context, value, child) {
-          return FilledButton(
-            onPressed: isLoading ? null : onPressed,
-            style: FilledButton.styleFrom(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(value),
-              ),
-              textStyle: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-              disabledBackgroundColor: isLoading
-                  ? Theme.of(context).primaryColor.withAlpha(180)
-                  : null,
-              disabledForegroundColor: isLoading ? Colors.white : null,
-            ),
-            child: isLoading
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 4),
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: const CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  )
-                : Text(label),
+          return CustomFilledButton(
+            label: label,
+            isLoading: isLoading,
+            onPressed: onPressed,
+            borderRadius: value,
           );
         },
-      ),
-    );
-  }
-}
-
-class AppBarAction {
-  final Key? key;
-  final IconData iconData;
-  final String tooltip;
-  final VoidCallback? onPressed;
-
-  const AppBarAction({
-    this.key,
-    required this.iconData,
-    required this.tooltip,
-    this.onPressed,
-  });
-}
-
-class _AppBar extends StatelessWidget {
-  const _AppBar({
-    this.title,
-    this.onBackPressed,
-    this.actions = const [],
-    this.ignoreButtonPress = false,
-    this.textBrightness = Brightness.dark,
-  });
-
-  final String? title;
-  final VoidCallback? onBackPressed;
-  final List<AppBarAction> actions;
-  final bool ignoreButtonPress;
-  final Brightness textBrightness;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color textColor =
-        textBrightness == Brightness.dark ? Colors.black : Colors.white;
-
-    final title = this.title;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: ignoreButtonPress ? () {} : onBackPressed,
-            tooltip: '뒤로가기',
-            splashRadius: 20,
-            color: textColor,
-            icon: const Icon(Icons.arrow_back),
-          ),
-          if (title != null)
-            Expanded(
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            )
-          else
-            const Spacer(),
-          for (AppBarAction action in actions)
-            IconButton(
-              key: action.key,
-              onPressed: ignoreButtonPress ? () {} : action.onPressed,
-              tooltip: action.tooltip,
-              splashRadius: 20,
-              icon: Icon(action.iconData),
-            ),
-        ],
       ),
     );
   }
