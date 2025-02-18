@@ -17,6 +17,14 @@ import '../home/cubit/home_cubit.dart';
 import '../home/settings/settings_view.dart';
 import 'cubit/purchase_cubit.dart';
 
+class PurchasePageArguments {
+  const PurchasePageArguments({
+    required this.product,
+  });
+
+  final Product product;
+}
+
 class PurchasePage extends StatefulWidget {
   const PurchasePage({
     super.key,
@@ -24,6 +32,7 @@ class PurchasePage extends StatefulWidget {
   });
 
   static const routeName = '/purchase';
+
   final Product product;
 
   @override
@@ -48,6 +57,12 @@ class _PurchasePageState extends State<PurchasePage> {
       onMessageReceived: _onWebviewMessageReceived,
     );
 
+  @override
+  void initState() {
+    super.initState();
+    _loadWebView();
+  }
+
   Future<void> _loadWebView() async {
     final packageInfo = await PackageInfo.fromPlatform();
     Uri uri = Uri.parse(widget.product.pageUrl);
@@ -60,10 +75,128 @@ class _PurchasePageState extends State<PurchasePage> {
     _webViewController.loadRequest(uri);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadWebView();
+  void _onWebviewMessageReceived(JavaScriptMessage message) {
+    final AppCubit appCubit = context.read();
+    final IapCubit iapCubit = context.read();
+    switch (message.message) {
+      case 'purchaseSectionShown':
+        _cubit.purchaseSectionShown();
+        break;
+      case 'purchaseSectionHidden':
+        _cubit.purchaseSectionHidden();
+        break;
+
+      case 'showCustomExamGuide':
+        Navigator.pushNamed(
+          context,
+          CustomExamGuidePage.routeName,
+          arguments: const CustomExamGuideArguments(
+            isFromPurchasePage: true,
+          ),
+        );
+        break;
+
+      case 'purchase':
+        AnalyticsManager.logEvent(
+          name: '[PurchasePage] Webview message received',
+          properties: {
+            'message': message.message,
+            'product_id': widget.product.id,
+            'product_name': widget.product.name,
+          },
+        );
+        iapCubit.purchaseProduct(widget.product);
+        break;
+      case 'trial':
+        AnalyticsManager.logEvent(
+          name: '[PurchasePage] Webview message received',
+          properties: {
+            'message': message.message,
+            'product_id': widget.product.id,
+            'product_name': widget.product.name,
+          },
+        );
+        final now = DateFormat.yMd('ko_KR').add_Hm().format(DateTime.now());
+        final trialEndTime = DateFormat.yMd('ko_KR').add_Hm().format(
+              DateTime.now()
+                  .add(Duration(days: widget.product.trialPeriod))
+                  .subtract(const Duration(seconds: 1)),
+            );
+        showDialog(
+          context: context,
+          routeSettings:
+              const RouteSettings(name: '/purchase/trial_confirm_dialog'),
+          builder: (context) {
+            return CustomAlertDialog.customContent(
+              title:
+                  '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildInfo('이용 가능 기간 : $now ~ $trialEndTime'),
+                  _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
+                  _buildInfo(
+                    '무료 체험 기간이 끝나는 시점까지 작성되어있는 모의고사 기록이 ${appCubit.state.freeProductBenefit.examRecordLimit}개를 초과하면, 체험 기간 후에는 모의고사 기록을 열람 및 삭제만 할 수 있습니다. (${appCubit.state.freeProductBenefit.examRecordLimit}개 미만까지 삭제할 시에만 추가/수정 가능)',
+                  ),
+                ],
+              ),
+              actions: [
+                CustomTextButton.secondary(
+                  text: '취소',
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                CustomTextButton.primary(
+                  text: '시작',
+                  onPressed: () {
+                    AnalyticsManager.logEvent(
+                      name: '[PurchasePage] Start free trial button tapped',
+                      properties: {
+                        'product_id': widget.product.id,
+                        'product_name': widget.product.name,
+                      },
+                    );
+                    iapCubit.startFreeTrialProcess(widget.product);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+              scrollable: true,
+            );
+          },
+        );
+        break;
+    }
+  }
+
+  Widget _buildInfo(String text) {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• ',
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w300,
+              color: Colors.grey.shade600,
+              height: 1.2,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                height: 1.2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -209,138 +342,6 @@ class _PurchasePageState extends State<PurchasePage> {
       ),
     );
   }
-
-  void _onWebviewMessageReceived(JavaScriptMessage message) {
-    final AppCubit appCubit = context.read();
-    final IapCubit iapCubit = context.read();
-    switch (message.message) {
-      case 'purchaseSectionShown':
-        _cubit.purchaseSectionShown();
-        break;
-      case 'purchaseSectionHidden':
-        _cubit.purchaseSectionHidden();
-        break;
-
-      case 'showCustomExamGuide':
-        Navigator.pushNamed(
-          context,
-          CustomExamGuidePage.routeName,
-          arguments: const CustomExamGuideArguments(
-            isFromPurchasePage: true,
-          ),
-        );
-        break;
-
-      case 'purchase':
-        AnalyticsManager.logEvent(
-          name: '[PurchasePage] Webview message received',
-          properties: {
-            'message': message.message,
-            'product_id': widget.product.id,
-            'product_name': widget.product.name,
-          },
-        );
-        iapCubit.purchaseProduct(widget.product);
-        break;
-      case 'trial':
-        AnalyticsManager.logEvent(
-          name: '[PurchasePage] Webview message received',
-          properties: {
-            'message': message.message,
-            'product_id': widget.product.id,
-            'product_name': widget.product.name,
-          },
-        );
-        final now = DateFormat.yMd('ko_KR').add_Hm().format(DateTime.now());
-        final trialEndTime = DateFormat.yMd('ko_KR').add_Hm().format(
-              DateTime.now()
-                  .add(Duration(days: widget.product.trialPeriod))
-                  .subtract(const Duration(seconds: 1)),
-            );
-        showDialog(
-          context: context,
-          routeSettings:
-              const RouteSettings(name: '/purchase/trial_confirm_dialog'),
-          builder: (context) {
-            return CustomAlertDialog.customContent(
-              title:
-                  '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildInfo('이용 가능 기간 : $now ~ $trialEndTime'),
-                  _buildInfo('실감패스 무료 체험판은 매년 판매되는 패스 구매 전 한 번만 사용 가능합니다.'),
-                  _buildInfo(
-                    '무료 체험 기간이 끝나는 시점까지 작성되어있는 모의고사 기록이 ${appCubit.state.freeProductBenefit.examRecordLimit}개를 초과하면, 체험 기간 후에는 모의고사 기록을 열람 및 삭제만 할 수 있습니다. (${appCubit.state.freeProductBenefit.examRecordLimit}개 미만까지 삭제할 시에만 추가/수정 가능)',
-                  ),
-                ],
-              ),
-              actions: [
-                CustomTextButton.secondary(
-                  text: '취소',
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                CustomTextButton.primary(
-                  text: '시작',
-                  onPressed: () {
-                    AnalyticsManager.logEvent(
-                      name: '[PurchasePage] Start free trial button tapped',
-                      properties: {
-                        'product_id': widget.product.id,
-                        'product_name': widget.product.name,
-                      },
-                    );
-                    iapCubit.startFreeTrialProcess(widget.product);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-              scrollable: true,
-            );
-          },
-        );
-        break;
-    }
-  }
-
-  Widget _buildInfo(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '• ',
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w300,
-              color: Colors.grey.shade600,
-              height: 1.2,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                height: 1.2,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PurchasePageArguments {
-  const PurchasePageArguments({
-    required this.product,
-  });
-
-  final Product product;
 }
 
 class _DelayedCurve extends Curve {
