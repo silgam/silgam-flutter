@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:crypto/crypto.dart';
@@ -84,22 +85,31 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginFacebook() async {
-    final String rawNonce = generateNonce();
-    final LoginResult loginResult = await FacebookAuth.instance.login(
-      nonce: rawNonce.toSha256(),
-    );
+    String? rawNonce;
+    final LoginResult loginResult;
+    if (Platform.isIOS) {
+      rawNonce = generateNonce();
+      loginResult = await FacebookAuth.instance.login(
+        nonce: rawNonce.toSha256(),
+      );
+    } else {
+      loginResult = await FacebookAuth.instance.login();
+    }
+
     final AccessToken? accessToken = loginResult.accessToken;
     if (loginResult.status != LoginStatus.success || accessToken == null) {
       emit(state.copyWith(isLoading: false));
       return;
     }
 
-    final OAuthCredential facebookAuthCredential = OAuthCredential(
-      providerId: 'facebook.com',
-      signInMethod: 'oauth',
-      idToken: accessToken.tokenString,
-      rawNonce: rawNonce,
-    );
+    final OAuthCredential facebookAuthCredential = Platform.isIOS
+        ? OAuthCredential(
+            providerId: 'facebook.com',
+            signInMethod: 'oauth',
+            idToken: accessToken.tokenString,
+            rawNonce: rawNonce,
+          )
+        : FacebookAuthProvider.credential(accessToken.tokenString);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
