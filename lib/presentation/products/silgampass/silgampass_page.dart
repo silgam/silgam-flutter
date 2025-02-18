@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ui/ui.dart';
 
 import '../../../util/injection.dart';
-import '../../app/app.dart';
 import '../../app/cubit/iap_cubit.dart';
-import '../../common/custom_menu_bar.dart';
 import '../../purchase/purchase_page.dart';
 
 class SilgampassPage extends StatelessWidget {
@@ -32,27 +31,15 @@ class SilgampassPage extends StatelessWidget {
 
     return BlocListener<IapCubit, IapState>(
       listener: _onIapStateChanged,
-      child: AnnotatedRegion(
-        value: darkSystemUiOverlayStyle,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
-          body: const SafeArea(
-            child: Column(
-              children: [
-                CustomMenuBar(
-                  title: '실감패스',
-                  lightText: true,
-                ),
-                Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 3,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      child: PageLayout(
+        title: '실감패스',
+        onBackPressed: () => Navigator.pop(context),
+        backgroundColor: Theme.of(context).primaryColor,
+        textBrightness: Brightness.light,
+        child: Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+            color: Colors.white,
           ),
         ),
       ),
