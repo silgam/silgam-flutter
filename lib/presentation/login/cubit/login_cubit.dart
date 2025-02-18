@@ -84,15 +84,22 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginFacebook() async {
-    final LoginResult loginResult = await FacebookAuth.instance.login();
+    final String rawNonce = generateNonce();
+    final LoginResult loginResult = await FacebookAuth.instance.login(
+      nonce: rawNonce.toSha256(),
+    );
     final AccessToken? accessToken = loginResult.accessToken;
     if (loginResult.status != LoginStatus.success || accessToken == null) {
       emit(state.copyWith(isLoading: false));
       return;
     }
 
-    final OAuthCredential facebookAuthCredential =
-        FacebookAuthProvider.credential(accessToken.tokenString);
+    final OAuthCredential facebookAuthCredential = OAuthCredential(
+      providerId: 'facebook.com',
+      signInMethod: 'oauth',
+      idToken: accessToken.tokenString,
+      rawNonce: rawNonce,
+    );
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
