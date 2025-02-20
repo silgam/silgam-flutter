@@ -97,13 +97,12 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
       child: Column(
         spacing: 20,
         children: [
-          for (final MapEntry(key: subject, value: subjectName)
-              in _initialSubjectNames.entries)
+          for (final subject in Subject.values)
             FormItem(
               label: subject.defaultName,
               child: FormTextField(
                 name: subject.name,
-                initialValue: subjectName,
+                initialValue: _initialSubjectNames[subject],
                 textInputAction: TextInputAction.next,
                 validator: FormBuilderValidators.maxLength(
                   10,
