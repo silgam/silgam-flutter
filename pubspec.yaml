@@ -149,8 +149,9 @@ flutter_icons:
   adaptive_icon_foreground: 'assets/app_icon/app_icon_responsive.png'
 
 flutter_native_splash:
-  background_image: assets/splash_background.png
+  color: '#283593'
   image: assets/app_icon/app_icon_transparent.png
   android_12:
-    image: assets/app_icon/app_icon_transparent_1152.png
     color: '#283593'
+    image: assets/app_icon/app_icon_transparent_1152.png
+  web: false
