@@ -418,7 +418,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
           ),
       ],
       bottomAction: PageLayoutBottomAction(
-        label: _isEditMode ? '수정' : '만들기',
+        label: _isEditMode ? '저장' : '만들기',
         onPressed: _onSavePressed,
       ),
       unfocusOnTapBackground: true,
