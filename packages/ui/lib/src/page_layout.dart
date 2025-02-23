@@ -201,7 +201,11 @@ class _BottomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedPadding(
       duration: _animationDuration,
-      padding: EdgeInsets.symmetric(horizontal: isKeyboardVisible ? 0 : 16),
+      padding: EdgeInsets.only(
+        left: isKeyboardVisible ? 0 : 16,
+        right: isKeyboardVisible ? 0 : 16,
+        bottom: isKeyboardVisible ? 0 : 12,
+      ),
       child: TweenAnimationBuilder(
         duration: _animationDuration,
         tween: Tween<double>(begin: 12, end: isKeyboardVisible ? 0 : 12),
