@@ -5,9 +5,11 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:ui/ui.dart';
 
 import '../../model/subject.dart';
+import '../../util/analytics_manager.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/free_user_block_overlay.dart';
+import '../app/cubit/iap_cubit.dart';
+import '../purchase/purchase_page.dart';
 import 'cubit/customize_subject_name_cubit.dart';
 
 class CustomizeSubjectNamePage extends StatefulWidget {
@@ -29,6 +31,11 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
       _appCubit.state.me?.customSubjectNameMap ?? defaultSubjectNameMap;
 
   void _onSavePressed() {
+    if (!_appCubit.state.productBenefit.isCustomSubjectNameAvailable) {
+      _showCustomSubjectNameNotAvailableDialog();
+      return;
+    }
+
     final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isFormValid) return;
 
@@ -43,6 +50,53 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
     );
 
     _cubit.save(subjectNames: subjectNames);
+  }
+
+  void _showCustomSubjectNameNotAvailableDialog() {
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name:
+            '${CustomizeSubjectNamePage.routeName}/custom_subject_name_not_available_dialog',
+      ),
+      builder: (context) {
+        return BlocBuilder<IapCubit, IapState>(
+          builder: (context, state) {
+            final sellingProduct = state.sellingProduct;
+
+            return CustomAlertDialog(
+              title: '과목 이름 설정 기능 제한 안내',
+              content: '과목 이름 설정 기능은 실감패스 사용자만 이용 가능해요.',
+              actions: [
+                CustomTextButton.secondary(
+                  text: '확인',
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                if (sellingProduct != null)
+                  CustomTextButton.primary(
+                    text: '실감패스 확인하러 가기',
+                    onPressed: () {
+                      AnalyticsManager.logEvent(
+                        name:
+                            '[CustomizeSubjectNamePage] Check pass button tapped',
+                      );
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed(
+                        PurchasePage.routeName,
+                        arguments: PurchasePageArguments(
+                          product: sellingProduct,
+                        ),
+                      );
+                    },
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   void _onSaved() {
@@ -118,9 +172,6 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isCustomSubjectNameAvailable =
-        _appCubit.state.productBenefit.isCustomSubjectNameAvailable;
-
     return BlocProvider(
       create: (context) => _cubit,
       child: BlocConsumer<CustomizeSubjectNameCubit, CustomizeSubjectNameState>(
@@ -133,26 +184,16 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
           return PageLayout(
             title: '기본 과목 이름 설정',
             onBackPressed: () => Navigator.of(context).maybePop(),
-            bottomAction: isCustomSubjectNameAvailable
-                ? PageLayoutBottomAction(
-                    label: '저장',
-                    onPressed: _onSavePressed,
-                  )
-                : null,
+            bottomAction: PageLayoutBottomAction(
+              label: '저장',
+              onPressed: _onSavePressed,
+            ),
             isBottomActionLoading:
                 state.status == CustomizeSubjectNameStatus.saving,
             unfocusOnTapBackground: true,
-            child: Stack(
-              children: [
-                SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: _buildForm(state),
-                ),
-                if (!isCustomSubjectNameAvailable)
-                  const FreeUserBlockOverlay(
-                    text: '과목 이름 설정 기능은 실감패스 사용자만 이용 가능해요.',
-                  ),
-              ],
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: _buildForm(state),
             ),
           );
         },
