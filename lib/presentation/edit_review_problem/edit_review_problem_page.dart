@@ -242,17 +242,17 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
                       top: 8,
                       right: 8,
                       child: Material(
-                        color: Colors.white54,
+                        color: Colors.black45,
                         clipBehavior: Clip.hardEdge,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+                        shape: const CircleBorder(),
                         child: InkWell(
                           onTap: () => _onImageRemove(imagePath),
                           child: Padding(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(4),
                             child: Icon(
                               Icons.clear,
+                              color: Colors.white,
+                              size: 22,
                             ),
                           ),
                         ),
@@ -336,27 +336,25 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: PageLayout(
-        title: widget.reviewProblemToEdit == null ? '복습할 문제 추가' : '복습할 문제 수정',
-        onBackPressed: _onBackPressed,
-        appBarActions: [
-          if (widget.reviewProblemToEdit != null)
-            AppBarAction(
-              iconData: Icons.delete,
-              tooltip: '삭제',
-              onPressed: _onDeleteButtonPressed,
-            ),
-        ],
-        bottomAction: PageLayoutBottomAction(
-          label: widget.reviewProblemToEdit == null ? '추가' : '수정',
-          onPressed: _onSaveButtonPressed,
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: _buildForm(),
-        ),
+    return PageLayout(
+      title: widget.reviewProblemToEdit == null ? '복습할 문제 추가' : '복습할 문제 수정',
+      onBackPressed: _onBackPressed,
+      appBarActions: [
+        if (widget.reviewProblemToEdit != null)
+          AppBarAction(
+            iconData: Icons.delete,
+            tooltip: '삭제',
+            onPressed: _onDeleteButtonPressed,
+          ),
+      ],
+      bottomAction: PageLayoutBottomAction(
+        label: widget.reviewProblemToEdit == null ? '추가' : '수정',
+        onPressed: _onSaveButtonPressed,
+      ),
+      unfocusOnTapBackground: true,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: _buildForm(),
       ),
     );
   }

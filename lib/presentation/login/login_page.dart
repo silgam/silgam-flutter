@@ -4,16 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ui/ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
-import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/custom_menu_bar.dart';
-import '../common/progress_overlay.dart';
 import 'cubit/login_cubit.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,75 +25,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _isPagePopped = false;
+  final LoginCubit _cubit = getIt.get();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt.get<LoginCubit>(),
-      child: AnnotatedRegion(
-        value: darkSystemUiOverlayStyle,
-        child: Scaffold(
-          body: BlocListener<AppCubit, AppState>(
-            listenWhen: (previous, current) => previous.me != current.me,
-            listener: (_, appState) {
-              if (appState.isSignedIn && !_isPagePopped) {
-                _isPagePopped = true;
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
-                ));
-                AnalyticsManager.logEvent(
-                  name: '[LoginPage] Login',
-                  properties: {'user_id': appState.me!.id},
-                );
-              }
-            },
-            child: BlocBuilder<LoginCubit, LoginState>(
-              builder: (context, state) {
-                final cubit = context.read<LoginCubit>();
-                return ProgressOverlay(
-                  isProgressing: state.isProgressing,
-                  fast: true,
-                  description: '로그인 하는 중입니다.',
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              const Color(0xFF3F50A8),
-                              Theme.of(context).primaryColor
-                            ],
-                          ),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        child: _buildLoginLayout(cubit),
-                      ),
-                      SafeArea(
-                        child: Container(
-                          alignment: Alignment.topLeft,
-                          child: const CustomMenuBar(lightText: true),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoginLayout(LoginCubit cubit) {
+  Widget _buildLoginLayout() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 72),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 32, bottom: 72),
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -121,14 +56,14 @@ class _LoginPageState extends State<LoginPage> {
           Column(
             children: [
               _LoginButton(
-                onTap: () => cubit.onLoginButtonTap(cubit.loginKakao),
+                onTap: () => _cubit.onLoginButtonTap(_cubit.loginKakao),
                 assetName: 'assets/kakao_icon.svg',
                 provider: '카카오',
                 color: const Color(0xFFFEE500),
               ),
               const SizedBox(height: 12),
               _LoginButton(
-                onTap: () => cubit.onLoginButtonTap(cubit.loginGoogle),
+                onTap: () => _cubit.onLoginButtonTap(_cubit.loginGoogle),
                 assetName: 'assets/google_icon.svg',
                 provider: '구글',
                 color: Colors.white,
@@ -136,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 12),
               _LoginButton(
-                onTap: () => cubit.onLoginButtonTap(cubit.loginFacebook),
+                onTap: () => _cubit.onLoginButtonTap(_cubit.loginFacebook),
                 assetName: 'assets/facebook_icon.svg',
                 provider: '페이스북',
                 color: const Color(0xFF4267b2),
@@ -145,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
               if (!kIsWeb && Platform.isIOS) const SizedBox(height: 12),
               if (!kIsWeb && Platform.isIOS)
                 _LoginButton(
-                  onTap: () => cubit.onLoginButtonTap(cubit.loginApple),
+                  onTap: () => _cubit.onLoginButtonTap(_cubit.loginApple),
                   assetName: 'assets/apple_icon.svg',
                   provider: 'Apple',
                   color: Colors.black,
@@ -195,15 +130,61 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AppCubit, AppState>(
+      listenWhen: (previous, current) =>
+          previous.isSignedIn != current.isSignedIn,
+      listener: (context, appState) {
+        if (appState.isSignedIn) {
+          Navigator.pop(context);
+          EasyLoading.dismiss();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
+            ),
+          );
+          AnalyticsManager.logEvent(
+            name: '[LoginPage] Login',
+            properties: {'user_id': appState.me!.id},
+          );
+        }
+      },
+      child: BlocProvider(
+        create: (context) => _cubit,
+        child: PageLayout(
+          onBackPressed: () => Navigator.pop(context),
+          backgroundColor: Theme.of(context).primaryColor,
+          textBrightness: Brightness.light,
+          child: BlocConsumer<LoginCubit, LoginState>(
+            listenWhen: (previous, current) =>
+                previous.isLoading != current.isLoading,
+            listener: (context, state) {
+              if (state.isLoading) {
+                EasyLoading.show();
+              } else {
+                EasyLoading.dismiss();
+              }
+            },
+            builder: (context, state) {
+              return PopScope(
+                canPop: !state.isLoading,
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: _buildLoginLayout(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _LoginButton extends StatelessWidget {
-  final String assetName, provider;
-  final Color color;
-  final Color borderColor;
-  final bool lightText;
-  final GestureTapCallback onTap;
-
   const _LoginButton({
     required this.onTap,
     required this.assetName,
@@ -212,6 +193,12 @@ class _LoginButton extends StatelessWidget {
     this.lightText = false,
     Color? borderColor,
   }) : borderColor = borderColor ?? color;
+
+  final String assetName, provider;
+  final Color color;
+  final Color borderColor;
+  final bool lightText;
+  final GestureTapCallback onTap;
 
   @override
   Widget build(BuildContext context) {

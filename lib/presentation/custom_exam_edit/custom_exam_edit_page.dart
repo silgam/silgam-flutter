@@ -9,7 +9,6 @@ import '../../model/exam.dart';
 import '../../repository/exam/exam_repository.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/injection.dart';
-import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
@@ -87,43 +86,11 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     }
   }
 
-  void _onPopInvokedWithResult(bool didPop, _) {
-    if (didPop) return;
-
-    showDialog(
-      context: context,
-      routeSettings: const RouteSettings(
-        name: '${CustomExamEditPage.routeName}/exit_confirm_dialog',
-      ),
-      builder: (context) {
-        return CustomAlertDialog(
-          title: '아직 저장하지 않았어요!',
-          content: '저장하지 않고 나가시겠어요?',
-          actions: [
-            CustomTextButton.secondary(
-              text: '취소',
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            CustomTextButton.destructive(
-              text: '저장하지 않고 나가기',
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _onCancelButtonPressed() {
+  void _onBackPressed() {
     Navigator.maybePop(context);
   }
 
-  void _onSaveButtonPressed() {
+  void _onSavePressed() {
     final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isFormValid) {
       final firstErrorMessage =
@@ -161,6 +128,39 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     );
 
     Navigator.pop(context, true);
+  }
+
+  void _onDeletePressed() async {
+    final examToDelete = _examToEdit;
+    if (examToDelete == null) return;
+
+    showDialog(
+      context: context,
+      routeSettings: const RouteSettings(
+        name: '${CustomExamEditPage.routeName}/delete_confirm_dialog',
+      ),
+      builder: (context) {
+        return CustomAlertDialog(
+          title: '정말 이 과목을 삭제하실 건가요?',
+          content: examToDelete.name,
+          actions: [
+            CustomTextButton.secondary(
+              text: '취소',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            CustomTextButton.destructive(
+              text: '삭제',
+              onPressed: () {
+                Navigator.pop(context);
+                _deleteExam(examToDelete);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _deleteExam(Exam examToDelete) async {
@@ -203,19 +203,18 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     EasyLoading.dismiss();
   }
 
-  void _onDeleteButtonPressed() async {
-    final examToDelete = _examToEdit;
-    if (examToDelete == null) return;
+  void _onPopInvokedWithResult(bool didPop, _) {
+    if (didPop) return;
 
     showDialog(
       context: context,
       routeSettings: const RouteSettings(
-        name: '${CustomExamEditPage.routeName}/delete_confirm_dialog',
+        name: '${CustomExamEditPage.routeName}/exit_confirm_dialog',
       ),
       builder: (context) {
         return CustomAlertDialog(
-          title: '정말 이 과목을 삭제하실 건가요?',
-          content: examToDelete.name,
+          title: '아직 저장하지 않았어요!',
+          content: '저장하지 않고 나가시겠어요?',
           actions: [
             CustomTextButton.secondary(
               text: '취소',
@@ -224,10 +223,10 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               },
             ),
             CustomTextButton.destructive(
-              text: '삭제',
+              text: '저장하지 않고 나가기',
               onPressed: () {
                 Navigator.pop(context);
-                _deleteExam(examToDelete);
+                Navigator.pop(context);
               },
             ),
           ],
@@ -405,90 +404,27 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     );
   }
 
-  Widget _buildBottomButtons() {
-    return Container(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).padding.bottom,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade100,
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextButton(
-              onPressed: _onCancelButtonPressed,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: Colors.grey,
-              ),
-              child: Text(
-                '취소',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-            ),
-          ),
-          Expanded(
-            child: TextButton(
-              onPressed: _onSaveButtonPressed,
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).primaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(_isEditMode ? '수정' : '추가'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: AnnotatedRegion(
-        value: defaultSystemUiOverlayStyle,
-        child: Scaffold(
-          body: SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _isEditMode
-                            ? Container(
-                                alignment: Alignment.topRight,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 4,
-                                  horizontal: 20,
-                                ),
-                                child: CustomTextButton.destructive(
-                                  text: '삭제하기',
-                                  onPressed: _onDeleteButtonPressed,
-                                ),
-                              )
-                            : const SizedBox(height: 28),
-                        _buildForm(),
-                        const SizedBox(height: 28),
-                      ],
-                    ),
-                  ),
-                ),
-                _buildBottomButtons(),
-              ],
-            ),
+    return PageLayout(
+      title: _isEditMode ? '과목 수정' : '과목 만들기',
+      onBackPressed: _onBackPressed,
+      appBarActions: [
+        if (_isEditMode)
+          AppBarAction(
+            iconData: Icons.delete,
+            tooltip: '삭제',
+            onPressed: _onDeletePressed,
           ),
-        ),
+      ],
+      bottomAction: PageLayoutBottomAction(
+        label: _isEditMode ? '저장' : '만들기',
+        onPressed: _onSavePressed,
+      ),
+      unfocusOnTapBackground: true,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: _buildForm(),
       ),
     );
   }

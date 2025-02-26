@@ -1,13 +1,13 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/subject.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/announcement_player.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
-import '../common/custom_menu_bar.dart';
 import 'announcement_type.dart';
 
 class AnnouncementSettingPage extends StatefulWidget {
@@ -79,44 +79,38 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+    return PageLayout(
+      title: '타종 소리 설정',
+      onBackPressed: () => Navigator.of(context).pop(),
+      child: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustomMenuBar(title: '타종 소리 설정'),
-            Expanded(
-              child: ListView(
-                children: [
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28),
-                    child: Text(
-                      '수능 시험장에서의 타종 소리는 지역별로 다를 수 있어요. 혹시 모를 상황에 대비해 다양한 타종 소리로 연습해보세요.',
-                      style:
-                          TextStyle(height: 1.35, color: Colors.grey.shade800),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Divider(
-                    indent: 16,
-                    endIndent: 16,
-                    height: 1,
-                    thickness: 1,
-                    color: Colors.grey.shade300,
-                  ),
-                  const SizedBox(height: 4),
-                  for (var announcementType in announcementTypes)
-                    RadioListTile(
-                      title: Text(announcementType.title),
-                      subtitle: Text(announcementType.description),
-                      value: announcementType,
-                      groupValue: _selectedAnnouncementType,
-                      onChanged: _onAnnouncementTypeChanged,
-                    ),
-                ],
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Text(
+                '수능 시험장에서의 타종 소리는 지역별로 다를 수 있어요. 혹시 모를 상황에 대비해 다양한 타종 소리로 연습해보세요.',
+                style: TextStyle(height: 1.35, color: Colors.grey.shade800),
               ),
             ),
+            const SizedBox(height: 18),
+            Divider(
+              indent: 16,
+              endIndent: 16,
+              height: 1,
+              thickness: 1,
+              color: Colors.grey.shade300,
+            ),
+            const SizedBox(height: 4),
+            for (var announcementType in announcementTypes)
+              RadioListTile(
+                title: Text(announcementType.title),
+                subtitle: Text(announcementType.description),
+                value: announcementType,
+                groupValue: _selectedAnnouncementType,
+                onChanged: _onAnnouncementTypeChanged,
+              ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

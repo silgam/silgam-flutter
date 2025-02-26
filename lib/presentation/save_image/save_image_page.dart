@@ -7,10 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rich_text_controller/rich_text_controller.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/exam_record.dart';
 import '../../util/analytics_manager.dart';
-import '../common/custom_menu_bar.dart';
 
 const double _strokeWidth = 0.5;
 
@@ -46,34 +46,24 @@ class _SaveImagePageState extends State<SaveImagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            CustomMenuBar(
-              title: '이미지 저장',
-              actionButtons: [
-                ActionButton(
-                  key: _shareButtonKey,
-                  tooltip: '공유하기',
-                  icon: const Icon(Icons.share),
-                  onPressed: onShareButtonPressed,
-                ),
-                ActionButton(
-                  tooltip: '저장하기',
-                  icon: const Icon(Icons.download),
-                  onPressed: onSaveButtonPressed,
-                ),
-              ],
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: _buildBody(),
-              ),
-            ),
-          ],
+    return PageLayout(
+      title: '이미지 저장',
+      onBackPressed: () => Navigator.of(context).pop(),
+      appBarActions: [
+        AppBarAction(
+          key: _shareButtonKey,
+          iconData: Icons.share,
+          tooltip: '공유하기',
+          onPressed: onShareButtonPressed,
         ),
+        AppBarAction(
+          iconData: Icons.download,
+          tooltip: '저장하기',
+          onPressed: onSaveButtonPressed,
+        ),
+      ],
+      child: SingleChildScrollView(
+        child: _buildBody(),
       ),
     );
   }
@@ -82,6 +72,11 @@ class _SaveImagePageState extends State<SaveImagePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Divider(
+          color: Colors.grey.shade300,
+          height: 0.5,
+          thickness: 0.5,
+        ),
         MediaQuery(
           data: MediaQuery.of(context)
               .copyWith(textScaler: const TextScaler.linear(1)),
@@ -91,6 +86,11 @@ class _SaveImagePageState extends State<SaveImagePage> {
               child: _buildPreview(),
             ),
           ),
+        ),
+        Divider(
+          color: Colors.grey.shade300,
+          height: 0.5,
+          thickness: 0.5,
         ),
         const SizedBox(height: 8),
         SingleChildScrollView(

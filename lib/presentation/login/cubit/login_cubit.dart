@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:crypto/crypto.dart';
@@ -35,11 +36,11 @@ class LoginCubit extends Cubit<LoginState> {
       return;
     }
 
-    emit(state.copyWith(isProgressing: true));
+    emit(state.copyWith(isLoading: true));
     try {
       await loginFunction();
     } catch (e) {
-      emit(state.copyWith(isProgressing: false));
+      emit(state.copyWith(isLoading: false));
       log(e.toString(), name: 'LoginCubit');
     }
   }
@@ -56,7 +57,7 @@ class LoginCubit extends Cubit<LoginState> {
     final authKakaoResult = await _authRepository.authKakao(oAuthToken);
     final firebaseToken = authKakaoResult.tryGetSuccess();
     if (firebaseToken == null) {
-      emit(state.copyWith(isProgressing: false));
+      emit(state.copyWith(isLoading: false));
       return;
     }
 
@@ -70,7 +71,7 @@ class LoginCubit extends Cubit<LoginState> {
     } else {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        emit(state.copyWith(isProgressing: false));
+        emit(state.copyWith(isLoading: false));
         return;
       }
       final GoogleSignInAuthentication googleAuth =
@@ -84,15 +85,31 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginFacebook() async {
-    final LoginResult loginResult = await FacebookAuth.instance.login();
+    String? rawNonce;
+    final LoginResult loginResult;
+    if (Platform.isIOS) {
+      rawNonce = generateNonce();
+      loginResult = await FacebookAuth.instance.login(
+        nonce: rawNonce.toSha256(),
+      );
+    } else {
+      loginResult = await FacebookAuth.instance.login();
+    }
+
     final AccessToken? accessToken = loginResult.accessToken;
     if (loginResult.status != LoginStatus.success || accessToken == null) {
-      emit(state.copyWith(isProgressing: false));
+      emit(state.copyWith(isLoading: false));
       return;
     }
 
-    final OAuthCredential facebookAuthCredential =
-        FacebookAuthProvider.credential(accessToken.tokenString);
+    final OAuthCredential facebookAuthCredential = Platform.isIOS
+        ? OAuthCredential(
+            providerId: 'facebook.com',
+            signInMethod: 'oauth',
+            idToken: accessToken.tokenString,
+            rawNonce: rawNonce,
+          )
+        : FacebookAuthProvider.credential(accessToken.tokenString);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 

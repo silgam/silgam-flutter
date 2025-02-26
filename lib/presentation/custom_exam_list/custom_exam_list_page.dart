@@ -1,14 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:ui/ui.dart';
 
 import '../../model/exam.dart';
 import '../../util/injection.dart';
-import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/custom_menu_bar.dart';
 import '../common/dialog.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
 import '../custom_exam_guide/custom_exam_guide_page.dart';
@@ -150,26 +149,24 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
         color: Colors.white,
         child: InkWell(
           onTap: _onAddExamButtonPressed,
-          splashColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             child: Row(
+              spacing: 4,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(
-                  'assets/add.svg',
-                  width: 30,
-                  colorFilter: ColorFilter.mode(
-                    Colors.grey.shade800,
-                    BlendMode.srcIn,
-                  ),
+                Icon(
+                  CupertinoIcons.add,
+                  size: 24,
+                  color: Colors.grey.shade600,
                 ),
                 Text(
                   '과목 만들기',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w100,
-                    color: Colors.grey.shade800,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey.shade600,
                   ),
                 ),
               ],
@@ -182,54 +179,41 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion(
-      value: defaultSystemUiOverlayStyle,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              CustomMenuBar(
-                title: '나만의 과목 만들기',
-                actionButtons: [
-                  ActionButton(
-                    icon: const Icon(Icons.help_outline),
-                    tooltip: '도움말',
-                    onPressed: _onHelpButtonPressed,
+    return PageLayout(
+      title: '나만의 과목 만들기',
+      onBackPressed: () => Navigator.of(context).pop(),
+      appBarActions: [
+        AppBarAction(
+          iconData: Icons.help_outline,
+          tooltip: '도움말',
+          onPressed: _onHelpButtonPressed,
+        ),
+      ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onAddExamButtonPressed,
+        tooltip: '과목 만들기',
+        child: const Icon(Icons.add),
+      ),
+      child: BlocBuilder<AppCubit, AppState>(
+        buildWhen: (previous, current) =>
+            !listEquals(previous.customExams, current.customExams) ||
+            !listEquals(previous.getDefaultExams(), current.getDefaultExams()),
+        builder: (context, state) {
+          return RefreshIndicator(
+            onRefresh: _appCubit.updateCustomExams,
+            child: ListView(
+              children: [
+                ...state.customExams.map(
+                  (exam) => _buildCustomExamItem(
+                    exam,
+                    state.getDefaultExams(),
                   ),
-                ],
-              ),
-              Expanded(
-                child: BlocBuilder<AppCubit, AppState>(
-                  buildWhen: (previous, current) =>
-                      !listEquals(previous.customExams, current.customExams) ||
-                      !listEquals(previous.getDefaultExams(),
-                          current.getDefaultExams()),
-                  builder: (context, state) {
-                    return RefreshIndicator(
-                      onRefresh: _appCubit.updateCustomExams,
-                      child: ListView(
-                        children: [
-                          ...state.customExams.map(
-                            (exam) => _buildCustomExamItem(
-                              exam,
-                              state.getDefaultExams(),
-                            ),
-                          ),
-                          _buildAddExamButton(),
-                        ],
-                      ),
-                    );
-                  },
                 ),
-              )
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _onAddExamButtonPressed,
-          tooltip: '과목 만들기',
-          child: const Icon(Icons.add),
-        ),
+                _buildAddExamButton(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

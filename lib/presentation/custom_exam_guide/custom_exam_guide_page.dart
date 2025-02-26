@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ui/ui.dart';
 
 import '../../util/injection.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/cubit/iap_cubit.dart';
-import '../common/custom_menu_bar.dart';
 import '../custom_exam_list/custom_exam_list_page.dart';
 import '../purchase/purchase_page.dart';
 
@@ -144,37 +144,15 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
         top: 12,
         bottom: 12 + MediaQuery.of(context).padding.bottom,
       ),
-      child: Material(
-        color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.circular(12),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: _onBottomButtonTap,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.grey.withAlpha(60),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 14,
-            ),
-            child: BlocBuilder<AppCubit, AppState>(
-              builder: (context, state) {
-                return Text(
-                  state.productBenefit.isCustomExamAvailable
-                      ? '나만의 과목 만들어보기'
-                      : '실감패스 구매하러 가기',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
+      child: BlocBuilder<AppCubit, AppState>(
+        builder: (context, state) {
+          return CustomFilledButton(
+            onPressed: _onBottomButtonTap,
+            label: state.productBenefit.isCustomExamAvailable
+                ? '나만의 과목 만들어보기'
+                : '실감패스 구매하러 가기',
+          );
+        },
       ),
     );
   }
@@ -192,6 +170,7 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
         body: Stack(
           children: [
             Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: SingleChildScrollView(
@@ -212,9 +191,10 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
                 left: MediaQuery.of(context).padding.left,
                 right: MediaQuery.of(context).padding.right,
               ),
-              child: const CustomMenuBar(
+              child: CustomAppBar(
                 title: '나만의 과목 이용 안내',
-                lightText: true,
+                onBackPressed: () => Navigator.pop(context),
+                textBrightness: Brightness.light,
               ),
             ),
           ],
