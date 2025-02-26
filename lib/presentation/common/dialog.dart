@@ -42,15 +42,11 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
                     CustomTextButton.primary(
                       text: '실감패스 확인하러 가기',
                       onPressed: () {
-                        AnalyticsManager.logEvent(
-                          name: '[HomePage-list] Check pass button tapped',
-                        );
+                        AnalyticsManager.logEvent(name: '[HomePage-list] Check pass button tapped');
                         Navigator.of(context).pop();
                         Navigator.of(context).pushNamed(
                           PurchasePage.routeName,
-                          arguments: PurchasePageArguments(
-                            product: sellingProduct,
-                          ),
+                          arguments: PurchasePageArguments(product: sellingProduct),
                         );
                       },
                     ),
@@ -75,8 +71,7 @@ void showLapTimeLimitInfoDialog(BuildContext context) {
 
           return CustomAlertDialog(
             title: '랩타임 기능 이용 제한 안내',
-            content:
-                '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
+            content: '랩타임 측정 기능은 실감패스 구매 후에 이용 가능해요. (랩타임 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
             actions: [
               CustomTextButton.secondary(
                 text: '확인',
@@ -112,9 +107,7 @@ void showCustomExamNotAvailableDialog(
 }) {
   showDialog(
     context: context,
-    routeSettings: const RouteSettings(
-      name: '/custom_exam_not_available_dialog',
-    ),
+    routeSettings: const RouteSettings(name: '/custom_exam_not_available_dialog'),
     builder: (context) {
       return CustomAlertDialog(
         title: '나만의 과목 이용 제한 안내',
@@ -147,9 +140,7 @@ void showCustomExamNotAvailableDialog(
 void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
   showDialog(
     context: context,
-    routeSettings: const RouteSettings(
-      name: '/all_subjects_timetable_not_available_dialog',
-    ),
+    routeSettings: const RouteSettings(name: '/all_subjects_timetable_not_available_dialog'),
     builder: (context) {
       return BlocBuilder<IapCubit, IapState>(
         builder: (context, iapState) {
@@ -157,8 +148,7 @@ void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
 
           return CustomAlertDialog(
             title: '전과목 연속 응시 기능 이용 제한 안내',
-            content:
-                '전과목 연속 응시 기능은 실감패스 구매 후에 이용 가능해요. (전과목 연속 응시 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
+            content: '전과목 연속 응시 기능은 실감패스 구매 후에 이용 가능해요. (전과목 연속 응시 기능에 대한 자세한 설명은 실감패스 안내 페이지 참고)',
             actions: [
               CustomTextButton.secondary(
                 text: '확인',
@@ -171,8 +161,7 @@ void showAllSubjectsTimetableNotAvailableDialog(BuildContext context) {
                   text: '실감패스 확인하러 가기',
                   onPressed: () {
                     AnalyticsManager.logEvent(
-                      name:
-                          '[AllSubjectsTimetableNotAvailableDialog] Check pass button tapped',
+                      name: '[AllSubjectsTimetableNotAvailableDialog] Check pass button tapped',
                     );
                     Navigator.of(context).pop();
                     Navigator.of(context).pushNamed(
@@ -201,9 +190,7 @@ Future<void> showMarketingInfoReceivingConsentDialog(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    routeSettings: const RouteSettings(
-      name: 'marketing_info_receiving_consent_dialog',
-    ),
+    routeSettings: const RouteSettings(name: 'marketing_info_receiving_consent_dialog'),
     builder:
         (_) => SingleChildScrollView(
           child: Padding(
@@ -230,10 +217,7 @@ Future<void> showMarketingInfoReceivingConsentDialog(
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(3),
@@ -255,39 +239,25 @@ Future<void> showMarketingInfoReceivingConsentDialog(
                   onPressed: () async {
                     Navigator.pop(context);
                     AnalyticsManager.logEvent(
-                      name:
-                          '[MarketingInfoReceivingConsentDialog] Receive button tapped',
+                      name: '[MarketingInfoReceivingConsentDialog] Receive button tapped',
                     );
-                    await changeMarketingInfoReceivingConsentStatus(
-                      context,
-                      true,
-                    );
+                    await changeMarketingInfoReceivingConsentStatus(context, true);
                   },
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     side: BorderSide.none,
                     shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
-                  child: const Text(
-                    '좋아요!',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
+                  child: const Text('좋아요!', style: TextStyle(color: Colors.white, fontSize: 16)),
                 ),
                 TextButton(
                   onPressed: () async {
                     Navigator.pop(context);
                     AnalyticsManager.logEvent(
-                      name:
-                          '[MarketingInfoReceivingConsentDialog] Close button tapped',
+                      name: '[MarketingInfoReceivingConsentDialog] Close button tapped',
                     );
-                    await changeMarketingInfoReceivingConsentStatus(
-                      context,
-                      false,
-                    );
+                    await changeMarketingInfoReceivingConsentStatus(context, false);
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.grey.shade600,
@@ -295,10 +265,7 @@ Future<void> showMarketingInfoReceivingConsentDialog(
                     splashFactory: NoSplash.splashFactory,
                     shape: const StadiumBorder(),
                   ),
-                  child: Text(
-                    '괜찮아요',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-                  ),
+                  child: Text('괜찮아요', style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
                 ),
               ],
             ),
@@ -307,10 +274,7 @@ Future<void> showMarketingInfoReceivingConsentDialog(
   );
 }
 
-Future<void> changeMarketingInfoReceivingConsentStatus(
-  BuildContext context,
-  bool isConsent,
-) async {
+Future<void> changeMarketingInfoReceivingConsentStatus(BuildContext context, bool isConsent) async {
   final appCubit = getIt.get<AppCubit>();
   if (appCubit.state.isOffline) {
     EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
@@ -321,10 +285,7 @@ Future<void> changeMarketingInfoReceivingConsentStatus(
   if (me == null) return;
 
   final userRepository = getIt.get<UserRepository>();
-  await userRepository.updateMarketingConsent(
-    userId: me.id,
-    isConsent: isConsent,
-  );
+  await userRepository.updateMarketingConsent(userId: me.id, isConsent: isConsent);
   await appCubit.onUserChange();
 
   final dateString = DateFormat('yyyy년 M월 d일').format(DateTime.now());
@@ -363,8 +324,7 @@ void showSendFeedbackDialog(BuildContext context) {
               left: 20,
               right: 20,
               bottom:
-                  MediaQuery.of(context).viewInsets.bottom +
-                  MediaQuery.of(context).padding.bottom,
+                  MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -384,10 +344,7 @@ void showSendFeedbackDialog(BuildContext context) {
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
                     border: Border.all(color: Colors.grey.shade300, width: 1),
@@ -449,10 +406,7 @@ void showSendFeedbackDialog(BuildContext context) {
                 OutlinedButton(
                   onPressed: () async {
                     if (appCubit.state.isOffline) {
-                      EasyLoading.showToast(
-                        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-                        dismissOnTap: true,
-                      );
+                      EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
                       return;
                     }
 
@@ -462,16 +416,10 @@ void showSendFeedbackDialog(BuildContext context) {
                       return;
                     }
 
-                    getIt.get<FeedbackRepository>().sendFeedback(
-                      feedback: text,
-                    );
+                    getIt.get<FeedbackRepository>().sendFeedback(feedback: text);
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          '소중한 의견 감사합니다😆 보내주신 의견은 실감팀이 빠르게 읽어볼게요.',
-                        ),
-                      ),
+                      const SnackBar(content: Text('소중한 의견 감사합니다😆 보내주신 의견은 실감팀이 빠르게 읽어볼게요.')),
                     );
                     AnalyticsManager.logEvent(
                       name: '[SendFeedbackDialog] Send Feedback',
@@ -482,15 +430,9 @@ void showSendFeedbackDialog(BuildContext context) {
                     backgroundColor: Theme.of(context).primaryColor,
                     side: BorderSide.none,
                     shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
-                  child: const Text(
-                    '보내기',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
+                  child: const Text('보내기', style: TextStyle(color: Colors.white, fontSize: 16)),
                 ),
                 const SizedBox(height: 20),
               ],

@@ -21,8 +21,7 @@ class Product with _$Product {
     required final ProductBenefit benefit,
   }) = _Product;
 
-  factory Product.fromJson(Map<String, dynamic> json) =>
-      _$ProductFromJson(json);
+  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 }
 
 @freezed
@@ -38,8 +37,7 @@ class ProductBenefit with _$ProductBenefit {
     @Default(false) final bool isAllSubjectsTimetableAvailable,
   }) = _ProductBenefit;
 
-  factory ProductBenefit.fromJson(Map<String, dynamic> json) =>
-      _$ProductBenefitFromJson(json);
+  factory ProductBenefit.fromJson(Map<String, dynamic> json) => _$ProductBenefitFromJson(json);
 
   static const ProductBenefit initial = ProductBenefit(
     isAdsRemoved: false,

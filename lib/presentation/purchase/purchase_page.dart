@@ -40,9 +40,7 @@ class _PurchasePageState extends State<PurchasePage> {
   final IapCubit _iapCubit = getIt.get();
   final PurchaseCubit _cubit = getIt.get();
 
-  late final backgroundColor = Color(
-    int.parse(widget.product.pageBackgroundColor),
-  );
+  late final backgroundColor = Color(int.parse(widget.product.pageBackgroundColor));
   final WebViewController _webViewController = WebViewController();
 
   @override
@@ -55,23 +53,15 @@ class _PurchasePageState extends State<PurchasePage> {
     final packageInfo = await PackageInfo.fromPlatform();
     Uri uri = Uri.parse(widget.product.pageUrl);
     uri = uri.replace(
-      queryParameters: {
-        ...uri.queryParameters,
-        'buildNumber': packageInfo.buildNumber,
-      },
+      queryParameters: {...uri.queryParameters, 'buildNumber': packageInfo.buildNumber},
     );
 
     _webViewController
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..enableZoom(false)
       ..setBackgroundColor(backgroundColor)
-      ..setNavigationDelegate(
-        NavigationDelegate(onProgress: _cubit.onWebviewProgressChanged),
-      )
-      ..addJavaScriptChannel(
-        'FlutterWebView',
-        onMessageReceived: _onWebviewMessageReceived,
-      )
+      ..setNavigationDelegate(NavigationDelegate(onProgress: _cubit.onWebviewProgressChanged))
+      ..addJavaScriptChannel('FlutterWebView', onMessageReceived: _onWebviewMessageReceived)
       ..loadRequest(uri);
   }
 
@@ -128,13 +118,10 @@ class _PurchasePageState extends State<PurchasePage> {
 
     showDialog(
       context: context,
-      routeSettings: const RouteSettings(
-        name: '/purchase/trial_confirm_dialog',
-      ),
+      routeSettings: const RouteSettings(name: '/purchase/trial_confirm_dialog'),
       builder: (context) {
         return CustomAlertDialog.customContent(
-          title:
-              '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
+          title: '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
           scrollable: true,
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -183,9 +170,7 @@ class _PurchasePageState extends State<PurchasePage> {
         me.isProductTrial
             ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
             : '${widget.product.name}가 시작되었어요! 열공하세요 🔥';
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _onIapLoadingChanged(bool isLoading) {
@@ -215,12 +200,7 @@ class _PurchasePageState extends State<PurchasePage> {
               height: 1.2,
             ),
           ),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(color: Colors.grey.shade600, height: 1.2),
-            ),
-          ),
+          Expanded(child: Text(text, style: TextStyle(color: Colors.grey.shade600, height: 1.2))),
         ],
       ),
     );
@@ -229,8 +209,7 @@ class _PurchasePageState extends State<PurchasePage> {
   Widget _buildBody() {
     return BlocBuilder<PurchaseCubit, PurchaseState>(
       builder: (context, state) {
-        final showBottomButton =
-            !state.isWebviewLoading && !state.isPurchaseSectionShown;
+        final showBottomButton = !state.isWebviewLoading && !state.isPurchaseSectionShown;
 
         return Stack(
           fit: StackFit.expand,
@@ -295,8 +274,7 @@ class _PurchasePageState extends State<PurchasePage> {
           _onMeChanged(state.me);
         },
         child: BlocConsumer<IapCubit, IapState>(
-          listenWhen:
-              (previous, current) => previous.isLoading != current.isLoading,
+          listenWhen: (previous, current) => previous.isLoading != current.isLoading,
           listener: (context, state) {
             _onIapLoadingChanged(state.isLoading);
           },
@@ -307,13 +285,9 @@ class _PurchasePageState extends State<PurchasePage> {
                 value: defaultSystemUiOverlayStyle.copyWith(
                   statusBarColor: backgroundColor,
                   statusBarBrightness:
-                      widget.product.isPageBackgroundDark
-                          ? Brightness.dark
-                          : Brightness.light,
+                      widget.product.isPageBackgroundDark ? Brightness.dark : Brightness.light,
                   statusBarIconBrightness:
-                      widget.product.isPageBackgroundDark
-                          ? Brightness.light
-                          : Brightness.dark,
+                      widget.product.isPageBackgroundDark ? Brightness.light : Brightness.dark,
                 ),
                 child: Scaffold(
                   backgroundColor: backgroundColor,

@@ -25,9 +25,7 @@ class FormDatePicker extends StatelessWidget {
       initialValue: initialValue,
       builder: (field) {
         final value = field.value;
-        final state =
-            field
-                as FormBuilderFieldState<FormBuilderField<DateTime>, DateTime>;
+        final state = field as FormBuilderFieldState<FormBuilderField<DateTime>, DateTime>;
 
         return GestureDetector(
           onTap:

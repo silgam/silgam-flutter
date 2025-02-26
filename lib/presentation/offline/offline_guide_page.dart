@@ -18,9 +18,7 @@ class OfflineGuidePage extends StatelessWidget {
       backgroundColor: Theme.of(context).primaryColor,
       textBrightness: Brightness.light,
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: max(0, (screenWidth - _maxWidth) / 2),
-        ),
+        padding: EdgeInsets.symmetric(horizontal: max(0, (screenWidth - _maxWidth) / 2)),
         child: Column(
           children: [
             Image.asset('assets/offline_guide_1.png', fit: BoxFit.contain),

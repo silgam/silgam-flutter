@@ -71,8 +71,7 @@ class LoginCubit extends Cubit<LoginState> {
         emit(state.copyWith(isLoading: false));
         return;
       }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
@@ -86,9 +85,7 @@ class LoginCubit extends Cubit<LoginState> {
     final LoginResult loginResult;
     if (Platform.isIOS) {
       rawNonce = generateNonce();
-      loginResult = await FacebookAuth.instance.login(
-        nonce: rawNonce.toSha256(),
-      );
+      loginResult = await FacebookAuth.instance.login(nonce: rawNonce.toSha256());
     } else {
       loginResult = await FacebookAuth.instance.login();
     }
@@ -114,10 +111,7 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> loginApple() async {
     final rawNonce = generateNonce();
     final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
+      scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
       nonce: rawNonce.toSha256(),
     );
     final credential = OAuthProvider('apple.com').credential(

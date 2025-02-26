@@ -30,14 +30,9 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  final _randomWelcomeMessage =
-      welcomeMessages[Random().nextInt(welcomeMessages.length)];
+  final _randomWelcomeMessage = welcomeMessages[Random().nextInt(welcomeMessages.length)];
 
-  Widget _buildSnsButton({
-    required String snsName,
-    required String tooltip,
-    required String url,
-  }) {
+  Widget _buildSnsButton({required String snsName, required String tooltip, required String url}) {
     return IconButton(
       onPressed: () {
         launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -60,10 +55,7 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildTitle({
-    required double horizontalPadding,
-    bool isTablet = false,
-  }) {
+  Widget _buildTitle({required double horizontalPadding, bool isTablet = false}) {
     final DateTime today = DateTime.now();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,10 +65,7 @@ class _MainViewState extends State<MainView> {
           child: Text(
             // cspell:disable-next-line
             DateFormat.MMMMEEEEd('ko_KR').format(today),
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: isTablet ? 28 : 24,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: isTablet ? 28 : 24),
           ),
         ),
         const SizedBox(width: 4),
@@ -93,16 +82,8 @@ class _MainViewState extends State<MainView> {
                         tooltip: '카카오톡 채널로 문의하기',
                         url: urlSupport,
                       ),
-                      _buildSnsButton(
-                        snsName: "kakaotalk",
-                        tooltip: '실감 오픈채팅방',
-                        url: urlOpenchat,
-                      ),
-                      _buildSnsButton(
-                        snsName: "instagram",
-                        tooltip: '실감 인스타그램',
-                        url: urlInstagram,
-                      ),
+                      _buildSnsButton(snsName: "kakaotalk", tooltip: '실감 오픈채팅방', url: urlOpenchat),
+                      _buildSnsButton(snsName: "instagram", tooltip: '실감 인스타그램', url: urlInstagram),
                       SizedBox(width: horizontalPadding - 12),
                     ],
                   ),
@@ -111,10 +92,7 @@ class _MainViewState extends State<MainView> {
                   width: 10,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        SilgamApp.backgroundColor,
-                        SilgamApp.backgroundColor.withAlpha(0),
-                      ],
+                      colors: [SilgamApp.backgroundColor, SilgamApp.backgroundColor.withAlpha(0)],
                     ),
                   ),
                 ),
@@ -129,10 +107,7 @@ class _MainViewState extends State<MainView> {
   Widget _buildWelcomeMessage({bool isTablet = false}) {
     return Text(
       _randomWelcomeMessage,
-      style: TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: isTablet ? 16 : 13,
-      ),
+      style: TextStyle(fontWeight: FontWeight.w300, fontSize: isTablet ? 16 : 13),
     );
   }
 
@@ -140,10 +115,7 @@ class _MainViewState extends State<MainView> {
     return BlocBuilder<AppCubit, AppState>(
       buildWhen:
           (previous, current) =>
-              !listEquals(
-                previous.getAllTimetables(),
-                current.getAllTimetables(),
-              ),
+              !listEquals(previous.getAllTimetables(), current.getAllTimetables()),
       builder: (context, state) {
         return TimetableStartCard(timetables: state.getAllTimetables());
       },
@@ -153,10 +125,7 @@ class _MainViewState extends State<MainView> {
   Widget _buildTabletLayout() {
     final screenWidth = MediaQuery.of(context).size.width;
     final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
-    final horizontalPadding = max(
-      (screenWidth - maxWidthForTablet) / 2,
-      originalHorizontalPadding,
-    );
+    final horizontalPadding = max((screenWidth - maxWidthForTablet) / 2, originalHorizontalPadding);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,9 +218,7 @@ class _MainViewState extends State<MainView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                screenWidth > tabletScreenWidth
-                    ? _buildTabletLayout()
-                    : _buildMobileLayout(),
+                screenWidth > tabletScreenWidth ? _buildTabletLayout() : _buildMobileLayout(),
               ],
             ),
           ),

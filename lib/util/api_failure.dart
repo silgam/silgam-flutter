@@ -4,17 +4,12 @@ part 'api_failure.freezed.dart';
 
 @freezed
 class ApiFailure with _$ApiFailure implements Exception {
-  const factory ApiFailure({
-    required ApiFailureType type,
-    required String message,
-  }) = _ApiFailure;
+  const factory ApiFailure({required ApiFailureType type, required String message}) = _ApiFailure;
 
-  factory ApiFailure.from(ApiFailureType type) =>
-      ApiFailure(type: type, message: type.message);
+  factory ApiFailure.from(ApiFailureType type) => ApiFailure(type: type, message: type.message);
 
   factory ApiFailure.unknown() => ApiFailure.from(ApiFailureType.unknown);
-  factory ApiFailure.unauthorized() =>
-      ApiFailure.from(ApiFailureType.unauthorized);
+  factory ApiFailure.unauthorized() => ApiFailure.from(ApiFailureType.unauthorized);
   factory ApiFailure.noNetwork() => ApiFailure.from(ApiFailureType.noNetwork);
 }
 

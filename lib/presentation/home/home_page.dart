@@ -17,10 +17,7 @@ class HomePageView {
   final Widget Function() viewBuilder;
   final BottomNavigationBarItem bottomNavigationBarItem;
 
-  HomePageView({
-    required this.viewBuilder,
-    required this.bottomNavigationBarItem,
-  });
+  HomePageView({required this.viewBuilder, required this.bottomNavigationBarItem});
 }
 
 class HomePage extends StatefulWidget {
@@ -108,9 +105,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   bottomNavigationBar: BlocBuilder<AppCubit, AppState>(
-                    buildWhen:
-                        (previous, current) =>
-                            previous.isOffline != current.isOffline,
+                    buildWhen: (previous, current) => previous.isOffline != current.isOffline,
                     builder: (context, appState) {
                       return SafeArea(
                         left: false,
@@ -120,11 +115,7 @@ class _HomePageState extends State<HomePage> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Divider(
-                              height: 1,
-                              thickness: 1,
-                              color: Colors.grey.shade100,
-                            ),
+                            Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
                             BottomNavigationBar(
                               elevation: 0,
                               backgroundColor: Colors.white,
@@ -134,8 +125,7 @@ class _HomePageState extends State<HomePage> {
                               type: BottomNavigationBarType.fixed,
                               onTap: _cubit.changeTab,
                               currentIndex: state.tabIndex,
-                              landscapeLayout:
-                                  BottomNavigationBarLandscapeLayout.centered,
+                              landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
                               items: HomePage.views.values
                                   .map((view) => view.bottomNavigationBarItem)
                                   .toList(growable: false),
@@ -170,15 +160,12 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   floatingActionButton: BlocBuilder<AppCubit, AppState>(
-                    buildWhen:
-                        (previous, current) =>
-                            previous.isSignedIn != current.isSignedIn,
+                    buildWhen: (previous, current) => previous.isSignedIn != current.isSignedIn,
                     builder: (context, appState) {
-                      final recordListTabIndex = HomePage.views.keys
-                          .toList()
-                          .indexOf(RecordListView.title);
-                      return state.tabIndex == recordListTabIndex &&
-                              appState.isSignedIn
+                      final recordListTabIndex = HomePage.views.keys.toList().indexOf(
+                        RecordListView.title,
+                      );
+                      return state.tabIndex == recordListTabIndex && appState.isSignedIn
                           ? FloatingActionButton(
                             onPressed: () => _onAddExamRecordButtonPressed(),
                             child: const Icon(Icons.add),

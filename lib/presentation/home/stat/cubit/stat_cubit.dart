@@ -46,10 +46,7 @@ class StatCubit extends Cubit<StatState> {
     emit(
       state.copyWith(
         originalRecords: recordsToShow,
-        records: _getFilteredRecords(
-          originalRecords: recordsToShow,
-          dateRange: dateRange,
-        ),
+        records: _getFilteredRecords(originalRecords: recordsToShow, dateRange: dateRange),
         dateRange: dateRange,
       ),
     );
@@ -71,12 +68,7 @@ class StatCubit extends Cubit<StatState> {
   }
 
   void onSearchTextChanged(String query) {
-    emit(
-      state.copyWith(
-        searchQuery: query,
-        records: _getFilteredRecords(searchQuery: query),
-      ),
-    );
+    emit(state.copyWith(searchQuery: query, records: _getFilteredRecords(searchQuery: query)));
   }
 
   void onExamFilterButtonTapped(Exam exam) {
@@ -109,16 +101,11 @@ class StatCubit extends Cubit<StatState> {
         selectedExamIds: [],
         isDateRangeSet: false,
         dateRange: state.defaultDateRange,
-        records: _getFilteredRecords(
-          selectedExamIds: [],
-          dateRange: state.defaultDateRange,
-        ),
+        records: _getFilteredRecords(selectedExamIds: [], dateRange: state.defaultDateRange),
       ),
     );
 
-    AnalyticsManager.logEvent(
-      name: '[HomePage-stat] Filter reset button tapped',
-    );
+    AnalyticsManager.logEvent(name: '[HomePage-stat] Filter reset button tapped');
   }
 
   void onDateRangeChanged(DateTimeRange dateRange) {
@@ -134,10 +121,7 @@ class StatCubit extends Cubit<StatState> {
 
     AnalyticsManager.logEvent(
       name: '[HomePage-stat] Date range changed',
-      properties: {
-        'start_date': dateRange.start.toString(),
-        'end_date': dateRange.end.toString(),
-      },
+      properties: {'start_date': dateRange.start.toString(), 'end_date': dateRange.end.toString()},
     );
   }
 
@@ -164,27 +148,21 @@ class StatCubit extends Cubit<StatState> {
 
     var records = [...originalRecords];
     if (searchQuery.isNotEmpty) {
-      records =
-          records
-              .where((record) => record.title.contains(searchQuery!))
-              .toList();
+      records = records.where((record) => record.title.contains(searchQuery!)).toList();
     }
     records =
         records
             .where(
               (record) =>
                   record.examStartedTime.isSameOrAfter(dateRange!.start) &&
-                  record.examStartedTime.isBefore(
-                    dateRange.end.add(const Duration(days: 1)),
-                  ),
+                  record.examStartedTime.isBefore(dateRange.end.add(const Duration(days: 1))),
             )
             .toList();
     final Map<Exam, List<ExamRecord>> filteredRecords = records.groupListsBy(
       (record) => record.exam,
     )..removeWhere(
       (exam, records) =>
-          records.isEmpty ||
-          (selectedExamIds!.isNotEmpty && !selectedExamIds.contains(exam.id)),
+          records.isEmpty || (selectedExamIds!.isNotEmpty && !selectedExamIds.contains(exam.id)),
     );
     return filteredRecords;
   }

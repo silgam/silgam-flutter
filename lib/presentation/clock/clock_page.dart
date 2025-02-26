@@ -41,8 +41,7 @@ class _ClockPageState extends State<ClockPage> {
   final AppCubit _appCubit = getIt.get();
   late final ClockCubit _cubit = getIt.get(param1: widget.timetable);
 
-  final TransformationController _clockTransformController =
-      TransformationController();
+  final TransformationController _clockTransformController = TransformationController();
   final ScrollController _timelineController = ScrollController();
   late final List<GlobalKey> _timelineTileKeys = List.generate(
     _cubit.state.breakpoints.length,
@@ -83,8 +82,7 @@ class _ClockPageState extends State<ClockPage> {
       child: BlocConsumer<ClockCubit, ClockState>(
         listenWhen:
             (previous, current) =>
-                previous.currentBreakpointIndex !=
-                current.currentBreakpointIndex,
+                previous.currentBreakpointIndex != current.currentBreakpointIndex,
         listener: (context, state) {
           _animateTimeline(state.currentBreakpointIndex);
         },
@@ -115,23 +113,15 @@ class _ClockPageState extends State<ClockPage> {
                           horizontal: MediaQuery.of(context).size.width,
                           vertical: MediaQuery.of(context).size.height,
                         ),
-                        child: Center(
-                          child: WristWatch(clockTime: state.currentTime),
-                        ),
+                        child: Center(child: WristWatch(clockTime: state.currentTime)),
                       ),
                       Visibility(
                         visible: state.isUiVisible,
                         child: Container(
-                          width:
-                              state.isFinished && !_isSmallHeightScreen
-                                  ? double.infinity
-                                  : null,
+                          width: state.isFinished && !_isSmallHeightScreen ? double.infinity : null,
                           margin: EdgeInsets.symmetric(
                             horizontal: state.isFinished ? 20 : 8,
-                            vertical:
-                                state.isFinished && _isSmallHeightScreen
-                                    ? 12
-                                    : 0,
+                            vertical: state.isFinished && _isSmallHeightScreen ? 12 : 0,
                           ),
                           child:
                               state.isFinished
@@ -139,10 +129,7 @@ class _ClockPageState extends State<ClockPage> {
                                     onPressed: _onFinishButtonPressed,
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: Colors.white,
-                                      side: const BorderSide(
-                                        color: Colors.white,
-                                        width: 1,
-                                      ),
+                                      side: const BorderSide(color: Colors.white, width: 1),
                                     ),
                                     child: const Text('시험 종료'),
                                   )
@@ -184,11 +171,7 @@ class _ClockPageState extends State<ClockPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: Visibility(
-            visible: isUiVisible,
-            maintainState: true,
-            child: _buildExamTitle(),
-          ),
+          child: Visibility(visible: isUiVisible, maintainState: true, child: _buildExamTitle()),
         ),
         const WristWatchContainer(),
         Expanded(
@@ -202,10 +185,7 @@ class _ClockPageState extends State<ClockPage> {
                 maintainState: true,
                 maintainSize: true,
                 maintainAnimation: true,
-                child: Flex(
-                  direction: direction,
-                  children: [_buildTimeline(), _buildNavigator()],
-                ),
+                child: Flex(direction: direction, children: [_buildTimeline(), _buildNavigator()]),
               ),
               if (_appCubit.useLapTime) _buildLapTimeButton(direction),
             ],
@@ -217,8 +197,7 @@ class _ClockPageState extends State<ClockPage> {
 
   Widget _buildExamTitle() {
     final isLastBreakpoint =
-        _cubit.state.currentBreakpointIndex ==
-        _cubit.state.breakpoints.length - 1;
+        _cubit.state.currentBreakpointIndex == _cubit.state.breakpoints.length - 1;
 
     final String badge;
     final String title;
@@ -226,19 +205,11 @@ class _ClockPageState extends State<ClockPage> {
       badge = '시험 종료';
       title = _cubit.state.currentBreakpoint.title;
     } else {
-      if (_cubit.state.currentBreakpoint.announcement.time.type ==
-          RelativeTimeType.afterFinish) {
+      if (_cubit.state.currentBreakpoint.announcement.time.type == RelativeTimeType.afterFinish) {
         final currentNumber = _cubit.state.currentExam.number;
         final nextNumber =
-            _cubit
-                .state
-                .breakpoints[_cubit.state.currentBreakpointIndex + 1]
-                .exam
-                .number;
-        badge =
-            currentNumber == nextNumber
-                ? '$currentNumber교시'
-                : '$nextNumber교시 전';
+            _cubit.state.breakpoints[_cubit.state.currentBreakpointIndex + 1].exam.number;
+        badge = currentNumber == nextNumber ? '$currentNumber교시' : '$nextNumber교시 전';
         title = '쉬는 시간';
       } else {
         badge = '${_cubit.state.currentExam.number}교시';
@@ -258,21 +229,13 @@ class _ClockPageState extends State<ClockPage> {
           ),
           child: Text(
             badge,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w700),
         ),
       ],
     );
@@ -301,9 +264,7 @@ class _ClockPageState extends State<ClockPage> {
           child: Flex(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment:
-                direction == Axis.horizontal
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.center,
+                direction == Axis.horizontal ? CrossAxisAlignment.end : CrossAxisAlignment.center,
             direction: direction,
             children: _buildTimelineTiles(direction),
           ),
@@ -320,8 +281,7 @@ class _ClockPageState extends State<ClockPage> {
       if (index > state.currentBreakpointIndex) disabled = true;
 
       // Tile
-      final time =
-          '${breakpoint.time.hour}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
+      final time = '${breakpoint.time.hour}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
       tiles.add(
         TimelineTile(
           key: _timelineTileKeys[index],
@@ -347,9 +307,7 @@ class _ClockPageState extends State<ClockPage> {
       if (disabled) {
         progress = 0;
       } else if (index == state.currentBreakpointIndex) {
-        progress =
-            state.currentTime.difference(breakpoint.time).inSeconds /
-            duration.inSeconds;
+        progress = state.currentTime.difference(breakpoint.time).inSeconds / duration.inSeconds;
       }
 
       final markerPositions =
@@ -362,8 +320,7 @@ class _ClockPageState extends State<ClockPage> {
               )
               .map((lapTime) {
                 final lapTimeProgress =
-                    lapTime.time.difference(breakpoint.time).inSeconds /
-                    duration.inSeconds;
+                    lapTime.time.difference(breakpoint.time).inSeconds / duration.inSeconds;
                 return lapTimeProgress;
               })
               .toList();
@@ -399,10 +356,7 @@ class _ClockPageState extends State<ClockPage> {
         ),
         IconButton(
           onPressed: _cubit.onPausePlayButtonPressed,
-          icon:
-              _cubit.state.isRunning
-                  ? const Icon(Icons.pause)
-                  : const Icon(Icons.play_arrow),
+          icon: _cubit.state.isRunning ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
           color: Colors.grey.shade700,
           splashRadius: 20,
         ),
@@ -425,9 +379,7 @@ class _ClockPageState extends State<ClockPage> {
       child: OutlinedButton(
         onPressed: _cubit.onLapTimeButtonPressed,
         style: ButtonStyle(
-          side: WidgetStateProperty.all(
-            BorderSide(color: Colors.grey.shade700, width: 1),
-          ),
+          side: WidgetStateProperty.all(BorderSide(color: Colors.grey.shade700, width: 1)),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(1000)),
           ),
@@ -482,10 +434,7 @@ class _ClockPageState extends State<ClockPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Spacer(),
-                const Text(
-                  '화면을 터치하면 시작합니다',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
+                const Text('화면을 터치하면 시작합니다', style: TextStyle(color: Colors.white, fontSize: 18)),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -503,11 +452,7 @@ class _ClockPageState extends State<ClockPage> {
                       ].map(
                         (text) => BulletText(
                           text: text,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                            height: 1.4,
-                          ),
+                          style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -555,10 +500,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   void _finishExam() {
-    final isAdsRemoved =
-        isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
-    final sincePageOpenedMinutes =
-        DateTime.now().difference(_cubit.state.pageOpenedTime).inMinutes;
+    final isAdsRemoved = isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
+    final sincePageOpenedMinutes = DateTime.now().difference(_cubit.state.pageOpenedTime).inMinutes;
     if (!isAdsRemoved && sincePageOpenedMinutes >= 10) {
       _interstitialAd?.show();
     }
@@ -571,16 +514,11 @@ class _ClockPageState extends State<ClockPage> {
         examFinishedTimes: _cubit.state.examFinishedTimes,
         lapTimes: _cubit.state.lapTimes,
         timetableStartedTime: _cubit.state.timetableStartedTime,
-        timetableFinishedTime:
-            _cubit.state.timetableFinishedTime ?? DateTime.now(),
+        timetableFinishedTime: _cubit.state.timetableFinishedTime ?? DateTime.now(),
       ),
     );
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      Navigator.pushNamed(
-        context,
-        ExamOverviewPage.routeName,
-        arguments: arguments,
-      );
+      Navigator.pushNamed(context, ExamOverviewPage.routeName, arguments: arguments);
     });
 
     getIt.get<HomeCubit>().changeTabByTitle(RecordListView.title);
@@ -592,12 +530,8 @@ class _ClockPageState extends State<ClockPage> {
         'exam_names': widget.timetable.toExamNamesString(),
         'subject_names': widget.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
-        'exam_ids': widget.timetable.items
-            .map((item) => item.exam.id)
-            .join(', '),
-        'isCustomExams': widget.timetable.items
-            .map((item) => item.exam.isCustomExam)
-            .join(', '),
+        'exam_ids': widget.timetable.items.map((item) => item.exam.id).join(', '),
+        'isCustomExams': widget.timetable.items.map((item) => item.exam.isCustomExam).join(', '),
       },
     );
   }
@@ -606,16 +540,13 @@ class _ClockPageState extends State<ClockPage> {
     double progressedSize = 0;
     if (_isSmallHeightScreen) {
       for (int i = 0; i < currentBreakpointIndex; i++) {
-        progressedSize +=
-            _timelineTileKeys[i].currentContext?.size?.height ?? 0;
-        progressedSize +=
-            _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
+        progressedSize += _timelineTileKeys[i].currentContext?.size?.height ?? 0;
+        progressedSize += _timelineConnectorKeys[i].currentContext?.size?.height ?? 0;
       }
     } else {
       for (int i = 0; i < currentBreakpointIndex; i++) {
         progressedSize += _timelineTileKeys[i].currentContext?.size?.width ?? 0;
-        progressedSize +=
-            _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
+        progressedSize += _timelineConnectorKeys[i].currentContext?.size?.width ?? 0;
       }
     }
 
@@ -635,8 +566,7 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Future<void> _loadAd() async {
-    final isAdsRemoved =
-        isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
+    final isAdsRemoved = isAdmobDisabled || _appCubit.state.productBenefit.isAdsRemoved;
     if (isAdsRemoved) return;
     await InterstitialAd.load(
       adUnitId: interstitialAdId,
@@ -645,8 +575,7 @@ class _ClockPageState extends State<ClockPage> {
         onAdLoaded: (InterstitialAd ad) {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (InterstitialAd ad) => ad.dispose(),
-            onAdFailedToShowFullScreenContent:
-                (InterstitialAd ad, _) => ad.dispose(),
+            onAdFailedToShowFullScreenContent: (InterstitialAd ad, _) => ad.dispose(),
           );
           _interstitialAd = ad;
         },

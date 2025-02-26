@@ -26,18 +26,15 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   void onChange(Change<OnboardingState> change) async {
     super.onChange(change);
     if (change.nextState.step == OnboardingStep.finished) {
-      await _sharedPreferences.setBool(
-        PreferenceKey.isOnboardingFinished,
-        true,
-      );
+      await _sharedPreferences.setBool(PreferenceKey.isOnboardingFinished, true);
     }
   }
 
   Future<bool> initialize() async {
     try {
-      final joinPathsResult = await _onboardingRepository
-          .getAllJoinPaths()
-          .timeout(const Duration(seconds: 3));
+      final joinPathsResult = await _onboardingRepository.getAllJoinPaths().timeout(
+        const Duration(seconds: 3),
+      );
       final joinPaths = joinPathsResult.tryGetSuccess() ?? [];
       if (joinPaths.isEmpty) return false;
 
@@ -71,11 +68,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void skip() {
     emit(state.copyWith(step: OnboardingStep.finished));
-    _onboardingRepository.submitJoinPaths(
-      isSkipped: true,
-      joinPathIds: [],
-      otherJoinPath: null,
-    );
+    _onboardingRepository.submitJoinPaths(isSkipped: true, joinPathIds: [], otherJoinPath: null);
     AnalyticsManager.logEvent(name: '[Onboarding] Skip join path');
   }
 
@@ -88,10 +81,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     );
     AnalyticsManager.logEvent(
       name: '[Onboarding] Submit join path',
-      properties: {
-        'joinPathIds': state.selectedJoinPathIds,
-        'otherJoinPath': otherJoinPath,
-      },
+      properties: {'joinPathIds': state.selectedJoinPathIds, 'otherJoinPath': otherJoinPath},
     );
   }
 

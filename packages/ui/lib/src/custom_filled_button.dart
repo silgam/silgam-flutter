@@ -21,12 +21,9 @@ class CustomFilledButton extends StatelessWidget {
       style: FilledButton.styleFrom(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
         textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-        disabledBackgroundColor:
-            isLoading ? Theme.of(context).primaryColor.withAlpha(180) : null,
+        disabledBackgroundColor: isLoading ? Theme.of(context).primaryColor.withAlpha(180) : null,
         disabledForegroundColor: isLoading ? Colors.white : null,
       ),
       child:
@@ -36,10 +33,7 @@ class CustomFilledButton extends StatelessWidget {
                 child: SizedBox(
                   width: 16,
                   height: 16,
-                  child: const CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  ),
+                  child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                 ),
               )
               : Text(label),

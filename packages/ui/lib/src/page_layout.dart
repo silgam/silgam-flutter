@@ -42,23 +42,21 @@ class PageLayout extends StatefulWidget {
 }
 
 class _PageLayoutState extends State<PageLayout> {
-  static const SystemUiOverlayStyle _lightSystemUiOverlayStyle =
-      SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.dark,
-      );
+  static const SystemUiOverlayStyle _lightSystemUiOverlayStyle = SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarIconBrightness: Brightness.dark,
+    statusBarColor: Colors.transparent,
+    statusBarBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.dark,
+  );
 
-  static const SystemUiOverlayStyle _darkSystemUiOverlayStyle =
-      SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.black,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.dark,
-        statusBarIconBrightness: Brightness.light,
-      );
+  static const SystemUiOverlayStyle _darkSystemUiOverlayStyle = SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.black,
+    systemNavigationBarIconBrightness: Brightness.light,
+    statusBarColor: Colors.transparent,
+    statusBarBrightness: Brightness.dark,
+    statusBarIconBrightness: Brightness.light,
+  );
 
   double _maxBottomInset = 0;
   double _lastBottomInset = 0;

@@ -9,20 +9,16 @@ part 'auth_dto.g.dart';
 class AuthRequest with _$AuthRequest {
   const factory AuthRequest({required String token}) = _AuthRequest;
 
-  factory AuthRequest.fromJson(Map<String, dynamic> json) =>
-      _$AuthRequestFromJson(json);
+  factory AuthRequest.fromJson(Map<String, dynamic> json) => _$AuthRequestFromJson(json);
 
-  factory AuthRequest.fromJsonString(String json) =>
-      AuthRequest.fromJson(jsonDecode(json));
+  factory AuthRequest.fromJsonString(String json) => AuthRequest.fromJson(jsonDecode(json));
 }
 
 @freezed
 class AuthResponse with _$AuthResponse {
   const factory AuthResponse({required String firebaseToken}) = _AuthResponse;
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
-      _$AuthResponseFromJson(json);
+  factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);
 
-  factory AuthResponse.fromJsonString(String json) =>
-      AuthResponse.fromJson(jsonDecode(json));
+  factory AuthResponse.fromJsonString(String json) => AuthResponse.fromJson(jsonDecode(json));
 }

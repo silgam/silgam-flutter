@@ -15,9 +15,7 @@ class ExamRecordRepository {
         fromFirestore: (snapshot, _) => ExamRecord.fromJson(snapshot.data()!),
         toFirestore: (record, _) => record.toJson(),
       );
-  final Reference _problemImagesRef = FirebaseStorage.instance.ref(
-    'problem_images',
-  );
+  final Reference _problemImagesRef = FirebaseStorage.instance.ref('problem_images');
 
   Future<ExamRecord> addExamRecord(ExamRecord record) async {
     await _uploadProblemImages(record.userId, record);
@@ -31,22 +29,17 @@ class ExamRecordRepository {
             .where('userId', isEqualTo: userId)
             .orderBy('examStartedTime', descending: true)
             .get();
-    final examRecords =
-        querySnapshot.docs.map((snapshot) => snapshot.data()).toList();
+    final examRecords = querySnapshot.docs.map((snapshot) => snapshot.data()).toList();
     return examRecords;
   }
 
-  Future<List<ExamRecord>> getMyExamRecordsByExamId(
-    String userId,
-    String examId,
-  ) async {
+  Future<List<ExamRecord>> getMyExamRecordsByExamId(String userId, String examId) async {
     final querySnapshot =
         await _recordsRef
             .where('userId', isEqualTo: userId)
             .where('subject', isEqualTo: examId)
             .get();
-    final examRecords =
-        querySnapshot.docs.map((snapshot) => snapshot.data()).toList();
+    final examRecords = querySnapshot.docs.map((snapshot) => snapshot.data()).toList();
     return examRecords;
   }
 
@@ -54,16 +47,10 @@ class ExamRecordRepository {
     required ExamRecord oldRecord,
     required ExamRecord newRecord,
   }) async {
-    final oldImages = oldRecord.reviewProblems.expand(
-      (element) => element.imagePaths,
-    );
-    final newImages = newRecord.reviewProblems.expand(
-      (element) => element.imagePaths,
-    );
+    final oldImages = oldRecord.reviewProblems.expand((element) => element.imagePaths);
+    final newImages = newRecord.reviewProblems.expand((element) => element.imagePaths);
 
-    final removedImages = oldImages.where(
-      (image) => !newImages.contains(image),
-    );
+    final removedImages = oldImages.where((image) => !newImages.contains(image));
     await _deleteImages(removedImages);
 
     await _uploadProblemImages(newRecord.userId, newRecord);
@@ -72,9 +59,7 @@ class ExamRecordRepository {
   }
 
   Future<void> deleteExamRecord(ExamRecord examRecord) async {
-    final allImages = examRecord.reviewProblems.expand(
-      (element) => element.imagePaths,
-    );
+    final allImages = examRecord.reviewProblems.expand((element) => element.imagePaths);
     await _deleteImages(allImages);
 
     _recordsRef.doc(examRecord.id).delete();

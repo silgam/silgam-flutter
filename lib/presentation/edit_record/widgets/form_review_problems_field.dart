@@ -7,33 +7,23 @@ import '../../common/review_problem_card.dart';
 import '../../edit_review_problem/edit_review_problem_page.dart';
 
 class FormReviewProblemsField extends StatefulWidget {
-  const FormReviewProblemsField({
-    super.key,
-    required this.name,
-    this.initialValue = const [],
-  });
+  const FormReviewProblemsField({super.key, required this.name, this.initialValue = const []});
 
   final String name;
   final List<ReviewProblem> initialValue;
 
   @override
-  State<FormReviewProblemsField> createState() =>
-      _FormReviewProblemsFieldState();
+  State<FormReviewProblemsField> createState() => _FormReviewProblemsFieldState();
 }
 
 class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
   final GlobalKey<FormFieldState<List<ReviewProblem>>> _fieldKey = GlobalKey();
 
-  Future<void> _onReviewProblemCardTap(
-    BuildContext context,
-    ReviewProblem reviewProblem,
-  ) async {
+  Future<void> _onReviewProblemCardTap(BuildContext context, ReviewProblem reviewProblem) async {
     final result = await Navigator.pushNamed<EditReviewProblemPageResult>(
       context,
       EditReviewProblemPage.routeName,
-      arguments: EditReviewProblemPageArguments(
-        reviewProblemToEdit: reviewProblem,
-      ),
+      arguments: EditReviewProblemPageArguments(reviewProblemToEdit: reviewProblem),
     );
 
     switch (result) {
@@ -117,16 +107,10 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
             for (final problem in field.value ?? [])
               ReviewProblemCard(
                 problem: problem,
-                onTap:
-                    state.enabled
-                        ? () => _onReviewProblemCardTap(context, problem)
-                        : null,
+                onTap: state.enabled ? () => _onReviewProblemCardTap(context, problem) : null,
               ),
             _ReviewProblemAddCard(
-              onTap:
-                  state.enabled
-                      ? () => _onReviewProblemAddCardTap(context)
-                      : null,
+              onTap: state.enabled ? () => _onReviewProblemAddCardTap(context) : null,
             ),
           ],
         );

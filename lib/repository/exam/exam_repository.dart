@@ -17,8 +17,7 @@ class ExamRepository {
   }
 
   Future<List<Exam>> getMyExams(String userId) async {
-    final exams =
-        await _examsCollection.where('userId', isEqualTo: userId).get();
+    final exams = await _examsCollection.where('userId', isEqualTo: userId).get();
     return exams.docs.map((snapshot) => snapshot.data()).toList();
   }
 

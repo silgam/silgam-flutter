@@ -41,20 +41,13 @@ class _FormLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final labelWidget = Text(
       label,
-      style: TextStyle(
-        color: Colors.grey.shade900,
-        fontWeight: FontWeight.w500,
-        fontSize: 15,
-      ),
+      style: TextStyle(color: Colors.grey.shade900, fontWeight: FontWeight.w500, fontSize: 15),
     );
 
     if (isRequired) {
       return Row(
         spacing: 2,
-        children: [
-          labelWidget,
-          const Text('*', style: TextStyle(color: Colors.red)),
-        ],
+        children: [labelWidget, const Text('*', style: TextStyle(color: Colors.red))],
       );
     }
 

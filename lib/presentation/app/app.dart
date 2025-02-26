@@ -44,8 +44,7 @@ import 'initial_route_handler.dart';
 const double cardCornerRadius = 14;
 
 class SilgamApp extends StatelessWidget {
-  const SilgamApp({super.key, required String? initialRoute})
-    : _initialRoute = initialRoute;
+  const SilgamApp({super.key, required String? initialRoute}) : _initialRoute = initialRoute;
 
   static const backgroundColor = Color.fromARGB(255, 245, 246, 247);
   final String? _initialRoute;
@@ -94,14 +93,10 @@ class SilgamApp extends StatelessWidget {
         onGenerateInitialRoutes:
             !kIsWeb &&
                     Platform.isAndroid &&
-                    PlatformDispatcher.instance.defaultRouteName.contains(
-                      'silgam.app',
-                    )
+                    PlatformDispatcher.instance.defaultRouteName.contains('silgam.app')
                 ? (initialRoute) {
                   return [
-                    MaterialPageRoute(
-                      builder: (context) => InitialRouteHandler(initialRoute),
-                    ),
+                    MaterialPageRoute(builder: (context) => InitialRouteHandler(initialRoute)),
                   ];
                 }
                 : null,
@@ -111,15 +106,12 @@ class SilgamApp extends StatelessWidget {
           LoginPage.routeName: (_) => const LoginPage(),
           NoiseSettingPage.routeName: (_) => const NoiseSettingPage(),
           MyPage.routeName: (_) => const MyPage(),
-          NotificationSettingPage.routeName:
-              (_) => const NotificationSettingPage(),
-          CustomizeSubjectNamePage.routeName:
-              (_) => const CustomizeSubjectNamePage(),
+          NotificationSettingPage.routeName: (_) => const NotificationSettingPage(),
+          CustomizeSubjectNamePage.routeName: (_) => const CustomizeSubjectNamePage(),
           OfflineGuidePage.routeName: (_) => const OfflineGuidePage(),
           SilgampassPage.routeName: (_) => const SilgampassPage(),
           CustomExamListPage.routeName: (_) => const CustomExamListPage(),
-          AnnouncementSettingPage.routeName:
-              (_) => const AnnouncementSettingPage(),
+          AnnouncementSettingPage.routeName: (_) => const AnnouncementSettingPage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
@@ -128,12 +120,7 @@ class SilgamApp extends StatelessWidget {
                 settings: settings,
                 pageBuilder: (_, __, ___) => const HomePage(),
                 transitionDuration: const Duration(milliseconds: 800),
-                transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                ) {
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
                   return FadeTransition(opacity: animation, child: child);
                 },
               );
@@ -157,13 +144,10 @@ class SilgamApp extends StatelessWidget {
                 settings: settings,
               );
             case EditReviewProblemPage.routeName:
-              final args =
-                  settings.arguments as EditReviewProblemPageArguments?;
+              final args = settings.arguments as EditReviewProblemPageArguments?;
               return MaterialPageRoute<EditReviewProblemPageResult>(
                 builder:
-                    (_) => EditReviewProblemPage(
-                      reviewProblemToEdit: args?.reviewProblemToEdit,
-                    ),
+                    (_) => EditReviewProblemPage(reviewProblemToEdit: args?.reviewProblemToEdit),
                 settings: settings,
               );
             case RecordDetailPage.routeName:
@@ -173,11 +157,9 @@ class SilgamApp extends StatelessWidget {
                 settings: settings,
               );
             case ReviewProblemDetailPage.routeName:
-              final args =
-                  settings.arguments as ReviewProblemDetailPageArguments;
+              final args = settings.arguments as ReviewProblemDetailPageArguments;
               return MaterialPageRoute(
-                builder:
-                    (_) => ReviewProblemDetailPage(reviewProblem: args.problem),
+                builder: (_) => ReviewProblemDetailPage(reviewProblem: args.problem),
                 settings: settings,
               );
             case SaveImagePage.routeName:
@@ -201,8 +183,7 @@ class SilgamApp extends StatelessWidget {
             case CustomExamEditPage.routeName:
               final args = settings.arguments as CustomExamEditPageArguments?;
               return MaterialPageRoute(
-                builder:
-                    (_) => CustomExamEditPage(examToEdit: args?.examToEdit),
+                builder: (_) => CustomExamEditPage(examToEdit: args?.examToEdit),
                 settings: settings,
               );
             case CustomExamGuidePage.routeName:
@@ -250,19 +231,18 @@ class SilgamApp extends StatelessWidget {
   }
 }
 
-const MaterialColor indigoSwatch =
-    MaterialColor(indigoPrimaryValue, <int, Color>{
-      50: Color(0xFFE8EAF6),
-      100: Color(0xFFC5CAE9),
-      200: Color(0xFF9FA8DA),
-      300: Color(0xFF7986CB),
-      400: Color(0xFF5C6BC0),
-      500: Color(0xFF3F51B5),
-      600: Color(0xFF3949AB),
-      700: Color(0xFF303F9F),
-      800: Color(indigoPrimaryValue),
-      900: Color(0xFF1A237E),
-    });
+const MaterialColor indigoSwatch = MaterialColor(indigoPrimaryValue, <int, Color>{
+  50: Color(0xFFE8EAF6),
+  100: Color(0xFFC5CAE9),
+  200: Color(0xFF9FA8DA),
+  300: Color(0xFF7986CB),
+  400: Color(0xFF5C6BC0),
+  500: Color(0xFF3F51B5),
+  600: Color(0xFF3949AB),
+  700: Color(0xFF303F9F),
+  800: Color(indigoPrimaryValue),
+  900: Color(0xFF1A237E),
+});
 const int indigoPrimaryValue = 0xFF283593;
 
 const SystemUiOverlayStyle defaultSystemUiOverlayStyle = SystemUiOverlayStyle(

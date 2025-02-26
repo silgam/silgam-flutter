@@ -54,12 +54,9 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   );
 
   final AppCubit _appCubit = getIt.get();
-  late final ExamOverviewCubit _examOverviewCubit = getIt.get(
-    param1: widget.examDetail,
-  );
+  late final ExamOverviewCubit _examOverviewCubit = getIt.get(param1: widget.examDetail);
 
-  final _randomTitle =
-      _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
+  final _randomTitle = _examOverviewMessages[Random().nextInt(_examOverviewMessages.length)];
 
   bool _isExpandableFabOpen = false;
 
@@ -69,17 +66,12 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
   bool get _isTablet => _screenWidth > _tabletLayoutWidth;
   double get _horizontalPadding => _isTablet ? 60 : 24;
   double get _floatingButtonWidth =>
-      _screenWidth -
-      _horizontalPadding * 2 -
-      MediaQuery.paddingOf(context).horizontal;
+      _screenWidth - _horizontalPadding * 2 - MediaQuery.paddingOf(context).horizontal;
 
   Future<void> _autoSaveExamRecords() async {
-    final autoSaveFailedExamNames =
-        await _examOverviewCubit.autoSaveExamRecords();
+    final autoSaveFailedExamNames = await _examOverviewCubit.autoSaveExamRecords();
 
-    if (autoSaveFailedExamNames == null ||
-        autoSaveFailedExamNames.isEmpty ||
-        !mounted) {
+    if (autoSaveFailedExamNames == null || autoSaveFailedExamNames.isEmpty || !mounted) {
       return;
     }
 
@@ -89,8 +81,7 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
         name: '${ExamOverviewPage.routeName}/auto_save_failed_dialog',
       ),
       builder: (context) {
-        final examRecordLimit =
-            _appCubit.state.freeProductBenefit.examRecordLimit;
+        final examRecordLimit = _appCubit.state.freeProductBenefit.examRecordLimit;
         final examsCount = _exams.length;
 
         return CustomAlertDialog(
@@ -174,9 +165,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
     required List<LapTimeItemGroup> lapTimeItemGroups,
     required bool isUsingExample,
   }) {
-    final textToCopy = lapTimeItemGroups.toCopyableString(
-      isExample: isUsingExample,
-    );
+    final textToCopy = lapTimeItemGroups.toCopyableString(isExample: isUsingExample);
     Clipboard.setData(ClipboardData(text: textToCopy));
     EasyLoading.showToast(
       '복사되었습니다.',
@@ -213,8 +202,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
     if (_appCubit.state.isSignedIn) {
       final arguments = EditRecordPageArguments(
         inputExam: exam,
-        prefillFeedback: _examOverviewCubit.state
-            .getPrefillFeedbackForExamRecord(exam),
+        prefillFeedback: _examOverviewCubit.state.getPrefillFeedbackForExamRecord(exam),
         examStartedTime: widget.examDetail.examStartedTimes[exam],
         examFinishedTime: widget.examDetail.examFinishedTimes[exam],
       );
@@ -253,8 +241,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
       child: AnnotatedRegion(
         value: defaultSystemUiOverlayStyle,
         child: Scaffold(
-          floatingActionButtonLocation:
-              _exams.length > 1 ? ExpandableFab.location : null,
+          floatingActionButtonLocation: _exams.length > 1 ? ExpandableFab.location : null,
           floatingActionButton: _exams.length > 1 ? _buildFab() : null,
           body: SafeArea(
             child: BlocBuilder<AppCubit, AppState>(
@@ -266,10 +253,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                     return PopScope(
                       canPop: state.examToRecordIds.length == _exams.length,
                       onPopInvokedWithResult: _onPopInvokedWithResult,
-                      child:
-                          _isTablet
-                              ? _buildTabletLayout()
-                              : _buildMobileLayout(),
+                      child: _isTablet ? _buildTabletLayout() : _buildMobileLayout(),
                     );
                   },
                 );
@@ -291,10 +275,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
       openCloseStackAlignment: Alignment.centerRight,
       distance: 52,
       type: ExpandableFabType.up,
-      overlayStyle: ExpandableFabOverlayStyle(
-        color: Colors.black.withAlpha(51),
-        blur: 8,
-      ),
+      overlayStyle: ExpandableFabOverlayStyle(color: Colors.black.withAlpha(51), blur: 8),
       childrenOffset: Offset(rightOffset, 8),
       childrenAnimation: ExpandableFabAnimation.none,
       openButtonBuilder: FloatingActionButtonBuilder(
@@ -313,10 +294,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                 child: Container(
                   width: _floatingButtonWidth,
                   height: 48,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   child: const FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Row(
@@ -358,10 +336,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                 child: Container(
                   width: _floatingButtonWidth,
                   height: 48,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   child: const FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Row(
@@ -369,13 +344,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                       children: [
                         Icon(Icons.close),
                         SizedBox(width: 6),
-                        Text(
-                          '닫기',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
+                        Text('닫기', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
                       ],
                     ),
                   ),
@@ -483,11 +452,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
       alignment: Alignment.centerLeft,
       child: Text(
         _randomTitle,
-        style: const TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w900,
-          height: 1.3,
-        ),
+        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, height: 1.3),
       ),
     );
   }
@@ -522,9 +487,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                         child: Text(
                           exam.name,
                           textAlign: TextAlign.center,
-                          style: _contentTextStyle.copyWith(
-                            color: Color(exam.color),
-                          ),
+                          style: _contentTextStyle.copyWith(color: Color(exam.color)),
                         ),
                       ),
                     )
@@ -569,21 +532,14 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.timer_outlined,
-                    color: Theme.of(context).primaryColor,
-                    size: 24,
-                  ),
+                  Icon(Icons.timer_outlined, color: Theme.of(context).primaryColor, size: 24),
                   const SizedBox(width: 8),
                   IntrinsicHeight(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          '$startedTimeString ~ $finishedTimeString',
-                          style: _contentTextStyle,
-                        ),
+                        Text('$startedTimeString ~ $finishedTimeString', style: _contentTextStyle),
                         VerticalDivider(
                           color: Colors.grey.shade900,
                           width: 20,
@@ -602,10 +558,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          '${durationSeconds % 60}',
-                          style: _contentTextStyle,
-                        ),
+                        Text('${durationSeconds % 60}', style: _contentTextStyle),
                         const SizedBox(width: 1),
                         Text(
                           's',
@@ -628,22 +581,16 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
   }
 
   Widget _buildLapTimeCard() {
-    final examToLapTimeItemGroups =
-        _examOverviewCubit.state.examToLapTimeItemGroups;
-    final isUsingExample =
-        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
-    final isLapTimeAvailable =
-        _appCubit.state.productBenefit.isLapTimeAvailable;
+    final examToLapTimeItemGroups = _examOverviewCubit.state.examToLapTimeItemGroups;
+    final isUsingExample = _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
+    final isLapTimeAvailable = _appCubit.state.productBenefit.isLapTimeAvailable;
     final useLapTime = _appCubit.useLapTime;
 
     return CustomCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
-          Stack(
-            alignment: Alignment.topCenter,
-            children: [Text('랩타임', style: _titleTextStyle)],
-          ),
+          Stack(alignment: Alignment.topCenter, children: [Text('랩타임', style: _titleTextStyle)]),
           const SizedBox(height: 8),
           if (examToLapTimeItemGroups.isEmpty && isLapTimeAvailable)
             Padding(
@@ -653,11 +600,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                     ? '기록된 랩타임이 없어요.\n시험 중에 LAP 버튼을 눌러 랩타임을 기록해보세요.'
                     : '랩타임 기능이 꺼져있어요.\n설정에서 랩타임 기능을 켜보세요.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                  height: 1.3,
-                ),
+                style: const TextStyle(color: Colors.grey, fontSize: 14, height: 1.3),
               ),
             )
           else
@@ -710,23 +653,14 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                             const SizedBox(height: 8),
                             Container(
                               alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 5,
-                                horizontal: 8,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey.shade600,
-                                  width: 0.7,
-                                ),
+                                border: Border.all(color: Colors.grey.shade600, width: 0.7),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
                                 '${DateFormat.Hm().format(lapTimeItemGroup.startTime)} / ${lapTimeItemGroup.title}',
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 14,
-                                ),
+                                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -758,10 +692,8 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
   }
 
   Widget _buildLapTimeTimeline() {
-    final lapTimeItemGroups =
-        _examOverviewCubit.state.examToLapTimeItemGroups.values.flattened;
-    final isUsingExample =
-        _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
+    final lapTimeItemGroups = _examOverviewCubit.state.examToLapTimeItemGroups.values.flattened;
+    final isUsingExample = _examOverviewCubit.state.isUsingExampleLapTimeItemGroups;
     final startTime = lapTimeItemGroups.first.startTime;
     final endTime = isUsingExample ? _exams.first.endTime : _exams.last.endTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;
@@ -771,9 +703,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
             .map((group) => group.lapTimeItems)
             .flattened
             .map(
-              (lapTimeItem) =>
-                  lapTimeItem.time.difference(startTime).inSeconds /
-                  durationSeconds,
+              (lapTimeItem) => lapTimeItem.time.difference(startTime).inSeconds / durationSeconds,
             )
             .where((position) => position >= 0 && position <= 1)
             .toList();
@@ -800,17 +730,11 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
             children: [
               Text(
                 DateFormat.Hm().format(startTime),
-                style: TextStyle(
-                  height: 1,
-                  color: Theme.of(context).primaryColor,
-                ),
+                style: TextStyle(height: 1, color: Theme.of(context).primaryColor),
               ),
               Text(
                 DateFormat.Hm().format(endTime),
-                style: TextStyle(
-                  height: 1,
-                  color: Theme.of(context).primaryColor,
-                ),
+                style: TextStyle(height: 1, color: Theme.of(context).primaryColor),
               ),
             ],
           ),
@@ -849,12 +773,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                 ),
               ),
               const SizedBox(width: 16),
-              Expanded(
-                child: DottedLine(
-                  dashLength: 1,
-                  dashColor: Colors.grey.shade700,
-                ),
-              ),
+              Expanded(child: DottedLine(dashLength: 1, dashColor: Colors.grey.shade700)),
               const SizedBox(width: 16),
               Text(
                 '+ ${timeDifference.to2DigitString()}',
@@ -864,11 +783,7 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
           ),
           Text(
             timeElapsed.to2DigitString(),
-            style: TextStyle(
-              color: Colors.grey.shade700,
-              height: 1,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey.shade700, height: 1, fontSize: 12),
           ),
         ],
       ),
@@ -888,17 +803,13 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
         return Material(
           color: isRecorded ? Colors.grey.shade100 : Color(exam.color),
           shape: StadiumBorder(
-            side:
-                isRecorded
-                    ? BorderSide(color: Color(exam.color))
-                    : BorderSide.none,
+            side: isRecorded ? BorderSide(color: Color(exam.color)) : BorderSide.none,
           ),
           clipBehavior: Clip.hardEdge,
           elevation: 5,
           shadowColor: Colors.black26,
           child: InkWell(
-            onTap:
-                isAutoSaving ? () {} : () => _onRecordExamButtonPressed(exam),
+            onTap: isAutoSaving ? () {} : () => _onRecordExamButtonPressed(exam),
             splashFactory: NoSplash.splashFactory,
             child: Container(
               width: _floatingButtonWidth,
@@ -933,15 +844,11 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                             ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                             )
                             : Icon(
                               isRecorded ? Icons.check : Icons.chevron_right,
-                              color:
-                                  isRecorded ? Color(exam.color) : Colors.white,
+                              color: isRecorded ? Color(exam.color) : Colors.white,
                               size: 24,
                             ),
                   ),

@@ -43,8 +43,7 @@ Future<String?> initializeInitialRoute() async {
       sharedPreferences.getBool(PreferenceKey.isOnboardingFinished) ?? false;
   if (isOnboardingFinished) return null;
 
-  final isOnboardingInitialized =
-      await getIt.get<OnboardingCubit>().initialize();
+  final isOnboardingInitialized = await getIt.get<OnboardingCubit>().initialize();
   if (isOnboardingInitialized) return OnboardingPage.routeName;
   return null;
 }
@@ -69,10 +68,7 @@ Future<void> initializeFirebase() async {
 
   await Future.wait([
     getIt.get<AppCubit>().initialize(),
-    if (!kIsWeb)
-      FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
-        kReleaseMode,
-      ),
+    if (!kIsWeb) FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode),
   ]);
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
@@ -87,8 +83,7 @@ Future<void> initializeAudioSession() async {
   await audioSession.configure(
     const AudioSessionConfiguration(
       avAudioSessionCategory: AVAudioSessionCategory.playback,
-      avAudioSessionCategoryOptions:
-          AVAudioSessionCategoryOptions.mixWithOthers,
+      avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.mixWithOthers,
       androidAudioAttributes: AndroidAudioAttributes(
         contentType: AndroidAudioContentType.music,
         usage: AndroidAudioUsage.media,

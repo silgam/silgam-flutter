@@ -26,9 +26,7 @@ class ReviewProblemCard extends StatelessWidget {
         margin: const EdgeInsets.all(0),
         elevation: 0,
         clipBehavior: Clip.antiAlias,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(6))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -63,19 +61,13 @@ class ReviewProblemCard extends StatelessWidget {
                                   Text(
                                     '사진을 불러올 수 없어요.',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
+                                    style: TextStyle(color: Colors.grey, fontSize: 12),
                                   ),
                                   SizedBox(height: 4),
                                   Text(
                                     '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
+                                    style: TextStyle(color: Colors.grey, fontSize: 12),
                                   ),
                                 ],
                               ),
@@ -119,10 +111,7 @@ class ReviewProblemCard extends StatelessWidget {
                       problem.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -130,10 +119,7 @@ class ReviewProblemCard extends StatelessWidget {
                     imageCountText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w300,
-                    ),
+                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w300),
                   ),
                 ],
               ),

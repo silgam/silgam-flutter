@@ -18,8 +18,7 @@ class TimetableStartCard extends StatefulWidget {
   State<TimetableStartCard> createState() => _TimetableStartCardState();
 }
 
-class _TimetableStartCardState extends State<TimetableStartCard>
-    with TickerProviderStateMixin {
+class _TimetableStartCardState extends State<TimetableStartCard> with TickerProviderStateMixin {
   final AppCubit _appCubit = getIt.get();
 
   TabController? _tabController;
@@ -75,11 +74,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
       return;
     }
 
-    Navigator.pushNamed(
-      context,
-      ClockPage.routeName,
-      arguments: ClockPageArguments(timetable),
-    );
+    Navigator.pushNamed(context, ClockPage.routeName, arguments: ClockPageArguments(timetable));
   }
 
   Widget _buildInfo({
@@ -101,23 +96,14 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                 spacing: 6,
                 runSpacing: 4,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                    ),
-                  ),
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
                   if (badgeText != null)
                     Container(
                       padding: const EdgeInsets.all(1.5),
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor.withAlpha(20),
                         borderRadius: BorderRadius.circular(2),
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 0.5,
-                        ),
+                        border: Border.all(color: Theme.of(context).primaryColor, width: 0.5),
                       ),
                       child: Text(
                         badgeText,
@@ -168,8 +154,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                       title: '시험 시간',
                       content:
                           '${DateFormat.Hm().format(timetable.items.first.exam.startTime)} ~ ${DateFormat.Hm().format(timetable.items.first.exam.endTime)}',
-                      badgeText:
-                          '${timetable.items.first.exam.durationMinutes}분',
+                      badgeText: '${timetable.items.first.exam.durationMinutes}분',
                     ),
                 const SizedBox(height: 16),
                 timetable.items.length > 1
@@ -194,9 +179,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
           height: 100,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [Color(0xFF1E2A7C), Color(0xFF283593)],
-            ),
+            gradient: LinearGradient(colors: [Color(0xFF1E2A7C), Color(0xFF283593)]),
           ),
           child: InkWell(
             onTap: () => _onTimetableStartTap(timetable),
@@ -207,11 +190,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
               alignment: Alignment.center,
               child: const Text(
                 '시험 시작',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18),
               ),
             ),
           ),
@@ -241,16 +220,9 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
                   labelColor: Theme.of(context).primaryColor,
                   unselectedLabelColor: disabledColor,
-                  labelStyle: defaultTextStyle?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
-                  unselectedLabelStyle: defaultTextStyle?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                  tabs:
-                      widget.timetables
-                          .map((timetable) => Tab(text: timetable.name))
-                          .toList(),
+                  labelStyle: defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
+                  unselectedLabelStyle: defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
+                  tabs: widget.timetables.map((timetable) => Tab(text: timetable.name)).toList(),
                 ),
               ],
             ),

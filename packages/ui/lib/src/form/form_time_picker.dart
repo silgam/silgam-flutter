@@ -3,12 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 
 class FormTimePicker extends StatelessWidget {
-  const FormTimePicker({
-    super.key,
-    required this.name,
-    this.initialValue,
-    this.autoWidth = false,
-  });
+  const FormTimePicker({super.key, required this.name, this.initialValue, this.autoWidth = false});
 
   final String name;
   final TimeOfDay? initialValue;
@@ -21,12 +16,7 @@ class FormTimePicker extends StatelessWidget {
       initialValue: initialValue,
       builder: (field) {
         final value = field.value;
-        final state =
-            field
-                as FormBuilderFieldState<
-                  FormBuilderField<TimeOfDay>,
-                  TimeOfDay
-                >;
+        final state = field as FormBuilderFieldState<FormBuilderField<TimeOfDay>, TimeOfDay>;
 
         return GestureDetector(
           onTap:
@@ -54,9 +44,7 @@ class FormTimePicker extends StatelessWidget {
             ),
             child: Text(
               value != null
-                  ? DateFormat.jm(
-                    'ko_KR',
-                  ).format(DateTime(0, 0, 0, value.hour, value.minute))
+                  ? DateFormat.jm('ko_KR').format(DateTime(0, 0, 0, value.hour, value.minute))
                   : '',
               style: TextTheme.of(context).titleMedium?.copyWith(
                 color: state.enabled ? null : Theme.of(context).disabledColor,

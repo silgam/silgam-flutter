@@ -28,8 +28,7 @@ class ReviewProblemDetailPage extends StatefulWidget {
   const ReviewProblemDetailPage({super.key, required this.reviewProblem});
 
   @override
-  State<ReviewProblemDetailPage> createState() =>
-      _ReviewProblemDetailPageState();
+  State<ReviewProblemDetailPage> createState() => _ReviewProblemDetailPageState();
 }
 
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
@@ -93,9 +92,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     String imageUrl = widget.reviewProblem.imagePaths[_currentIndex];
 
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('다운로드하는 중입니다...')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('다운로드하는 중입니다...')));
     }
     await Dio().download(imageUrl, savePath);
     await ImageGallerySaver.saveFile(savePath, name: DateTime.now().toString());
@@ -118,17 +115,13 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
       onPageChanged: _onPhotoChanged,
       itemCount: widget.reviewProblem.imagePaths.length,
       loadingBuilder: (context, event) {
-        return const Center(
-          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-        );
+        return const Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2));
       },
       builder: (context, index) {
         return PhotoViewGalleryPageOptions(
           onTapUp: (context, details, controllerValue) => _onPhotoViewTapUp(),
           onScaleEnd: _onPhotoViewScaleEnd,
-          imageProvider: CachedNetworkImageProvider(
-            widget.reviewProblem.imagePaths[index],
-          ),
+          imageProvider: CachedNetworkImageProvider(widget.reviewProblem.imagePaths[index]),
           errorBuilder: (context, error, stackTrace) {
             return Container(
               padding: const EdgeInsets.all(20),
@@ -163,8 +156,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     return Container(
       padding: EdgeInsets.only(top: statusBarHeight),
       margin: const EdgeInsets.only(bottom: 40),
-      color:
-          _hideMemo ? Colors.black.withAlpha(102) : Colors.black.withAlpha(179),
+      color: _hideMemo ? Colors.black.withAlpha(102) : Colors.black.withAlpha(179),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,10 +186,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
-                  child: Text(
-                    problem.memo,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  child: Text(problem.memo, style: const TextStyle(color: Colors.white)),
                 ),
               ),
             ),
@@ -212,10 +201,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
       padding: const EdgeInsets.all(8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.black38,
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.black38),
         child: Text(
           '${_currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
           style: const TextStyle(color: Colors.white),

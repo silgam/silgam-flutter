@@ -18,12 +18,8 @@ part 'main_state.dart';
 
 @lazySingleton
 class MainCubit extends Cubit<MainState> {
-  MainCubit(
-    this._adsRepository,
-    this._dDayRepository,
-    this._cacheManager,
-    this._appCubit,
-  ) : super(const MainState());
+  MainCubit(this._adsRepository, this._dDayRepository, this._cacheManager, this._appCubit)
+    : super(const MainState());
 
   final AdsRepository _adsRepository;
   final DDayRepository _dDayRepository;
@@ -65,9 +61,7 @@ class MainCubit extends Cubit<MainState> {
     final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     return ads
         .whereNot(
-          (ad) =>
-              (isPurchasedUser && ad.isHiddenToPurchasedUser) ||
-              (isAdsRemoved && ad.isAd),
+          (ad) => (isPurchasedUser && ad.isHiddenToPurchasedUser) || (isAdsRemoved && ad.isAd),
         )
         .toList();
   }
@@ -78,11 +72,7 @@ class MainCubit extends Cubit<MainState> {
 
   void onAdsShown(int index) {
     if (state.adsShownLoggedMap[index] == true) return;
-    emit(
-      state.copyWith(
-        adsShownLoggedMap: {...state.adsShownLoggedMap, index: true},
-      ),
-    );
+    emit(state.copyWith(adsShownLoggedMap: {...state.adsShownLoggedMap, index: true}));
 
     final Ads ads = state.ads[index];
     AnalyticsManager.logEvent(

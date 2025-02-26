@@ -51,18 +51,14 @@ class AppCubit extends Cubit<AppState> {
   @override
   void onChange(Change<AppState> change) {
     if (change.nextState.me?.id != change.currentState.me?.id) {
-      _connectivityManger.updateRealtimeDatabaseListener(
-        currentUserId: change.nextState.me?.id,
-      );
+      _connectivityManger.updateRealtimeDatabaseListener(currentUserId: change.nextState.me?.id);
     }
     super.onChange(change);
   }
 
   Future<void> initialize() async {
     await _connectivityManger.updateConnectivityListener();
-    _connectivityManger.updateRealtimeDatabaseListener(
-      currentUserId: state.me?.id,
-    );
+    _connectivityManger.updateRealtimeDatabaseListener(currentUserId: state.me?.id);
 
     FirebaseAuth.instance.userChanges().listen((user) {
       onUserChange();
@@ -98,17 +94,10 @@ class AppCubit extends Cubit<AppState> {
   }
 
   void updateProductBenefit() {
-    final freeProductBenefit =
-        _iapCubit.state.freeProduct?.benefit ?? ProductBenefit.initial;
-    final productBenefit =
-        state.me?.activeProduct.benefit ?? freeProductBenefit;
+    final freeProductBenefit = _iapCubit.state.freeProduct?.benefit ?? ProductBenefit.initial;
+    final productBenefit = state.me?.activeProduct.benefit ?? freeProductBenefit;
 
-    emit(
-      state.copyWith(
-        productBenefit: productBenefit,
-        freeProductBenefit: freeProductBenefit,
-      ),
-    );
+    emit(state.copyWith(productBenefit: productBenefit, freeProductBenefit: freeProductBenefit));
     log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
   }
 
@@ -139,10 +128,7 @@ class AppCubit extends Cubit<AppState> {
     emit(state.copyWith(customExams: customExams));
   }
 
-  Future<void> _updateFcmToken({
-    required User? updatedMe,
-    required User? previousMe,
-  }) async {
+  Future<void> _updateFcmToken({required User? updatedMe, required User? previousMe}) async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
     log('fcmToken: $fcmToken', name: 'AppCubit');
     if (fcmToken == null) return;
@@ -151,24 +137,14 @@ class AppCubit extends Cubit<AppState> {
       if (previousMe == null) return;
 
       if (previousMe.fcmTokens.contains(fcmToken)) {
-        await _userRepository.removeFcmToken(
-          userId: previousMe.id,
-          fcmToken: fcmToken,
-        );
+        await _userRepository.removeFcmToken(userId: previousMe.id, fcmToken: fcmToken);
         log('fcmToken removed', name: 'AppCubit');
       }
     } else {
       if (updatedMe.fcmTokens.contains(fcmToken)) return;
 
-      await _userRepository.addFcmToken(
-        userId: updatedMe.id,
-        fcmToken: fcmToken,
-      );
-      emit(
-        state.copyWith(
-          me: updatedMe.copyWith(fcmTokens: [...updatedMe.fcmTokens, fcmToken]),
-        ),
-      );
+      await _userRepository.addFcmToken(userId: updatedMe.id, fcmToken: fcmToken);
+      emit(state.copyWith(me: updatedMe.copyWith(fcmTokens: [...updatedMe.fcmTokens, fcmToken])));
       log('fcmToken added', name: 'AppCubit');
     }
   }

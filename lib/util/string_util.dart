@@ -8,10 +8,7 @@ String keepWord(text) {
     fullText +=
         emoji.hasMatch(words[i])
             ? words[i]
-            : words[i].replaceAllMapped(
-              RegExp(r'(\S)(?=\S)'),
-              (m) => '${m[1]}\u200D',
-            );
+            : words[i].replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D');
     if (i < words.length - 1) fullText += ' ';
   }
   return fullText;

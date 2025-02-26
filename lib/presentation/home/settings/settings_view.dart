@@ -53,11 +53,7 @@ class _SettingsViewState extends State<SettingsView> {
       builder: (context, state) {
         return ScaffoldBody(
           title: SettingsView.title,
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate(_buildSettingTiles(state)),
-            ),
-          ],
+          slivers: [SliverList(delegate: SliverChildListDelegate(_buildSettingTiles(state)))],
         );
       },
     );
@@ -66,9 +62,7 @@ class _SettingsViewState extends State<SettingsView> {
   List<Widget> _buildSettingTiles(AppState appState) {
     return [
       const SizedBox(height: 8),
-      appState.isSignedIn
-          ? _buildLoginInfo(appState.me!)
-          : LoginButton(onTap: _onLoginTap),
+      appState.isSignedIn ? _buildLoginInfo(appState.me!) : LoginButton(onTap: _onLoginTap),
       if (appState.me?.isPurchasedUser != true)
         buildPurchaseButtonOr(margin: const EdgeInsets.symmetric(vertical: 16)),
       if (appState.me?.isPurchasedUser == true) const SizedBox(height: 16),
@@ -88,22 +82,19 @@ class _SettingsViewState extends State<SettingsView> {
           builder: (context, recordListState) {
             final examRecordLimit = appState.productBenefit.examRecordLimit;
             final isExamRecordLimitReached =
-                examRecordLimit != -1 &&
-                recordListState.originalRecords.length >= examRecordLimit;
+                examRecordLimit != -1 && recordListState.originalRecords.length >= examRecordLimit;
 
             if (appState.isSignedIn && !isExamRecordLimitReached) {
               return const SettingTile(
                 title: '시험 종료 후 자동 저장',
-                description:
-                    '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+                description: '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
                 preferenceKey: PreferenceKey.useAutoSaveRecords,
               );
             } else {
               return SettingTile(
                 onTap: _onAutoSaveRecordsUnavailableButtonTap,
                 title: '시험 종료 후 자동 저장',
-                description:
-                    '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+                description: '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
                 showArrow: true,
               );
             }
@@ -134,8 +125,7 @@ class _SettingsViewState extends State<SettingsView> {
       SettingTile(
         onTap: _onCustomExamButtonTap,
         title: '나만의 과목 만들기',
-        description:
-            '기본 과목의 이름, 응시 시간 등을 바꾼 새로운 과목을 만들 수 있어요. (하프 모의고사, 내신 시험 등 커스텀 가능)',
+        description: '기본 과목의 이름, 응시 시간 등을 바꾼 새로운 과목을 만들 수 있어요. (하프 모의고사, 내신 시험 등 커스텀 가능)',
         showArrow: true,
       ),
       const Subtitle(text: '소리 설정', margin: EdgeInsets.zero),
@@ -159,8 +149,7 @@ class _SettingsViewState extends State<SettingsView> {
         description: '인터넷이 없는 환경에서도 이용할 수 있는 기능들에 대해 알아보세요.',
       ),
       const SettingDivider(),
-      if (appState.isSignedIn)
-        SettingTile(onTap: _onNotificationSettingButtonTap, title: '알림 설정'),
+      if (appState.isSignedIn) SettingTile(onTap: _onNotificationSettingButtonTap, title: '알림 설정'),
       if (appState.isSignedIn) const SettingDivider(),
       SettingTile(
         onTap: _onWriteReviewButtonTap,
@@ -175,11 +164,7 @@ class _SettingsViewState extends State<SettingsView> {
       ),
       const SettingDivider(),
       SettingTile(
-        onTap:
-            () => launchUrl(
-              Uri.parse(urlSupport),
-              mode: LaunchMode.externalApplication,
-            ),
+        onTap: () => launchUrl(Uri.parse(urlSupport), mode: LaunchMode.externalApplication),
         title: '카카오톡 채널로 문의하기',
         description: '앱 사용 중 발생하는 오류나 의견 등 실감팀의 답변이 필요한 내용을 문의할 수 있어요.',
       ),
@@ -202,11 +187,7 @@ class _SettingsViewState extends State<SettingsView> {
             alignment: Alignment.center,
             child: Text(
               '버전 정보 ${snapshot.data?.version}+${snapshot.data?.buildNumber}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-              ),
+              style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
             ),
           );
         },
@@ -214,18 +195,11 @@ class _SettingsViewState extends State<SettingsView> {
       const SizedBox(height: 4),
       GestureDetector(
         onTap: () {
-          launchUrl(
-            Uri.parse(urlPrivacy),
-            mode: LaunchMode.externalApplication,
-          );
+          launchUrl(Uri.parse(urlPrivacy), mode: LaunchMode.externalApplication);
         },
         child: const Text(
           '개인정보처리방침',
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
+          style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
           textAlign: TextAlign.center,
         ),
       ),
@@ -236,11 +210,7 @@ class _SettingsViewState extends State<SettingsView> {
         },
         child: const Text(
           '서비스이용약관',
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
+          style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
           textAlign: TextAlign.center,
         ),
       ),
@@ -256,11 +226,7 @@ class _SettingsViewState extends State<SettingsView> {
         },
         child: const Text(
           '오픈소스 라이선스',
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
+          style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
           textAlign: TextAlign.center,
         ),
       ),
@@ -283,9 +249,7 @@ class _SettingsViewState extends State<SettingsView> {
               children: [
                 const SizedBox(width: 10),
                 CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                    user.photoUrl ?? '',
-                  ),
+                  backgroundImage: CachedNetworkImageProvider(user.photoUrl ?? ''),
                   backgroundColor: Colors.grey,
                   radius: 24,
                   onBackgroundImageError: (exception, stackTrace) {},
@@ -303,10 +267,7 @@ class _SettingsViewState extends State<SettingsView> {
                               user.displayName ?? '이름 없음',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -318,10 +279,7 @@ class _SettingsViewState extends State<SettingsView> {
                         user.email ?? '이메일 없음',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                       ),
                     ],
                   ),
@@ -335,8 +293,7 @@ class _SettingsViewState extends State<SettingsView> {
                           ? user.activeProduct.trialStampImageUrl
                           : user.activeProduct.stampImageUrl,
                   height: 74,
-                  errorWidget:
-                      (_, __, ___) => const AspectRatio(aspectRatio: 1),
+                  errorWidget: (_, __, ___) => const AspectRatio(aspectRatio: 1),
                 ),
               ],
             ),
@@ -356,9 +313,7 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void _onLoginInfoLongPress(User user) {
-    AnalyticsManager.logEvent(
-      name: '[HomePage-settings] Login info long pressed',
-    );
+    AnalyticsManager.logEvent(name: '[HomePage-settings] Login info long pressed');
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
@@ -367,9 +322,7 @@ class _SettingsViewState extends State<SettingsView> {
             content: SelectableText(
               user.id,
               onTap: () {
-                AnalyticsManager.logEvent(
-                  name: '[HomePage-settings] User ID copied',
-                );
+                AnalyticsManager.logEvent(name: '[HomePage-settings] User ID copied');
                 Clipboard.setData(ClipboardData(text: user.id));
                 ScaffoldMessenger.of(
                   context,
@@ -405,9 +358,7 @@ class _SettingsViewState extends State<SettingsView> {
                 onPressed: () async {
                   await getIt<AppCubit>().onLogout();
                   if (mounted) Navigator.pop(context);
-                  await AnalyticsManager.logEvent(
-                    name: '[HomePage-settings] Logout',
-                  );
+                  await AnalyticsManager.logEvent(name: '[HomePage-settings] Logout');
                 },
               ),
             ],
@@ -449,18 +400,14 @@ class _SettingsViewState extends State<SettingsView> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             duration: Duration(seconds: 7),
-                            content: Text(
-                              '로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.',
-                            ),
+                            content: Text('로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
                           ),
                         );
                         Navigator.pushNamed(context, LoginPage.routeName);
                       }
                     }
                   }
-                  await AnalyticsManager.logEvent(
-                    name: '[HomePage-settings] Delete account',
-                  );
+                  await AnalyticsManager.logEvent(name: '[HomePage-settings] Delete account');
                 },
               ),
             ],
@@ -478,16 +425,13 @@ class _SettingsViewState extends State<SettingsView> {
     } else {
       showDialog(
         context: context,
-        routeSettings: const RouteSettings(
-          name: '/auto_save_records_limit_info_dialog',
-        ),
+        routeSettings: const RouteSettings(name: '/auto_save_records_limit_info_dialog'),
         builder: (context) {
           return BlocBuilder<AppCubit, AppState>(
             builder: (context, appState) {
               return BlocBuilder<IapCubit, IapState>(
                 builder: (context, iapState) {
-                  final examRecordLimit =
-                      appState.freeProductBenefit.examRecordLimit;
+                  final examRecordLimit = appState.freeProductBenefit.examRecordLimit;
                   final sellingProduct = iapState.sellingProduct;
 
                   return CustomAlertDialog(
@@ -511,9 +455,7 @@ class _SettingsViewState extends State<SettingsView> {
                             Navigator.of(context).pop();
                             Navigator.of(context).pushNamed(
                               PurchasePage.routeName,
-                              arguments: PurchasePageArguments(
-                                product: sellingProduct,
-                              ),
+                              arguments: PurchasePageArguments(product: sellingProduct),
                             );
                           },
                         ),
@@ -601,12 +543,6 @@ class SettingDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Divider(
-      color: Colors.grey.shade200,
-      height: 1,
-      thickness: 1,
-      indent: 12,
-      endIndent: 12,
-    );
+    return Divider(color: Colors.grey.shade200, height: 1, thickness: 1, indent: 12, endIndent: 12);
   }
 }

@@ -15,9 +15,7 @@ class AuthRepository {
 
   final AuthApi _authApi;
 
-  Future<Result<String, ApiFailure>> authKakao(
-    kakao.OAuthToken kakaoOAuthToken,
-  ) async {
+  Future<Result<String, ApiFailure>> authKakao(kakao.OAuthToken kakaoOAuthToken) async {
     final requestBody = AuthRequest(token: kakaoOAuthToken.accessToken);
     try {
       final response = await _authApi.authKakao(requestBody);

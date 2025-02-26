@@ -127,10 +127,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                         Theme.of(context).primaryColor,
                         Theme.of(context).primaryColor.withAlpha(0),
                       ]
-                      : [
-                        const Color(0xFF303030),
-                        const Color(0xFF303030).withAlpha(0),
-                      ],
+                      : [const Color(0xFF303030), const Color(0xFF303030).withAlpha(0)],
             ),
           ),
           child: Row(
@@ -138,10 +135,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 150),
                 opacity: isSelected ? 1 : 0,
-                child: const Text(
-                  '✓',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                child: const Text('✓', style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -183,10 +177,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                     if (preset.description != null)
                       Text(
                         preset.description ?? '',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
                       ),
                   ],
                 ),
@@ -200,9 +191,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
 
   Widget _buildNoiseSettings() {
     return BlocBuilder<AppCubit, AppState>(
-      buildWhen:
-          (previous, current) =>
-              previous.productBenefit != current.productBenefit,
+      buildWhen: (previous, current) => previous.productBenefit != current.productBenefit,
       builder: (context, appState) {
         final availableNoiseIds = appState.productBenefit.availableNoiseIds;
         final noiseSettingWidgets = [
@@ -219,10 +208,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
             children: [
               Expanded(
                 child: Column(
-                  children: noiseSettingWidgets.sublist(
-                    0,
-                    (noiseSettingWidgets.length / 2).ceil(),
-                  ),
+                  children: noiseSettingWidgets.sublist(0, (noiseSettingWidgets.length / 2).ceil()),
                 ),
               ),
               Expanded(
@@ -253,9 +239,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   (noise.existingFiles == 0 ? '(지원 예정) ' : '') + noise.name,
-                  style: TextStyle(
-                    color: noise.existingFiles == 0 ? Colors.grey : null,
-                  ),
+                  style: TextStyle(color: noise.existingFiles == 0 ? Colors.grey : null),
                 ),
               ),
               const SizedBox(height: 4),
@@ -264,16 +248,12 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                   trackHeight: 6,
                   trackShape: const RoundedRectSliderTrackShape(),
                   overlayShape: SliderComponentShape.noOverlay,
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 8,
-                  ),
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
                 ),
                 child: Slider(
                   value: _cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0,
-                  onChanged:
-                      (value) => _cubit.onSliderChanged(noise, value.toInt()),
-                  label: (_cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0)
-                      .toStringAsFixed(0),
+                  onChanged: (value) => _cubit.onSliderChanged(noise, value.toInt()),
+                  label: (_cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0).toStringAsFixed(0),
                   max: Noise.maxLevel.toDouble(),
                   activeColor: Theme.of(
                     context,
@@ -300,10 +280,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                     SizedBox(width: 8),
                     Text(
                       '유료 기능',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
@@ -343,9 +320,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                       Navigator.of(context).pop();
                       Navigator.of(context).pushNamed(
                         PurchasePage.routeName,
-                        arguments: PurchasePageArguments(
-                          product: sellingProduct,
-                        ),
+                        arguments: PurchasePageArguments(product: sellingProduct),
                       );
                     },
                   ),

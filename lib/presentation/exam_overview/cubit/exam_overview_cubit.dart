@@ -40,9 +40,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
 
   void updateLapTimeItemGroups() {
     if (_appCubit.state.productBenefit.isLapTimeAvailable) {
-      _updateLapTimeItemGroups(
-        lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
-      );
+      _updateLapTimeItemGroups(lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time));
     } else {
       _updateLapTimeItemGroupsUsingExample();
     }
@@ -62,8 +60,10 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     final recordsCountToSave =
         examRecordLimit == -1
             ? _examDetail.exams.length
-            : (examRecordLimit - _recordListCubit.state.originalRecords.length)
-                .clamp(0, _examDetail.exams.length);
+            : (examRecordLimit - _recordListCubit.state.originalRecords.length).clamp(
+              0,
+              _examDetail.exams.length,
+            );
 
     final List<ExamRecord> savedRecords = [];
     for (final exam in _examDetail.exams.take(recordsCountToSave)) {
@@ -71,18 +71,14 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
       final examFinishedTime = _examDetail.examFinishedTimes[exam];
       final examDurationMinutes =
           examStartedTime != null && examFinishedTime != null
-              ? examFinishedTime
-                  .difference(examStartedTime)
-                  .inMinutesWithCorrection
+              ? examFinishedTime.difference(examStartedTime).inMinutesWithCorrection
               : exam.durationMinutes;
 
       final record = ExamRecord.create(
         userId: userId,
         title:
             ExamRecord.autoSaveTitlePrefix +
-            (_examDetail.exams.length > 1
-                ? '${_examDetail.timetableName} - '
-                : '') +
+            (_examDetail.exams.length > 1 ? '${_examDetail.timetableName} - ' : '') +
             exam.name,
         exam: exam,
         examStartedTime: examStartedTime ?? DateTime.now(),
@@ -122,17 +118,11 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   }
 
   void examRecorded(Exam exam, String recordId) {
-    emit(
-      state.copyWith(
-        examToRecordIds: {...state.examToRecordIds, exam: recordId},
-      ),
-    );
+    emit(state.copyWith(examToRecordIds: {...state.examToRecordIds, exam: recordId}));
   }
 
   void examRecordDeleted(Exam exam) {
-    emit(
-      state.copyWith(examToRecordIds: {...state.examToRecordIds}..remove(exam)),
-    );
+    emit(state.copyWith(examToRecordIds: {...state.examToRecordIds}..remove(exam)));
   }
 
   void _updateLapTimeItemGroups({required List<LapTime> lapTimes}) {
@@ -141,8 +131,10 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     for (final lapTime in lapTimes) {
       final exam = lapTime.breakpoint.exam;
 
-      final List<LapTimeItemGroup> lapTimeItemGroups = examToLapTimeItemGroups
-          .putIfAbsent(exam, () => []);
+      final List<LapTimeItemGroup> lapTimeItemGroups = examToLapTimeItemGroups.putIfAbsent(
+        exam,
+        () => [],
+      );
 
       final Announcement? targetAnnouncement;
       if (lapTime.time.isSameOrAfter(exam.endTime)) {
@@ -154,8 +146,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
       }
 
       if (targetAnnouncement != null &&
-          lapTimeItemGroups.lastOrNull?.announcementPurpose !=
-              targetAnnouncement.purpose) {
+          lapTimeItemGroups.lastOrNull?.announcementPurpose != targetAnnouncement.purpose) {
         lapTimeItemGroups.add(
           LapTimeItemGroup(
             title: targetAnnouncement.title,
@@ -174,8 +165,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
         LapTimeItem(
           time: lapTime.time,
           timeDifference: lapTime.time.difference(
-            lapTimeItemGroup.lapTimeItems.lastOrNull?.time ??
-                lapTimeItemGroup.startTime,
+            lapTimeItemGroup.lapTimeItems.lastOrNull?.time ?? lapTimeItemGroup.startTime,
           ),
           timeElapsed: lapTime.time.difference(lapTimeItemGroup.startTime),
         ),
@@ -188,8 +178,10 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   void _updateLapTimeItemGroupsUsingExample() {
     final firstExam = _examDetail.exams.first;
     final exampleLapTimeItemGroups = getExampleLapTimeGroups(
-      startTime: firstExam.subject.defaultAnnouncements.first.time
-          .calculateBreakpointTime(firstExam.startTime, firstExam.endTime),
+      startTime: firstExam.subject.defaultAnnouncements.first.time.calculateBreakpointTime(
+        firstExam.startTime,
+        firstExam.endTime,
+      ),
     );
 
     emit(

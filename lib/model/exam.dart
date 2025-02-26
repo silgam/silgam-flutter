@@ -21,8 +21,7 @@ class Exam with _$Exam {
     required Subject subject,
     required String name,
     required int number,
-    @JsonKey(fromJson: timeFromJson, toJson: timeToJson)
-    required DateTime startTime,
+    @JsonKey(fromJson: timeFromJson, toJson: timeToJson) required DateTime startTime,
     required int durationMinutes,
     required int numberOfQuestions,
     required int perfectScore,
@@ -35,26 +34,20 @@ class Exam with _$Exam {
 
   factory Exam.fromId(String id) {
     final AppState appState = getIt.get<AppCubit>().state;
-    return appState.getAllExams().firstWhereOrNull(
-          (element) => element.id == id,
-        ) ??
+    return appState.getAllExams().firstWhereOrNull((element) => element.id == id) ??
         appState.getDefaultExams().first.copyWith(id: id, name: '알 수 없는 과목');
   }
 
   static String toId(Exam exam) => exam.id;
 
-  late final DateTime endTime = startTime.add(
-    Duration(minutes: durationMinutes),
-  );
+  late final DateTime endTime = startTime.add(Duration(minutes: durationMinutes));
 
   late final DateTime timetableStartTime = startTime.subtract(
     Duration(minutes: subject.minutesBeforeExamStart),
   );
 
   int get timetableDurationMinutes =>
-      durationMinutes +
-      subject.minutesBeforeExamStart +
-      subject.minutesAfterExamFinish;
+      durationMinutes + subject.minutesBeforeExamStart + subject.minutesAfterExamFinish;
 
   bool get isCustomExam => userId != null;
 
@@ -84,10 +77,7 @@ class Exam with _$Exam {
 
 DateTime timeFromJson(String json) {
   final parts = json.split(':');
-  return DateTimeBuilder.fromHourMinute(
-    int.parse(parts[0]),
-    int.parse(parts[1]),
-  );
+  return DateTimeBuilder.fromHourMinute(int.parse(parts[0]), int.parse(parts[1]));
 }
 
 String timeToJson(DateTime dateTime) {

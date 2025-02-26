@@ -42,10 +42,7 @@ class LoginButton extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withAlpha(200),
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(200)),
                     ),
                   ],
                 ),

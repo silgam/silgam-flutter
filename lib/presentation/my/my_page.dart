@@ -31,24 +31,18 @@ class MyPage extends StatelessWidget {
       child: BlocBuilder<AppCubit, AppState>(
         buildWhen:
             (previous, current) =>
-                previous.me != current.me ||
-                previous.productBenefit != current.productBenefit,
+                previous.me != current.me || previous.productBenefit != current.productBenefit,
         builder: (context, appState) {
           final me = appState.me;
           if (me == null) {
-            return const Center(
-              child: CircularProgressIndicator(strokeWidth: 3),
-            );
+            return const Center(child: CircularProgressIndicator(strokeWidth: 3));
           }
           return ListView(
             physics: const BouncingScrollPhysics(),
             children: [
               Container(
                 color: Theme.of(context).primaryColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 40,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
                 child: Column(
                   children: [
                     const Text(
@@ -67,23 +61,15 @@ class MyPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     if (me.activeProduct.id != ProductId.free)
                       ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          maxWidth: _cardMaxWidth,
-                        ),
+                        constraints: const BoxConstraints(maxWidth: _cardMaxWidth),
                         child: _buildPass(context, me),
                       ),
                     if (me.activeProduct.id == ProductId.free)
                       Container(
                         width: double.infinity,
                         alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 16,
-                        ),
-                        constraints: const BoxConstraints(
-                          maxWidth: _cardMaxWidth,
-                          minHeight: 120,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        constraints: const BoxConstraints(maxWidth: _cardMaxWidth, minHeight: 120),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: Colors.white, width: 1),
@@ -99,27 +85,18 @@ class MyPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               BlocBuilder<IapCubit, IapState>(
-                buildWhen:
-                    (previous, current) =>
-                        previous.products != current.products,
+                buildWhen: (previous, current) => previous.products != current.products,
                 builder: (context, iapState) {
                   return Column(
                     children: [
                       if (!me.isPurchasedUser)
                         buildPurchaseButtonOr(
-                          margin: const EdgeInsets.only(
-                            left: 24,
-                            right: 24,
-                            bottom: 40,
-                          ),
+                          margin: const EdgeInsets.only(left: 24, right: 24, bottom: 40),
                         ),
                       if (me.receipts.isNotEmpty)
                         const Text(
                           '사용 내역',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                          ),
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                         ),
                       const SizedBox(height: 8),
                       ...me.receipts.reversed.map((receipt) {
@@ -132,9 +109,7 @@ class MyPage extends StatelessWidget {
 
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 24),
-                          constraints: const BoxConstraints(
-                            maxWidth: _cardMaxWidth,
-                          ),
+                          constraints: const BoxConstraints(maxWidth: _cardMaxWidth),
                           child: _buildReceipt(receipt, product),
                         );
                       }),
@@ -152,9 +127,7 @@ class MyPage extends StatelessWidget {
               _buildInfo(
                 '실감패스 이용 기간 중 작성한 모의고사 기록이 ${appState.freeProductBenefit.examRecordLimit}개를 초과할 경우, 실감패스 이용 기간 이후에는 기록을 추가하거나 기존의 기록을 수정할 수 없습니다. (열람 및 삭제만 가능) 단, 기록이 ${appState.freeProductBenefit.examRecordLimit}개 이하가 되도록 일부 기록을 삭제할 경우 추가 및 수정이 가능합니다.',
               ),
-              _buildInfo(
-                '구매 취소 및 환불은 구입일로부터 7일 이내에만 가능하며, 환불 절차는 스토어의 운영 정책을 따릅니다.',
-              ),
+              _buildInfo('구매 취소 및 환불은 구입일로부터 7일 이내에만 가능하며, 환불 절차는 스토어의 운영 정책을 따릅니다.'),
               const SizedBox(height: 60),
             ],
           );
@@ -172,24 +145,14 @@ class MyPage extends StatelessWidget {
         isTrial
             ? DateTime.parse(user.receipts.last.token).toLocal()
             : user.activeProduct.expiryDate;
-    final expiryDateString = DateFormat.yMd(
-      'ko_KR',
-    ).add_Hm().format(expiryDate);
+    final expiryDateString = DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
 
     final now = DateTime.now();
-    final expiryDay = DateTime(
-      expiryDate.year,
-      expiryDate.month,
-      expiryDate.day,
-    );
-    final expiryDDay =
-        expiryDay.difference(DateTime(now.year, now.month, now.day)).inDays;
+    final expiryDay = DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
+    final expiryDDay = expiryDay.difference(DateTime(now.year, now.month, now.day)).inDays;
     return Container(
       clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
       child: IntrinsicHeight(
         child: Row(
           children: [
@@ -255,19 +218,11 @@ class MyPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color:
-                              isTrial
-                                  ? Colors.grey.shade700
-                                  : Colors.transparent,
+                          color: isTrial ? Colors.grey.shade700 : Colors.transparent,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Divider(
-                        indent: 8,
-                        endIndent: 8,
-                        height: 1,
-                        thickness: 1,
-                      ),
+                      const Divider(indent: 8, endIndent: 8, height: 1, thickness: 1),
                       const SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -292,14 +247,9 @@ class MyPage extends StatelessWidget {
 
   Widget _buildReceipt(Receipt receipt, Product product) {
     final isTrial = receipt.store == 'trial';
-    final purchaseDateString = DateFormat.yMd(
-      'ko_KR',
-    ).add_Hm().format(receipt.createdAt);
-    final expiryDate =
-        isTrial ? DateTime.parse(receipt.token).toLocal() : product.expiryDate;
-    final expiryDateString = DateFormat.yMd(
-      'ko_KR',
-    ).add_Hm().format(expiryDate);
+    final purchaseDateString = DateFormat.yMd('ko_KR').add_Hm().format(receipt.createdAt);
+    final expiryDate = isTrial ? DateTime.parse(receipt.token).toLocal() : product.expiryDate;
+    final expiryDateString = DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
 
     var store = '';
     switch (receipt.store) {
@@ -335,37 +285,21 @@ class MyPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          DottedLine(
-            dashLength: 8,
-            dashGapLength: 8,
-            dashColor: Colors.grey.shade700,
-          ),
+          DottedLine(dashLength: 8, dashGapLength: 8, dashColor: Colors.grey.shade700),
           const SizedBox(height: 14),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: _buildReceiptInfo(
-              '구매 방법',
-              store,
-              textColor: Colors.grey.shade700,
-            ),
+            child: _buildReceiptInfo('구매 방법', store, textColor: Colors.grey.shade700),
           ),
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: _buildReceiptInfo(
-              '구매 일시',
-              purchaseDateString,
-              textColor: Colors.grey.shade700,
-            ),
+            child: _buildReceiptInfo('구매 일시', purchaseDateString, textColor: Colors.grey.shade700),
           ),
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: _buildReceiptInfo(
-              '만료 일시',
-              expiryDateString,
-              textColor: Colors.grey.shade700,
-            ),
+            child: _buildReceiptInfo('만료 일시', expiryDateString, textColor: Colors.grey.shade700),
           ),
         ],
       ),
@@ -376,10 +310,7 @@ class MyPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-        ),
+        Text(title, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -399,10 +330,7 @@ class MyPage extends StatelessWidget {
   Widget _buildInfo(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-      child: BulletText(
-        text: text,
-        style: const TextStyle(color: Colors.grey, height: 1.2),
-      ),
+      child: BulletText(text: text, style: const TextStyle(color: Colors.grey, height: 1.2)),
     );
   }
 }

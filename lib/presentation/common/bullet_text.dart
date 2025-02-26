@@ -15,10 +15,7 @@ class BulletText extends StatelessWidget {
         Text(
           '• ',
           style:
-              style?.copyWith(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w300,
-              ) ??
+              style?.copyWith(fontFamily: 'Roboto', fontWeight: FontWeight.w300) ??
               const TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w300,

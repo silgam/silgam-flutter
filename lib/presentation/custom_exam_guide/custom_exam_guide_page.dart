@@ -81,16 +81,11 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
 
   Widget _buildGuideImages() {
     final screenWidth = MediaQuery.of(context).size.width;
-    final padding = EdgeInsets.symmetric(
-      horizontal: max(0, (screenWidth - _maxWidth) / 2),
-    );
+    final padding = EdgeInsets.symmetric(horizontal: max(0, (screenWidth - _maxWidth) / 2));
 
     return Column(
       children: [
-        Container(
-          height: MediaQuery.of(context).padding.top,
-          color: const Color(0xFF090B1E),
-        ),
+        Container(height: MediaQuery.of(context).padding.top, color: const Color(0xFF090B1E)),
         Container(
           padding: padding,
           decoration: BoxDecoration(
@@ -101,31 +96,19 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
               colors: [Colors.black.withAlpha(204), Colors.black.withAlpha(0)],
             ),
           ),
-          child: Image.asset(
-            'assets/custom_exam_guide_1.png',
-            fit: BoxFit.contain,
-          ),
+          child: Image.asset('assets/custom_exam_guide_1.png', fit: BoxFit.contain),
         ),
         Padding(
           padding: padding,
-          child: Image.asset(
-            'assets/custom_exam_guide_2.png',
-            fit: BoxFit.contain,
-          ),
+          child: Image.asset('assets/custom_exam_guide_2.png', fit: BoxFit.contain),
         ),
         Padding(
           padding: padding,
-          child: Image.asset(
-            'assets/custom_exam_guide_3.png',
-            fit: BoxFit.contain,
-          ),
+          child: Image.asset('assets/custom_exam_guide_3.png', fit: BoxFit.contain),
         ),
         Padding(
           padding: padding,
-          child: Image.asset(
-            'assets/custom_exam_guide_4.png',
-            fit: BoxFit.contain,
-          ),
+          child: Image.asset('assets/custom_exam_guide_4.png', fit: BoxFit.contain),
         ),
         const SizedBox(height: 100),
       ],
@@ -145,10 +128,7 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
         builder: (context, state) {
           return CustomFilledButton(
             onPressed: _onBottomButtonTap,
-            label:
-                state.productBenefit.isCustomExamAvailable
-                    ? '나만의 과목 만들어보기'
-                    : '실감패스 구매하러 가기',
+            label: state.productBenefit.isCustomExamAvailable ? '나만의 과목 만들어보기' : '실감패스 구매하러 가기',
           );
         },
       ),
@@ -181,10 +161,7 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              color:
-                  _isMenuBarTransparent
-                      ? Colors.transparent
-                      : Theme.of(context).primaryColor,
+              color: _isMenuBarTransparent ? Colors.transparent : Theme.of(context).primaryColor,
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).padding.top,
                 left: MediaQuery.of(context).padding.left,

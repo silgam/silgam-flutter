@@ -58,9 +58,7 @@ class ProductRepository {
     }
   }
 
-  Future<Result<Unit, ApiFailure>> startTrial({
-    required String productId,
-  }) async {
+  Future<Result<Unit, ApiFailure>> startTrial({required String productId}) async {
     final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
     final request = StartTrialRequestDto(productId: productId);
     try {

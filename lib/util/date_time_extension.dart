@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 extension DateTimeBuilder on DateTime {
-  static DateTime fromHourMinute(int hour, int minute) =>
-      DateTime(0, 1, 1, hour, minute);
+  static DateTime fromHourMinute(int hour, int minute) => DateTime(0, 1, 1, hour, minute);
 }
 
 extension DateTimeUtil on DateTime {

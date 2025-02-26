@@ -90,38 +90,27 @@ class _EditRecordPageState extends State<EditRecordPage> {
     ExamRecord.autoSaveTitlePrefix,
     '',
   );
-  late final Exam _initialExam =
-      _recordToEdit?.exam ?? widget.inputExam ?? _exams.first;
+  late final Exam _initialExam = _recordToEdit?.exam ?? widget.inputExam ?? _exams.first;
   late final int? _initialScore = _recordToEdit?.score;
   late final int? _initialGrade = _recordToEdit?.grade;
   late final int? _initialPercentile = _recordToEdit?.percentile;
   late final int? _initialStandardScore = _recordToEdit?.standardScore;
   late final DateTime _initialExamStartedDate =
-      _recordToEdit?.examStartedTime ??
-      widget.examStartedTime ??
-      DateTime.now();
-  late final TimeOfDay _initialExamStartedTime = TimeOfDay.fromDateTime(
-    _initialExamStartedDate,
-  );
+      _recordToEdit?.examStartedTime ?? widget.examStartedTime ?? DateTime.now();
+  late final TimeOfDay _initialExamStartedTime = TimeOfDay.fromDateTime(_initialExamStartedDate);
   late final int _initialExamDurationMinutes =
       _recordToEdit?.examDurationMinutes ??
       (widget.examStartedTime != null && widget.examFinishedTime != null
-          ? widget.examFinishedTime!
-              .difference(widget.examStartedTime!)
-              .inMinutesWithCorrection
+          ? widget.examFinishedTime!.difference(widget.examStartedTime!).inMinutesWithCorrection
           : _initialExam.durationMinutes);
-  late final List<WrongProblem> _initialWrongProblems =
-      _recordToEdit?.wrongProblems ?? [];
-  late final String? _initialFeedback =
-      _recordToEdit?.feedback ?? widget.prefillFeedback;
-  late final List<ReviewProblem> _initialReviewProblems =
-      _recordToEdit?.reviewProblems ?? [];
+  late final List<WrongProblem> _initialWrongProblems = _recordToEdit?.wrongProblems ?? [];
+  late final String? _initialFeedback = _recordToEdit?.feedback ?? widget.prefillFeedback;
+  late final List<ReviewProblem> _initialReviewProblems = _recordToEdit?.reviewProblems ?? [];
 
   bool _isChanged = false;
   bool _isSaving = false;
   late Exam _previousExam = _initialExam;
-  late int _wrongProblemMaxDigits =
-      _initialExam.numberOfQuestions.toString().length;
+  late int _wrongProblemMaxDigits = _initialExam.numberOfQuestions.toString().length;
 
   @override
   void initState() {
@@ -150,9 +139,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
     final examRecordCount = _recordListCubit.state.originalRecords.length;
     if (examRecordLimit != -1 &&
-        (_isEditingMode
-            ? examRecordCount > examRecordLimit
-            : examRecordCount >= examRecordLimit)) {
+        (_isEditingMode ? examRecordCount > examRecordLimit : examRecordCount >= examRecordLimit)) {
       Navigator.pop(context);
       showExamRecordLimitInfoDialog(context);
     }
@@ -180,9 +167,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
     showDialog(
       context: context,
-      routeSettings: const RouteSettings(
-        name: '${EditRecordPage.routeName}/exit_confirm_dialog',
-      ),
+      routeSettings: const RouteSettings(name: '${EditRecordPage.routeName}/exit_confirm_dialog'),
       builder: (context) {
         return CustomAlertDialog(
           title: '아직 저장하지 않았어요!',
@@ -210,10 +195,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void _onExamChanged(Exam? exam) {
     if (exam == null) return;
 
-    final examDurationMinutesField =
-        _formKey.currentState?.fields[_examDurationMinutesFieldName];
-    if (_previousExam.durationMinutes ==
-        int.tryParse(examDurationMinutesField?.value)) {
+    final examDurationMinutesField = _formKey.currentState?.fields[_examDurationMinutesFieldName];
+    if (_previousExam.durationMinutes == int.tryParse(examDurationMinutesField?.value)) {
       examDurationMinutesField?.didChange(exam.durationMinutes.toString());
     }
 
@@ -236,8 +219,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
     final isFormValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isFormValid) {
-      final firstErrorMessage =
-          _formKey.currentState?.errors.entries.first.value;
+      final firstErrorMessage = _formKey.currentState?.errors.entries.first.value;
       if (firstErrorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -255,8 +237,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (userId == null || values == null) return;
 
     final Exam exam = values[_examFieldName];
-    if (!_appCubit.state.productBenefit.isCustomExamAvailable &&
-        exam.isCustomExam) {
+    if (!_appCubit.state.productBenefit.isCustomExamAvailable && exam.isCustomExam) {
       showCustomExamNotAvailableDialog(context);
       return;
     }
@@ -293,10 +274,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     if (_recordToEdit != null) {
       record = await _recordRepository.updateExamRecord(
         oldRecord: _recordToEdit,
-        newRecord: record.copyWith(
-          id: _recordToEdit.id,
-          createdAt: _recordToEdit.createdAt,
-        ),
+        newRecord: record.copyWith(id: _recordToEdit.id, createdAt: _recordToEdit.createdAt),
       );
       _recordListCubit.onRecordUpdated(record);
 
@@ -347,12 +325,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
                   return element.title.contains(textEditingValue.text);
                 }).toList();
               },
-              fieldViewBuilder: (
-                context,
-                textEditingController,
-                focusNode,
-                onFieldSubmitted,
-              ) {
+              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
                 return FormTextField(
                   name: _titleFieldName,
                   hintText: '실감 모의고사 시즌1 1회',
@@ -361,13 +334,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
                   focusNode: focusNode,
                   onSubmitted: (_) => onFieldSubmitted(),
                   validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(
-                      errorText: '모의고사 이름을 입력해주세요.',
-                    ),
-                    FormBuilderValidators.maxLength(
-                      100,
-                      errorText: '100자 이하로 입력해주세요.',
-                    ),
+                    FormBuilderValidators.required(errorText: '모의고사 이름을 입력해주세요.'),
+                    FormBuilderValidators.maxLength(100, errorText: '100자 이하로 입력해주세요.'),
                   ]),
                 );
               },
@@ -381,10 +349,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
               onChanged: _onExamChanged,
               items:
                   _exams.map((exam) {
-                    return DropdownMenuItem(
-                      value: exam,
-                      child: Text(exam.name),
-                    );
+                    return DropdownMenuItem(value: exam, child: Text(exam.name));
                   }).toList(),
             ),
           ),
@@ -535,12 +500,8 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 child: FormDatePicker(
                   name: _examStartedDateFieldName,
                   initialValue: _initialExamStartedDate,
-                  firstDate: _initialExamStartedDate.subtract(
-                    const Duration(days: 365 * 20),
-                  ),
-                  lastDate: _initialExamStartedDate.add(
-                    const Duration(days: 365),
-                  ),
+                  firstDate: _initialExamStartedDate.subtract(const Duration(days: 365 * 20)),
+                  lastDate: _initialExamStartedDate.add(const Duration(days: 365)),
                   autoWidth: true,
                 ),
               ),
@@ -591,8 +552,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             label: '틀린 문제',
             child: FormNumbersField(
               name: _wrongProblemsFieldName,
-              initialValue:
-                  _initialWrongProblems.map((e) => e.problemNumber).toList(),
+              initialValue: _initialWrongProblems.map((e) => e.problemNumber).toList(),
               hintText: '번호 입력',
               maxDigits: _wrongProblemMaxDigits,
               displayStringForNumber: (number) => '$number번',
@@ -603,8 +563,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
             child: FormTextField(
               name: _feedbackFieldName,
               initialValue: _initialFeedback,
-              hintText:
-                  '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
+              hintText: '시험 운영은 계획한 대로 되었는지, 준비한 전략들은 잘 해냈는지, 새로 알게 된 문제점은 없었는지 생각해 보세요.',
               minLines: 2,
               maxLines: null,
             ),
@@ -626,16 +585,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
     return PageLayout(
       title: _isEditingMode ? '기록 수정' : '기록 작성',
       onBackPressed: _onBackPressed,
-      bottomAction: PageLayoutBottomAction(
-        label: '저장',
-        onPressed: _onSavePressed,
-      ),
+      bottomAction: PageLayoutBottomAction(label: '저장', onPressed: _onSavePressed),
       isBottomActionLoading: _isSaving,
       unfocusOnTapBackground: true,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: _buildForm(),
-      ),
+      child: SingleChildScrollView(padding: const EdgeInsets.all(20), child: _buildForm()),
     );
   }
 }

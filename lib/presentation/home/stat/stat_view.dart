@@ -53,10 +53,7 @@ class _StatViewState extends State<StatView> {
       firstDate: _cubit.state.defaultDateRange.start,
       lastDate: _cubit.state.defaultDateRange.end,
       initialDateRange: _cubit.state.dateRange,
-      switchToCalendarEntryModeIcon: const Icon(
-        Icons.date_range,
-        color: Colors.white,
-      ),
+      switchToCalendarEntryModeIcon: const Icon(Icons.date_range, color: Colors.white),
     );
     if (picked != null) {
       _cubit.onDateRangeChanged(picked);
@@ -71,12 +68,9 @@ class _StatViewState extends State<StatView> {
       child: MultiBlocListener(
         listeners: [
           BlocListener<HomeCubit, HomeState>(
-            listenWhen:
-                (previous, current) => previous.tabIndex != current.tabIndex,
+            listenWhen: (previous, current) => previous.tabIndex != current.tabIndex,
             listener: (context, state) {
-              final statViewTabIndex = HomePage.views.keys.toList().indexOf(
-                StatView.title,
-              );
+              final statViewTabIndex = HomePage.views.keys.toList().indexOf(StatView.title);
               if (state.tabIndex == statViewTabIndex) {
                 _cubit.refresh();
               }
@@ -84,9 +78,7 @@ class _StatViewState extends State<StatView> {
           ),
           BlocListener<RecordListCubit, RecordListState>(
             bloc: getIt.get(),
-            listenWhen:
-                (previous, current) =>
-                    previous.originalRecords != current.originalRecords,
+            listenWhen: (previous, current) => previous.originalRecords != current.originalRecords,
             listener: (_, recordListState) => _cubit.onOriginalRecordsUpdated(),
           ),
         ],
@@ -112,21 +104,17 @@ class _StatViewState extends State<StatView> {
                             ? _buildTabletLayout(
                               filteredRecords: state.records,
                               selectedExamIds: state.selectedExamIds,
-                              selectedExamValueType:
-                                  state.selectedExamValueType,
+                              selectedExamValueType: state.selectedExamValueType,
                             )
                             : _buildMobileLayout(
                               filteredRecords: state.records,
                               selectedExamIds: state.selectedExamIds,
-                              selectedExamValueType:
-                                  state.selectedExamValueType,
+                              selectedExamValueType: state.selectedExamValueType,
                             ),
                       ],
                     ),
                     if (!appState.productBenefit.isStatisticAvailable)
-                      const FreeUserBlockOverlay(
-                        text: '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.',
-                      ),
+                      const FreeUserBlockOverlay(text: '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.'),
                   ],
                 );
               },
@@ -157,12 +145,8 @@ class _StatViewState extends State<StatView> {
                     examValueType: selectedExamValueType,
                     selectedExamIds: selectedExamIds,
                   ),
-                  _buildTotalExamDurationInfoCard(
-                    filteredRecords: filteredRecords,
-                  ),
-                  _buildTotalExamCountInfoCard(
-                    filteredRecords: filteredRecords,
-                  ),
+                  _buildTotalExamDurationInfoCard(filteredRecords: filteredRecords),
+                  _buildTotalExamCountInfoCard(filteredRecords: filteredRecords),
                 ],
               ),
             ),
@@ -171,10 +155,7 @@ class _StatViewState extends State<StatView> {
               child: Column(
                 children: [
                   _buildPieChartCard(filteredRecords: filteredRecords),
-                  _buildHeatmapChartCard(
-                    filteredRecords: filteredRecords,
-                    expandHeight: false,
-                  ),
+                  _buildHeatmapChartCard(filteredRecords: filteredRecords, expandHeight: false),
                 ],
               ),
             ),
@@ -202,15 +183,10 @@ class _StatViewState extends State<StatView> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: _buildPieChartCard(filteredRecords: filteredRecords),
-              ),
+              Expanded(child: _buildPieChartCard(filteredRecords: filteredRecords)),
               const SizedBox(width: _cardBetweenMarginHorizontal),
               Expanded(
-                child: _buildHeatmapChartCard(
-                  filteredRecords: filteredRecords,
-                  expandHeight: true,
-                ),
+                child: _buildHeatmapChartCard(filteredRecords: filteredRecords, expandHeight: true),
               ),
             ],
           ),
@@ -253,11 +229,7 @@ class _StatViewState extends State<StatView> {
                   children: [
                     SizedBox(width: horizontalPadding),
                     FilterActionChip(
-                      label: Icon(
-                        Icons.replay,
-                        size: 16,
-                        color: Colors.grey.shade700,
-                      ),
+                      label: Icon(Icons.replay, size: 16, color: Colors.grey.shade700),
                       onPressed: _cubit.onFilterResetButtonTapped,
                       tooltip: '초기화',
                     ),
@@ -274,9 +246,7 @@ class _StatViewState extends State<StatView> {
                       tooltip: '기간 설정',
                     ),
                     const SizedBox(width: 6),
-                    for (Exam exam in exams.where(
-                      (exam) => exam.name.isNotEmpty,
-                    ))
+                    for (Exam exam in exams.where((exam) => exam.name.isNotEmpty))
                       ExamFilterChip(
                         exam: exam,
                         isSelected: selectedExamIds.contains(exam.id),
@@ -299,8 +269,7 @@ class _StatViewState extends State<StatView> {
     required List<String> selectedExamIds,
   }) {
     final isAllPerfectScoresSame =
-        1 ==
-        filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
+        1 == filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
         .nonNulls
@@ -336,20 +305,9 @@ class _StatViewState extends State<StatView> {
 환산식: 보정 점수 = (취득 점수 / 만점) x 100''',
                       triggerMode: TooltipTriggerMode.tap,
                       showDuration: const Duration(seconds: 5),
-                      textStyle: const TextStyle(
-                        height: 1.4,
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      child: Icon(
-                        Icons.help_outline,
-                        size: 18,
-                        color: Colors.grey.shade700,
-                      ),
+                      textStyle: const TextStyle(height: 1.4, color: Colors.white, fontSize: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Icon(Icons.help_outline, size: 18, color: Colors.grey.shade700),
                     ),
                   )
                   : const SizedBox.shrink(),
@@ -366,9 +324,7 @@ class _StatViewState extends State<StatView> {
                     (exam, records) => MapEntry(
                       exam,
                       records
-                          .where(
-                            (record) => examValueType.getValue(record) != null,
-                          )
+                          .where((record) => examValueType.getValue(record) != null)
                           .sortedBy((record) => record.examStartedTime),
                     ),
                   )..removeWhere((subject, records) => records.isEmpty),
@@ -384,10 +340,7 @@ class _StatViewState extends State<StatView> {
               Text(
                 '평균',
                 textAlign: TextAlign.center,
-                style: _titleTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: _titleTextStyle.copyWith(fontSize: 13, fontWeight: FontWeight.w500),
               ),
               const SizedBox(width: 6),
               Text(
@@ -397,8 +350,7 @@ class _StatViewState extends State<StatView> {
                 textAlign: TextAlign.center,
                 style: _titleTextStyle.copyWith(),
               ),
-              if (!isAllPerfectScoresSame || average == null)
-                const SizedBox(width: 6),
+              if (!isAllPerfectScoresSame || average == null) const SizedBox(width: 6),
               if (!isAllPerfectScoresSame || average == null)
                 Tooltip(
                   message:
@@ -406,11 +358,7 @@ class _StatViewState extends State<StatView> {
                           ? '1개 이상의 기록이 있을 때에만 평균 계산이 가능해요'
                           : '평균 계산은 만점이 같은 과목들끼리만 가능해요',
                   triggerMode: TooltipTriggerMode.tap,
-                  child: Icon(
-                    Icons.info_outline,
-                    size: 15,
-                    color: Colors.grey.shade700,
-                  ),
+                  child: Icon(Icons.info_outline, size: 15, color: Colors.grey.shade700),
                 ),
             ],
           ),
@@ -445,12 +393,8 @@ class _StatViewState extends State<StatView> {
     });
 
     final values = allRecords.map((record) => examValueType.getValue(record)!);
-    var minValue =
-        (values.minOrNull ?? examValueType.minValue) *
-        examValueType.reverseMultiple;
-    var maxValue =
-        (values.maxOrNull ?? examValueType.maxValue) *
-        examValueType.reverseMultiple;
+    var minValue = (values.minOrNull ?? examValueType.minValue) * examValueType.reverseMultiple;
+    var maxValue = (values.maxOrNull ?? examValueType.maxValue) * examValueType.reverseMultiple;
     if (examValueType.reverse && values.isNotEmpty) {
       final temp = minValue;
       minValue = maxValue;
@@ -481,19 +425,14 @@ class _StatViewState extends State<StatView> {
                 return FlDotCirclePainter(
                   radius: 2,
                   color: Colors.white,
-                  strokeWidth: (2 - dateToRecordsMap.keys.length * 0.005).clamp(
-                    1,
-                    2,
-                  ),
+                  strokeWidth: (2 - dateToRecordsMap.keys.length * 0.005).clamp(1, 2),
                   strokeColor: color,
                 );
               },
             ),
             spots: [
               ...dateToRecordsMap.entries.mapIndexed((index, entry) {
-                final record = entry.value.where(
-                  (record) => record.exam == exam,
-                );
+                final record = entry.value.where((record) => record.exam == exam);
                 return record.isEmpty
                     ? null
                     : FlSpot(
@@ -510,11 +449,7 @@ class _StatViewState extends State<StatView> {
       getTouchedSpotIndicator: (barData, spotIndexes) {
         return spotIndexes.map((spotIndex) {
           return TouchedSpotIndicatorData(
-            FlLine(
-              color: barData.color ?? Colors.black,
-              dashArray: [5, 5],
-              strokeWidth: 1,
-            ),
+            FlLine(color: barData.color ?? Colors.black, dashArray: [5, 5], strokeWidth: 1),
             FlDotData(
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
@@ -538,8 +473,7 @@ class _StatViewState extends State<StatView> {
         getTooltipItems: (touchedSpots) {
           return touchedSpots.map((touchedSpot) {
             final exam = recordsMap.keys.toList()[touchedSpot.barIndex];
-            final records =
-                dateToRecordsMap.entries.elementAt(touchedSpot.x.toInt()).value;
+            final records = dateToRecordsMap.entries.elementAt(touchedSpot.x.toInt()).value;
             final record = records.firstWhere((record) => record.exam == exam);
             final value = touchedSpot.y.toInt() * examValueType.reverseMultiple;
             return LineTooltipItem(
@@ -606,11 +540,8 @@ class _StatViewState extends State<StatView> {
             final index = value.toInt();
             final key = dateToRecordsMap.keys.elementAt(index);
             final keySplits = key.split('.')..removeLast();
-            final isAlreadyShown = dateToRecordsMap.keys.take(index).any((
-              previousKey,
-            ) {
-              return (previousKey.split('.')..removeLast()).join() ==
-                  keySplits.join();
+            final isAlreadyShown = dateToRecordsMap.keys.take(index).any((previousKey) {
+              return (previousKey.split('.')..removeLast()).join() == keySplits.join();
             });
             if (isAlreadyShown && meta.appliedInterval < 2) {
               return const SizedBox.shrink();
@@ -652,9 +583,7 @@ class _StatViewState extends State<StatView> {
     );
   }
 
-  Widget _buildPieChartCard({
-    required final Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildPieChartCard({required final Map<Exam, List<ExamRecord>> filteredRecords}) {
     return CustomCard(
       clipBehavior: Clip.none,
       padding: const EdgeInsets.symmetric(
@@ -664,24 +593,15 @@ class _StatViewState extends State<StatView> {
       margin: _cardMargin.subtract(EdgeInsets.only(right: _cardMargin.right)),
       child: Column(
         children: [
-          Text(
-            '과목별 푼 모의고사 수',
-            textAlign: TextAlign.center,
-            style: _titleTextStyle,
-          ),
+          Text('과목별 푼 모의고사 수', textAlign: TextAlign.center, style: _titleTextStyle),
           const SizedBox(height: 16),
-          AspectRatio(
-            aspectRatio: 1,
-            child: _buildPieChart(filteredRecords: filteredRecords),
-          ),
+          AspectRatio(aspectRatio: 1, child: _buildPieChart(filteredRecords: filteredRecords)),
         ],
       ),
     );
   }
 
-  Widget _buildPieChart({
-    required final Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildPieChart({required final Map<Exam, List<ExamRecord>> filteredRecords}) {
     final totalValue = filteredRecords.values.flattened.length;
 
     int touchedIndex = -1;
@@ -708,9 +628,7 @@ class _StatViewState extends State<StatView> {
                           color: Color(exam.color),
                           value: value.toDouble() * (isTouched ? 3 : 1),
                           showTitle: false,
-                          radius:
-                              (constraints.maxWidth / 2) *
-                              (isTouched ? 1.05 : 1),
+                          radius: (constraints.maxWidth / 2) * (isTouched ? 1.05 : 1),
                           badgePositionPercentageOffset:
                               ratio == 1
                                   ? 0
@@ -725,10 +643,7 @@ class _StatViewState extends State<StatView> {
                                       if (isTouched || ratio >= 0.1)
                                         ConstrainedBox(
                                           constraints: BoxConstraints(
-                                            maxWidth:
-                                                isTouched
-                                                    ? double.infinity
-                                                    : 60,
+                                            maxWidth: isTouched ? double.infinity : 60,
                                           ),
                                           child: Text(
                                             exam.name,
@@ -736,24 +651,17 @@ class _StatViewState extends State<StatView> {
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize:
-                                                  (_titleTextStyle.fontSize ??
-                                                      14) -
-                                                  2,
+                                              fontSize: (_titleTextStyle.fontSize ?? 14) - 2,
                                             ),
                                           ),
                                         ),
-                                      if (isTouched || ratio >= 0.1)
-                                        const SizedBox(height: 4),
+                                      if (isTouched || ratio >= 0.1) const SizedBox(height: 4),
                                       if (isTouched || ratio >= 0.025)
                                         Text(
                                           '$value개',
                                           style: TextStyle(
                                             color: Colors.white,
-                                            fontSize:
-                                                (_titleTextStyle.fontSize ??
-                                                    14) -
-                                                3,
+                                            fontSize: (_titleTextStyle.fontSize ?? 14) - 3,
                                           ),
                                         ),
                                     ],
@@ -770,10 +678,7 @@ class _StatViewState extends State<StatView> {
                           touchedIndex = -1;
                           return;
                         }
-                        touchedIndex =
-                            pieTouchResponse
-                                .touchedSection!
-                                .touchedSectionIndex;
+                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
                       });
                     },
                   ),
@@ -800,11 +705,7 @@ class _StatViewState extends State<StatView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '푼 모의고사 수 히트맵',
-            textAlign: TextAlign.center,
-            style: _titleTextStyle,
-          ),
+          Text('푼 모의고사 수 히트맵', textAlign: TextAlign.center, style: _titleTextStyle),
           if (!expandHeight) const SizedBox(height: 12),
           if (expandHeight) const Spacer(),
           _buildHeatmapChart(filteredRecords: filteredRecords),
@@ -814,9 +715,7 @@ class _StatViewState extends State<StatView> {
     );
   }
 
-  Widget _buildHeatmapChart({
-    required Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildHeatmapChart({required Map<Exam, List<ExamRecord>> filteredRecords}) {
     final datasets = filteredRecords.values.flattened
         .groupListsBy((record) => record.examStartedTime.toDate())
         .map((date, records) => MapEntry(date, records.length));
@@ -849,14 +748,11 @@ class _StatViewState extends State<StatView> {
                   setState(() {
                     touchedData = MapEntry(date, value);
                     dismissTimer?.cancel();
-                    dismissTimer = Timer(
-                      const Duration(milliseconds: 2000),
-                      () {
-                        setState(() {
-                          touchedData = null;
-                        });
-                      },
-                    );
+                    dismissTimer = Timer(const Duration(milliseconds: 2000), () {
+                      setState(() {
+                        touchedData = null;
+                      });
+                    });
                   });
                 },
               ),
@@ -867,11 +763,7 @@ class _StatViewState extends State<StatView> {
                 child: Text(
                   touchedData != null ? '${touchedData!.value}개' : '',
                   maxLines: 1,
-                  style: TextStyle(
-                    height: 1,
-                    fontSize: 10,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(height: 1, fontSize: 10, color: Colors.grey.shade600),
                 ),
               ),
             ],
@@ -881,25 +773,18 @@ class _StatViewState extends State<StatView> {
     );
   }
 
-  Widget _buildTotalExamDurationInfoCard({
-    required Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildTotalExamDurationInfoCard({required Map<Exam, List<ExamRecord>> filteredRecords}) {
     return _buildInfoCard(
       title: '지금까지 모의고사를 푼 시간',
       text:
           Duration(
             minutes:
-                filteredRecords.values.flattened
-                    .map((e) => e.examDurationMinutes)
-                    .nonNulls
-                    .sum,
+                filteredRecords.values.flattened.map((e) => e.examDurationMinutes).nonNulls.sum,
           ).toStringFormat(),
     );
   }
 
-  Widget _buildTotalExamCountInfoCard({
-    required Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildTotalExamCountInfoCard({required Map<Exam, List<ExamRecord>> filteredRecords}) {
     return _buildInfoCard(
       title: '지금까지 푼 모의고사 개수',
       text: '${filteredRecords.values.flattened.length}개',
@@ -955,42 +840,11 @@ class _StatViewState extends State<StatView> {
 }
 
 enum ExamValueType {
-  score(
-    name: '점수',
-    postfix: '점',
-    getValue: getScore,
-    minValue: 0,
-    maxValue: 100,
-  ),
-  scoreRatio(
-    name: '보정 점수',
-    postfix: '점',
-    getValue: getScoreRatio,
-    minValue: 0,
-    maxValue: 100,
-  ),
-  grade(
-    name: '등급',
-    postfix: '등급',
-    getValue: getGrade,
-    minValue: 9,
-    maxValue: 1,
-    reverse: true,
-  ),
-  percentile(
-    name: '백분위',
-    postfix: '%',
-    getValue: getPercentile,
-    minValue: 0,
-    maxValue: 100,
-  ),
-  standardScore(
-    name: '표준점수',
-    postfix: '점',
-    getValue: getStandardScore,
-    minValue: 0,
-    maxValue: 150,
-  );
+  score(name: '점수', postfix: '점', getValue: getScore, minValue: 0, maxValue: 100),
+  scoreRatio(name: '보정 점수', postfix: '점', getValue: getScoreRatio, minValue: 0, maxValue: 100),
+  grade(name: '등급', postfix: '등급', getValue: getGrade, minValue: 9, maxValue: 1, reverse: true),
+  percentile(name: '백분위', postfix: '%', getValue: getPercentile, minValue: 0, maxValue: 100),
+  standardScore(name: '표준점수', postfix: '점', getValue: getStandardScore, minValue: 0, maxValue: 150);
 
   const ExamValueType({
     required this.name,

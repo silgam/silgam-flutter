@@ -29,9 +29,7 @@ class AppState with _$AppState {
       Exam(
         id: Subject.language.name,
         subject: Subject.language,
-        name:
-            customSubjectNameMap?[Subject.language] ??
-            Subject.language.defaultName,
+        name: customSubjectNameMap?[Subject.language] ?? Subject.language.defaultName,
         number: 1,
         startTime: DateTimeBuilder.fromHourMinute(8, 40),
         durationMinutes: 80,
@@ -53,9 +51,7 @@ class AppState with _$AppState {
       Exam(
         id: Subject.english.name,
         subject: Subject.english,
-        name:
-            customSubjectNameMap?[Subject.english] ??
-            Subject.english.defaultName,
+        name: customSubjectNameMap?[Subject.english] ?? Subject.english.defaultName,
         number: 3,
         startTime: DateTimeBuilder.fromHourMinute(13, 10),
         durationMinutes: 70,
@@ -66,9 +62,7 @@ class AppState with _$AppState {
       Exam(
         id: Subject.history.name,
         subject: Subject.history,
-        name:
-            customSubjectNameMap?[Subject.history] ??
-            Subject.history.defaultName,
+        name: customSubjectNameMap?[Subject.history] ?? Subject.history.defaultName,
         number: 4,
         startTime: DateTimeBuilder.fromHourMinute(14, 50),
         durationMinutes: 30,
@@ -79,9 +73,7 @@ class AppState with _$AppState {
       Exam(
         id: Subject.investigation.name,
         subject: Subject.investigation,
-        name:
-            customSubjectNameMap?[Subject.investigation] ??
-            Subject.investigation.defaultName,
+        name: customSubjectNameMap?[Subject.investigation] ?? Subject.investigation.defaultName,
         number: 4,
         startTime: DateTimeBuilder.fromHourMinute(15, 35),
         durationMinutes: 30,
@@ -92,9 +84,7 @@ class AppState with _$AppState {
       Exam(
         id: Subject.investigation2.name,
         subject: Subject.investigation2,
-        name:
-            customSubjectNameMap?[Subject.investigation2] ??
-            Subject.investigation2.defaultName,
+        name: customSubjectNameMap?[Subject.investigation2] ?? Subject.investigation2.defaultName,
         number: 4,
         startTime: DateTimeBuilder.fromHourMinute(16, 7),
         durationMinutes: 30,
@@ -105,9 +95,7 @@ class AppState with _$AppState {
       Exam(
         id: Subject.secondLanguage.name,
         subject: Subject.secondLanguage,
-        name:
-            customSubjectNameMap?[Subject.secondLanguage] ??
-            Subject.secondLanguage.defaultName,
+        name: customSubjectNameMap?[Subject.secondLanguage] ?? Subject.secondLanguage.defaultName,
         number: 5,
         startTime: DateTimeBuilder.fromHourMinute(17, 5),
         durationMinutes: 40,
@@ -142,9 +130,7 @@ class AppState with _$AppState {
     );
 
     timetables.insert(
-      allExams.indexWhere(
-        (exam) => exam.subject == Subject.investigation && !exam.isCustomExam,
-      ),
+      allExams.indexWhere((exam) => exam.subject == Subject.investigation && !exam.isCustomExam),
       Timetable(
         name: '탐구 연속',
         startTime: defaultInvestigationExam.timetableStartTime,
@@ -165,10 +151,8 @@ class AppState with _$AppState {
       items:
           defaultExams
               .map(
-                (exam) => TimetableItem(
-                  exam: exam,
-                  breakMinutesAfter: exam.subject.breakMinutesAfter,
-                ),
+                (exam) =>
+                    TimetableItem(exam: exam, breakMinutesAfter: exam.subject.breakMinutesAfter),
               )
               .toList(),
     );
@@ -186,8 +170,6 @@ extension on Subject {
     Subject.language || Subject.english => 20,
     Subject.math => 50,
     Subject.history => 5,
-    Subject.investigation ||
-    Subject.investigation2 ||
-    Subject.secondLanguage => 0,
+    Subject.investigation || Subject.investigation2 || Subject.secondLanguage => 0,
   };
 }

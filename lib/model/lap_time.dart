@@ -10,10 +10,7 @@ part 'lap_time.freezed.dart';
 
 @freezed
 class LapTime with _$LapTime {
-  const factory LapTime({
-    required DateTime time,
-    required Breakpoint breakpoint,
-  }) = _LapTime;
+  const factory LapTime({required DateTime time, required Breakpoint breakpoint}) = _LapTime;
 }
 
 @freezed

@@ -10,15 +10,11 @@ class DDayUtil {
     today = DateTime(today.year, today.month, today.day);
     DDayItem? suneungDDay = _getSuneungDDay(today);
     DDayItem? mockTestDDay = _getMockTestDDay(today);
-    return [
-      if (suneungDDay != null) suneungDDay,
-      if (mockTestDDay != null) mockTestDDay,
-    ];
+    return [if (suneungDDay != null) suneungDDay, if (mockTestDDay != null) mockTestDDay];
   }
 
   DDayItem? _getSuneungDDay(DateTime today) {
-    final List<DDay> suneungs =
-        _dDays.where((test) => test.testType == DDayType.suneung).toList();
+    final List<DDay> suneungs = _dDays.where((test) => test.testType == DDayType.suneung).toList();
     final DDay? previousSuneung = _getPreviousTest(today, suneungs);
     final DDay? nextSuneung = _getNextTest(today, suneungs);
     if (previousSuneung == null || nextSuneung == null) return null;
@@ -43,8 +39,7 @@ class DDayUtil {
     }
 
     final remainingDays = nextMockTest.date.difference(today).inDays;
-    final totalDays =
-        nextMockTest.date.difference(previousMockTest.date).inDays;
+    final totalDays = nextMockTest.date.difference(previousMockTest.date).inDays;
     return DDayItem(
       title: nextMockTest.title,
       date: nextMockTest.date,

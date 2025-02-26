@@ -23,8 +23,7 @@ Future<void> configureDependencies() => getIt.init();
 abstract class RegisterModule {
   @singleton
   @preResolve
-  Future<SharedPreferences> get sharedPreferences =>
-      SharedPreferences.getInstance();
+  Future<SharedPreferences> get sharedPreferences => SharedPreferences.getInstance();
 
   @singleton
   Dio get dio =>
@@ -47,10 +46,7 @@ abstract class RegisterModule {
               handler.next(response);
             },
             onError: (e, handler) {
-              log(
-                'Dio error: ${e.error}, type: ${e.type}',
-                name: 'DioInterceptor',
-              );
+              log('Dio error: ${e.error}, type: ${e.type}', name: 'DioInterceptor');
 
               final body = e.response?.data;
               ApiFailure failure;

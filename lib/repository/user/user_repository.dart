@@ -34,9 +34,7 @@ class UserRepository {
 
     try {
       var me = await _userApi.getMe('Bearer $authToken');
-      me = me.copyWith(
-        receipts: me.receipts.sortedBy((element) => element.createdAt),
-      );
+      me = me.copyWith(receipts: me.receipts.sortedBy((element) => element.createdAt));
       final receipts = <Receipt>[];
       for (final receipt in me.receipts) {
         receipts.add(receipt.copyWith(createdAt: receipt.createdAt.toLocal()));
@@ -53,8 +51,7 @@ class UserRepository {
       AnalyticsManager.setPeopleProperties({
         '[Product] Id': me.activeProduct.id,
         '[Product] Purchased Store': me.receipts.lastOrNull?.store,
-        'Marketing Info Receiving Consented':
-            me.isMarketingInfoReceivingConsented,
+        'Marketing Info Receiving Consented': me.isMarketingInfoReceivingConsented,
       });
       return Result.success(me);
     } on DioException catch (e) {
@@ -105,8 +102,7 @@ class UserRepository {
     try {
       await _usersRef.doc(userId).update({
         'isMarketingInfoReceivingConsented': isConsent,
-        'marketingInfoReceivingConsentUpdatedAt':
-            DateTime.now().toUtc().toIso8601String(),
+        'marketingInfoReceivingConsentUpdatedAt': DateTime.now().toUtc().toIso8601String(),
       });
       return const Result.success(unit);
     } on DioException catch (e) {
@@ -121,9 +117,7 @@ class UserRepository {
   }) async {
     try {
       await _usersRef.doc(userId).update({
-        'customSubjectNameMap': subjectNameMap.map(
-          (key, value) => MapEntry(key.name, value),
-        ),
+        'customSubjectNameMap': subjectNameMap.map((key, value) => MapEntry(key.name, value)),
       });
       return const Result.success(unit);
     } on DioException catch (e) {

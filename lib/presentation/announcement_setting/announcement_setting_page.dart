@@ -16,8 +16,7 @@ class AnnouncementSettingPage extends StatefulWidget {
   static const routeName = '/announcement_setting';
 
   @override
-  State<AnnouncementSettingPage> createState() =>
-      _AnnouncementSettingPageState();
+  State<AnnouncementSettingPage> createState() => _AnnouncementSettingPageState();
 }
 
 class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
@@ -31,8 +30,7 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
     super.initState();
 
     final announcementTypeId =
-        _sharedPreferences.getInt(PreferenceKey.announcementTypeId) ??
-        defaultAnnouncementType.id;
+        _sharedPreferences.getInt(PreferenceKey.announcementTypeId) ?? defaultAnnouncementType.id;
     _selectedAnnouncementType = announcementTypes.firstWhereOrNull(
       (element) => element.id == announcementTypeId,
     );
@@ -51,12 +49,8 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
       _selectedAnnouncementType = announcementType;
     });
 
-    final announcementTypeId =
-        announcementType?.id ?? defaultAnnouncementType.id;
-    _sharedPreferences.setInt(
-      PreferenceKey.announcementTypeId,
-      announcementTypeId,
-    );
+    final announcementTypeId = announcementType?.id ?? defaultAnnouncementType.id;
+    _sharedPreferences.setInt(PreferenceKey.announcementTypeId, announcementTypeId);
 
     _announcementPlayer
       ..setAnnouncement(

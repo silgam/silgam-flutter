@@ -64,12 +64,7 @@ class _FormNumbersFieldState extends State<FormNumbersField> {
       name: widget.name,
       initialValue: widget.initialValue,
       builder: (field) {
-        final state =
-            field
-                as FormBuilderFieldState<
-                  FormBuilderField<List<int>>,
-                  List<int>
-                >;
+        final state = field as FormBuilderFieldState<FormBuilderField<List<int>>, List<int>>;
 
         return Wrap(
           spacing: 8,
@@ -96,11 +91,7 @@ class _FormNumbersFieldState extends State<FormNumbersField> {
 }
 
 class _NumberItem extends StatelessWidget {
-  const _NumberItem({
-    required this.number,
-    required this.displayStringForNumber,
-    this.onTap,
-  });
+  const _NumberItem({required this.number, required this.displayStringForNumber, this.onTap});
 
   final int number;
   final FormNumbersFieldNumberToString displayStringForNumber;
@@ -113,10 +104,7 @@ class _NumberItem extends StatelessWidget {
       child: IntrinsicWidth(
         child: InputDecorator(
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 10,
-            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             isCollapsed: true,
             filled: true,
             fillColor: Theme.of(context).primaryColor,
@@ -230,10 +218,7 @@ class _NumberFieldState extends State<_NumberField> {
             hintText: widget.hintText,
             hintStyle: TextStyle(color: Colors.grey.shade500),
             isCollapsed: true,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 10,
-            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             filled: true,
             fillColor: Colors.white,
             enabledBorder: OutlineInputBorder(
@@ -245,10 +230,7 @@ class _NumberFieldState extends State<_NumberField> {
               borderRadius: BorderRadius.circular(100),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                width: 0.5,
-                color: Theme.of(context).primaryColor,
-              ),
+              borderSide: BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
               borderRadius: BorderRadius.circular(100),
             ),
             errorBorder: OutlineInputBorder(

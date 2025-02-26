@@ -19,10 +19,7 @@ class Subtitle extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-      ),
+      child: Text(text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
     );
   }
 }

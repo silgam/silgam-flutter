@@ -26,10 +26,8 @@ class NoiseGenerator {
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) async {
       ClockState clockState = clockCubit.state;
       if (!clockState.isRunning) return;
-      RelativeTimeType currentRelativeTime =
-          clockState.currentBreakpoint.announcement.time.type;
-      for (final MapEntry(key: id, value: level)
-          in noiseSettingState.noiseLevels.entries) {
+      RelativeTimeType currentRelativeTime = clockState.currentBreakpoint.announcement.time.type;
+      for (final MapEntry(key: id, value: level) in noiseSettingState.noiseLevels.entries) {
         double levelMultiple = 1;
         int delay = 0;
         // 시험지 넘기는 소리 예외 사항
@@ -38,9 +36,7 @@ class NoiseGenerator {
             levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
           } else if (currentRelativeTime == RelativeTimeType.afterStart) {
             int afterStart =
-                clockState.currentTime
-                    .difference(clockState.currentBreakpoint.time)
-                    .inSeconds;
+                clockState.currentTime.difference(clockState.currentBreakpoint.time).inSeconds;
             if (afterStart <= 2) {
               delay = 1000;
               levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
@@ -50,9 +46,7 @@ class NoiseGenerator {
             }
           } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
             int beforeFinish =
-                clockState.currentTime
-                    .difference(clockState.currentBreakpoint.time)
-                    .inMinutes;
+                clockState.currentTime.difference(clockState.currentBreakpoint.time).inMinutes;
             if (clockState.currentExam.subject == Subject.investigation ||
                 clockState.currentExam.subject == Subject.investigation2) {
               beforeFinish = 5 - beforeFinish;

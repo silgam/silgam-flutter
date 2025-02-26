@@ -37,11 +37,8 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
         .ref('stats/minOnlineDevicesShowingCount')
         .onValue
         .listen((event) {
-          final previousMinOnlineDevicesShowingCount =
-              _minOnlineDevicesShowingCount;
-          _minOnlineDevicesShowingCount = int.tryParse(
-            event.snapshot.value.toString(),
-          );
+          final previousMinOnlineDevicesShowingCount = _minOnlineDevicesShowingCount;
+          _minOnlineDevicesShowingCount = int.tryParse(event.snapshot.value.toString());
           if (previousMinOnlineDevicesShowingCount == null) setState(() {});
         });
     _updateTimer = Timer.periodic(const Duration(seconds: 5), (_) {
@@ -98,12 +95,7 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                         color: Colors.red,
                         fontWeight: FontWeight.w900,
                         fontSize: 14,
-                        shadows: [
-                          Shadow(
-                            color: Colors.red.withAlpha(51),
-                            blurRadius: 6,
-                          ),
-                        ],
+                        shadows: [Shadow(color: Colors.red.withAlpha(51), blurRadius: 6)],
                       ),
                     ),
                     const SizedBox(width: 2),
@@ -113,12 +105,7 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.red,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.red.withAlpha(51),
-                            blurRadius: 6,
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: Colors.red.withAlpha(51), blurRadius: 6)],
                       ),
                     ),
                   ],

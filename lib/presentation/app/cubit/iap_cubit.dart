@@ -24,8 +24,7 @@ part 'iap_state.dart';
 
 @lazySingleton
 class IapCubit extends Cubit<IapState> {
-  IapCubit(this._productRepository, this._appCubit, this._cacheManager)
-    : super(const IapState());
+  IapCubit(this._productRepository, this._appCubit, this._cacheManager) : super(const IapState());
 
   final ProductRepository _productRepository;
   final CacheManager _cacheManager;
@@ -97,10 +96,7 @@ class IapCubit extends Cubit<IapState> {
     }
 
     if (!state.isStoreAvailable) {
-      EasyLoading.showError(
-        '이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showError('이 기기에서는 구매가 불가능합니다. 스토어가 설치되어 있는지 확인해주세요.', dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -116,10 +112,7 @@ class IapCubit extends Cubit<IapState> {
       (productDetails) => productDetails.id == product.id,
     );
     if (productDetails == null) {
-      EasyLoading.showError(
-        '정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.', dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -140,10 +133,7 @@ class IapCubit extends Cubit<IapState> {
     if (canPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = canPurchaseResult.tryGetError()!.message;
-      EasyLoading.showError(
-        canPurchaseResult.tryGetError()!.message,
-        dismissOnTap: true,
-      );
+      EasyLoading.showError(canPurchaseResult.tryGetError()!.message, dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Purchase process failed',
         properties: {
@@ -164,17 +154,12 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> _startFreeTrialIos(Product product) async {
-    final trialProductDetailResponse = await _iap.queryProductDetails({
-      '${product.id}_trial',
-    });
+    final trialProductDetailResponse = await _iap.queryProductDetails({'${product.id}_trial'});
 
     if (trialProductDetailResponse.error != null ||
         trialProductDetailResponse.productDetails.isEmpty) {
       emit(state.copyWith(isLoading: false));
-      EasyLoading.showError(
-        '정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showError('정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.', dismissOnTap: true);
       AnalyticsManager.logEvent(
         name: '[PurchasePage] Start free trial process failed',
         properties: {
@@ -188,16 +173,12 @@ class IapCubit extends Cubit<IapState> {
     }
 
     await _iap.buyNonConsumable(
-      purchaseParam: PurchaseParam(
-        productDetails: trialProductDetailResponse.productDetails.first,
-      ),
+      purchaseParam: PurchaseParam(productDetails: trialProductDetailResponse.productDetails.first),
     );
   }
 
   Future<void> _startFreeTrial(Product product) async {
-    final startTrialResult = await _productRepository.startTrial(
-      productId: product.id,
-    );
+    final startTrialResult = await _productRepository.startTrial(productId: product.id);
 
     if (startTrialResult.isError()) {
       emit(state.copyWith(isLoading: false));
@@ -224,9 +205,7 @@ class IapCubit extends Cubit<IapState> {
     emit(state.copyWith(isLoading: false));
   }
 
-  Future<void> _onPurchaseStreamData(
-    List<PurchaseDetails> purchaseDetailsList,
-  ) async {
+  Future<void> _onPurchaseStreamData(List<PurchaseDetails> purchaseDetailsList) async {
     for (final purchaseDetails in purchaseDetailsList) {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
@@ -249,9 +228,7 @@ class IapCubit extends Cubit<IapState> {
           log('[PurchaseCubit] status.error: ${purchaseDetails.error}');
           AnalyticsManager.logEvent(
             name: '[PurchasePage] Purchase process failed',
-            properties: {
-              'reason': 'Purchase stream error: ${purchaseDetails.error}',
-            },
+            properties: {'reason': 'Purchase stream error: ${purchaseDetails.error}'},
           );
           if (Platform.isIOS) {
             await _iap.completePurchase(purchaseDetails);
@@ -297,8 +274,7 @@ class IapCubit extends Cubit<IapState> {
       properties: {
         'product_id': purchaseDetails.productID,
         'store': purchaseDetails.verificationData.source,
-        'verification_token':
-            purchaseDetails.verificationData.serverVerificationData,
+        'verification_token': purchaseDetails.verificationData.serverVerificationData,
       },
     );
 
@@ -314,8 +290,7 @@ class IapCubit extends Cubit<IapState> {
     final onPurchaseResult = await _productRepository.onPurchase(
       productId: purchaseDetails.productID,
       store: purchaseDetails.verificationData.source,
-      verificationToken:
-          purchaseDetails.verificationData.serverVerificationData,
+      verificationToken: purchaseDetails.verificationData.serverVerificationData,
     );
 
     if (onPurchaseResult.isError()) {
@@ -328,8 +303,7 @@ class IapCubit extends Cubit<IapState> {
           'reason': 'onPurchaseRequest failed: $message',
           'product_id': purchaseDetails.productID,
           'store': purchaseDetails.verificationData.source,
-          'verification_token':
-              purchaseDetails.verificationData.serverVerificationData,
+          'verification_token': purchaseDetails.verificationData.serverVerificationData,
         },
       );
       return;
@@ -343,8 +317,7 @@ class IapCubit extends Cubit<IapState> {
       properties: {
         'product_id': purchaseDetails.productID,
         'store': purchaseDetails.verificationData.source,
-        'verification_token':
-            purchaseDetails.verificationData.serverVerificationData,
+        'verification_token': purchaseDetails.verificationData.serverVerificationData,
       },
     );
 
@@ -389,9 +362,7 @@ class IapCubit extends Cubit<IapState> {
     _appCubit.updateProductBenefit();
 
     if (!kIsWeb && sellingProduct != null) {
-      final productDetailsResponse = await _iap.queryProductDetails({
-        sellingProduct.id,
-      });
+      final productDetailsResponse = await _iap.queryProductDetails({sellingProduct.id});
       final productDetails = productDetailsResponse.productDetails;
       emit(state.copyWith(productDetails: productDetails));
     }

@@ -15,8 +15,7 @@ class ExamRecord with _$ExamRecord {
     required final String id,
     required final String userId,
     required final String title,
-    @JsonKey(name: 'subject', toJson: Exam.toId, fromJson: Exam.fromId)
-    required final Exam exam,
+    @JsonKey(name: 'subject', toJson: Exam.toId, fromJson: Exam.fromId) required final Exam exam,
     required final DateTime examStartedTime,
     final int? examDurationMinutes,
     final int? score,
@@ -59,8 +58,7 @@ class ExamRecord with _$ExamRecord {
     createdAt: DateTime.now().toUtc(),
   );
 
-  factory ExamRecord.fromJson(Map<String, dynamic> json) =>
-      _$ExamRecordFromJson(json);
+  factory ExamRecord.fromJson(Map<String, dynamic> json) => _$ExamRecordFromJson(json);
 
   static const String autoSaveTitlePrefix = '(자동 저장됨) ';
 

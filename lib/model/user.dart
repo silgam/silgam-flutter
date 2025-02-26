@@ -26,11 +26,9 @@ class User with _$User {
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
-  bool get isProductTrial =>
-      activeProduct.id != ProductId.free && receipts.last.store == 'trial';
+  bool get isProductTrial => activeProduct.id != ProductId.free && receipts.last.store == 'trial';
 
-  bool get isPurchasedUser =>
-      activeProduct.id != ProductId.free && !isProductTrial;
+  bool get isPurchasedUser => activeProduct.id != ProductId.free && !isProductTrial;
 }
 
 @freezed
@@ -42,14 +40,12 @@ class Receipt with _$Receipt {
     required final DateTime createdAt,
   }) = _Receipt;
 
-  factory Receipt.fromJson(Map<String, dynamic> json) =>
-      _$ReceiptFromJson(json);
+  factory Receipt.fromJson(Map<String, dynamic> json) => _$ReceiptFromJson(json);
 }
 
 @freezed
 class ProviderData with _$ProviderData {
   factory ProviderData({required final String providerId}) = _ProviderData;
 
-  factory ProviderData.fromJson(Map<String, dynamic> json) =>
-      _$ProviderDataFromJson(json);
+  factory ProviderData.fromJson(Map<String, dynamic> json) => _$ProviderDataFromJson(json);
 }

@@ -53,11 +53,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
           tooltip: '공유하기',
           onPressed: onShareButtonPressed,
         ),
-        AppBarAction(
-          iconData: Icons.download,
-          tooltip: '저장하기',
-          onPressed: onSaveButtonPressed,
-        ),
+        AppBarAction(iconData: Icons.download, tooltip: '저장하기', onPressed: onSaveButtonPressed),
       ],
       child: SingleChildScrollView(child: _buildBody()),
     );
@@ -69,14 +65,9 @@ class _SaveImagePageState extends State<SaveImagePage> {
       children: [
         Divider(color: Colors.grey.shade300, height: 0.5, thickness: 0.5),
         MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: const TextScaler.linear(1)),
+          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)),
           child: FittedBox(
-            child: Screenshot(
-              controller: _screenshotController,
-              child: _buildPreview(),
-            ),
+            child: Screenshot(controller: _screenshotController, child: _buildPreview()),
           ),
         ),
         Divider(color: Colors.grey.shade300, height: 0.5, thickness: 0.5),
@@ -168,9 +159,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
                 blurRadius: 20,
               ),
             ],
-            border: Border(
-              top: BorderSide(color: Theme.of(context).primaryColor, width: 20),
-            ),
+            border: Border(top: BorderSide(color: Theme.of(context).primaryColor, width: 20)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,9 +168,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
-                  DateFormat.yMEd(
-                    'ko_KR',
-                  ).format(widget.examRecord.examStartedTime),
+                  DateFormat.yMEd('ko_KR').format(widget.examRecord.examStartedTime),
                   style: const TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.w700,
@@ -206,19 +193,13 @@ class _SaveImagePageState extends State<SaveImagePage> {
                     const SizedBox(width: 4),
                     Text(
                       widget.examRecord.exam.name,
-                      style: TextStyle(
-                        color: Color(widget.examRecord.exam.color),
-                        fontSize: 9,
-                      ),
+                      style: TextStyle(color: Color(widget.examRecord.exam.color), fontSize: 9),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 2),
-              Divider(
-                color: Theme.of(context).primaryColor,
-                thickness: _strokeWidth,
-              ),
+              Divider(color: Theme.of(context).primaryColor, thickness: _strokeWidth),
               const SizedBox(height: 12),
               if (showScore || showGrade || showDuration)
                 Row(
@@ -247,15 +228,13 @@ class _SaveImagePageState extends State<SaveImagePage> {
                         width: 72,
                         child: _InfoBox(
                           title: 'TIME',
-                          content:
-                              widget.examRecord.examDurationMinutes.toString(),
+                          content: widget.examRecord.examDurationMinutes.toString(),
                           suffix: '분',
                         ),
                       ),
                   ],
                 ),
-              if (showScore || showGrade || showDuration)
-                const SizedBox(height: 20),
+              if (showScore || showGrade || showDuration) const SizedBox(height: 20),
               if (showWrongProblems)
                 _InfoBox(
                   title: '틀린 문제',
@@ -283,19 +262,12 @@ class _SaveImagePageState extends State<SaveImagePage> {
   }
 
   void onShareButtonPressed() async {
-    AnalyticsManager.logEvent(
-      name: '[SaveExamRecordImagePage] Share button tapped',
-    );
+    AnalyticsManager.logEvent(name: '[SaveExamRecordImagePage] Share button tapped');
 
     final temporaryDirectory = await getTemporaryDirectory();
     final imagePath =
-        await _screenshotController.captureAndSave(
-          temporaryDirectory.path,
-          pixelRatio: 4,
-        ) ??
-        '';
-    RenderBox shareButtonBox =
-        _shareButtonKey.currentContext?.findRenderObject() as RenderBox;
+        await _screenshotController.captureAndSave(temporaryDirectory.path, pixelRatio: 4) ?? '';
+    RenderBox shareButtonBox = _shareButtonKey.currentContext?.findRenderObject() as RenderBox;
     Offset shareButtonPosition = shareButtonBox.localToGlobal(Offset.zero);
     Rect shareButtonRect = Rect.fromLTWH(
       shareButtonPosition.dx,
@@ -312,23 +284,15 @@ class _SaveImagePageState extends State<SaveImagePage> {
   }
 
   void onSaveButtonPressed() async {
-    AnalyticsManager.logEvent(
-      name: '[SaveExamRecordImagePage] Save button tapped',
-    );
+    AnalyticsManager.logEvent(name: '[SaveExamRecordImagePage] Save button tapped');
 
     final imageBytes = await _screenshotController.capture(pixelRatio: 4);
     if (imageBytes == null) {
       throw Exception('Capture failed: return value is null');
     }
-    await ImageGallerySaver.saveImage(
-      imageBytes,
-      quality: 100,
-      name: widget.examRecord.title,
-    );
+    await ImageGallerySaver.saveImage(imageBytes, quality: 100, name: widget.examRecord.title);
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('이미지가 저장되었습니다.')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('이미지가 저장되었습니다.')));
   }
 }
 
@@ -380,10 +344,7 @@ class _InfoBox extends StatelessWidget {
       decoration: InputDecoration(
         isCollapsed: true,
         disabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Theme.of(context).primaryColor,
-            width: _strokeWidth,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: _strokeWidth),
         ),
         labelText: title,
         labelStyle: TextStyle(
@@ -409,11 +370,7 @@ class _ChoiceChip extends StatelessWidget {
   final bool selected;
   final ValueChanged<bool> onSelected;
 
-  const _ChoiceChip({
-    required this.label,
-    required this.selected,
-    required this.onSelected,
-  });
+  const _ChoiceChip({required this.label, required this.selected, required this.onSelected});
 
   @override
   Widget build(BuildContext context) {

@@ -13,9 +13,7 @@ class WelcomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(
-      value: darkSystemUiOverlayStyle.copyWith(
-        systemNavigationBarColor: Colors.black,
-      ),
+      value: darkSystemUiOverlayStyle.copyWith(systemNavigationBarColor: Colors.black),
       child: Scaffold(
         body: Stack(
           fit: StackFit.expand,
@@ -45,11 +43,7 @@ class WelcomeView extends StatelessWidget {
                     Text(
                       keepWord('수능 실전 감각 연습, 오답노트, 성적관리까지 모두 실감과 함께 해보세요'),
                       textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        height: 1.3,
-                        color: Colors.white,
-                      ),
+                      style: const TextStyle(fontSize: 18, height: 1.3, color: Colors.white),
                     ),
                     const Divider(height: 60, color: Colors.white38),
                     _buildButton(
@@ -68,10 +62,7 @@ class WelcomeView extends StatelessWidget {
                       ),
                       child: const Text(
                         '실감을 써본 적이 있어요',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -104,11 +95,7 @@ class WelcomeView extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              fontSize: 16,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 16),
           ),
         ),
       ),

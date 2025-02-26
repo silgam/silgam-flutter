@@ -24,10 +24,7 @@ class RecordTileState extends State<RecordTile> {
           Positioned.fill(
             child: Container(
               alignment: Alignment.centerRight,
-              child: Container(
-                width: 2,
-                color: Color(widget.record.getGradeColor()),
-              ),
+              child: Container(width: 2, color: Color(widget.record.getGradeColor())),
             ),
           ),
           Material(
@@ -36,10 +33,7 @@ class RecordTileState extends State<RecordTile> {
               onTap: widget.onTileTap,
               splashColor: Colors.transparent,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: _buildContent(),
               ),
             ),
@@ -57,9 +51,7 @@ class RecordTileState extends State<RecordTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                DateFormat.yMEd(
-                  'ko_KR',
-                ).add_Hm().format(widget.record.examStartedTime),
+                DateFormat.yMEd('ko_KR').add_Hm().format(widget.record.examStartedTime),
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 12,
@@ -75,10 +67,7 @@ class RecordTileState extends State<RecordTile> {
                       widget.record.title,
                       overflow: TextOverflow.ellipsis,
                       textWidthBasis: TextWidthBasis.longestLine,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -98,10 +87,7 @@ class RecordTileState extends State<RecordTile> {
                   widget.record.feedback,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 11,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 11),
                 ),
             ],
           ),
@@ -118,10 +104,7 @@ class RecordTileState extends State<RecordTile> {
     int? grade = widget.record.grade;
 
     final List<TextSpan> textSpans = [];
-    TextStyle smallTextStyle = TextStyle(
-      fontSize: 12,
-      color: Colors.grey.shade700,
-    );
+    TextStyle smallTextStyle = TextStyle(fontSize: 12, color: Colors.grey.shade700);
 
     if (score != null) {
       textSpans.add(TextSpan(text: score.toString()));

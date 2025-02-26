@@ -37,10 +37,7 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
 
     emit(state.copyWith(status: CustomizeSubjectNameStatus.saving));
 
-    await _userRepository.updateCustomSubjectNameMap(
-      userId: me.id,
-      subjectNameMap: subjectNames,
-    );
+    await _userRepository.updateCustomSubjectNameMap(userId: me.id, subjectNameMap: subjectNames);
     await _appCubit.onUserChange();
 
     emit(state.copyWith(status: CustomizeSubjectNameStatus.saved));
@@ -49,9 +46,6 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
       name: '[CustomizeSubjectNamePage] Subject Name Saved',
       properties: {'subjectNameMap': subjectNames.toString()},
     );
-    AnalyticsManager.setPeopleProperty(
-      'Customized Subject Names',
-      subjectNames.toString(),
-    );
+    AnalyticsManager.setPeopleProperty('Customized Subject Names', subjectNames.toString());
   }
 }

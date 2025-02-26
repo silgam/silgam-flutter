@@ -36,10 +36,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
   }
 
   void _onAddExamButtonPressed() async {
-    final isAdded = await Navigator.pushNamed(
-      context,
-      CustomExamEditPage.routeName,
-    );
+    final isAdded = await Navigator.pushNamed(context, CustomExamEditPage.routeName);
     if (isAdded == true) {
       await _appCubit.updateCustomExams();
     }
@@ -50,9 +47,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
       Navigator.pushNamed(
         context,
         CustomExamGuidePage.routeName,
-        arguments: const CustomExamGuideArguments(
-          isFromCustomExamListPage: true,
-        ),
+        arguments: const CustomExamGuideArguments(isFromCustomExamListPage: true),
       );
     } else {
       showCustomExamNotAvailableDialog(context, isFromCustomExamListPage: true);
@@ -64,14 +59,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
       children: [
         Icon(iconData, size: 16, color: Colors.grey.shade800),
         const SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.grey.shade800,
-            fontSize: 12,
-            height: 1.2,
-          ),
-        ),
+        Text(text, style: TextStyle(color: Colors.grey.shade800, fontSize: 12, height: 1.2)),
       ],
     );
   }
@@ -94,15 +82,9 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
                     children: [
                       Text(
                         defaultExams
-                            .firstWhere(
-                              (defaultExam) =>
-                                  defaultExam.subject == exam.subject,
-                            )
+                            .firstWhere((defaultExam) => defaultExam.subject == exam.subject)
                             .name,
-                        style: TextStyle(
-                          color: Color(exam.color),
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Color(exam.color), fontSize: 12),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -177,11 +159,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
       title: '나만의 과목 만들기',
       onBackPressed: () => Navigator.of(context).pop(),
       appBarActions: [
-        AppBarAction(
-          iconData: Icons.help_outline,
-          tooltip: '도움말',
-          onPressed: _onHelpButtonPressed,
-        ),
+        AppBarAction(iconData: Icons.help_outline, tooltip: '도움말', onPressed: _onHelpButtonPressed),
       ],
       floatingActionButton: FloatingActionButton(
         onPressed: _onAddExamButtonPressed,
@@ -192,10 +170,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
         buildWhen:
             (previous, current) =>
                 !listEquals(previous.customExams, current.customExams) ||
-                !listEquals(
-                  previous.getDefaultExams(),
-                  current.getDefaultExams(),
-                ),
+                !listEquals(previous.getDefaultExams(), current.getDefaultExams()),
         builder: (context, state) {
           return RefreshIndicator(
             onRefresh: _appCubit.updateCustomExams,

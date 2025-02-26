@@ -29,10 +29,7 @@ class ScaffoldBody extends StatelessWidget {
     final double horizontalPadding;
     if (screenWidth > tabletScreenWidth) {
       final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
-      horizontalPadding = max(
-        (screenWidth - maxWidthForTablet) / 2,
-        originalHorizontalPadding,
-      );
+      horizontalPadding = max((screenWidth - maxWidthForTablet) / 2, originalHorizontalPadding);
     } else {
       horizontalPadding = max((screenWidth - maxWidth) / 2, 20.0);
     }
@@ -71,10 +68,7 @@ class ScaffoldBody extends StatelessWidget {
                         icon: SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                         ),
                       );
                     } else {
@@ -92,8 +86,7 @@ class ScaffoldBody extends StatelessWidget {
           foregroundColor: Colors.black,
           backgroundColor: SilgamApp.backgroundColor,
           // Because of this https://github.com/flutter/flutter/issues/24893
-          systemOverlayStyle:
-              kIsWeb || Platform.isIOS ? null : systemOverlayStyle,
+          systemOverlayStyle: kIsWeb || Platform.isIOS ? null : systemOverlayStyle,
         ),
         ...slivers.map((sliver) {
           if (sliver is NonPaddingChildBuilder) {
@@ -110,10 +103,7 @@ class ScaffoldBody extends StatelessWidget {
 
   void _onRefresh() {
     onRefresh?.call();
-    AnalyticsManager.logEvent(
-      name: '[ScaffoldBody] Refresh',
-      properties: {'page': title},
-    );
+    AnalyticsManager.logEvent(name: '[ScaffoldBody] Refresh', properties: {'page': title});
   }
 }
 

@@ -52,9 +52,7 @@ class ClockCubit extends Cubit<ClockState> {
     'subject_names': _timetable.toSubjectNamesString(),
     'is_exam_finished': state.isFinished,
     'exam_ids': _timetable.items.map((item) => item.exam.id).join(', '),
-    'isCustomExams': _timetable.items
-        .map((item) => item.exam.isCustomExam)
-        .join(', '),
+    'isCustomExams': _timetable.items.map((item) => item.exam.isCustomExam).join(', '),
   };
 
   void _initialize() {
@@ -91,16 +89,12 @@ class ClockCubit extends Cubit<ClockState> {
     _noiseGenerator?.start();
 
     AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Start exam',
-      properties: defaultLogProperties,
-    );
+    AnalyticsManager.logEvent(name: '[ClockPage] Start exam', properties: defaultLogProperties);
   }
 
   void subtract30Seconds() {
     final announcementPosition = _announcementPlayer.position.inMilliseconds;
-    final announcementDuration =
-        _announcementPlayer.duration?.inMilliseconds ?? 0;
+    final announcementDuration = _announcementPlayer.duration?.inMilliseconds ?? 0;
     if ((announcementPosition - announcementDuration).abs() > 100) {
       _announcementPlayer.seek(_announcementPlayer.position - 30.seconds);
     }
@@ -110,10 +104,7 @@ class ClockCubit extends Cubit<ClockState> {
 
     AnalyticsManager.logEvent(
       name: '[ClockPage] Subtract 30 seconds',
-      properties: {
-        ...defaultLogProperties,
-        'current_time': state.currentTime.toString(),
-      },
+      properties: {...defaultLogProperties, 'current_time': state.currentTime.toString()},
     );
   }
 
@@ -124,10 +115,7 @@ class ClockCubit extends Cubit<ClockState> {
 
     AnalyticsManager.logEvent(
       name: '[ClockPage] Add 30 seconds',
-      properties: {
-        ...defaultLogProperties,
-        'current_time': state.currentTime.toString(),
-      },
+      properties: {...defaultLogProperties, 'current_time': state.currentTime.toString()},
     );
   }
 
@@ -156,10 +144,7 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void onLapTimeButtonPressed() {
-    final newLapTime = LapTime(
-      time: state.currentTime,
-      breakpoint: state.currentBreakpoint,
-    );
+    final newLapTime = LapTime(time: state.currentTime, breakpoint: state.currentBreakpoint);
     if (state.lapTimes.lastOrNull?.time != newLapTime.time) {
       emit(state.copyWith(lapTimes: [...state.lapTimes, newLapTime]));
     }
@@ -177,8 +162,7 @@ class ClockCubit extends Cubit<ClockState> {
   void _onEverySecond(DateTime newTime) {
     emit(state.copyWith(currentTime: newTime));
     if (!state.isFinished) {
-      final nextBreakpoint =
-          state.breakpoints[state.currentBreakpointIndex + 1];
+      final nextBreakpoint = state.breakpoints[state.currentBreakpointIndex + 1];
       if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
     }
   }
@@ -190,10 +174,7 @@ class ClockCubit extends Cubit<ClockState> {
 
   void _moveToPreviousBreakpoint({bool adjustTime = true}) {
     if (state.currentBreakpointIndex <= 0) return;
-    _moveBreakpoint(
-      index: state.currentBreakpointIndex - 1,
-      adjustTime: adjustTime,
-    );
+    _moveBreakpoint(index: state.currentBreakpointIndex - 1, adjustTime: adjustTime);
   }
 
   void _moveBreakpoint({required int index, bool adjustTime = true}) {
@@ -210,8 +191,7 @@ class ClockCubit extends Cubit<ClockState> {
 
   Future<void> _playAnnouncement() async {
     await _announcementPlayer.pause();
-    final String? currentFileName =
-        state.currentBreakpoint.announcement.fileName;
+    final String? currentFileName = state.currentBreakpoint.announcement.fileName;
     if (currentFileName == null) {
       await _announcementPlayer.seek(_announcementPlayer.duration);
       return;
@@ -224,28 +204,20 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void _saveExamStartedTimeIfNeeded() {
-    if (state.currentBreakpoint.announcement.purpose ==
-        AnnouncementPurpose.start) {
+    if (state.currentBreakpoint.announcement.purpose == AnnouncementPurpose.start) {
       emit(
         state.copyWith(
-          examStartedTimes: {
-            ...state.examStartedTimes,
-            state.currentExam: DateTime.now(),
-          },
+          examStartedTimes: {...state.examStartedTimes, state.currentExam: DateTime.now()},
         ),
       );
     }
   }
 
   void _saveExamFinishedTimeIfNeeded() {
-    if (state.currentBreakpoint.announcement.purpose ==
-        AnnouncementPurpose.finish) {
+    if (state.currentBreakpoint.announcement.purpose == AnnouncementPurpose.finish) {
       emit(
         state.copyWith(
-          examFinishedTimes: {
-            ...state.examFinishedTimes,
-            state.currentExam: DateTime.now(),
-          },
+          examFinishedTimes: {...state.examFinishedTimes, state.currentExam: DateTime.now()},
         ),
       );
     }
@@ -264,8 +236,7 @@ class ClockCubit extends Cubit<ClockState> {
       }
     }
     if (!state.isFinished) {
-      final nextBreakpoint =
-          state.breakpoints[state.currentBreakpointIndex + 1];
+      final nextBreakpoint = state.breakpoints[state.currentBreakpointIndex + 1];
       if (newTime.compareTo(nextBreakpoint.time) >= 0) {
         _moveToNextBreakpoint();
         return;

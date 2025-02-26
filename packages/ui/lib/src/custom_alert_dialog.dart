@@ -31,15 +31,11 @@ class CustomAlertDialog extends StatelessWidget {
     final content = this.content;
 
     return AlertDialog(
-      title:
-          title != null
-              ? Text(title, style: TextStyle(fontWeight: FontWeight.w700))
-              : null,
+      title: title != null ? Text(title, style: TextStyle(fontWeight: FontWeight.w700)) : null,
       content: content,
       actions: actions,
       scrollable: scrollable,
-      backgroundColor:
-          dimmedBackground ? Theme.of(context).scaffoldBackgroundColor : null,
+      backgroundColor: dimmedBackground ? Theme.of(context).scaffoldBackgroundColor : null,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );

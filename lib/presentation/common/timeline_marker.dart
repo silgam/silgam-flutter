@@ -5,12 +5,7 @@ class TimelineMarker extends StatelessWidget {
   final double height;
   final Color color;
 
-  const TimelineMarker({
-    super.key,
-    this.width = 8,
-    this.height = 12,
-    this.color = Colors.grey,
-  });
+  const TimelineMarker({super.key, this.width = 8, this.height = 12, this.color = Colors.grey});
 
   @override
   Widget build(BuildContext context) {

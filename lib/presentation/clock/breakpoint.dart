@@ -37,8 +37,7 @@ class Breakpoint {
         currentItem.exam,
         examStartTime,
       );
-      if (breakpoints.lastOrNull?.time ==
-          currentItemBreakpoints.firstOrNull?.time) {
+      if (breakpoints.lastOrNull?.time == currentItemBreakpoints.firstOrNull?.time) {
         breakpoints.removeLast();
       }
       breakpoints.addAll(currentItemBreakpoints);
@@ -47,10 +46,7 @@ class Breakpoint {
     return breakpoints;
   }
 
-  static List<Breakpoint> _createBreakpointsFromExam(
-    Exam exam,
-    DateTime examStartTime,
-  ) {
+  static List<Breakpoint> _createBreakpointsFromExam(Exam exam, DateTime examStartTime) {
     final breakpoints = <Breakpoint>[];
 
     for (final announcement in exam.announcements) {
