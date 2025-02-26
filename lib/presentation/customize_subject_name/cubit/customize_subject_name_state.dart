@@ -1,10 +1,6 @@
 part of 'customize_subject_name_cubit.dart';
 
-enum CustomizeSubjectNameStatus {
-  initial,
-  saving,
-  saved,
-}
+enum CustomizeSubjectNameStatus { initial, saving, saved }
 
 @freezed
 class CustomizeSubjectNameState with _$CustomizeSubjectNameState {

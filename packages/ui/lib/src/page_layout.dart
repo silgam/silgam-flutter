@@ -5,10 +5,7 @@ import 'custom_app_bar.dart';
 import 'custom_filled_button.dart';
 
 class PageLayoutBottomAction {
-  const PageLayoutBottomAction({
-    required this.label,
-    this.onPressed,
-  });
+  const PageLayoutBottomAction({required this.label, this.onPressed});
 
   final String label;
   final VoidCallback? onPressed;
@@ -47,21 +44,21 @@ class PageLayout extends StatefulWidget {
 class _PageLayoutState extends State<PageLayout> {
   static const SystemUiOverlayStyle _lightSystemUiOverlayStyle =
       SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
-    statusBarColor: Colors.transparent,
-    statusBarBrightness: Brightness.light,
-    statusBarIconBrightness: Brightness.dark,
-  );
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+      );
 
   static const SystemUiOverlayStyle _darkSystemUiOverlayStyle =
       SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.black,
-    systemNavigationBarIconBrightness: Brightness.light,
-    statusBarColor: Colors.transparent,
-    statusBarBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.light,
-  );
+        systemNavigationBarColor: Colors.black,
+        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+      );
 
   double _maxBottomInset = 0;
   double _lastBottomInset = 0;
@@ -101,11 +98,12 @@ class _PageLayoutState extends State<PageLayout> {
     final bottomAction = widget.bottomAction;
 
     final resultWidget = AnnotatedRegion(
-      value: widget.textBrightness == Brightness.dark
-          ? _lightSystemUiOverlayStyle
-          : _darkSystemUiOverlayStyle.copyWith(
-              systemNavigationBarColor: widget.backgroundColor,
-            ),
+      value:
+          widget.textBrightness == Brightness.dark
+              ? _lightSystemUiOverlayStyle
+              : _darkSystemUiOverlayStyle.copyWith(
+                systemNavigationBarColor: widget.backgroundColor,
+              ),
       child: Scaffold(
         backgroundColor: widget.backgroundColor,
         floatingActionButton: widget.floatingActionButton,
@@ -121,14 +119,10 @@ class _PageLayoutState extends State<PageLayout> {
                 textBrightness: widget.textBrightness,
               ),
               Expanded(
-                child: bottomAction != null
-                    ? Stack(
-                        children: [
-                          widget.child,
-                          _BottomFadeGradient(),
-                        ],
-                      )
-                    : widget.child,
+                child:
+                    bottomAction != null
+                        ? Stack(children: [widget.child, _BottomFadeGradient()])
+                        : widget.child,
               ),
               if (bottomAction != null)
                 _BottomButton(

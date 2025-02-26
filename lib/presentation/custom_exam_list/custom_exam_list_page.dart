@@ -28,9 +28,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
     final isEdited = await Navigator.pushNamed(
       context,
       CustomExamEditPage.routeName,
-      arguments: CustomExamEditPageArguments(
-        examToEdit: exam,
-      ),
+      arguments: CustomExamEditPageArguments(examToEdit: exam),
     );
     if (isEdited == true) {
       await _appCubit.updateCustomExams();
@@ -38,8 +36,10 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
   }
 
   void _onAddExamButtonPressed() async {
-    final isAdded =
-        await Navigator.pushNamed(context, CustomExamEditPage.routeName);
+    final isAdded = await Navigator.pushNamed(
+      context,
+      CustomExamEditPage.routeName,
+    );
     if (isAdded == true) {
       await _appCubit.updateCustomExams();
     }
@@ -62,11 +62,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
   Widget _buildExamInfoWidget(IconData iconData, String text) {
     return Row(
       children: [
-        Icon(
-          iconData,
-          size: 16,
-          color: Colors.grey.shade800,
-        ),
+        Icon(iconData, size: 16, color: Colors.grey.shade800),
         const SizedBox(width: 4),
         Text(
           text,
@@ -98,8 +94,10 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
                     children: [
                       Text(
                         defaultExams
-                            .firstWhere((defaultExam) =>
-                                defaultExam.subject == exam.subject)
+                            .firstWhere(
+                              (defaultExam) =>
+                                  defaultExam.subject == exam.subject,
+                            )
                             .name,
                         style: TextStyle(
                           color: Color(exam.color),
@@ -156,11 +154,7 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
               spacing: 4,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  CupertinoIcons.add,
-                  size: 24,
-                  color: Colors.grey.shade600,
-                ),
+                Icon(CupertinoIcons.add, size: 24, color: Colors.grey.shade600),
                 Text(
                   '과목 만들기',
                   style: TextStyle(
@@ -195,19 +189,20 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
         child: const Icon(Icons.add),
       ),
       child: BlocBuilder<AppCubit, AppState>(
-        buildWhen: (previous, current) =>
-            !listEquals(previous.customExams, current.customExams) ||
-            !listEquals(previous.getDefaultExams(), current.getDefaultExams()),
+        buildWhen:
+            (previous, current) =>
+                !listEquals(previous.customExams, current.customExams) ||
+                !listEquals(
+                  previous.getDefaultExams(),
+                  current.getDefaultExams(),
+                ),
         builder: (context, state) {
           return RefreshIndicator(
             onRefresh: _appCubit.updateCustomExams,
             child: ListView(
               children: [
                 ...state.customExams.map(
-                  (exam) => _buildCustomExamItem(
-                    exam,
-                    state.getDefaultExams(),
-                  ),
+                  (exam) => _buildCustomExamItem(exam, state.getDefaultExams()),
                 ),
                 _buildAddExamButton(),
               ],

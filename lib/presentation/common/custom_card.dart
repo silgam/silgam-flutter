@@ -34,10 +34,7 @@ class CustomCard extends StatelessWidget {
       child: Material(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(isThin ? 100 : cardCornerRadius),
-        child: Padding(
-          padding: padding ?? EdgeInsets.zero,
-          child: child,
-        ),
+        child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
       ),
     );
   }

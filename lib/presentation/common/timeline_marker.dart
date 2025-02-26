@@ -17,11 +17,7 @@ class TimelineMarker extends StatelessWidget {
     return Center(
       child: ClipPath(
         clipper: TimelineMarkerClipper(),
-        child: Container(
-          width: width,
-          height: height,
-          color: color,
-        ),
+        child: Container(width: width, height: height, color: color),
       ),
     );
   }

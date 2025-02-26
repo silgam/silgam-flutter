@@ -21,10 +21,7 @@ class CustomExamEditPage extends StatefulWidget {
 
   final Exam? examToEdit;
 
-  const CustomExamEditPage({
-    super.key,
-    this.examToEdit,
-  });
+  const CustomExamEditPage({super.key, this.examToEdit});
 
   @override
   State<CustomExamEditPage> createState() => _CustomExamEditPageState();
@@ -50,18 +47,24 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   late final bool _isEditMode = _examToEdit != null;
 
   late final _examNameInitialValue = _examToEdit?.name;
-  late final _baseExamInitialValue = _examToEdit == null
-      ? _defaultExams.first
-      : _defaultExams.firstWhere((exam) => exam.subject == _examToEdit.subject);
-  late final _startTimeInitialValue = _examToEdit == null
-      ? TimeOfDay.fromDateTime(_baseExamInitialValue.startTime)
-      : TimeOfDay.fromDateTime(_examToEdit.startTime);
-  late final _durationInitialValue = _examToEdit?.durationMinutes.toString() ??
+  late final _baseExamInitialValue =
+      _examToEdit == null
+          ? _defaultExams.first
+          : _defaultExams.firstWhere(
+            (exam) => exam.subject == _examToEdit.subject,
+          );
+  late final _startTimeInitialValue =
+      _examToEdit == null
+          ? TimeOfDay.fromDateTime(_baseExamInitialValue.startTime)
+          : TimeOfDay.fromDateTime(_examToEdit.startTime);
+  late final _durationInitialValue =
+      _examToEdit?.durationMinutes.toString() ??
       _baseExamInitialValue.durationMinutes.toString();
   late final _numberOfQuestionsInitialValue =
       _examToEdit?.numberOfQuestions.toString() ??
-          _baseExamInitialValue.numberOfQuestions.toString();
-  late final _perfectScoreInitialValue = _examToEdit?.perfectScore.toString() ??
+      _baseExamInitialValue.numberOfQuestions.toString();
+  late final _perfectScoreInitialValue =
+      _examToEdit?.perfectScore.toString() ??
       _baseExamInitialValue.perfectScore.toString();
   late final _isBeforeFinishAnnouncementEnabledInitialValue =
       _examToEdit?.isBeforeFinishAnnouncementEnabled ?? true;
@@ -166,36 +169,35 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   void _deleteExam(Exam examToDelete) async {
     EasyLoading.show();
 
-    final examRecordsUsing =
-        await _examRecordRepository.getMyExamRecordsByExamId(
-      _appCubit.state.me!.id,
-      examToDelete.id,
-    );
+    final examRecordsUsing = await _examRecordRepository
+        .getMyExamRecordsByExamId(_appCubit.state.me!.id, examToDelete.id);
 
     if (examRecordsUsing.isEmpty) {
       _examRepository.deleteExam(examToDelete.id);
       if (mounted) Navigator.pop(context, true);
     } else {
       if (mounted) {
-        final recordNames =
-            examRecordsUsing.map((record) => '• ${record.title}').join('\n');
+        final recordNames = examRecordsUsing
+            .map((record) => '• ${record.title}')
+            .join('\n');
 
         showDialog(
           context: context,
-          builder: (context) => CustomAlertDialog(
-            title: '과목을 삭제할 수 없어요!',
-            content:
-                '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
-            actions: [
-              CustomTextButton.primary(
-                text: '확인',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+          builder:
+              (context) => CustomAlertDialog(
+                title: '과목을 삭제할 수 없어요!',
+                content:
+                    '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
+                actions: [
+                  CustomTextButton.primary(
+                    text: '확인',
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+                scrollable: true,
               ),
-            ],
-            scrollable: true,
-          ),
         );
       }
     }
@@ -277,9 +279,12 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     textInputAction: TextInputAction.next,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
-                          errorText: '과목 이름을 입력해주세요.'),
-                      FormBuilderValidators.maxLength(20,
-                          errorText: '20자 이하로 입력해주세요.'),
+                        errorText: '과목 이름을 입력해주세요.',
+                      ),
+                      FormBuilderValidators.maxLength(
+                        20,
+                        errorText: '20자 이하로 입력해주세요.',
+                      ),
                     ]),
                   ),
                 ),
@@ -290,12 +295,15 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     name: _baseExamFieldName,
                     initialValue: _baseExamInitialValue,
                     onChanged: _onDefaultExamChanged,
-                    items: _defaultExams
-                        .map((exam) => DropdownMenuItem(
-                              value: exam,
-                              child: Text(exam.name),
-                            ))
-                        .toList(),
+                    items:
+                        _defaultExams
+                            .map(
+                              (exam) => DropdownMenuItem(
+                                value: exam,
+                                child: Text(exam.name),
+                              ),
+                            )
+                            .toList(),
                   ),
                 ),
                 Wrap(
@@ -326,13 +334,19 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                         ],
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(
-                              errorText: '시험 시간을 입력해주세요.'),
+                            errorText: '시험 시간을 입력해주세요.',
+                          ),
                           FormBuilderValidators.numeric(
-                              errorText: '시험 시간은 숫자만 입력해주세요.'),
-                          FormBuilderValidators.min(5,
-                              errorText: '시험 시간을 5분 이상으로 입력해주세요.'),
-                          FormBuilderValidators.max(300,
-                              errorText: '시험 시간을 300분 이하로 입력해주세요.'),
+                            errorText: '시험 시간은 숫자만 입력해주세요.',
+                          ),
+                          FormBuilderValidators.min(
+                            5,
+                            errorText: '시험 시간을 5분 이상으로 입력해주세요.',
+                          ),
+                          FormBuilderValidators.max(
+                            300,
+                            errorText: '시험 시간을 300분 이하로 입력해주세요.',
+                          ),
                         ]),
                       ),
                     ),
@@ -352,13 +366,19 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                         ],
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(
-                              errorText: '문제 수를 입력해주세요.'),
+                            errorText: '문제 수를 입력해주세요.',
+                          ),
                           FormBuilderValidators.numeric(
-                              errorText: '문제 수는 숫자만 입력해주세요.'),
-                          FormBuilderValidators.min(1,
-                              errorText: '문제 수를 1 이상 입력해주세요.'),
-                          FormBuilderValidators.max(300,
-                              errorText: '문제 수를 300 이하로 입력해주세요.'),
+                            errorText: '문제 수는 숫자만 입력해주세요.',
+                          ),
+                          FormBuilderValidators.min(
+                            1,
+                            errorText: '문제 수를 1 이상 입력해주세요.',
+                          ),
+                          FormBuilderValidators.max(
+                            300,
+                            errorText: '문제 수를 300 이하로 입력해주세요.',
+                          ),
                         ]),
                       ),
                     ),
@@ -378,13 +398,19 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                         ],
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(
-                              errorText: '만점을 입력해주세요.'),
+                            errorText: '만점을 입력해주세요.',
+                          ),
                           FormBuilderValidators.numeric(
-                              errorText: '만점은 숫자만 입력해주세요.'),
-                          FormBuilderValidators.min(1,
-                              errorText: '만점을 1 이상 입력해주세요.'),
-                          FormBuilderValidators.max(999,
-                              errorText: '만점을 999 이하로 입력해주세요.'),
+                            errorText: '만점은 숫자만 입력해주세요.',
+                          ),
+                          FormBuilderValidators.min(
+                            1,
+                            errorText: '만점을 1 이상 입력해주세요.',
+                          ),
+                          FormBuilderValidators.max(
+                            999,
+                            errorText: '만점을 999 이하로 입력해주세요.',
+                          ),
                         ]),
                       ),
                     ),
@@ -433,7 +459,5 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
 class CustomExamEditPageArguments {
   final Exam? examToEdit;
 
-  CustomExamEditPageArguments({
-    required this.examToEdit,
-  });
+  CustomExamEditPageArguments({required this.examToEdit});
 }

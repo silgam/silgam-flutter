@@ -7,11 +7,7 @@ class RecordTile extends StatefulWidget {
   final ExamRecord record;
   final GestureTapCallback onTileTap;
 
-  const RecordTile({
-    super.key,
-    required this.record,
-    required this.onTileTap,
-  });
+  const RecordTile({super.key, required this.record, required this.onTileTap});
 
   @override
   State<RecordTile> createState() => RecordTileState();
@@ -40,8 +36,10 @@ class RecordTileState extends State<RecordTile> {
               onTap: widget.onTileTap,
               splashColor: Colors.transparent,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: _buildContent(),
               ),
             ),
@@ -59,9 +57,9 @@ class RecordTileState extends State<RecordTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                DateFormat.yMEd('ko_KR')
-                    .add_Hm()
-                    .format(widget.record.examStartedTime),
+                DateFormat.yMEd(
+                  'ko_KR',
+                ).add_Hm().format(widget.record.examStartedTime),
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 12,
@@ -104,7 +102,7 @@ class RecordTileState extends State<RecordTile> {
                     fontWeight: FontWeight.w300,
                     fontSize: 11,
                   ),
-                )
+                ),
             ],
           ),
         ),
@@ -127,24 +125,14 @@ class RecordTileState extends State<RecordTile> {
 
     if (score != null) {
       textSpans.add(TextSpan(text: score.toString()));
-      textSpans.add(
-        TextSpan(
-          text: ' 점',
-          style: smallTextStyle,
-        ),
-      );
+      textSpans.add(TextSpan(text: ' 점', style: smallTextStyle));
     }
     if (score != null && grade != null) {
       textSpans.add(const TextSpan(text: '\n'));
     }
     if (grade != null) {
       textSpans.add(TextSpan(text: grade.toString()));
-      textSpans.add(
-        TextSpan(
-          text: ' 등급',
-          style: smallTextStyle,
-        ),
-      );
+      textSpans.add(TextSpan(text: ' 등급', style: smallTextStyle));
     }
 
     TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;

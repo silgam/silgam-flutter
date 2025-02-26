@@ -67,8 +67,9 @@ class CacheManager {
 
   List<DDay>? getDDays() {
     try {
-      final cachedDDays =
-          _sharedPreferences.getString(PreferenceKey.cacheDDays);
+      final cachedDDays = _sharedPreferences.getString(
+        PreferenceKey.cacheDDays,
+      );
       final isExpired = _isCacheExpired(PreferenceKey.cacheDDays);
       if (cachedDDays == null || isExpired) return null;
 
@@ -94,8 +95,9 @@ class CacheManager {
 
   List<Product>? getProducts() {
     try {
-      final cachedProducts =
-          _sharedPreferences.getString(PreferenceKey.cacheProducts);
+      final cachedProducts = _sharedPreferences.getString(
+        PreferenceKey.cacheProducts,
+      );
       final isExpired = _isCacheExpired(PreferenceKey.cacheProducts);
       if (cachedProducts == null || isExpired) return null;
 
@@ -120,8 +122,9 @@ class CacheManager {
   }
 
   bool _isCacheExpired(String cacheKey) {
-    final lastUpdatedString =
-        _sharedPreferences.getString('${cacheKey}LastUpdated');
+    final lastUpdatedString = _sharedPreferences.getString(
+      '${cacheKey}LastUpdated',
+    );
     if (lastUpdatedString == null) return true;
     final lastUpdated = DateTime.parse(lastUpdatedString);
     return lastUpdated.add(_cacheDuration).isBefore(DateTime.now().toUtc());

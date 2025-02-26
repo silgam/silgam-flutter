@@ -21,21 +21,26 @@ class FormTimePicker extends StatelessWidget {
       initialValue: initialValue,
       builder: (field) {
         final value = field.value;
-        final state = field
-            as FormBuilderFieldState<FormBuilderField<TimeOfDay>, TimeOfDay>;
+        final state =
+            field
+                as FormBuilderFieldState<
+                  FormBuilderField<TimeOfDay>,
+                  TimeOfDay
+                >;
 
         return GestureDetector(
-          onTap: state.enabled
-              ? () async {
-                  final time = await showTimePicker(
-                    context: context,
-                    initialTime: value ?? TimeOfDay.now(),
-                  );
-                  if (time == null) return;
+          onTap:
+              state.enabled
+                  ? () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: value ?? TimeOfDay.now(),
+                    );
+                    if (time == null) return;
 
-                  field.didChange(time);
-                }
-              : null,
+                    field.didChange(time);
+                  }
+                  : null,
           child: InputDecorator(
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(12),
@@ -49,13 +54,13 @@ class FormTimePicker extends StatelessWidget {
             ),
             child: Text(
               value != null
-                  ? DateFormat.jm('ko_KR')
-                      .format(DateTime(0, 0, 0, value.hour, value.minute))
+                  ? DateFormat.jm(
+                    'ko_KR',
+                  ).format(DateTime(0, 0, 0, value.hour, value.minute))
                   : '',
               style: TextTheme.of(context).titleMedium?.copyWith(
-                    color:
-                        state.enabled ? null : Theme.of(context).disabledColor,
-                  ),
+                color: state.enabled ? null : Theme.of(context).disabledColor,
+              ),
             ),
           ),
         );

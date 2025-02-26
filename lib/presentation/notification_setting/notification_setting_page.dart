@@ -18,10 +18,11 @@ class NotificationSettingPage extends StatelessWidget {
       title: '알림 설정',
       onBackPressed: () => Navigator.of(context).pop(),
       child: BlocConsumer<AppCubit, AppState>(
-        listenWhen: (previous, current) =>
-            previous.me?.isMarketingInfoReceivingConsented !=
-                current.me?.isMarketingInfoReceivingConsented ||
-            previous.isOffline != current.isOffline,
+        listenWhen:
+            (previous, current) =>
+                previous.me?.isMarketingInfoReceivingConsented !=
+                    current.me?.isMarketingInfoReceivingConsented ||
+                previous.isOffline != current.isOffline,
         listener: (context, appState) {
           EasyLoading.dismiss();
         },
@@ -38,8 +39,9 @@ class NotificationSettingPage extends StatelessWidget {
                 title: '마케팅 정보 수신 동의',
                 description: '실감의 상품 소개, 이벤트 등 유용한 정보들을 푸시알림으로 받아보실 수 있어요.',
                 value: me.isMarketingInfoReceivingConsented ?? false,
-                onChanged: (value) =>
-                    _onMarketingInfoReceivingConsentChanged(context, value),
+                onChanged:
+                    (value) =>
+                        _onMarketingInfoReceivingConsentChanged(context, value),
               ),
               const SettingDivider(),
             ],

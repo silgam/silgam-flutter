@@ -7,28 +7,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 class WristWatch extends StatelessWidget {
   final DateTime clockTime;
 
-  const WristWatch({
-    super.key,
-    required this.clockTime,
-  });
+  const WristWatch({super.key, required this.clockTime});
 
   @override
   Widget build(BuildContext context) {
     return WristWatchContainer(
       child: Stack(
         children: [
-          SvgPicture.asset(
-            'assets/wrist_watch.svg',
-            fit: BoxFit.fitWidth,
-          ),
+          SvgPicture.asset('assets/wrist_watch.svg', fit: BoxFit.fitWidth),
           Container(
             alignment: Alignment.center,
             child: FractionallySizedBox(
               widthFactor: 0.77,
-              child: AnalogClock(
-                clockTime: clockTime,
-                borderWidth: 0,
-              ),
+              child: AnalogClock(clockTime: clockTime, borderWidth: 0),
             ),
           ),
         ],
@@ -40,10 +31,7 @@ class WristWatch extends StatelessWidget {
 class WristWatchContainer extends StatelessWidget {
   final Widget? child;
 
-  const WristWatchContainer({
-    super.key,
-    this.child,
-  });
+  const WristWatchContainer({super.key, this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +39,7 @@ class WristWatchContainer extends StatelessWidget {
       constraints: const BoxConstraints(maxHeight: 410),
       child: FractionallySizedBox(
         heightFactor: 0.8,
-        child: AspectRatio(
-          aspectRatio: 200 / 330,
-          child: child,
-        ),
+        child: AspectRatio(aspectRatio: 200 / 330, child: child),
       ),
     );
   }
@@ -153,7 +138,7 @@ class AnalogClockPainter extends CustomPainter {
     '9',
     '10',
     '11',
-    '12'
+    '12',
   ];
   final DateTime _dateTime;
   final Color dialPlateColor;
@@ -195,8 +180,8 @@ class AnalogClockPainter extends CustomPainter {
     this.hourNumberScale = 1.0,
     this.hourNumbers = defaultHourNumbers,
     double? borderWidth,
-  })  : assert(hourNumbers.length == 12),
-        _borderWidth = borderWidth;
+  }) : assert(hourNumbers.length == 12),
+       _borderWidth = borderWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -210,21 +195,26 @@ class AnalogClockPainter extends CustomPainter {
     canvas.translate(size.width / 2, size.height / 2);
 
     canvas.drawCircle(
-        const Offset(0, 0),
-        radius,
-        Paint()
-          ..style = PaintingStyle.fill
-          ..color = dialPlateColor);
+      const Offset(0, 0),
+      radius,
+      Paint()
+        ..style = PaintingStyle.fill
+        ..color = dialPlateColor,
+    );
 
     // border style
     if (showBorder && borderWidth > 0) {
-      Paint borderPaint = Paint()
-        ..color = borderColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = borderWidth
-        ..isAntiAlias = true;
+      Paint borderPaint =
+          Paint()
+            ..color = borderColor
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = borderWidth
+            ..isAntiAlias = true;
       canvas.drawCircle(
-          const Offset(0, 0), radius - borderWidth / 2, borderPaint);
+        const Offset(0, 0),
+        radius - borderWidth / 2,
+        borderPaint,
+      );
     }
 
     // setup tick
@@ -242,27 +232,38 @@ class AnalogClockPainter extends CustomPainter {
     }
 
     _paintHourHand(
-        canvas, numberRadius - hourTextHeight, (radius - borderWidth) / 20);
+      canvas,
+      numberRadius - hourTextHeight,
+      (radius - borderWidth) / 20,
+    );
 
     if (showMinuteHand) {
       _paintMinuteHand(canvas, numberRadius, (radius - borderWidth) / 40);
     }
     if (showSecondHand) {
-      _paintSecondHand(canvas, numberRadius + hourTextHeight / 2,
-          (radius - borderWidth) / 80);
+      _paintSecondHand(
+        canvas,
+        numberRadius + hourTextHeight / 2,
+        (radius - borderWidth) / 80,
+      );
     }
 
     //draw center point
-    Paint centerPointPaint = Paint()
-      ..strokeWidth = ((radius - borderWidth) / 10)
-      ..strokeCap = StrokeCap.round
-      ..color = centerPointColor;
+    Paint centerPointPaint =
+        Paint()
+          ..strokeWidth = ((radius - borderWidth) / 10)
+          ..strokeCap = StrokeCap.round
+          ..color = centerPointColor;
     canvas.drawPoints(PointMode.points, [const Offset(0, 0)], centerPointPaint);
   }
 
   /// draw ticks
   void _paintTicks(
-      Canvas canvas, double radius, double tickWidth, double bigTickWidth) {
+    Canvas canvas,
+    double radius,
+    double tickWidth,
+    double bigTickWidth,
+  ) {
     List<Offset> ticks = [];
     List<Offset> bigTicks = [];
     for (var i = 0; i < 60; i++) {
@@ -277,16 +278,18 @@ class AnalogClockPainter extends CustomPainter {
         bigTicks.add(Offset(x, y));
       }
     }
-    Paint tickPaint = Paint()
-      ..color = tickColor
-      ..strokeWidth = tickWidth
-      ..strokeCap = StrokeCap.round;
+    Paint tickPaint =
+        Paint()
+          ..color = tickColor
+          ..strokeWidth = tickWidth
+          ..strokeCap = StrokeCap.round;
     canvas.drawPoints(PointMode.points, ticks, tickPaint);
 
-    Paint bigTickPaint = Paint()
-      ..color = tickColor
-      ..strokeWidth = bigTickWidth
-      ..strokeCap = StrokeCap.round;
+    Paint bigTickPaint =
+        Paint()
+          ..color = tickColor
+          ..strokeWidth = bigTickWidth
+          ..strokeCap = StrokeCap.round;
     canvas.drawPoints(PointMode.points, bigTicks, bigTickPaint);
   }
 
@@ -306,16 +309,19 @@ class AnalogClockPainter extends CustomPainter {
       _hourTextPainter.text = TextSpan(
         text: hourText,
         style: TextStyle(
-            fontSize: fontSize,
-            color: numberColor,
-            fontWeight: FontWeight.w900),
+          fontSize: fontSize,
+          color: numberColor,
+          fontWeight: FontWeight.w900,
+        ),
       );
       _hourTextPainter.layout();
       if (_hourTextPainter.height > maxTextHeight) {
         maxTextHeight = _hourTextPainter.height;
       }
-      _hourTextPainter.paint(canvas,
-          Offset(-_hourTextPainter.width / 2, -_hourTextPainter.height / 2));
+      _hourTextPainter.paint(
+        canvas,
+        Offset(-_hourTextPainter.width / 2, -_hourTextPainter.height / 2),
+      );
       canvas.restore();
     }
     return maxTextHeight;
@@ -324,33 +330,42 @@ class AnalogClockPainter extends CustomPainter {
   /// draw hour hand
   void _paintHourHand(Canvas canvas, double radius, double strokeWidth) {
     double angle = _dateTime.hour % 12 + _dateTime.minute / 60.0 - 3;
-    Offset handOffset = Offset(cos(getRadians(angle * 30)) * radius,
-        sin(getRadians(angle * 30)) * radius);
-    final hourHandPaint = Paint()
-      ..color = hourHandColor
-      ..strokeWidth = strokeWidth;
+    Offset handOffset = Offset(
+      cos(getRadians(angle * 30)) * radius,
+      sin(getRadians(angle * 30)) * radius,
+    );
+    final hourHandPaint =
+        Paint()
+          ..color = hourHandColor
+          ..strokeWidth = strokeWidth;
     canvas.drawLine(const Offset(0, 0), handOffset, hourHandPaint);
   }
 
   /// draw minute hand
   void _paintMinuteHand(Canvas canvas, double radius, double strokeWidth) {
     double angle = _dateTime.minute + _dateTime.second / 60 - 15.0;
-    Offset handOffset = Offset(cos(getRadians(angle * 6.0)) * radius,
-        sin(getRadians(angle * 6.0)) * radius);
-    final hourHandPaint = Paint()
-      ..color = minuteHandColor
-      ..strokeWidth = strokeWidth;
+    Offset handOffset = Offset(
+      cos(getRadians(angle * 6.0)) * radius,
+      sin(getRadians(angle * 6.0)) * radius,
+    );
+    final hourHandPaint =
+        Paint()
+          ..color = minuteHandColor
+          ..strokeWidth = strokeWidth;
     canvas.drawLine(const Offset(0, 0), handOffset, hourHandPaint);
   }
 
   /// draw second hand
   void _paintSecondHand(Canvas canvas, double radius, double strokeWidth) {
     double angle = _dateTime.second - 15.0;
-    Offset handOffset = Offset(cos(getRadians(angle * 6.0)) * radius,
-        sin(getRadians(angle * 6.0)) * radius);
-    final hourHandPaint = Paint()
-      ..color = secondHandColor
-      ..strokeWidth = strokeWidth;
+    Offset handOffset = Offset(
+      cos(getRadians(angle * 6.0)) * radius,
+      sin(getRadians(angle * 6.0)) * radius,
+    );
+    final hourHandPaint =
+        Paint()
+          ..color = secondHandColor
+          ..strokeWidth = strokeWidth;
     canvas.drawLine(const Offset(0, 0), handOffset, hourHandPaint);
   }
 

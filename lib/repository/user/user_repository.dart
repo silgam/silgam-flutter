@@ -18,11 +18,12 @@ class UserRepository {
   UserRepository(this._userApi);
 
   final UserApi _userApi;
-  final CollectionReference<User> _usersRef =
-      FirebaseFirestore.instance.collection('users').withConverter(
-            fromFirestore: (snapshot, _) => User.fromJson(snapshot.data()!),
-            toFirestore: (user, _) => user.toJson(),
-          );
+  final CollectionReference<User> _usersRef = FirebaseFirestore.instance
+      .collection('users')
+      .withConverter(
+        fromFirestore: (snapshot, _) => User.fromJson(snapshot.data()!),
+        toFirestore: (user, _) => user.toJson(),
+      );
 
   Future<Result<User, ApiFailure>> getMe() async {
     final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
@@ -38,9 +39,7 @@ class UserRepository {
       );
       final receipts = <Receipt>[];
       for (final receipt in me.receipts) {
-        receipts.add(receipt.copyWith(
-          createdAt: receipt.createdAt.toLocal(),
-        ));
+        receipts.add(receipt.copyWith(createdAt: receipt.createdAt.toLocal()));
       }
       me = me.copyWith(
         receipts: receipts,
@@ -124,7 +123,7 @@ class UserRepository {
       await _usersRef.doc(userId).update({
         'customSubjectNameMap': subjectNameMap.map(
           (key, value) => MapEntry(key.name, value),
-        )
+        ),
       });
       return const Result.success(unit);
     } on DioException catch (e) {

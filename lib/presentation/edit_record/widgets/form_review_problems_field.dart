@@ -99,8 +99,12 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
       name: widget.name,
       initialValue: widget.initialValue,
       builder: (field) {
-        final state = field as FormBuilderFieldState<
-            FormBuilderField<List<ReviewProblem>>, List<ReviewProblem>>;
+        final state =
+            field
+                as FormBuilderFieldState<
+                  FormBuilderField<List<ReviewProblem>>,
+                  List<ReviewProblem>
+                >;
 
         return GridView.extent(
           maxCrossAxisExtent: 400,
@@ -113,14 +117,16 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
             for (final problem in field.value ?? [])
               ReviewProblemCard(
                 problem: problem,
-                onTap: state.enabled
-                    ? () => _onReviewProblemCardTap(context, problem)
-                    : null,
+                onTap:
+                    state.enabled
+                        ? () => _onReviewProblemCardTap(context, problem)
+                        : null,
               ),
             _ReviewProblemAddCard(
-              onTap: state.enabled
-                  ? () => _onReviewProblemAddCardTap(context)
-                  : null,
+              onTap:
+                  state.enabled
+                      ? () => _onReviewProblemAddCardTap(context)
+                      : null,
             ),
           ],
         );
@@ -130,9 +136,7 @@ class _FormReviewProblemsFieldState extends State<FormReviewProblemsField> {
 }
 
 class _ReviewProblemAddCard extends StatelessWidget {
-  const _ReviewProblemAddCard({
-    required this.onTap,
-  });
+  const _ReviewProblemAddCard({required this.onTap});
 
   final GestureTapCallback? onTap;
 
@@ -149,11 +153,7 @@ class _ReviewProblemAddCard extends StatelessWidget {
           spacing: 4,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              CupertinoIcons.add,
-              size: 24,
-              color: Colors.grey.shade600,
-            ),
+            Icon(CupertinoIcons.add, size: 24, color: Colors.grey.shade600),
             Text(
               '추가하기',
               style: TextStyle(

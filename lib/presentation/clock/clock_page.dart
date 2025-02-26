@@ -31,10 +31,7 @@ class ClockPage extends StatefulWidget {
   static const routeName = '/clock';
   final Timetable timetable;
 
-  const ClockPage({
-    super.key,
-    required this.timetable,
-  });
+  const ClockPage({super.key, required this.timetable});
 
   @override
   State<ClockPage> createState() => _ClockPageState();
@@ -47,10 +44,14 @@ class _ClockPageState extends State<ClockPage> {
   final TransformationController _clockTransformController =
       TransformationController();
   final ScrollController _timelineController = ScrollController();
-  late final List<GlobalKey> _timelineTileKeys =
-      List.generate(_cubit.state.breakpoints.length, (index) => GlobalKey());
+  late final List<GlobalKey> _timelineTileKeys = List.generate(
+    _cubit.state.breakpoints.length,
+    (index) => GlobalKey(),
+  );
   late final List<GlobalKey> _timelineConnectorKeys = List.generate(
-      _cubit.state.breakpoints.length - 1, (index) => GlobalKey());
+    _cubit.state.breakpoints.length - 1,
+    (index) => GlobalKey(),
+  );
 
   InterstitialAd? _interstitialAd;
   bool get _isSmallHeightScreen => MediaQuery.of(context).size.height < 600;
@@ -80,8 +81,10 @@ class _ClockPageState extends State<ClockPage> {
     return BlocProvider(
       create: (context) => _cubit,
       child: BlocConsumer<ClockCubit, ClockState>(
-        listenWhen: (previous, current) =>
-            previous.currentBreakpointIndex != current.currentBreakpointIndex,
+        listenWhen:
+            (previous, current) =>
+                previous.currentBreakpointIndex !=
+                current.currentBreakpointIndex,
         listener: (context, state) {
           _animateTimeline(state.currentBreakpointIndex);
         },
@@ -113,41 +116,42 @@ class _ClockPageState extends State<ClockPage> {
                           vertical: MediaQuery.of(context).size.height,
                         ),
                         child: Center(
-                          child: WristWatch(
-                            clockTime: state.currentTime,
-                          ),
+                          child: WristWatch(clockTime: state.currentTime),
                         ),
                       ),
                       Visibility(
                         visible: state.isUiVisible,
                         child: Container(
-                          width: state.isFinished && !_isSmallHeightScreen
-                              ? double.infinity
-                              : null,
+                          width:
+                              state.isFinished && !_isSmallHeightScreen
+                                  ? double.infinity
+                                  : null,
                           margin: EdgeInsets.symmetric(
                             horizontal: state.isFinished ? 20 : 8,
-                            vertical: state.isFinished && _isSmallHeightScreen
-                                ? 12
-                                : 0,
+                            vertical:
+                                state.isFinished && _isSmallHeightScreen
+                                    ? 12
+                                    : 0,
                           ),
-                          child: state.isFinished
-                              ? OutlinedButton(
-                                  onPressed: _onFinishButtonPressed,
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    side: const BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
+                          child:
+                              state.isFinished
+                                  ? OutlinedButton(
+                                    onPressed: _onFinishButtonPressed,
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      side: const BorderSide(
+                                        color: Colors.white,
+                                        width: 1,
+                                      ),
                                     ),
+                                    child: const Text('시험 종료'),
+                                  )
+                                  : IconButton(
+                                    splashRadius: 20,
+                                    icon: const Icon(Icons.close),
+                                    onPressed: _onFinishButtonPressed,
+                                    color: Colors.white,
                                   ),
-                                  child: const Text('시험 종료'),
-                                )
-                              : IconButton(
-                                  splashRadius: 20,
-                                  icon: const Icon(Icons.close),
-                                  onPressed: _onFinishButtonPressed,
-                                  color: Colors.white,
-                                ),
                         ),
                       ),
                       _buildBackgroundUi(state.isUiVisible),
@@ -157,10 +161,7 @@ class _ClockPageState extends State<ClockPage> {
                         top: 12,
                         child: Visibility(
                           visible: !state.isUiVisible,
-                          child: Icon(
-                            Icons.lock,
-                            color: Colors.grey.shade800,
-                          ),
+                          child: Icon(Icons.lock, color: Colors.grey.shade800),
                         ),
                       ),
                       if (!state.isStarted) _buildScreenOverlay(),
@@ -203,10 +204,7 @@ class _ClockPageState extends State<ClockPage> {
                 maintainAnimation: true,
                 child: Flex(
                   direction: direction,
-                  children: [
-                    _buildTimeline(),
-                    _buildNavigator(),
-                  ],
+                  children: [_buildTimeline(), _buildNavigator()],
                 ),
               ),
               if (_appCubit.useLapTime) _buildLapTimeButton(direction),
@@ -218,7 +216,8 @@ class _ClockPageState extends State<ClockPage> {
   }
 
   Widget _buildExamTitle() {
-    final isLastBreakpoint = _cubit.state.currentBreakpointIndex ==
+    final isLastBreakpoint =
+        _cubit.state.currentBreakpointIndex ==
         _cubit.state.breakpoints.length - 1;
 
     final String badge;
@@ -230,11 +229,16 @@ class _ClockPageState extends State<ClockPage> {
       if (_cubit.state.currentBreakpoint.announcement.time.type ==
           RelativeTimeType.afterFinish) {
         final currentNumber = _cubit.state.currentExam.number;
-        final nextNumber = _cubit.state
-            .breakpoints[_cubit.state.currentBreakpointIndex + 1].exam.number;
-        badge = currentNumber == nextNumber
-            ? '$currentNumber교시'
-            : '$nextNumber교시 전';
+        final nextNumber =
+            _cubit
+                .state
+                .breakpoints[_cubit.state.currentBreakpointIndex + 1]
+                .exam
+                .number;
+        badge =
+            currentNumber == nextNumber
+                ? '$currentNumber교시'
+                : '$nextNumber교시 전';
         title = '쉬는 시간';
       } else {
         badge = '${_cubit.state.currentExam.number}교시';
@@ -296,9 +300,10 @@ class _ClockPageState extends State<ClockPage> {
           physics: const ClampingScrollPhysics(),
           child: Flex(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: direction == Axis.horizontal
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.center,
+            crossAxisAlignment:
+                direction == Axis.horizontal
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.center,
             direction: direction,
             children: _buildTimelineTiles(direction),
           ),
@@ -317,18 +322,21 @@ class _ClockPageState extends State<ClockPage> {
       // Tile
       final time =
           '${breakpoint.time.hour}:${breakpoint.time.minute.toString().padLeft(2, '0')}';
-      tiles.add(TimelineTile(
-        key: _timelineTileKeys[index],
-        onTap: () => _cubit.onBreakpointTap(index),
-        examName: widget.timetable.items.length > 1 && breakpoint.isFirstInExam
-            ? breakpoint.exam.name
-            : null,
-        time: time,
-        title: breakpoint.title,
-        color: Color(breakpoint.exam.color),
-        direction: direction,
-        disabled: disabled,
-      ));
+      tiles.add(
+        TimelineTile(
+          key: _timelineTileKeys[index],
+          onTap: () => _cubit.onBreakpointTap(index),
+          examName:
+              widget.timetable.items.length > 1 && breakpoint.isFirstInExam
+                  ? breakpoint.exam.name
+                  : null,
+          time: time,
+          title: breakpoint.title,
+          color: Color(breakpoint.exam.color),
+          direction: direction,
+          disabled: disabled,
+        ),
+      );
 
       // Connector
       if (index == state.breakpoints.length - 1) return;
@@ -339,29 +347,36 @@ class _ClockPageState extends State<ClockPage> {
       if (disabled) {
         progress = 0;
       } else if (index == state.currentBreakpointIndex) {
-        progress = state.currentTime.difference(breakpoint.time).inSeconds /
+        progress =
+            state.currentTime.difference(breakpoint.time).inSeconds /
             duration.inSeconds;
       }
 
-      final markerPositions = state.lapTimes
-          .where((lapTime) =>
-              lapTime.time.isAtSameMomentAs(breakpoint.time) ||
-              lapTime.time.isAfter(breakpoint.time) &&
-                  lapTime.time.isBefore(nextBreakpoint.time))
-          .map((lapTime) {
-        final lapTimeProgress =
-            lapTime.time.difference(breakpoint.time).inSeconds /
-                duration.inSeconds;
-        return lapTimeProgress;
-      }).toList();
+      final markerPositions =
+          state.lapTimes
+              .where(
+                (lapTime) =>
+                    lapTime.time.isAtSameMomentAs(breakpoint.time) ||
+                    lapTime.time.isAfter(breakpoint.time) &&
+                        lapTime.time.isBefore(nextBreakpoint.time),
+              )
+              .map((lapTime) {
+                final lapTimeProgress =
+                    lapTime.time.difference(breakpoint.time).inSeconds /
+                    duration.inSeconds;
+                return lapTimeProgress;
+              })
+              .toList();
 
-      tiles.add(TimelineConnector(
-        duration.inMinutes,
-        progress,
-        direction: direction,
-        markerPositions: markerPositions,
-        key: _timelineConnectorKeys[index],
-      ));
+      tiles.add(
+        TimelineConnector(
+          duration.inMinutes,
+          progress,
+          direction: direction,
+          markerPositions: markerPositions,
+          key: _timelineConnectorKeys[index],
+        ),
+      );
     });
     return tiles;
   }
@@ -384,9 +399,10 @@ class _ClockPageState extends State<ClockPage> {
         ),
         IconButton(
           onPressed: _cubit.onPausePlayButtonPressed,
-          icon: _cubit.state.isRunning
-              ? const Icon(Icons.pause)
-              : const Icon(Icons.play_arrow),
+          icon:
+              _cubit.state.isRunning
+                  ? const Icon(Icons.pause)
+                  : const Icon(Icons.play_arrow),
           color: Colors.grey.shade700,
           splashRadius: 20,
         ),
@@ -410,15 +426,10 @@ class _ClockPageState extends State<ClockPage> {
         onPressed: _cubit.onLapTimeButtonPressed,
         style: ButtonStyle(
           side: WidgetStateProperty.all(
-            BorderSide(
-              color: Colors.grey.shade700,
-              width: 1,
-            ),
+            BorderSide(color: Colors.grey.shade700, width: 1),
           ),
           shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(1000),
-            ),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(1000)),
           ),
           visualDensity: const VisualDensity(
             horizontal: VisualDensity.minimumDensity,
@@ -431,13 +442,9 @@ class _ClockPageState extends State<ClockPage> {
             ),
           ),
           foregroundColor: WidgetStateProperty.all(Colors.grey.shade700),
-          overlayColor: WidgetStateProperty.all(
-            Colors.white.withAlpha(102),
-          ),
+          overlayColor: WidgetStateProperty.all(Colors.white.withAlpha(102)),
         ),
-        child: Text(
-          direction == Axis.vertical ? 'LAP' : 'L\nA\nP',
-        ),
+        child: Text(direction == Axis.vertical ? 'LAP' : 'L\nA\nP'),
       ),
     );
   }
@@ -477,10 +484,7 @@ class _ClockPageState extends State<ClockPage> {
                 const Spacer(),
                 const Text(
                   '화면을 터치하면 시작합니다',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 Expanded(
                   child: Column(
@@ -495,7 +499,7 @@ class _ClockPageState extends State<ClockPage> {
                             : '시험 시작 후 화면을 터치하면 시계만 보이게 할 수 있어요.',
                         '화면 속 시계는 터치를 통해 확대/축소하고 위치를 바꿀 수 있어요.',
                         '화면을 길게 누르면 시계가 기본 위치와 크기로 돌아가요.',
-                        '화면 하단의 타임라인에 글자를 누르면 각 지점으로 이동할 수 있어요.'
+                        '화면 하단의 타임라인에 글자를 누르면 각 지점으로 이동할 수 있어요.',
                       ].map(
                         (text) => BulletText(
                           text: text,
@@ -588,8 +592,9 @@ class _ClockPageState extends State<ClockPage> {
         'exam_names': widget.timetable.toExamNamesString(),
         'subject_names': widget.timetable.toSubjectNamesString(),
         'is_exam_finished': _cubit.state.isFinished,
-        'exam_ids':
-            widget.timetable.items.map((item) => item.exam.id).join(', '),
+        'exam_ids': widget.timetable.items
+            .map((item) => item.exam.id)
+            .join(', '),
         'isCustomExams': widget.timetable.items
             .map((item) => item.exam.isCustomExam)
             .join(', '),
@@ -640,8 +645,8 @@ class _ClockPageState extends State<ClockPage> {
         onAdLoaded: (InterstitialAd ad) {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (InterstitialAd ad) => ad.dispose(),
-            onAdFailedToShowFullScreenContent: (InterstitialAd ad, _) =>
-                ad.dispose(),
+            onAdFailedToShowFullScreenContent:
+                (InterstitialAd ad, _) => ad.dispose(),
           );
           _interstitialAd = ad;
         },

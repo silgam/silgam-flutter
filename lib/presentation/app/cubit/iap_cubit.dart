@@ -24,11 +24,8 @@ part 'iap_state.dart';
 
 @lazySingleton
 class IapCubit extends Cubit<IapState> {
-  IapCubit(
-    this._productRepository,
-    this._appCubit,
-    this._cacheManager,
-  ) : super(const IapState());
+  IapCubit(this._productRepository, this._appCubit, this._cacheManager)
+    : super(const IapState());
 
   final ProductRepository _productRepository;
   final CacheManager _cacheManager;
@@ -54,10 +51,7 @@ class IapCubit extends Cubit<IapState> {
   Future<void> startFreeTrialProcess(Product product) async {
     AnalyticsManager.logEvent(
       name: '[PurchasePage] Start free trial process start',
-      properties: {
-        'product_id': product.id,
-        'product_name': product.name,
-      },
+      properties: {'product_id': product.id, 'product_name': product.name},
     );
 
     final me = _appCubit.state.me;
@@ -85,10 +79,7 @@ class IapCubit extends Cubit<IapState> {
   Future<void> purchaseProduct(Product product) async {
     AnalyticsManager.logEvent(
       name: '[PurchasePage] Purchase process start',
-      properties: {
-        'product_id': product.id,
-        'product_name': product.name,
-      },
+      properties: {'product_id': product.id, 'product_name': product.name},
     );
 
     final me = _appCubit.state.me;
@@ -173,8 +164,9 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> _startFreeTrialIos(Product product) async {
-    final trialProductDetailResponse =
-        await _iap.queryProductDetails({'${product.id}_trial'});
+    final trialProductDetailResponse = await _iap.queryProductDetails({
+      '${product.id}_trial',
+    });
 
     if (trialProductDetailResponse.error != null ||
         trialProductDetailResponse.productDetails.isEmpty) {
@@ -203,8 +195,9 @@ class IapCubit extends Cubit<IapState> {
   }
 
   Future<void> _startFreeTrial(Product product) async {
-    final startTrialResult =
-        await _productRepository.startTrial(productId: product.id);
+    final startTrialResult = await _productRepository.startTrial(
+      productId: product.id,
+    );
 
     if (startTrialResult.isError()) {
       emit(state.copyWith(isLoading: false));
@@ -225,10 +218,7 @@ class IapCubit extends Cubit<IapState> {
 
     AnalyticsManager.logEvent(
       name: '[PurchasePage] Start free trial process success',
-      properties: {
-        'product_id': product.id,
-        'product_name': product.name,
-      },
+      properties: {'product_id': product.id, 'product_name': product.name},
     );
 
     emit(state.copyWith(isLoading: false));
@@ -240,13 +230,17 @@ class IapCubit extends Cubit<IapState> {
     for (final purchaseDetails in purchaseDetailsList) {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
-          log('[PurchaseCubit] status.pending: ${purchaseDetails.verificationData.serverVerificationData}');
+          log(
+            '[PurchaseCubit] status.pending: ${purchaseDetails.verificationData.serverVerificationData}',
+          );
           if (purchaseDetails.pendingCompletePurchase) {
             await _onPurchased(purchaseDetails);
           }
           break;
         case PurchaseStatus.purchased:
-          log('[PurchaseCubit] status.purchased: ${purchaseDetails.verificationData.serverVerificationData}');
+          log(
+            '[PurchaseCubit] status.purchased: ${purchaseDetails.verificationData.serverVerificationData}',
+          );
           if (purchaseDetails.pendingCompletePurchase) {
             await _onPurchased(purchaseDetails);
           }
@@ -268,9 +262,7 @@ class IapCubit extends Cubit<IapState> {
           log('[PurchaseCubit] status.canceled');
           AnalyticsManager.logEvent(
             name: '[PurchasePage] Purchase process failed',
-            properties: {
-              'reason': 'Purchase canceled',
-            },
+            properties: {'reason': 'Purchase canceled'},
           );
           if (Platform.isIOS) {
             await _iap.completePurchase(purchaseDetails);
@@ -278,7 +270,9 @@ class IapCubit extends Cubit<IapState> {
           emit(state.copyWith(isLoading: false));
           break;
         case PurchaseStatus.restored:
-          log('[PurchaseCubit] status.restored: ${purchaseDetails.verificationData.serverVerificationData}');
+          log(
+            '[PurchaseCubit] status.restored: ${purchaseDetails.verificationData.serverVerificationData}',
+          );
           if (purchaseDetails.pendingCompletePurchase) {
             await _onPurchased(purchaseDetails);
           }
@@ -309,9 +303,11 @@ class IapCubit extends Cubit<IapState> {
     );
 
     if (purchaseDetails.productID.contains('_trial')) {
-      await _startFreeTrial(state.products.firstWhere(
-        (product) => product.id == purchaseDetails.productID.split('_').first,
-      ));
+      await _startFreeTrial(
+        state.products.firstWhere(
+          (product) => product.id == purchaseDetails.productID.split('_').first,
+        ),
+      );
       return;
     }
 
@@ -382,15 +378,14 @@ class IapCubit extends Cubit<IapState> {
   Future<void> _onProductsChange(List<Product> products) async {
     final today = DateTime.now();
     final versionNumber = await _getVersionNumber();
-    final sellingProduct = products.firstWhereOrNull((e) =>
-        e.sellingStartDate.isBefore(today) &&
-        e.sellingEndDate.isAfter(today) &&
-        e.minVersionNumber <= versionNumber &&
-        e.id != ProductId.free);
-    emit(state.copyWith(
-      sellingProduct: sellingProduct,
-      products: products,
-    ));
+    final sellingProduct = products.firstWhereOrNull(
+      (e) =>
+          e.sellingStartDate.isBefore(today) &&
+          e.sellingEndDate.isAfter(today) &&
+          e.minVersionNumber <= versionNumber &&
+          e.id != ProductId.free,
+    );
+    emit(state.copyWith(sellingProduct: sellingProduct, products: products));
     _appCubit.updateProductBenefit();
 
     if (!kIsWeb && sellingProduct != null) {

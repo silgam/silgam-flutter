@@ -7,13 +7,11 @@ import '../app/cubit/iap_cubit.dart';
 import '../purchase/purchase_page.dart';
 import 'custom_card.dart';
 
-Widget buildPurchaseButtonOr({
-  EdgeInsetsGeometry? margin,
-  bool expand = true,
-}) {
+Widget buildPurchaseButtonOr({EdgeInsetsGeometry? margin, bool expand = true}) {
   return BlocBuilder<IapCubit, IapState>(
-    buildWhen: (previous, current) =>
-        previous.sellingProduct != current.sellingProduct,
+    buildWhen:
+        (previous, current) =>
+            previous.sellingProduct != current.sellingProduct,
     builder: (context, state) {
       final sellingProduct = state.sellingProduct;
       if (sellingProduct == null) {
@@ -64,10 +62,7 @@ class _PurchaseButton extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 '${product.name} 확인하기',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
+                style: const TextStyle(fontSize: 14, color: Colors.white),
               ),
               if (expand) const Spacer(),
               if (!expand) const SizedBox(width: 12),

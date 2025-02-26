@@ -98,10 +98,7 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: const [0, 660 / 1062],
-              colors: [
-                Colors.black.withAlpha(204),
-                Colors.black.withAlpha(0),
-              ],
+              colors: [Colors.black.withAlpha(204), Colors.black.withAlpha(0)],
             ),
           ),
           child: Image.asset(
@@ -148,9 +145,10 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
         builder: (context, state) {
           return CustomFilledButton(
             onPressed: _onBottomButtonTap,
-            label: state.productBenefit.isCustomExamAvailable
-                ? '나만의 과목 만들어보기'
-                : '실감패스 구매하러 가기',
+            label:
+                state.productBenefit.isCustomExamAvailable
+                    ? '나만의 과목 만들어보기'
+                    : '실감패스 구매하러 가기',
           );
         },
       ),
@@ -183,9 +181,10 @@ class _CustomExamGuidePageState extends State<CustomExamGuidePage> {
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              color: _isMenuBarTransparent
-                  ? Colors.transparent
-                  : Theme.of(context).primaryColor,
+              color:
+                  _isMenuBarTransparent
+                      ? Colors.transparent
+                      : Theme.of(context).primaryColor,
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).padding.top,
                 left: MediaQuery.of(context).padding.left,

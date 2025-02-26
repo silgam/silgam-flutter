@@ -17,7 +17,7 @@ part 'onboarding_state.dart';
 @lazySingleton
 class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit(this._onboardingRepository, this._sharedPreferences)
-      : super(const OnboardingState());
+    : super(const OnboardingState());
 
   final OnboardingRepository _onboardingRepository;
   final SharedPreferences _sharedPreferences;
@@ -41,9 +41,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       final joinPaths = joinPathsResult.tryGetSuccess() ?? [];
       if (joinPaths.isEmpty) return false;
 
-      emit(state.copyWith(
-        joinPaths: joinPaths,
-      ));
+      emit(state.copyWith(joinPaths: joinPaths));
       return true;
     } catch (e) {
       log('initialize timeout', name: 'OnboardingCubit.initialize');
@@ -64,21 +62,15 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         nextStep = OnboardingStep.finished;
         break;
     }
-    emit(state.copyWith(
-      step: nextStep,
-    ));
+    emit(state.copyWith(step: nextStep));
     AnalyticsManager.logEvent(
       name: '[Onboarding] Next',
-      properties: {
-        'next_step': nextStep.toString(),
-      },
+      properties: {'next_step': nextStep.toString()},
     );
   }
 
   void skip() {
-    emit(state.copyWith(
-      step: OnboardingStep.finished,
-    ));
+    emit(state.copyWith(step: OnboardingStep.finished));
     _onboardingRepository.submitJoinPaths(
       isSkipped: true,
       joinPathIds: [],
@@ -88,9 +80,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void submitJoinPath({required String otherJoinPath}) {
-    emit(state.copyWith(
-      step: OnboardingStep.finished,
-    ));
+    emit(state.copyWith(step: OnboardingStep.finished));
     _onboardingRepository.submitJoinPaths(
       isSkipped: false,
       joinPathIds: state.selectedJoinPathIds,
@@ -112,8 +102,6 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     } else {
       selectedJoinPathIds.add(joinPath.id);
     }
-    emit(state.copyWith(
-      selectedJoinPathIds: selectedJoinPathIds,
-    ));
+    emit(state.copyWith(selectedJoinPathIds: selectedJoinPathIds));
   }
 }

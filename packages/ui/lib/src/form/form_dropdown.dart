@@ -22,9 +22,9 @@ class FormDropdown<T> extends StatelessWidget {
       items: items,
       initialValue: initialValue,
       onChanged: onChanged,
-      style: TextTheme.of(context).titleMedium?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
+      style: TextTheme.of(
+        context,
+      ).titleMedium?.copyWith(overflow: TextOverflow.ellipsis),
       decoration: InputDecoration(
         hintStyle: TextStyle(color: Colors.grey.shade500),
         contentPadding: const EdgeInsets.all(12),
@@ -36,8 +36,10 @@ class FormDropdown<T> extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(6)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide:
-              BorderSide(width: 0.5, color: Theme.of(context).primaryColor),
+          borderSide: BorderSide(
+            width: 0.5,
+            color: Theme.of(context).primaryColor,
+          ),
           borderRadius: const BorderRadius.all(Radius.circular(6)),
         ),
         errorBorder: const OutlineInputBorder(

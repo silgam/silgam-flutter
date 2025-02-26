@@ -37,8 +37,10 @@ class TimelineTile extends StatelessWidget {
     }
 
     return Transform.translate(
-      offset:
-          Offset(0, smallText != null && direction == Axis.horizontal ? 10 : 0),
+      offset: Offset(
+        0,
+        smallText != null && direction == Axis.horizontal ? 10 : 0,
+      ),
       child: InkWell(
         onTap: _onTap,
         splashColor: Colors.transparent,
@@ -180,34 +182,34 @@ class TimelineConnector extends StatelessWidget {
           Expanded(
             flex: unsetHeight ? 0 : 1,
             child: Stack(
-              children: markerPositions
-                  .map(
-                    (position) => Flex(
-                      direction: direction,
-                      children: [
-                        if (position > 0)
-                          Spacer(
-                            flex: (position * 100000000).toInt(),
-                          ),
-                        RotatedBox(
-                          quarterTurns: direction == Axis.horizontal ? 0 : -1,
-                          child: TimelineMarker(
-                            width: _markerWidth,
-                            height: _markerHeight,
-                            color: _getTimelineColor(
-                              position > progress,
-                              enabledColor: enabledColor,
+              children:
+                  markerPositions
+                      .map(
+                        (position) => Flex(
+                          direction: direction,
+                          children: [
+                            if (position > 0)
+                              Spacer(flex: (position * 100000000).toInt()),
+                            RotatedBox(
+                              quarterTurns:
+                                  direction == Axis.horizontal ? 0 : -1,
+                              child: TimelineMarker(
+                                width: _markerWidth,
+                                height: _markerHeight,
+                                color: _getTimelineColor(
+                                  position > progress,
+                                  enabledColor: enabledColor,
+                                ),
+                              ),
                             ),
-                          ),
+                            if (position < 1)
+                              Spacer(
+                                flex: ((1 - position) * 100000000).toInt(),
+                              ),
+                          ],
                         ),
-                        if (position < 1)
-                          Spacer(
-                            flex: ((1 - position) * 100000000).toInt(),
-                          ),
-                      ],
-                    ),
-                  )
-                  .toList(),
+                      )
+                      .toList(),
             ),
           ),
           Container(
@@ -219,14 +221,8 @@ class TimelineConnector extends StatelessWidget {
                 begin: begin,
                 end: end,
                 colors: [
-                  _getTimelineColor(
-                    false,
-                    enabledColor: enabledColor,
-                  ),
-                  _getTimelineColor(
-                    true,
-                    enabledColor: enabledColor,
-                  )
+                  _getTimelineColor(false, enabledColor: enabledColor),
+                  _getTimelineColor(true, enabledColor: enabledColor),
                 ],
                 stops: [progress, progress],
               ),
@@ -239,10 +235,7 @@ class TimelineConnector extends StatelessWidget {
   }
 }
 
-Color _getTimelineColor(
-  bool disabled, {
-  Color enabledColor = Colors.white,
-}) {
+Color _getTimelineColor(bool disabled, {Color enabledColor = Colors.white}) {
   if (disabled) return Colors.grey[700]!;
   return enabledColor;
 }

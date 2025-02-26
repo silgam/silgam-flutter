@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum TextButtonVariant {
-  primary,
-  secondary,
-  destructive,
-}
+enum TextButtonVariant { primary, secondary, destructive }
 
 class CustomTextButton extends StatelessWidget {
   const CustomTextButton._({
@@ -18,37 +14,34 @@ class CustomTextButton extends StatelessWidget {
     Key? key,
     required String text,
     VoidCallback? onPressed,
-  }) =>
-      CustomTextButton._(
-        key: key,
-        variant: TextButtonVariant.primary,
-        text: text,
-        onPressed: onPressed,
-      );
+  }) => CustomTextButton._(
+    key: key,
+    variant: TextButtonVariant.primary,
+    text: text,
+    onPressed: onPressed,
+  );
 
   factory CustomTextButton.secondary({
     Key? key,
     required String text,
     VoidCallback? onPressed,
-  }) =>
-      CustomTextButton._(
-        key: key,
-        variant: TextButtonVariant.secondary,
-        text: text,
-        onPressed: onPressed,
-      );
+  }) => CustomTextButton._(
+    key: key,
+    variant: TextButtonVariant.secondary,
+    text: text,
+    onPressed: onPressed,
+  );
 
   factory CustomTextButton.destructive({
     Key? key,
     required String text,
     VoidCallback? onPressed,
-  }) =>
-      CustomTextButton._(
-        key: key,
-        variant: TextButtonVariant.destructive,
-        text: text,
-        onPressed: onPressed,
-      );
+  }) => CustomTextButton._(
+    key: key,
+    variant: TextButtonVariant.destructive,
+    text: text,
+    onPressed: onPressed,
+  );
 
   final TextButtonVariant variant;
   final String text;
@@ -67,11 +60,11 @@ class CustomTextButton extends StatelessWidget {
     return switch (variant) {
       TextButtonVariant.primary => null,
       TextButtonVariant.secondary => TextButton.styleFrom(
-          foregroundColor: Colors.grey.shade600,
-        ),
+        foregroundColor: Colors.grey.shade600,
+      ),
       TextButtonVariant.destructive => TextButton.styleFrom(
-          foregroundColor: Colors.red,
-        ),
+        foregroundColor: Colors.red,
+      ),
     };
   }
 }

@@ -13,7 +13,5 @@ abstract class FeedbackApi {
   factory FeedbackApi(Dio dio) = _FeedbackApi;
 
   @POST('/feedback')
-  Future<void> sendFeedback(
-    @Body() SendFeedbackRequestDto request,
-  );
+  Future<void> sendFeedback(@Body() SendFeedbackRequestDto request);
 }

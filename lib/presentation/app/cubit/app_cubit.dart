@@ -103,10 +103,12 @@ class AppCubit extends Cubit<AppState> {
     final productBenefit =
         state.me?.activeProduct.benefit ?? freeProductBenefit;
 
-    emit(state.copyWith(
-      productBenefit: productBenefit,
-      freeProductBenefit: freeProductBenefit,
-    ));
+    emit(
+      state.copyWith(
+        productBenefit: productBenefit,
+        freeProductBenefit: freeProductBenefit,
+      ),
+    );
     log('Update product benefit: ${state.productBenefit}', name: 'AppCubit');
   }
 
@@ -118,9 +120,7 @@ class AppCubit extends Cubit<AppState> {
         FirebaseFirestore.instance.enableNetwork();
       }
 
-      emit(state.copyWith(
-        isOffline: isOffline,
-      ));
+      emit(state.copyWith(isOffline: isOffline));
       onUserChange();
       getIt.get<IapCubit>().initialize();
       getIt.get<MainCubit>().initialize();
@@ -164,11 +164,11 @@ class AppCubit extends Cubit<AppState> {
         userId: updatedMe.id,
         fcmToken: fcmToken,
       );
-      emit(state.copyWith(
-        me: updatedMe.copyWith(
-          fcmTokens: [...updatedMe.fcmTokens, fcmToken],
+      emit(
+        state.copyWith(
+          me: updatedMe.copyWith(fcmTokens: [...updatedMe.fcmTokens, fcmToken]),
         ),
-      ));
+      );
       log('fcmToken added', name: 'AppCubit');
     }
   }

@@ -5,9 +5,7 @@ part 'problem.g.dart';
 
 @freezed
 class WrongProblem with _$WrongProblem {
-  const factory WrongProblem(
-    int problemNumber,
-  ) = _WrongProblem;
+  const factory WrongProblem(int problemNumber) = _WrongProblem;
 
   factory WrongProblem.fromJson(Map<String, dynamic> json) =>
       _$WrongProblemFromJson(json);

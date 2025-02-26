@@ -91,10 +91,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          iconData,
-          size: 28,
-        ),
+        Icon(iconData, size: 28),
         const SizedBox(width: 8),
         Flexible(
           child: Column(
@@ -160,33 +157,33 @@ class _TimetableStartCardState extends State<TimetableStartCard>
               children: [
                 timetable.items.length > 1
                     ? _buildInfo(
-                        iconData: Icons.schedule,
-                        title: '총 시간',
-                        content:
-                            '${DateFormat.Hm().format(timetable.startTime)} ~ ${DateFormat.Hm().format(timetable.endTime)}',
-                        badgeText: timetable.duration.toKoreanString(),
-                      )
+                      iconData: Icons.schedule,
+                      title: '총 시간',
+                      content:
+                          '${DateFormat.Hm().format(timetable.startTime)} ~ ${DateFormat.Hm().format(timetable.endTime)}',
+                      badgeText: timetable.duration.toKoreanString(),
+                    )
                     : _buildInfo(
-                        iconData: Icons.schedule,
-                        title: '시험 시간',
-                        content:
-                            '${DateFormat.Hm().format(timetable.items.first.exam.startTime)} ~ ${DateFormat.Hm().format(timetable.items.first.exam.endTime)}',
-                        badgeText:
-                            '${timetable.items.first.exam.durationMinutes}분',
-                      ),
+                      iconData: Icons.schedule,
+                      title: '시험 시간',
+                      content:
+                          '${DateFormat.Hm().format(timetable.items.first.exam.startTime)} ~ ${DateFormat.Hm().format(timetable.items.first.exam.endTime)}',
+                      badgeText:
+                          '${timetable.items.first.exam.durationMinutes}분',
+                    ),
                 const SizedBox(height: 16),
                 timetable.items.length > 1
                     ? _buildInfo(
-                        iconData: Icons.style,
-                        title: '과목',
-                        content: timetable.toExamNamesString(),
-                      )
+                      iconData: Icons.style,
+                      title: '과목',
+                      content: timetable.toExamNamesString(),
+                    )
                     : _buildInfo(
-                        iconData: Icons.text_snippet_outlined,
-                        title: '문제 수 / 만점',
-                        content:
-                            '${timetable.items.first.exam.numberOfQuestions}문제 / ${timetable.items.first.exam.perfectScore}점',
-                      ),
+                      iconData: Icons.text_snippet_outlined,
+                      title: '문제 수 / 만점',
+                      content:
+                          '${timetable.items.first.exam.numberOfQuestions}문제 / ${timetable.items.first.exam.perfectScore}점',
+                    ),
               ],
             ),
           ),
@@ -198,10 +195,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF1E2A7C),
-                Color(0xFF283593),
-              ],
+              colors: [Color(0xFF1E2A7C), Color(0xFF283593)],
             ),
           ),
           child: InkWell(
@@ -239,10 +233,7 @@ class _TimetableStartCardState extends State<TimetableStartCard>
             child: Stack(
               alignment: AlignmentDirectional.bottomCenter,
               children: [
-                Container(
-                  height: 2,
-                  color: disabledColor,
-                ),
+                Container(height: 2, color: disabledColor),
                 TabBar(
                   controller: _tabController,
                   isScrollable: true,
@@ -250,13 +241,16 @@ class _TimetableStartCardState extends State<TimetableStartCard>
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
                   labelColor: Theme.of(context).primaryColor,
                   unselectedLabelColor: disabledColor,
-                  labelStyle:
-                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w900),
-                  unselectedLabelStyle:
-                      defaultTextStyle?.copyWith(fontWeight: FontWeight.w500),
-                  tabs: widget.timetables
-                      .map((timetable) => Tab(text: timetable.name))
-                      .toList(),
+                  labelStyle: defaultTextStyle?.copyWith(
+                    fontWeight: FontWeight.w900,
+                  ),
+                  unselectedLabelStyle: defaultTextStyle?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  tabs:
+                      widget.timetables
+                          .map((timetable) => Tab(text: timetable.name))
+                          .toList(),
                 ),
               ],
             ),

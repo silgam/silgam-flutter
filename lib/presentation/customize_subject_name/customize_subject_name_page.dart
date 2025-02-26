@@ -43,10 +43,8 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
     if (values == null) return;
 
     final Map<Subject, String> subjectNames = values.map(
-      (subject, subjectName) => MapEntry(
-        Subject.values.byName(subject),
-        subjectName,
-      ),
+      (subject, subjectName) =>
+          MapEntry(Subject.values.byName(subject), subjectName),
     );
 
     _cubit.save(subjectNames: subjectNames);
@@ -101,11 +99,9 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
 
   void _onSaved() {
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('과목 이름이 저장되었습니다.'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('과목 이름이 저장되었습니다.')));
   }
 
   void _onPopInvokedWithResult(bool didPop, _) {
@@ -144,7 +140,8 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
     return FormBuilder(
       key: _formKey,
       enabled: state.status != CustomizeSubjectNameStatus.saving,
-      canPop: !state.isFormChanged &&
+      canPop:
+          !state.isFormChanged &&
           state.status != CustomizeSubjectNameStatus.saving,
       onPopInvokedWithResult: _onPopInvokedWithResult,
       onChanged: _cubit.onFormChanged,

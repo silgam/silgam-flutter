@@ -37,21 +37,23 @@ class _RecordListViewState extends State<RecordListView> {
       child: MultiBlocListener(
         listeners: [
           BlocListener<HomeCubit, HomeState>(
-            listenWhen: (previous, current) =>
-                previous.tabIndex != current.tabIndex,
+            listenWhen:
+                (previous, current) => previous.tabIndex != current.tabIndex,
             listener: (context, state) {
-              final recordListTabIndex =
-                  HomePage.views.keys.toList().indexOf(RecordListView.title);
+              final recordListTabIndex = HomePage.views.keys.toList().indexOf(
+                RecordListView.title,
+              );
               if (state.tabIndex == recordListTabIndex) {
                 _cubit.refresh();
               }
             },
           ),
           BlocListener<AppCubit, AppState>(
-            listenWhen: (previous, current) =>
-                previous.me != current.me ||
-                previous.productBenefit != current.productBenefit ||
-                previous.isOffline != current.isOffline,
+            listenWhen:
+                (previous, current) =>
+                    previous.me != current.me ||
+                    previous.productBenefit != current.productBenefit ||
+                    previous.isOffline != current.isOffline,
             listener: (context, state) {
               _cubit.refresh();
             },
@@ -144,17 +146,15 @@ class _RecordListViewState extends State<RecordListView> {
                         onPressed: _cubit.onSortDateButtonTapped,
                         tooltip: '정렬',
                       ),
-                      const VerticalDivider(
-                        indent: 6,
-                        endIndent: 6,
-                      ),
-                      for (Exam exam
-                          in allExams.where((exam) => exam.name.isNotEmpty))
+                      const VerticalDivider(indent: 6, endIndent: 6),
+                      for (Exam exam in allExams.where(
+                        (exam) => exam.name.isNotEmpty,
+                      ))
                         ExamFilterChip(
                           exam: exam,
                           isSelected: state.selectedExamIds.contains(exam.id),
-                          onSelected: () =>
-                              _cubit.onExamFilterButtonTapped(exam),
+                          onSelected:
+                              () => _cubit.onExamFilterButtonTapped(exam),
                         ),
                       SizedBox(width: horizontalPadding),
                     ],
@@ -194,21 +194,16 @@ class _RecordListViewState extends State<RecordListView> {
     );
   }
 
-  Widget _buildListSection(
-    List<ExamRecord> records,
-  ) {
+  Widget _buildListSection(List<ExamRecord> records) {
     return SliverPadding(
       padding: const EdgeInsets.only(bottom: 12),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return RecordTile(
-              record: records[index],
-              onTileTap: () => _onTileTap(records[index]),
-            );
-          },
-          childCount: records.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return RecordTile(
+            record: records[index],
+            onTileTap: () => _onTileTap(records[index]),
+          );
+        }, childCount: records.length),
       ),
     );
   }
@@ -218,10 +213,7 @@ class _RecordListViewState extends State<RecordListView> {
       hasScrollBody: false,
       child: Align(
         alignment: Alignment.center,
-        child: Text(
-          '오른쪽 아래 버튼을 눌러 모의고사를 기록해보세요!',
-          textAlign: TextAlign.center,
-        ),
+        child: Text('오른쪽 아래 버튼을 눌러 모의고사를 기록해보세요!', textAlign: TextAlign.center),
       ),
     );
   }

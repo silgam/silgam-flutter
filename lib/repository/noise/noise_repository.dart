@@ -1,10 +1,7 @@
 import 'dart:math';
 
 enum NoisePreset {
-  disabled(
-    title: '사용 안함',
-    difficulty: 0,
-  ),
+  disabled(title: '사용 안함', difficulty: 0),
   easy(
     title: '조용한 분위기',
     difficulty: 1,
@@ -23,10 +20,7 @@ enum NoisePreset {
     description: '실제 시험장보다 시끄러운 분위기로 모래주머니 효과를 원하는 분들에게 추천해요.',
     backgroundImage: 'assets/noise_hard.png',
   ),
-  custom(
-    title: '직접 설정',
-    difficulty: 0,
-  );
+  custom(title: '직접 설정', difficulty: 0);
 
   const NoisePreset({
     required this.title,

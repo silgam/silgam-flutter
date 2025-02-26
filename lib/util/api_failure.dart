@@ -23,9 +23,7 @@ enum ApiFailureType {
   unauthorized(message: '인증에 실패했습니다. 다시 로그인해주세요.'),
   noNetwork(message: '인터넷 연결을 확인해주세요.');
 
-  const ApiFailureType({
-    required this.message,
-  });
+  const ApiFailureType({required this.message});
 
   final String message;
 }

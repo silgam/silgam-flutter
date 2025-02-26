@@ -24,27 +24,25 @@ class CustomFilledButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        textStyle: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
+        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         disabledBackgroundColor:
             isLoading ? Theme.of(context).primaryColor.withAlpha(180) : null,
         disabledForegroundColor: isLoading ? Colors.white : null,
       ),
-      child: isLoading
-          ? Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: const CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
+      child:
+          isLoading
+              ? Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
                 ),
-              ),
-            )
-          : Text(label),
+              )
+              : Text(label),
     );
   }
 }

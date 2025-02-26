@@ -63,28 +63,30 @@ class ScaffoldBody extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: 12, right: horizontalPadding),
                 alignment: Alignment.center,
-                child: Builder(builder: (context) {
-                  if (isRefreshing) {
-                    return const IconButton(
-                      onPressed: null,
-                      icon: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
+                child: Builder(
+                  builder: (context) {
+                    if (isRefreshing) {
+                      return const IconButton(
+                        onPressed: null,
+                        icon: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                    );
-                  } else {
-                    return IconButton(
-                      onPressed: _onRefresh,
-                      icon: const Icon(Icons.refresh),
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                    );
-                  }
-                }),
+                      );
+                    } else {
+                      return IconButton(
+                        onPressed: _onRefresh,
+                        icon: const Icon(Icons.refresh),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                      );
+                    }
+                  },
+                ),
               ),
           ],
           foregroundColor: Colors.black,
@@ -118,10 +120,7 @@ class ScaffoldBody extends StatelessWidget {
 class NonPaddingChildBuilder extends StatelessWidget {
   final Widget Function(double horizontalPadding) builder;
 
-  const NonPaddingChildBuilder({
-    super.key,
-    required this.builder,
-  });
+  const NonPaddingChildBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,4 @@ class DDay with _$DDay {
   factory DDay.fromJson(Map<String, dynamic> json) => _$DDayFromJson(json);
 }
 
-enum DDayType {
-  suneung,
-  mockTest,
-}
+enum DDayType { suneung, mockTest }

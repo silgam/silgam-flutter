@@ -51,10 +51,7 @@ class WelcomeView extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const Divider(
-                      height: 60,
-                      color: Colors.white38,
-                    ),
+                    const Divider(height: 60, color: Colors.white38),
                     _buildButton(
                       onTap: _cubit.next,
                       text: '실감을 처음 써봐요!',
@@ -103,10 +100,7 @@ class WelcomeView extends StatelessWidget {
         highlightColor: Colors.grey.withAlpha(60),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 14,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           child: Text(
             text,
             textAlign: TextAlign.center,

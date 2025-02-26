@@ -17,13 +17,10 @@ class DDayRepository {
   Future<Result<List<DDay>, ApiFailure>> getAllDDays() async {
     try {
       final ddays = await _ddayApi.getAllDDays();
-      final ddaysLocal = ddays
-          .map(
-            (dday) => dday.copyWith(
-              date: dday.date.toLocal(),
-            ),
-          )
-          .toList();
+      final ddaysLocal =
+          ddays
+              .map((dday) => dday.copyWith(date: dday.date.toLocal()))
+              .toList();
       return Result.success(ddaysLocal);
     } on DioException catch (e) {
       log(e.toString(), name: 'DDayRepository.getAllDDays');

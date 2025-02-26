@@ -29,7 +29,8 @@ class AppState with _$AppState {
       Exam(
         id: Subject.language.name,
         subject: Subject.language,
-        name: customSubjectNameMap?[Subject.language] ??
+        name:
+            customSubjectNameMap?[Subject.language] ??
             Subject.language.defaultName,
         number: 1,
         startTime: DateTimeBuilder.fromHourMinute(8, 40),
@@ -52,7 +53,8 @@ class AppState with _$AppState {
       Exam(
         id: Subject.english.name,
         subject: Subject.english,
-        name: customSubjectNameMap?[Subject.english] ??
+        name:
+            customSubjectNameMap?[Subject.english] ??
             Subject.english.defaultName,
         number: 3,
         startTime: DateTimeBuilder.fromHourMinute(13, 10),
@@ -64,7 +66,8 @@ class AppState with _$AppState {
       Exam(
         id: Subject.history.name,
         subject: Subject.history,
-        name: customSubjectNameMap?[Subject.history] ??
+        name:
+            customSubjectNameMap?[Subject.history] ??
             Subject.history.defaultName,
         number: 4,
         startTime: DateTimeBuilder.fromHourMinute(14, 50),
@@ -76,7 +79,8 @@ class AppState with _$AppState {
       Exam(
         id: Subject.investigation.name,
         subject: Subject.investigation,
-        name: customSubjectNameMap?[Subject.investigation] ??
+        name:
+            customSubjectNameMap?[Subject.investigation] ??
             Subject.investigation.defaultName,
         number: 4,
         startTime: DateTimeBuilder.fromHourMinute(15, 35),
@@ -88,7 +92,8 @@ class AppState with _$AppState {
       Exam(
         id: Subject.investigation2.name,
         subject: Subject.investigation2,
-        name: customSubjectNameMap?[Subject.investigation2] ??
+        name:
+            customSubjectNameMap?[Subject.investigation2] ??
             Subject.investigation2.defaultName,
         number: 4,
         startTime: DateTimeBuilder.fromHourMinute(16, 7),
@@ -100,7 +105,8 @@ class AppState with _$AppState {
       Exam(
         id: Subject.secondLanguage.name,
         subject: Subject.secondLanguage,
-        name: customSubjectNameMap?[Subject.secondLanguage] ??
+        name:
+            customSubjectNameMap?[Subject.secondLanguage] ??
             Subject.secondLanguage.defaultName,
         number: 5,
         startTime: DateTimeBuilder.fromHourMinute(17, 5),
@@ -117,24 +123,28 @@ class AppState with _$AppState {
   List<Timetable> getAllTimetables() {
     final allExams = getAllExams();
 
-    final timetables = allExams
-        .map((exam) => Timetable(
-              name: exam.name,
-              startTime: exam.timetableStartTime,
-              items: [
-                TimetableItem(exam: exam),
-              ],
-            ))
-        .toList();
+    final timetables =
+        allExams
+            .map(
+              (exam) => Timetable(
+                name: exam.name,
+                startTime: exam.timetableStartTime,
+                items: [TimetableItem(exam: exam)],
+              ),
+            )
+            .toList();
 
     final defaultInvestigationExam = allExams.firstWhere(
-        (exam) => exam.subject == Subject.investigation && !exam.isCustomExam);
+      (exam) => exam.subject == Subject.investigation && !exam.isCustomExam,
+    );
     final defaultInvestigation2Exam = allExams.firstWhere(
-        (exam) => exam.subject == Subject.investigation2 && !exam.isCustomExam);
+      (exam) => exam.subject == Subject.investigation2 && !exam.isCustomExam,
+    );
 
     timetables.insert(
-      allExams.indexWhere((exam) =>
-          exam.subject == Subject.investigation && !exam.isCustomExam),
+      allExams.indexWhere(
+        (exam) => exam.subject == Subject.investigation && !exam.isCustomExam,
+      ),
       Timetable(
         name: '탐구 연속',
         startTime: defaultInvestigationExam.timetableStartTime,
@@ -145,18 +155,22 @@ class AppState with _$AppState {
       ),
     );
 
-    final defaultExams = getDefaultExams()
-        .where((exam) => exam.subject.includeInAllSubjectsTimetable);
+    final defaultExams = getDefaultExams().where(
+      (exam) => exam.subject.includeInAllSubjectsTimetable,
+    );
     final Timetable allSubjectsTimetable = Timetable(
       name: '전과목',
       isAllSubjectsTimetable: true,
       startTime: defaultExams.first.timetableStartTime,
-      items: defaultExams
-          .map((exam) => TimetableItem(
-                exam: exam,
-                breakMinutesAfter: exam.subject.breakMinutesAfter,
-              ))
-          .toList(),
+      items:
+          defaultExams
+              .map(
+                (exam) => TimetableItem(
+                  exam: exam,
+                  breakMinutesAfter: exam.subject.breakMinutesAfter,
+                ),
+              )
+              .toList(),
     );
 
     timetables.insert(0, allSubjectsTimetable);
@@ -169,12 +183,11 @@ extension on Subject {
   bool get includeInAllSubjectsTimetable => this != Subject.secondLanguage;
 
   int get breakMinutesAfter => switch (this) {
-        Subject.language || Subject.english => 20,
-        Subject.math => 50,
-        Subject.history => 5,
-        Subject.investigation ||
-        Subject.investigation2 ||
-        Subject.secondLanguage =>
-          0,
-      };
+    Subject.language || Subject.english => 20,
+    Subject.math => 50,
+    Subject.history => 5,
+    Subject.investigation ||
+    Subject.investigation2 ||
+    Subject.secondLanguage => 0,
+  };
 }

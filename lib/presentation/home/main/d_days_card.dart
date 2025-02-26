@@ -50,10 +50,7 @@ class DDaysCard extends StatelessWidget {
           decoration: ShapeDecoration(
             shape: const StadiumBorder(),
             gradient: LinearGradient(
-              colors: [
-                primaryColor,
-                primaryColor.withAlpha(30),
-              ],
+              colors: [primaryColor, primaryColor.withAlpha(30)],
               stops: [dDayItem.progress, dDayItem.progress],
             ),
           ),

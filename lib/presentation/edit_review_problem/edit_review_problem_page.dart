@@ -30,10 +30,7 @@ class EditReviewProblemPageSave extends EditReviewProblemPageResult {
 class EditReviewProblemPageDelete extends EditReviewProblemPageResult {}
 
 class EditReviewProblemPage extends StatefulWidget {
-  const EditReviewProblemPage({
-    super.key,
-    this.reviewProblemToEdit,
-  });
+  const EditReviewProblemPage({super.key, this.reviewProblemToEdit});
 
   final ReviewProblem? reviewProblemToEdit;
 
@@ -152,10 +149,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   void _onImageRemove(String imagePath) {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진을 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사진을 삭제할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -167,10 +161,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   void _onImageAddButtonTap() async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진을 추가할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사진을 추가할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -234,10 +225,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
                         },
                       )
                     else
-                      Image.file(
-                        File(imagePath),
-                        fit: BoxFit.cover,
-                      ),
+                      Image.file(File(imagePath), fit: BoxFit.cover),
                     Positioned(
                       top: 8,
                       right: 8,
@@ -309,8 +297,10 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
               textInputAction: TextInputAction.next,
               validator: FormBuilderValidators.compose([
                 FormBuilderValidators.required(errorText: '제목을 입력해주세요.'),
-                FormBuilderValidators.maxLength(100,
-                    errorText: '100자 이하로 입력해주세요.'),
+                FormBuilderValidators.maxLength(
+                  100,
+                  errorText: '100자 이하로 입력해주세요.',
+                ),
               ]),
             ),
           ),

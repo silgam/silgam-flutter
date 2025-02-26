@@ -18,10 +18,7 @@ class SaveImagePage extends StatefulWidget {
   static const routeName = '/record_detail/save_image';
   final ExamRecord examRecord;
 
-  const SaveImagePage({
-    super.key,
-    required this.examRecord,
-  });
+  const SaveImagePage({super.key, required this.examRecord});
 
   @override
   State<SaveImagePage> createState() => _SaveImagePageState();
@@ -62,9 +59,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
           onPressed: onSaveButtonPressed,
         ),
       ],
-      child: SingleChildScrollView(
-        child: _buildBody(),
-      ),
+      child: SingleChildScrollView(child: _buildBody()),
     );
   }
 
@@ -72,14 +67,11 @@ class _SaveImagePageState extends State<SaveImagePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Divider(
-          color: Colors.grey.shade300,
-          height: 0.5,
-          thickness: 0.5,
-        ),
+        Divider(color: Colors.grey.shade300, height: 0.5, thickness: 0.5),
         MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: const TextScaler.linear(1)),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1)),
           child: FittedBox(
             child: Screenshot(
               controller: _screenshotController,
@@ -87,11 +79,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
             ),
           ),
         ),
-        Divider(
-          color: Colors.grey.shade300,
-          height: 0.5,
-          thickness: 0.5,
-        ),
+        Divider(color: Colors.grey.shade300, height: 0.5, thickness: 0.5),
         const SizedBox(height: 8),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -103,37 +91,42 @@ class _SaveImagePageState extends State<SaveImagePage> {
               _ChoiceChip(
                 label: '점수',
                 selected: showScore,
-                onSelected: (value) => setState(() {
-                  showScore = value;
-                }),
+                onSelected:
+                    (value) => setState(() {
+                      showScore = value;
+                    }),
               ),
               _ChoiceChip(
                 label: '등급',
                 selected: showGrade,
-                onSelected: (value) => setState(() {
-                  showGrade = value;
-                }),
+                onSelected:
+                    (value) => setState(() {
+                      showGrade = value;
+                    }),
               ),
               _ChoiceChip(
                 label: '시간',
                 selected: showDuration,
-                onSelected: (value) => setState(() {
-                  showDuration = value;
-                }),
+                onSelected:
+                    (value) => setState(() {
+                      showDuration = value;
+                    }),
               ),
               _ChoiceChip(
                 label: '틀린 문제',
                 selected: showWrongProblems,
-                onSelected: (value) => setState(() {
-                  showWrongProblems = value;
-                }),
+                onSelected:
+                    (value) => setState(() {
+                      showWrongProblems = value;
+                    }),
               ),
               _ChoiceChip(
                 label: '피드백',
                 selected: showFeedback,
-                onSelected: (value) => setState(() {
-                  showFeedback = value;
-                }),
+                onSelected:
+                    (value) => setState(() {
+                      showFeedback = value;
+                    }),
               ),
               const SizedBox(width: 12),
             ],
@@ -157,9 +150,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
       height: 390,
       clipBehavior: Clip.hardEdge,
       alignment: Alignment.bottomCenter,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-      ),
+      decoration: BoxDecoration(color: Colors.grey.shade50),
       child: FractionallySizedBox(
         widthFactor: 0.8,
         heightFactor: 0.87,
@@ -188,8 +179,9 @@ class _SaveImagePageState extends State<SaveImagePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
-                  DateFormat.yMEd('ko_KR')
-                      .format(widget.examRecord.examStartedTime),
+                  DateFormat.yMEd(
+                    'ko_KR',
+                  ).format(widget.examRecord.examStartedTime),
                   style: const TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.w700,
@@ -224,8 +216,9 @@ class _SaveImagePageState extends State<SaveImagePage> {
               ),
               const SizedBox(height: 2),
               Divider(
-                  color: Theme.of(context).primaryColor,
-                  thickness: _strokeWidth),
+                color: Theme.of(context).primaryColor,
+                thickness: _strokeWidth,
+              ),
               const SizedBox(height: 12),
               if (showScore || showGrade || showDuration)
                 Row(
@@ -258,7 +251,7 @@ class _SaveImagePageState extends State<SaveImagePage> {
                               widget.examRecord.examDurationMinutes.toString(),
                           suffix: '분',
                         ),
-                      )
+                      ),
                   ],
                 ),
               if (showScore || showGrade || showDuration)
@@ -291,11 +284,15 @@ class _SaveImagePageState extends State<SaveImagePage> {
 
   void onShareButtonPressed() async {
     AnalyticsManager.logEvent(
-        name: '[SaveExamRecordImagePage] Share button tapped');
+      name: '[SaveExamRecordImagePage] Share button tapped',
+    );
 
     final temporaryDirectory = await getTemporaryDirectory();
-    final imagePath = await _screenshotController
-            .captureAndSave(temporaryDirectory.path, pixelRatio: 4) ??
+    final imagePath =
+        await _screenshotController.captureAndSave(
+          temporaryDirectory.path,
+          pixelRatio: 4,
+        ) ??
         '';
     RenderBox shareButtonBox =
         _shareButtonKey.currentContext?.findRenderObject() as RenderBox;
@@ -316,18 +313,22 @@ class _SaveImagePageState extends State<SaveImagePage> {
 
   void onSaveButtonPressed() async {
     AnalyticsManager.logEvent(
-        name: '[SaveExamRecordImagePage] Save button tapped');
+      name: '[SaveExamRecordImagePage] Save button tapped',
+    );
 
     final imageBytes = await _screenshotController.capture(pixelRatio: 4);
     if (imageBytes == null) {
       throw Exception('Capture failed: return value is null');
     }
-    await ImageGallerySaver.saveImage(imageBytes,
-        quality: 100, name: widget.examRecord.title);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('이미지가 저장되었습니다.')),
+    await ImageGallerySaver.saveImage(
+      imageBytes,
+      quality: 100,
+      name: widget.examRecord.title,
     );
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('이미지가 저장되었습니다.')));
   }
 }
 
@@ -356,11 +357,8 @@ class _InfoBox extends StatelessWidget {
         targetMatches: [
           MatchTargetItem(
             regex: RegExp(suffixCaptured),
-            style: const TextStyle(
-              fontSize: 8,
-              fontWeight: FontWeight.w300,
-            ),
-          )
+            style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w300),
+          ),
         ],
         onMatch: (_) {},
       );
@@ -440,7 +438,5 @@ class _ChoiceChip extends StatelessWidget {
 class SaveImagePageArguments {
   final ExamRecord recordToSave;
 
-  const SaveImagePageArguments({
-    required this.recordToSave,
-  });
+  const SaveImagePageArguments({required this.recordToSave});
 }

@@ -68,25 +68,18 @@ class _JoinPathViewState extends State<JoinPathView> {
             const Text(
               '🤔',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 72,
-              ),
+              style: TextStyle(fontSize: 72),
             ),
             const Text(
               '실감을 어떻게 알게 되었나요?',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w900,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 40),
             const Text(
               '복수 선택 가능',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-              ),
+              style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),
             ...state.joinPaths
@@ -101,8 +94,8 @@ class _JoinPathViewState extends State<JoinPathView> {
             _buildJoinPathSectionTitle('그 외 경로'),
             TextField(
               controller: _otherJoinPathController,
-              onTapOutside: (event) =>
-                  FocusManager.instance.primaryFocus?.unfocus(),
+              onTapOutside:
+                  (event) => FocusManager.instance.primaryFocus?.unfocus(),
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
@@ -120,10 +113,7 @@ class _JoinPathViewState extends State<JoinPathView> {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(100),
-                  borderSide: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(100),
@@ -156,8 +146,9 @@ class _JoinPathViewState extends State<JoinPathView> {
               (joinPath) => _buildJoinPathChip(
                 text: joinPath.text,
                 onSelected: (selected) => _cubit.onJoinPathClicked(joinPath),
-                selected:
-                    _cubit.state.selectedJoinPathIds.contains(joinPath.id),
+                selected: _cubit.state.selectedJoinPathIds.contains(
+                  joinPath.id,
+                ),
               ),
             ),
           ],
@@ -225,10 +216,7 @@ class _JoinPathViewState extends State<JoinPathView> {
         highlightColor: Colors.grey.withAlpha(60),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 14,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           child: Text(
             text,
             textAlign: TextAlign.center,

@@ -27,27 +27,32 @@ class StatCubit extends Cubit<StatState> {
   late final _exampleRecords = getExampleRecords();
 
   void onOriginalRecordsUpdated() {
-    var recordsToShow = _appCubit.state.productBenefit.isStatisticAvailable
-        ? _recordListCubit.state.originalRecords
-        : _exampleRecords;
+    var recordsToShow =
+        _appCubit.state.productBenefit.isStatisticAvailable
+            ? _recordListCubit.state.originalRecords
+            : _exampleRecords;
     recordsToShow = recordsToShow.sortedBy((record) => record.examStartedTime);
     final dateRange = DateTimeRange(
-      start: state.isDateRangeSet
-          ? state.dateRange.start
-          : state.getDefaultStartDate(records: recordsToShow),
-      end: state.isDateRangeSet
-          ? state.dateRange.end
-          : state.getDefaultEndDate(records: recordsToShow),
+      start:
+          state.isDateRangeSet
+              ? state.dateRange.start
+              : state.getDefaultStartDate(records: recordsToShow),
+      end:
+          state.isDateRangeSet
+              ? state.dateRange.end
+              : state.getDefaultEndDate(records: recordsToShow),
     );
 
-    emit(state.copyWith(
-      originalRecords: recordsToShow,
-      records: _getFilteredRecords(
+    emit(
+      state.copyWith(
         originalRecords: recordsToShow,
+        records: _getFilteredRecords(
+          originalRecords: recordsToShow,
+          dateRange: dateRange,
+        ),
         dateRange: dateRange,
       ),
-      dateRange: dateRange,
-    ));
+    );
   }
 
   Future<void> refresh() async {
@@ -66,10 +71,12 @@ class StatCubit extends Cubit<StatState> {
   }
 
   void onSearchTextChanged(String query) {
-    emit(state.copyWith(
-      searchQuery: query,
-      records: _getFilteredRecords(searchQuery: query),
-    ));
+    emit(
+      state.copyWith(
+        searchQuery: query,
+        records: _getFilteredRecords(searchQuery: query),
+      ),
+    );
   }
 
   void onExamFilterButtonTapped(Exam exam) {
@@ -79,10 +86,12 @@ class StatCubit extends Cubit<StatState> {
     } else {
       selectedExamIds.add(exam.id);
     }
-    emit(state.copyWith(
-      selectedExamIds: selectedExamIds,
-      records: _getFilteredRecords(selectedExamIds: selectedExamIds),
-    ));
+    emit(
+      state.copyWith(
+        selectedExamIds: selectedExamIds,
+        records: _getFilteredRecords(selectedExamIds: selectedExamIds),
+      ),
+    );
 
     AnalyticsManager.logEvent(
       name: '[HomePage-stat] Exam filter button tapped',
@@ -95,30 +104,33 @@ class StatCubit extends Cubit<StatState> {
   }
 
   void onFilterResetButtonTapped() {
-    emit(state.copyWith(
-      selectedExamIds: [],
-      isDateRangeSet: false,
-      dateRange: state.defaultDateRange,
-      records: _getFilteredRecords(
+    emit(
+      state.copyWith(
         selectedExamIds: [],
+        isDateRangeSet: false,
         dateRange: state.defaultDateRange,
+        records: _getFilteredRecords(
+          selectedExamIds: [],
+          dateRange: state.defaultDateRange,
+        ),
       ),
-    ));
+    );
 
     AnalyticsManager.logEvent(
-        name: '[HomePage-stat] Filter reset button tapped');
+      name: '[HomePage-stat] Filter reset button tapped',
+    );
   }
 
   void onDateRangeChanged(DateTimeRange dateRange) {
     if (dateRange == state.dateRange) return;
 
-    emit(state.copyWith(
-      isDateRangeSet: dateRange != state.defaultDateRange,
-      dateRange: dateRange,
-      records: _getFilteredRecords(
+    emit(
+      state.copyWith(
+        isDateRangeSet: dateRange != state.defaultDateRange,
         dateRange: dateRange,
+        records: _getFilteredRecords(dateRange: dateRange),
       ),
-    ));
+    );
 
     AnalyticsManager.logEvent(
       name: '[HomePage-stat] Date range changed',
@@ -135,9 +147,7 @@ class StatCubit extends Cubit<StatState> {
 
     AnalyticsManager.logEvent(
       name: '[HomePage-stat] Exam value type changed',
-      properties: {
-        'exam_value_type': examValueType.name,
-      },
+      properties: {'exam_value_type': examValueType.name},
     );
   }
 
@@ -154,26 +164,28 @@ class StatCubit extends Cubit<StatState> {
 
     var records = [...originalRecords];
     if (searchQuery.isNotEmpty) {
-      records = records
-          .where((record) => record.title.contains(searchQuery!))
-          .toList();
+      records =
+          records
+              .where((record) => record.title.contains(searchQuery!))
+              .toList();
     }
-    records = records
-        .where(
-          (record) =>
-              record.examStartedTime.isSameOrAfter(dateRange!.start) &&
-              record.examStartedTime.isBefore(
-                dateRange.end.add(const Duration(days: 1)),
-              ),
-        )
-        .toList();
-    final Map<Exam, List<ExamRecord>> filteredRecords = records
-        .groupListsBy((record) => record.exam)
-      ..removeWhere(
-        (exam, records) =>
-            records.isEmpty ||
-            (selectedExamIds!.isNotEmpty && !selectedExamIds.contains(exam.id)),
-      );
+    records =
+        records
+            .where(
+              (record) =>
+                  record.examStartedTime.isSameOrAfter(dateRange!.start) &&
+                  record.examStartedTime.isBefore(
+                    dateRange.end.add(const Duration(days: 1)),
+                  ),
+            )
+            .toList();
+    final Map<Exam, List<ExamRecord>> filteredRecords = records.groupListsBy(
+      (record) => record.exam,
+    )..removeWhere(
+      (exam, records) =>
+          records.isEmpty ||
+          (selectedExamIds!.isNotEmpty && !selectedExamIds.contains(exam.id)),
+    );
     return filteredRecords;
   }
 }

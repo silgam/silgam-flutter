@@ -20,10 +20,7 @@ void main() {
     testWidgets('renders text correctly', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: CustomTextButton.primary(
-            text: 'Button Text',
-            onPressed: () {},
-          ),
+          home: CustomTextButton.primary(text: 'Button Text', onPressed: () {}),
         ),
       );
 
@@ -51,45 +48,39 @@ void main() {
     testWidgets('primary variant uses default style', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: CustomTextButton.primary(
-            text: 'Primary',
-            onPressed: () {},
-          ),
+          home: CustomTextButton.primary(text: 'Primary', onPressed: () {}),
         ),
       );
 
-      final TextButton button =
-          tester.widget<TextButton>(find.byType(TextButton));
+      final TextButton button = tester.widget<TextButton>(
+        find.byType(TextButton),
+      );
       expect(button.style, isNull);
     });
 
     testWidgets('secondary variant has grey foreground color', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: CustomTextButton.secondary(
-            text: 'Secondary',
-            onPressed: () {},
-          ),
+          home: CustomTextButton.secondary(text: 'Secondary', onPressed: () {}),
         ),
       );
 
-      final TextButton button =
-          tester.widget<TextButton>(find.byType(TextButton));
+      final TextButton button = tester.widget<TextButton>(
+        find.byType(TextButton),
+      );
       expect(button.style?.foregroundColor?.resolve({}), Colors.grey.shade600);
     });
 
     testWidgets('destructive variant has red foreground color', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: CustomTextButton.destructive(
-            text: 'Delete',
-            onPressed: () {},
-          ),
+          home: CustomTextButton.destructive(text: 'Delete', onPressed: () {}),
         ),
       );
 
-      final TextButton button =
-          tester.widget<TextButton>(find.byType(TextButton));
+      final TextButton button = tester.widget<TextButton>(
+        find.byType(TextButton),
+      );
 
       expect(button.style?.foregroundColor?.resolve({}), Colors.red);
     });

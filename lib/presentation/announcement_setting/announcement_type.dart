@@ -11,11 +11,7 @@ class AnnouncementType {
 }
 
 const announcementTypes = [
-  AnnouncementType(
-    id: 2,
-    title: '클래식 음악',
-    description: '2024학년도 수능에 사용된 음원',
-  ),
+  AnnouncementType(id: 2, title: '클래식 음악', description: '2024학년도 수능에 사용된 음원'),
   AnnouncementType(
     id: 1,
     title: '비프음',

@@ -22,18 +22,9 @@ class FormItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 6,
       children: [
-        _FormLabel(
-          label: label,
-          isRequired: isRequired,
-        ),
+        _FormLabel(label: label, isRequired: isRequired),
         if (description != null)
-          Text(
-            description,
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-            ),
-          ),
+          Text(description, style: TextStyle(color: Colors.grey, fontSize: 12)),
         child,
       ],
     );
@@ -41,10 +32,7 @@ class FormItem extends StatelessWidget {
 }
 
 class _FormLabel extends StatelessWidget {
-  const _FormLabel({
-    required this.label,
-    this.isRequired = false,
-  });
+  const _FormLabel({required this.label, this.isRequired = false});
 
   final String label;
   final bool isRequired;
@@ -65,10 +53,7 @@ class _FormLabel extends StatelessWidget {
         spacing: 2,
         children: [
           labelWidget,
-          const Text(
-            '*',
-            style: TextStyle(color: Colors.red),
-          ),
+          const Text('*', style: TextStyle(color: Colors.red)),
         ],
       );
     }

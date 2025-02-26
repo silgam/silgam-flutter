@@ -90,10 +90,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
           child: Text(
             '여러가지 소음의 빈도를 조절할 수 있어요',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ),
         const SizedBox(height: 16),
@@ -111,27 +108,29 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 4),
         decoration: BoxDecoration(
           color: Colors.grey.shade700,
-          image: preset.backgroundImage != null
-              ? DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage(preset.backgroundImage ?? ''),
-                )
-              : null,
+          image:
+              preset.backgroundImage != null
+                  ? DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage(preset.backgroundImage ?? ''),
+                  )
+                  : null,
         ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: isSelected
-                  ? [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withAlpha(0),
-                    ]
-                  : [
-                      const Color(0xFF303030),
-                      const Color(0xFF303030).withAlpha(0),
-                    ],
+              colors:
+                  isSelected
+                      ? [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColor.withAlpha(0),
+                      ]
+                      : [
+                        const Color(0xFF303030),
+                        const Color(0xFF303030).withAlpha(0),
+                      ],
             ),
           ),
           child: Row(
@@ -141,10 +140,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 opacity: isSelected ? 1 : 0,
                 child: const Text(
                   '✓',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
               const SizedBox(width: 16),
@@ -204,17 +200,15 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
 
   Widget _buildNoiseSettings() {
     return BlocBuilder<AppCubit, AppState>(
-      buildWhen: (previous, current) =>
-          previous.productBenefit != current.productBenefit,
+      buildWhen:
+          (previous, current) =>
+              previous.productBenefit != current.productBenefit,
       builder: (context, appState) {
         final availableNoiseIds = appState.productBenefit.availableNoiseIds;
         final noiseSettingWidgets = [
           ...defaultNoises
               .where((element) => availableNoiseIds.contains(element.id))
-              .map((noise) => _buildNoiseSettingTile(
-                    noise,
-                    isLocked: false,
-                  )),
+              .map((noise) => _buildNoiseSettingTile(noise, isLocked: false)),
           ...defaultNoises
               .where((element) => !availableNoiseIds.contains(element.id))
               .map((noise) => _buildNoiseSettingTile(noise, isLocked: true)),
@@ -242,9 +236,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
             ],
           );
         }
-        return Column(
-          children: noiseSettingWidgets,
-        );
+        return Column(children: noiseSettingWidgets);
       },
     );
   }
@@ -278,17 +270,18 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                 ),
                 child: Slider(
                   value: _cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0,
-                  onChanged: (value) =>
-                      _cubit.onSliderChanged(noise, value.toInt()),
+                  onChanged:
+                      (value) => _cubit.onSliderChanged(noise, value.toInt()),
                   label: (_cubit.state.noiseLevels[noise.id]?.toDouble() ?? 0)
                       .toStringAsFixed(0),
                   max: Noise.maxLevel.toDouble(),
-                  activeColor: Theme.of(context)
-                      .primaryColor
-                      .withAlpha(noise.existingFiles == 0 ? 80 : 255),
-                  inactiveColor: noise.existingFiles == 0
-                      ? Theme.of(context).primaryColor.withAlpha(20)
-                      : null,
+                  activeColor: Theme.of(
+                    context,
+                  ).primaryColor.withAlpha(noise.existingFiles == 0 ? 80 : 255),
+                  inactiveColor:
+                      noise.existingFiles == 0
+                          ? Theme.of(context).primaryColor.withAlpha(20)
+                          : null,
                 ),
               ),
             ],
@@ -299,17 +292,11 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
             child: GestureDetector(
               onTap: _onLockedNoiseTapped,
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(100),
-                ),
+                decoration: BoxDecoration(color: Colors.black.withAlpha(100)),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.lock,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    Icon(Icons.lock, color: Colors.white, size: 20),
                     SizedBox(width: 8),
                     Text(
                       '유료 기능',
@@ -317,7 +304,7 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

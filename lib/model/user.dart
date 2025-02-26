@@ -48,9 +48,7 @@ class Receipt with _$Receipt {
 
 @freezed
 class ProviderData with _$ProviderData {
-  factory ProviderData({
-    required final String providerId,
-  }) = _ProviderData;
+  factory ProviderData({required final String providerId}) = _ProviderData;
 
   factory ProviderData.fromJson(Map<String, dynamic> json) =>
       _$ProviderDataFromJson(json);

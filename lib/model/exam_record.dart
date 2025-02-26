@@ -42,23 +42,22 @@ class ExamRecord with _$ExamRecord {
     final List<WrongProblem>? wrongProblems,
     final String? feedback,
     final List<ReviewProblem>? reviewProblems,
-  }) =>
-      ExamRecord(
-        id: '$userId-${const Uuid().v1()}',
-        userId: userId,
-        title: title,
-        exam: exam,
-        examStartedTime: examStartedTime,
-        examDurationMinutes: examDurationMinutes,
-        score: score,
-        grade: grade,
-        percentile: percentile,
-        standardScore: standardScore,
-        wrongProblems: wrongProblems ?? const [],
-        feedback: feedback ?? '',
-        reviewProblems: reviewProblems ?? const [],
-        createdAt: DateTime.now().toUtc(),
-      );
+  }) => ExamRecord(
+    id: '$userId-${const Uuid().v1()}',
+    userId: userId,
+    title: title,
+    exam: exam,
+    examStartedTime: examStartedTime,
+    examDurationMinutes: examDurationMinutes,
+    score: score,
+    grade: grade,
+    percentile: percentile,
+    standardScore: standardScore,
+    wrongProblems: wrongProblems ?? const [],
+    feedback: feedback ?? '',
+    reviewProblems: reviewProblems ?? const [],
+    createdAt: DateTime.now().toUtc(),
+  );
 
   factory ExamRecord.fromJson(Map<String, dynamic> json) =>
       _$ExamRecordFromJson(json);

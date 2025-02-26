@@ -29,20 +29,21 @@ class _SilgamNowCardState extends State<SilgamNowCard> {
         .ref('stats/onlineDevicesCount')
         .onValue
         .listen((event) {
-      final previousOnlineDevicesCount = _onlineDevicesCount;
-      _onlineDevicesCount = int.tryParse(event.snapshot.value.toString());
-      if (previousOnlineDevicesCount == null) setState(() {});
-    });
+          final previousOnlineDevicesCount = _onlineDevicesCount;
+          _onlineDevicesCount = int.tryParse(event.snapshot.value.toString());
+          if (previousOnlineDevicesCount == null) setState(() {});
+        });
     _minOnlineDevicesShowingCountSubscription = FirebaseDatabase.instance
         .ref('stats/minOnlineDevicesShowingCount')
         .onValue
         .listen((event) {
-      final previousMinOnlineDevicesShowingCount =
-          _minOnlineDevicesShowingCount;
-      _minOnlineDevicesShowingCount =
-          int.tryParse(event.snapshot.value.toString());
-      if (previousMinOnlineDevicesShowingCount == null) setState(() {});
-    });
+          final previousMinOnlineDevicesShowingCount =
+              _minOnlineDevicesShowingCount;
+          _minOnlineDevicesShowingCount = int.tryParse(
+            event.snapshot.value.toString(),
+          );
+          if (previousMinOnlineDevicesShowingCount == null) setState(() {});
+        });
     _updateTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (mounted) setState(() {});
     });

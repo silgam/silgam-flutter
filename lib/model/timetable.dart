@@ -24,11 +24,12 @@ class Timetable with _$Timetable {
   List<Exam> get exams => items.map((e) => e.exam).toList();
 
   Duration get duration => items.fold(
-      const Duration(),
-      (previousValue, item) =>
-          previousValue +
-          Duration(minutes: item.exam.timetableDurationMinutes) +
-          Duration(minutes: item.breakMinutesAfter));
+    const Duration(),
+    (previousValue, item) =>
+        previousValue +
+        Duration(minutes: item.exam.timetableDurationMinutes) +
+        Duration(minutes: item.breakMinutesAfter),
+  );
 
   DateTime get endTime => startTime.add(duration);
 

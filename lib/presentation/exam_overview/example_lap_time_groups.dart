@@ -1,9 +1,7 @@
 import '../../model/announcement.dart';
 import '../../model/lap_time.dart';
 
-List<LapTimeItemGroup> getExampleLapTimeGroups({
-  required DateTime startTime,
-}) =>
+List<LapTimeItemGroup> getExampleLapTimeGroups({required DateTime startTime}) =>
     [
       LapTimeItemGroup(
         title: '예비령',

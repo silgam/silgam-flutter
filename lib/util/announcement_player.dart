@@ -16,7 +16,7 @@ class AnnouncementPlayer extends AudioPlayer {
 
   late final int _announcementTypeId =
       _sharedPreferences.getInt(PreferenceKey.announcementTypeId) ??
-          defaultAnnouncementType.id;
+      defaultAnnouncementType.id;
 
   AnnouncementPlayer(this._sharedPreferences) {
     if (!kIsWeb && Platform.isAndroid) setVolume(0.4);
@@ -27,6 +27,7 @@ class AnnouncementPlayer extends AudioPlayer {
     int? announcementTypeId,
   }) {
     return setAsset(
-        '$_announcementsAssetPath/${announcementTypeId ?? _announcementTypeId}_$fileName');
+      '$_announcementsAssetPath/${announcementTypeId ?? _announcementTypeId}_$fileName',
+    );
   }
 }

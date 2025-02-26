@@ -23,10 +23,7 @@ class RecordDetailPage extends StatefulWidget {
   static const routeName = '/record_detail';
   final RecordDetailPageArguments arguments;
 
-  const RecordDetailPage({
-    super.key,
-    required this.arguments,
-  });
+  const RecordDetailPage({super.key, required this.arguments});
 
   @override
   State<RecordDetailPage> createState() => _RecordDetailPageState();
@@ -48,8 +45,9 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 
   Future<void> _refreshRecord() async {
     ExamRecord? getRecord() {
-      return _recordListCubit.state.originalRecords
-          .firstWhereOrNull((r) => r.id == widget.arguments.recordId);
+      return _recordListCubit.state.originalRecords.firstWhereOrNull(
+        (r) => r.id == widget.arguments.recordId,
+      );
     }
 
     ExamRecord? record = getRecord();
@@ -68,8 +66,11 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (_isDeleting) return;
 
     final arguments = SaveImagePageArguments(recordToSave: record);
-    await Navigator.pushNamed(context, SaveImagePage.routeName,
-        arguments: arguments);
+    await Navigator.pushNamed(
+      context,
+      SaveImagePage.routeName,
+      arguments: arguments,
+    );
   }
 
   void _onEditButtonPressed(ExamRecord record) async {
@@ -137,13 +138,17 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     EasyLoading.dismiss();
 
     await AnalyticsManager.logEvent(
-        name: '[ExamRecordDetailPage] Delete exam record');
+      name: '[ExamRecordDetailPage] Delete exam record',
+    );
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {
     final arguments = ReviewProblemDetailPageArguments(problem: problem);
-    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName,
-        arguments: arguments);
+    Navigator.pushNamed(
+      context,
+      ReviewProblemDetailPage.routeName,
+      arguments: arguments,
+    );
   }
 
   Widget _buildTitle(ExamRecord record) {
@@ -209,11 +214,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       scoreItems.insert(i, const VerticalDivider(indent: 6, endIndent: 6));
     }
 
-    return IntrinsicHeight(
-      child: Row(
-        children: scoreItems,
-      ),
-    );
+    return IntrinsicHeight(child: Row(children: scoreItems));
   }
 
   Widget _buildScoreItem(String title, int value) {
@@ -225,10 +226,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           const SizedBox(height: 4),
           Text(
             value.toString(),
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
           ),
         ],
       ),
@@ -253,14 +251,9 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
         IntrinsicHeight(
           child: Row(
             children: [
-              Container(
-                width: 2,
-                color: Color(record.getGradeColor()),
-              ),
+              Container(width: 2, color: Color(record.getGradeColor())),
               const SizedBox(width: 12),
-              Flexible(
-                child: _buildTitle(record),
-              ),
+              Flexible(child: _buildTitle(record)),
             ],
           ),
         ),
@@ -346,14 +339,15 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       onTap: () => _onReviewProblemCardTap(problem),
                     ),
                 ],
-              )
+              ),
             ],
           ),
         const SizedBox(height: 16),
         BlocBuilder<AppCubit, AppState>(
-          buildWhen: (previous, current) =>
-              previous.productBenefit.isAdsRemoved !=
-              current.productBenefit.isAdsRemoved,
+          buildWhen:
+              (previous, current) =>
+                  previous.productBenefit.isAdsRemoved !=
+                  current.productBenefit.isAdsRemoved,
           builder: (context, appState) {
             if (isAdmobDisabled || appState.productBenefit.isAdsRemoved) {
               return const SizedBox.shrink();
@@ -379,9 +373,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (record == null) {
       return PageLayout(
         onBackPressed: () => Navigator.of(context).pop(),
-        child: Center(
-          child: CircularProgressIndicator(strokeWidth: 3),
-        ),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 3)),
       );
     }
 
@@ -421,6 +413,4 @@ class RecordDetailPageArguments {
   RecordDetailPageArguments({required this.recordId});
 }
 
-enum RecordDetailPageResult {
-  deleted,
-}
+enum RecordDetailPageResult { deleted }

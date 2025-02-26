@@ -19,9 +19,7 @@ import '../purchase/purchase_page.dart';
 void showExamRecordLimitInfoDialog(BuildContext context) {
   showDialog(
     context: context,
-    routeSettings: const RouteSettings(
-      name: '/record_list/limit_help_dialog',
-    ),
+    routeSettings: const RouteSettings(name: '/record_list/limit_help_dialog'),
     builder: (context) {
       return BlocBuilder<AppCubit, AppState>(
         builder: (context, appState) {
@@ -69,9 +67,7 @@ void showExamRecordLimitInfoDialog(BuildContext context) {
 void showLapTimeLimitInfoDialog(BuildContext context) {
   showDialog(
     context: context,
-    routeSettings: const RouteSettings(
-      name: '/lap_time_limit_help_dialog',
-    ),
+    routeSettings: const RouteSettings(name: '/lap_time_limit_help_dialog'),
     builder: (context) {
       return BlocBuilder<IapCubit, IapState>(
         builder: (context, iapState) {
@@ -203,127 +199,111 @@ Future<void> showMarketingInfoReceivingConsentDialog(
     isDismissible: isDismissible,
     enableDrag: isDismissible,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(16),
-      ),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     routeSettings: const RouteSettings(
       name: 'marketing_info_receiving_consent_dialog',
     ),
-    builder: (_) => SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          bottom: MediaQuery.of(context).padding.bottom,
+    builder:
+        (_) => SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 32),
+                const Text(
+                  '실감의 소식을 알림으로 받아보세요!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '실감의 이벤트, 할인 정보 등 유용한 정보들을 푸시알림으로 받아보실 수 있어요.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w700, height: 1.5),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(3),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                  ),
+                  child: Text(
+                    '광고성 정보 수신 동의 철회는 앱 내 설정 페이지에서 언제든지 가능합니다.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.5,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    AnalyticsManager.logEvent(
+                      name:
+                          '[MarketingInfoReceivingConsentDialog] Receive button tapped',
+                    );
+                    await changeMarketingInfoReceivingConsentStatus(
+                      context,
+                      true,
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    side: BorderSide.none,
+                    shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                  ),
+                  child: const Text(
+                    '좋아요!',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    AnalyticsManager.logEvent(
+                      name:
+                          '[MarketingInfoReceivingConsentDialog] Close button tapped',
+                    );
+                    await changeMarketingInfoReceivingConsentStatus(
+                      context,
+                      false,
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey.shade600,
+                    visualDensity: VisualDensity.compact,
+                    splashFactory: NoSplash.splashFactory,
+                    shape: const StadiumBorder(),
+                  ),
+                  child: Text(
+                    '괜찮아요',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 32),
-            const Text(
-              '실감의 소식을 알림으로 받아보세요!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              '실감의 이벤트, 할인 정보 등 유용한 정보들을 푸시알림으로 받아보실 수 있어요.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(3),
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                '광고성 정보 수신 동의 철회는 앱 내 설정 페이지에서 언제든지 가능합니다.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  height: 1.5,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-                AnalyticsManager.logEvent(
-                  name:
-                      '[MarketingInfoReceivingConsentDialog] Receive button tapped',
-                );
-                await changeMarketingInfoReceivingConsentStatus(
-                  context,
-                  true,
-                );
-              },
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                side: BorderSide.none,
-                shape: const StadiumBorder(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-              ),
-              child: const Text(
-                '좋아요!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context);
-                AnalyticsManager.logEvent(
-                  name:
-                      '[MarketingInfoReceivingConsentDialog] Close button tapped',
-                );
-                await changeMarketingInfoReceivingConsentStatus(
-                  context,
-                  false,
-                );
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey.shade600,
-                visualDensity: VisualDensity.compact,
-                splashFactory: NoSplash.splashFactory,
-                shape: const StadiumBorder(),
-              ),
-              child: Text(
-                '괜찮아요',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
   );
 }
 
@@ -333,10 +313,7 @@ Future<void> changeMarketingInfoReceivingConsentStatus(
 ) async {
   final appCubit = getIt.get<AppCubit>();
   if (appCubit.state.isOffline) {
-    EasyLoading.showToast(
-      '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-      dismissOnTap: true,
-    );
+    EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
     return;
   }
 
@@ -352,22 +329,21 @@ Future<void> changeMarketingInfoReceivingConsentStatus(
 
   final dateString = DateFormat('yyyy년 M월 d일').format(DateTime.now());
   // ignore: use_build_context_synchronously
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    content: Text(
-      isConsent
-          ? '실감의 광고성 정보 수신에 동의하셨습니다 😀 ($dateString)'
-          : '실감의 광고성 정보 수신을 거부하셨습니다. ($dateString)',
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        isConsent
+            ? '실감의 광고성 정보 수신에 동의하셨습니다 😀 ($dateString)'
+            : '실감의 광고성 정보 수신을 거부하셨습니다. ($dateString)',
+      ),
     ),
-  ));
+  );
 }
 
 void showSendFeedbackDialog(BuildContext context) {
   final AppCubit appCubit = getIt.get();
   if (appCubit.state.isOffline) {
-    EasyLoading.showToast(
-      '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-      dismissOnTap: true,
-    );
+    EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
   }
 
   final textEditingController = TextEditingController();
@@ -375,13 +351,9 @@ void showSendFeedbackDialog(BuildContext context) {
     context: context,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(16),
-      ),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    routeSettings: const RouteSettings(
-      name: 'send_feedback_dialog',
-    ),
+    routeSettings: const RouteSettings(name: 'send_feedback_dialog'),
     builder: (context) {
       return SingleChildScrollView(
         child: GestureDetector(
@@ -390,7 +362,8 @@ void showSendFeedbackDialog(BuildContext context) {
             padding: EdgeInsets.only(
               left: 20,
               right: 20,
-              bottom: MediaQuery.of(context).viewInsets.bottom +
+              bottom:
+                  MediaQuery.of(context).viewInsets.bottom +
                   MediaQuery.of(context).padding.bottom,
             ),
             child: Column(
@@ -401,19 +374,13 @@ void showSendFeedbackDialog(BuildContext context) {
                 const Text(
                   '실감팀에게 의견을 보내주세요!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 20),
                 const Text(
                   '실감팀에게 전달하고 싶은 의견을 무엇이든 적어주세요!\n보내주신 의견은 실감팀이 꼼꼼히 읽어볼게요 🙇‍️',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    height: 1.5,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w700, height: 1.5),
                 ),
                 const SizedBox(height: 16),
                 Container(
@@ -423,10 +390,7 @@ void showSendFeedbackDialog(BuildContext context) {
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
                   child: RichText(
                     textAlign: TextAlign.center,
@@ -439,26 +403,24 @@ void showSendFeedbackDialog(BuildContext context) {
                       children: [
                         const TextSpan(
                           text: '기능상의 오류',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w700),
                         ),
-                        const TextSpan(
-                          text: '나 기타 실감팀의 답변이 필요하신 내용은 ',
-                        ),
+                        const TextSpan(text: '나 기타 실감팀의 답변이 필요하신 내용은 '),
                         TextSpan(
                           text: '카카오톡 채널',
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => launchUrl(Uri.parse(urlSupport),
-                                mode: LaunchMode.externalApplication),
+                          recognizer:
+                              TapGestureRecognizer()
+                                ..onTap =
+                                    () => launchUrl(
+                                      Uri.parse(urlSupport),
+                                      mode: LaunchMode.externalApplication,
+                                    ),
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             decoration: TextDecoration.underline,
                           ),
                         ),
-                        const TextSpan(
-                          text: '을 이용해주세요.',
-                        ),
+                        const TextSpan(text: '을 이용해주세요.'),
                       ],
                     ),
                   ),
@@ -476,10 +438,7 @@ void showSendFeedbackDialog(BuildContext context) {
                     filled: true,
                     fillColor: Colors.grey.shade200,
                     contentPadding: const EdgeInsets.all(12),
-                    hintStyle: const TextStyle(
-                      height: 1.2,
-                      color: Colors.grey,
-                    ),
+                    hintStyle: const TextStyle(height: 1.2, color: Colors.grey),
                     border: const OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -499,27 +458,24 @@ void showSendFeedbackDialog(BuildContext context) {
 
                     final text = textEditingController.text.trim();
                     if (text.isEmpty) {
-                      EasyLoading.showToast(
-                        '내용을 입력해주세요',
-                        dismissOnTap: true,
-                      );
+                      EasyLoading.showToast('내용을 입력해주세요', dismissOnTap: true);
                       return;
                     }
 
-                    getIt
-                        .get<FeedbackRepository>()
-                        .sendFeedback(feedback: text);
+                    getIt.get<FeedbackRepository>().sendFeedback(
+                      feedback: text,
+                    );
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text(
-                        '소중한 의견 감사합니다😆 보내주신 의견은 실감팀이 빠르게 읽어볼게요.',
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          '소중한 의견 감사합니다😆 보내주신 의견은 실감팀이 빠르게 읽어볼게요.',
+                        ),
                       ),
-                    ));
+                    );
                     AnalyticsManager.logEvent(
                       name: '[SendFeedbackDialog] Send Feedback',
-                      properties: {
-                        'content': text,
-                      },
+                      properties: {'content': text},
                     );
                   },
                   style: OutlinedButton.styleFrom(
@@ -533,10 +489,7 @@ void showSendFeedbackDialog(BuildContext context) {
                   ),
                   child: const Text(
                     '보내기',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
                 const SizedBox(height: 20),

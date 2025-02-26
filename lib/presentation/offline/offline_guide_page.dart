@@ -23,18 +23,9 @@ class OfflineGuidePage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Image.asset(
-              'assets/offline_guide_1.png',
-              fit: BoxFit.contain,
-            ),
-            Image.asset(
-              'assets/offline_guide_2.png',
-              fit: BoxFit.contain,
-            ),
-            Image.asset(
-              'assets/offline_guide_3.png',
-              fit: BoxFit.contain,
-            ),
+            Image.asset('assets/offline_guide_1.png', fit: BoxFit.contain),
+            Image.asset('assets/offline_guide_2.png', fit: BoxFit.contain),
+            Image.asset('assets/offline_guide_3.png', fit: BoxFit.contain),
             const SizedBox(height: 100),
           ],
         ),

@@ -15,7 +15,8 @@ class FreeUserBlockOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: overlayColor ??
+      color:
+          overlayColor ??
           Theme.of(context).scaffoldBackgroundColor.withAlpha(160),
       alignment: Alignment.center,
       padding: const EdgeInsets.all(20),
@@ -25,10 +26,7 @@ class FreeUserBlockOverlay extends StatelessWidget {
           Text(
             text,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           buildPurchaseButtonOr(
             margin: const EdgeInsets.only(top: 20),

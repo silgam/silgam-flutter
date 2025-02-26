@@ -21,10 +21,7 @@ class FilterActionChip extends StatelessWidget {
       pressElevation: 0,
       backgroundColor: Colors.grey.shade700.withAlpha(10),
       padding: EdgeInsets.zero,
-      side: BorderSide(
-        color: Colors.grey.shade700,
-        width: 0.4,
-      ),
+      side: BorderSide(color: Colors.grey.shade700, width: 0.4),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }

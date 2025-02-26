@@ -18,19 +18,14 @@ import '../app/cubit/app_cubit.dart';
 class ReviewProblemDetailPageArguments {
   ReviewProblem problem;
 
-  ReviewProblemDetailPageArguments({
-    required this.problem,
-  });
+  ReviewProblemDetailPageArguments({required this.problem});
 }
 
 class ReviewProblemDetailPage extends StatefulWidget {
   static const routeName = '/review_problem_detail';
   final ReviewProblem reviewProblem;
 
-  const ReviewProblemDetailPage({
-    super.key,
-    required this.reviewProblem,
-  });
+  const ReviewProblemDetailPage({super.key, required this.reviewProblem});
 
   @override
   State<ReviewProblemDetailPage> createState() =>
@@ -89,10 +84,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
 
   void _onDownloadPressed() async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
       return;
     }
 
@@ -101,11 +93,9 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     String imageUrl = widget.reviewProblem.imagePaths[_currentIndex];
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('다운로드하는 중입니다...'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('다운로드하는 중입니다...')));
     }
     await Dio().download(imageUrl, savePath);
     await ImageGallerySaver.saveFile(savePath, name: DateTime.now().toString());
@@ -114,9 +104,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     if (!mounted) return;
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
-      ..showSnackBar(
-        const SnackBar(content: Text('저장되었습니다.')),
-      );
+      ..showSnackBar(const SnackBar(content: Text('저장되었습니다.')));
   }
 
   void _onMemoIconPressed() {
@@ -131,10 +119,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
       itemCount: widget.reviewProblem.imagePaths.length,
       loadingBuilder: (context, event) {
         return const Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 2,
-          ),
+          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
         );
       },
       builder: (context, index) {
@@ -155,16 +140,12 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                   Text(
                     '사진을 불러올 수 없어요.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(color: Colors.grey),
                   ),
                   Text(
                     '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(color: Colors.grey),
                   ),
                 ],
               ),
@@ -215,9 +196,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     problem.memo,
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -239,9 +218,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
         ),
         child: Text(
           '${_currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
-          style: const TextStyle(
-            color: Colors.white,
-          ),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

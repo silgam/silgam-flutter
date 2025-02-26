@@ -67,10 +67,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
   late final List<Exam> _exams = _appCubit.state.getAllExams();
   late final List<ExamRecord> _titleAutocompleteRecords =
       (LinkedHashSet<ExamRecord>(
-    equals: (a, b) => a.title == b.title,
-    hashCode: (a) => a.title.hashCode,
-  )..addAll(_recordListCubit.state.originalRecords))
-          .toList();
+        equals: (a, b) => a.title == b.title,
+        hashCode: (a) => a.title.hashCode,
+      )..addAll(_recordListCubit.state.originalRecords)).toList();
 
   final GlobalKey<FormBuilderState> _formKey = GlobalKey();
 
@@ -87,8 +86,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
   final String _feedbackFieldName = 'feedback';
   final String _reviewProblemsFieldName = 'reviewProblems';
 
-  late final String? _initialTitle =
-      _recordToEdit?.title.replaceFirst(ExamRecord.autoSaveTitlePrefix, '');
+  late final String? _initialTitle = _recordToEdit?.title.replaceFirst(
+    ExamRecord.autoSaveTitlePrefix,
+    '',
+  );
   late final Exam _initialExam =
       _recordToEdit?.exam ?? widget.inputExam ?? _exams.first;
   late final int? _initialScore = _recordToEdit?.score;
@@ -97,17 +98,18 @@ class _EditRecordPageState extends State<EditRecordPage> {
   late final int? _initialStandardScore = _recordToEdit?.standardScore;
   late final DateTime _initialExamStartedDate =
       _recordToEdit?.examStartedTime ??
-          widget.examStartedTime ??
-          DateTime.now();
-  late final TimeOfDay _initialExamStartedTime =
-      TimeOfDay.fromDateTime(_initialExamStartedDate);
+      widget.examStartedTime ??
+      DateTime.now();
+  late final TimeOfDay _initialExamStartedTime = TimeOfDay.fromDateTime(
+    _initialExamStartedDate,
+  );
   late final int _initialExamDurationMinutes =
       _recordToEdit?.examDurationMinutes ??
-          (widget.examStartedTime != null && widget.examFinishedTime != null
-              ? widget.examFinishedTime!
-                  .difference(widget.examStartedTime!)
-                  .inMinutesWithCorrection
-              : _initialExam.durationMinutes);
+      (widget.examStartedTime != null && widget.examFinishedTime != null
+          ? widget.examFinishedTime!
+              .difference(widget.examStartedTime!)
+              .inMinutesWithCorrection
+          : _initialExam.durationMinutes);
   late final List<WrongProblem> _initialWrongProblems =
       _recordToEdit?.wrongProblems ?? [];
   late final String? _initialFeedback =
@@ -345,8 +347,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
                   return element.title.contains(textEditingValue.text);
                 }).toList();
               },
-              fieldViewBuilder: (context, textEditingController, focusNode,
-                  onFieldSubmitted) {
+              fieldViewBuilder: (
+                context,
+                textEditingController,
+                focusNode,
+                onFieldSubmitted,
+              ) {
                 return FormTextField(
                   name: _titleFieldName,
                   hintText: '실감 모의고사 시즌1 1회',
@@ -356,9 +362,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
                   onSubmitted: (_) => onFieldSubmitted(),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(
-                        errorText: '모의고사 이름을 입력해주세요.'),
-                    FormBuilderValidators.maxLength(100,
-                        errorText: '100자 이하로 입력해주세요.'),
+                      errorText: '모의고사 이름을 입력해주세요.',
+                    ),
+                    FormBuilderValidators.maxLength(
+                      100,
+                      errorText: '100자 이하로 입력해주세요.',
+                    ),
                   ]),
                 );
               },
@@ -370,12 +379,13 @@ class _EditRecordPageState extends State<EditRecordPage> {
               name: _examFieldName,
               initialValue: _initialExam,
               onChanged: _onExamChanged,
-              items: _exams.map((exam) {
-                return DropdownMenuItem(
-                  value: exam,
-                  child: Text(exam.name),
-                );
-              }).toList(),
+              items:
+                  _exams.map((exam) {
+                    return DropdownMenuItem(
+                      value: exam,
+                      child: Text(exam.name),
+                    );
+                  }).toList(),
             ),
           ),
           Wrap(
@@ -525,10 +535,12 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 child: FormDatePicker(
                   name: _examStartedDateFieldName,
                   initialValue: _initialExamStartedDate,
-                  firstDate: _initialExamStartedDate
-                      .subtract(const Duration(days: 365 * 20)),
-                  lastDate:
-                      _initialExamStartedDate.add(const Duration(days: 365)),
+                  firstDate: _initialExamStartedDate.subtract(
+                    const Duration(days: 365 * 20),
+                  ),
+                  lastDate: _initialExamStartedDate.add(
+                    const Duration(days: 365),
+                  ),
                   autoWidth: true,
                 ),
               ),

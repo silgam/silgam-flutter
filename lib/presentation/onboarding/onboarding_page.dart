@@ -23,15 +23,13 @@ class OnboardingPage extends StatelessWidget {
             Navigator.pushReplacementNamed(context, HomePage.routeName);
           }
         },
-        buildWhen: (previous, current) =>
-            current.step != OnboardingStep.finished,
+        buildWhen:
+            (previous, current) => current.step != OnboardingStep.finished,
         builder: (context, state) {
           Widget child;
           switch (state.step) {
             case OnboardingStep.welcome:
-              child = WelcomeView(
-                key: const ValueKey(OnboardingStep.welcome),
-              );
+              child = WelcomeView(key: const ValueKey(OnboardingStep.welcome));
             case OnboardingStep.joinPath:
               child = const JoinPathView(
                 key: ValueKey(OnboardingStep.joinPath),

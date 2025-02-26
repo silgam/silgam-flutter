@@ -37,10 +37,7 @@ class SilgampassPage extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         textBrightness: Brightness.light,
         child: Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 3,
-            color: Colors.white,
-          ),
+          child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white),
         ),
       ),
     );

@@ -41,10 +41,7 @@ class AnalyticsManager {
     FirebaseAuth.instance.authStateChanges().listen((event) {
       registerUserProperties({'Firebase User ID': event?.uid});
       setUserId(userId: event?.uid);
-      setPeopleProperties({
-        '\$name': event?.uid,
-        '\$email': event?.email,
-      });
+      setPeopleProperties({'\$name': event?.uid, '\$email': event?.email});
     });
   }
 
@@ -85,7 +82,8 @@ class AnalyticsManager {
   }
 
   static Future<void> registerUserProperties(
-      Map<String, dynamic> properties) async {
+    Map<String, dynamic> properties,
+  ) async {
     if (kIsWeb) return;
 
     log('User properties registered: $properties', name: 'AnalyticsManager');

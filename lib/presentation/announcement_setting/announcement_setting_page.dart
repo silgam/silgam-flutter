@@ -32,7 +32,7 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
 
     final announcementTypeId =
         _sharedPreferences.getInt(PreferenceKey.announcementTypeId) ??
-            defaultAnnouncementType.id;
+        defaultAnnouncementType.id;
     _selectedAnnouncementType = announcementTypes.firstWhereOrNull(
       (element) => element.id == announcementTypeId,
     );
@@ -67,14 +67,9 @@ class _AnnouncementSettingPageState extends State<AnnouncementSettingPage> {
 
     AnalyticsManager.logEvent(
       name: '[AnnouncementSettingPage] Announcement Type Changed',
-      properties: {
-        'announcementTypeId': announcementTypeId,
-      },
+      properties: {'announcementTypeId': announcementTypeId},
     );
-    AnalyticsManager.setPeopleProperty(
-      'Announcement Type',
-      announcementTypeId,
-    );
+    AnalyticsManager.setPeopleProperty('Announcement Type', announcementTypeId);
   }
 
   @override

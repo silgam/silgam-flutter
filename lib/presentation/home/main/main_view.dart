@@ -55,10 +55,7 @@ class _MainViewState extends State<MainView> {
       icon: SvgPicture.asset(
         'assets/sns_$snsName.svg',
         width: 20,
-        colorFilter: const ColorFilter.mode(
-          Colors.grey,
-          BlendMode.srcIn,
-        ),
+        colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
       ),
     );
   }
@@ -116,11 +113,11 @@ class _MainViewState extends State<MainView> {
                     gradient: LinearGradient(
                       colors: [
                         SilgamApp.backgroundColor,
-                        SilgamApp.backgroundColor.withAlpha(0)
+                        SilgamApp.backgroundColor.withAlpha(0),
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -141,8 +138,12 @@ class _MainViewState extends State<MainView> {
 
   Widget _buildTimetableStartCard() {
     return BlocBuilder<AppCubit, AppState>(
-      buildWhen: (previous, current) =>
-          !listEquals(previous.getAllTimetables(), current.getAllTimetables()),
+      buildWhen:
+          (previous, current) =>
+              !listEquals(
+                previous.getAllTimetables(),
+                current.getAllTimetables(),
+              ),
       builder: (context, state) {
         return TimetableStartCard(timetables: state.getAllTimetables());
       },
@@ -179,10 +180,7 @@ class _MainViewState extends State<MainView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AdsCard(),
-                        QuickLauncherCard(),
-                      ],
+                      children: [AdsCard(), QuickLauncherCard()],
                     ),
                   ),
                   const SizedBox(width: 40),
@@ -194,7 +192,7 @@ class _MainViewState extends State<MainView> {
                         _buildTimetableStartCard(),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
