@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:gal/gal.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -88,14 +88,19 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     }
 
     final appDocDir = await getTemporaryDirectory();
-    String savePath = "${appDocDir.path}/temp.jpg";
+    String savePath = "${appDocDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg";
     String imageUrl = widget.reviewProblem.imagePaths[_currentIndex];
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('다운로드하는 중입니다...')));
     }
+
     await Dio().download(imageUrl, savePath);
-    await ImageGallerySaver.saveFile(savePath, name: DateTime.now().toString());
+    final hasAccess = await Gal.hasAccess(toAlbum: true);
+    if (!hasAccess) {
+      await Gal.requestAccess(toAlbum: true);
+    }
+    await Gal.putImage(savePath, album: '실감');
     await File(savePath).delete();
 
     if (!mounted) return;

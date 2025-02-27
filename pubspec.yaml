@@ -72,10 +72,7 @@ dependencies:
   retrofit: ^4.2.0
 
   # Storage and Data
-  image_gallery_saver:
-    git:
-      url: https://github.com/knottx/image_gallery_saver.git
-      ref: knottx
+  gal: ^2.3.1
   image_picker: ^1.1.2
   path_provider: ^2.1.4
   shared_preferences: ^2.3.1

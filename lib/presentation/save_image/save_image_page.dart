@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:gal/gal.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rich_text_controller/rich_text_controller.dart';
@@ -290,7 +290,13 @@ class _SaveImagePageState extends State<SaveImagePage> {
     if (imageBytes == null) {
       throw Exception('Capture failed: return value is null');
     }
-    await ImageGallerySaver.saveImage(imageBytes, quality: 100, name: widget.examRecord.title);
+
+    final hasAccess = await Gal.hasAccess(toAlbum: true);
+    if (!hasAccess) {
+      await Gal.requestAccess(toAlbum: true);
+    }
+    await Gal.putImageBytes(imageBytes, name: widget.examRecord.title, album: '실감');
+
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('이미지가 저장되었습니다.')));
   }
