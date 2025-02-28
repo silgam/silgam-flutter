@@ -58,3 +58,6 @@ app.*.map.json
 *.config.dart
 lib/firebase_options.dart
 lib/app_env.dart
+
+# FVM Version Cache
+.fvm/
