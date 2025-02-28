@@ -31,8 +31,6 @@ class RecordListCubit extends Cubit<RecordListState> {
       return;
     }
 
-    AnalyticsManager.logEvent(name: '[HomePage-list] Refresh');
-
     emit(state.copyWith(isLoading: true));
 
     final records =
