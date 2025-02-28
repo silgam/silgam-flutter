@@ -23,10 +23,7 @@ class RecordDetailPage extends StatefulWidget {
   static const routeName = '/record_detail';
   final RecordDetailPageArguments arguments;
 
-  const RecordDetailPage({
-    super.key,
-    required this.arguments,
-  });
+  const RecordDetailPage({super.key, required this.arguments});
 
   @override
   State<RecordDetailPage> createState() => _RecordDetailPageState();
@@ -48,8 +45,9 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 
   Future<void> _refreshRecord() async {
     ExamRecord? getRecord() {
-      return _recordListCubit.state.originalRecords
-          .firstWhereOrNull((r) => r.id == widget.arguments.recordId);
+      return _recordListCubit.state.originalRecords.firstWhereOrNull(
+        (r) => r.id == widget.arguments.recordId,
+      );
     }
 
     ExamRecord? record = getRecord();
@@ -68,19 +66,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (_isDeleting) return;
 
     final arguments = SaveImagePageArguments(recordToSave: record);
-    await Navigator.pushNamed(context, SaveImagePage.routeName,
-        arguments: arguments);
+    await Navigator.pushNamed(context, SaveImagePage.routeName, arguments: arguments);
   }
 
   void _onEditButtonPressed(ExamRecord record) async {
     if (_isDeleting) return;
 
     final arguments = EditRecordPageArguments(recordToEdit: record);
-    await Navigator.pushNamed(
-      context,
-      EditRecordPage.routeName,
-      arguments: arguments,
-    );
+    await Navigator.pushNamed(context, EditRecordPage.routeName, arguments: arguments);
 
     await _refreshRecord();
   }
@@ -116,12 +109,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   Future<void> _deleteRecord(ExamRecord record) async {
-    if (_appCubit.state.isOffline &&
-        record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 복습할 문제 사진을 포함한 기록을 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
+    if (_appCubit.state.isOffline && record.reviewProblems.any((p) => p.imagePaths.isNotEmpty)) {
+      EasyLoading.showToast('오프라인 상태에서는 복습할 문제 사진을 포함한 기록을 삭제할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -136,14 +125,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (mounted) Navigator.pop(context, RecordDetailPageResult.deleted);
     EasyLoading.dismiss();
 
-    await AnalyticsManager.logEvent(
-        name: '[ExamRecordDetailPage] Delete exam record');
+    await AnalyticsManager.logEvent(name: '[ExamRecordDetailPage] Delete exam record');
   }
 
   void _onReviewProblemCardTap(ReviewProblem problem) {
     final arguments = ReviewProblemDetailPageArguments(problem: problem);
-    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName,
-        arguments: arguments);
+    Navigator.pushNamed(context, ReviewProblemDetailPage.routeName, arguments: arguments);
   }
 
   Widget _buildTitle(ExamRecord record) {
@@ -152,11 +139,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       children: [
         Text(
           DateFormat.yMEd('ko_KR').add_Hm().format(record.examStartedTime),
-          style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: Colors.grey.shade700,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12, color: Colors.grey.shade700),
         ),
         Center(
           child: Row(
@@ -166,10 +149,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               Flexible(
                 child: Text(
                   record.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
               ),
               const SizedBox(width: 6),
@@ -200,8 +180,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       if (grade != null) _buildScoreItem('등급', grade),
       if (percentile != null) _buildScoreItem('백분위', percentile),
       if (standardScore != null) _buildScoreItem('표준점수', standardScore),
-      if (examDurationMinutes != null)
-        _buildScoreItem('응시 시간', examDurationMinutes),
+      if (examDurationMinutes != null) _buildScoreItem('응시 시간', examDurationMinutes),
     ];
 
     for (var i = scoreItems.length - 1; i >= 0; i--) {
@@ -209,11 +188,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       scoreItems.insert(i, const VerticalDivider(indent: 6, endIndent: 6));
     }
 
-    return IntrinsicHeight(
-      child: Row(
-        children: scoreItems,
-      ),
-    );
+    return IntrinsicHeight(child: Row(children: scoreItems));
   }
 
   Widget _buildScoreItem(String title, int value) {
@@ -223,26 +198,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
         children: [
           _buildSubTitle(title),
           const SizedBox(height: 4),
-          Text(
-            value.toString(),
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
+          Text(value.toString(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w300)),
         ],
       ),
     );
   }
 
   Widget _buildSubTitle(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Colors.grey.shade700,
-        fontWeight: FontWeight.w300,
-      ),
-    );
+    return Text(text, style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.w300));
   }
 
   Widget _buildContent(ExamRecord record) {
@@ -253,14 +216,9 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
         IntrinsicHeight(
           child: Row(
             children: [
-              Container(
-                width: 2,
-                color: Color(record.getGradeColor()),
-              ),
+              Container(width: 2, color: Color(record.getGradeColor())),
               const SizedBox(width: 12),
-              Flexible(
-                child: _buildTitle(record),
-              ),
+              Flexible(child: _buildTitle(record)),
             ],
           ),
         ),
@@ -296,10 +254,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                     Chip(
                       label: Text('${wrongProblem.problemNumber}번'),
                       backgroundColor: Theme.of(context).primaryColor,
-                      labelStyle: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
                     ),
                 ],
               ),
@@ -318,10 +273,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text(
-                  record.feedback,
-                  style: const TextStyle(height: 1.2),
-                ),
+                child: Text(record.feedback, style: const TextStyle(height: 1.2)),
               ),
             ],
           ),
@@ -346,14 +298,14 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                       onTap: () => _onReviewProblemCardTap(problem),
                     ),
                 ],
-              )
+              ),
             ],
           ),
         const SizedBox(height: 16),
         BlocBuilder<AppCubit, AppState>(
-          buildWhen: (previous, current) =>
-              previous.productBenefit.isAdsRemoved !=
-              current.productBenefit.isAdsRemoved,
+          buildWhen:
+              (previous, current) =>
+                  previous.productBenefit.isAdsRemoved != current.productBenefit.isAdsRemoved,
           builder: (context, appState) {
             if (isAdmobDisabled || appState.productBenefit.isAdsRemoved) {
               return const SizedBox.shrink();
@@ -379,9 +331,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (record == null) {
       return PageLayout(
         onBackPressed: () => Navigator.of(context).pop(),
-        child: Center(
-          child: CircularProgressIndicator(strokeWidth: 3),
-        ),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 3)),
       );
     }
 
@@ -421,6 +371,4 @@ class RecordDetailPageArguments {
   RecordDetailPageArguments({required this.recordId});
 }
 
-enum RecordDetailPageResult {
-  deleted,
-}
+enum RecordDetailPageResult { deleted }

@@ -17,9 +17,7 @@ class FeedbackRepository {
 
   final FeedbackApi _feedbackApi;
 
-  Future<Result<Unit, ApiFailure>> sendFeedback({
-    required String feedback,
-  }) async {
+  Future<Result<Unit, ApiFailure>> sendFeedback({required String feedback}) async {
     final request = SendFeedbackRequestDto(
       userId: FirebaseAuth.instance.currentUser?.uid,
       feedback: feedback,

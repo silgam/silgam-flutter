@@ -29,10 +29,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> onLoginButtonTap(Future<void> Function() loginFunction) async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 로그인할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 로그인할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -74,8 +71,7 @@ class LoginCubit extends Cubit<LoginState> {
         emit(state.copyWith(isLoading: false));
         return;
       }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
@@ -89,9 +85,7 @@ class LoginCubit extends Cubit<LoginState> {
     final LoginResult loginResult;
     if (Platform.isIOS) {
       rawNonce = generateNonce();
-      loginResult = await FacebookAuth.instance.login(
-        nonce: rawNonce.toSha256(),
-      );
+      loginResult = await FacebookAuth.instance.login(nonce: rawNonce.toSha256());
     } else {
       loginResult = await FacebookAuth.instance.login();
     }
@@ -102,24 +96,22 @@ class LoginCubit extends Cubit<LoginState> {
       return;
     }
 
-    final OAuthCredential facebookAuthCredential = Platform.isIOS
-        ? OAuthCredential(
-            providerId: 'facebook.com',
-            signInMethod: 'oauth',
-            idToken: accessToken.tokenString,
-            rawNonce: rawNonce,
-          )
-        : FacebookAuthProvider.credential(accessToken.tokenString);
+    final OAuthCredential facebookAuthCredential =
+        Platform.isIOS
+            ? OAuthCredential(
+              providerId: 'facebook.com',
+              signInMethod: 'oauth',
+              idToken: accessToken.tokenString,
+              rawNonce: rawNonce,
+            )
+            : FacebookAuthProvider.credential(accessToken.tokenString);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
   Future<void> loginApple() async {
     final rawNonce = generateNonce();
     final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
+      scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
       nonce: rawNonce.toSha256(),
     );
     final credential = OAuthProvider('apple.com').credential(
@@ -131,7 +123,8 @@ class LoginCubit extends Cubit<LoginState> {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser?.displayName == null) {
       await currentUser?.updateDisplayName(
-          '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}');
+        '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}',
+      );
     }
   }
 }

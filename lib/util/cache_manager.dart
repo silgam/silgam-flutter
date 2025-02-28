@@ -57,18 +57,14 @@ class CacheManager {
     if (ads == null) {
       await _sharedPreferences.remove(PreferenceKey.cacheAds);
     } else {
-      await _sharedPreferences.setString(
-        PreferenceKey.cacheAds,
-        jsonEncode(ads),
-      );
+      await _sharedPreferences.setString(PreferenceKey.cacheAds, jsonEncode(ads));
     }
     await _setLastUpdated(PreferenceKey.cacheAds);
   }
 
   List<DDay>? getDDays() {
     try {
-      final cachedDDays =
-          _sharedPreferences.getString(PreferenceKey.cacheDDays);
+      final cachedDDays = _sharedPreferences.getString(PreferenceKey.cacheDDays);
       final isExpired = _isCacheExpired(PreferenceKey.cacheDDays);
       if (cachedDDays == null || isExpired) return null;
 
@@ -84,18 +80,14 @@ class CacheManager {
     if (dDays == null) {
       await _sharedPreferences.remove(PreferenceKey.cacheDDays);
     } else {
-      await _sharedPreferences.setString(
-        PreferenceKey.cacheDDays,
-        jsonEncode(dDays),
-      );
+      await _sharedPreferences.setString(PreferenceKey.cacheDDays, jsonEncode(dDays));
     }
     await _setLastUpdated(PreferenceKey.cacheDDays);
   }
 
   List<Product>? getProducts() {
     try {
-      final cachedProducts =
-          _sharedPreferences.getString(PreferenceKey.cacheProducts);
+      final cachedProducts = _sharedPreferences.getString(PreferenceKey.cacheProducts);
       final isExpired = _isCacheExpired(PreferenceKey.cacheProducts);
       if (cachedProducts == null || isExpired) return null;
 
@@ -111,17 +103,13 @@ class CacheManager {
     if (products == null) {
       await _sharedPreferences.remove(PreferenceKey.cacheProducts);
     } else {
-      await _sharedPreferences.setString(
-        PreferenceKey.cacheProducts,
-        jsonEncode(products),
-      );
+      await _sharedPreferences.setString(PreferenceKey.cacheProducts, jsonEncode(products));
     }
     await _setLastUpdated(PreferenceKey.cacheProducts);
   }
 
   bool _isCacheExpired(String cacheKey) {
-    final lastUpdatedString =
-        _sharedPreferences.getString('${cacheKey}LastUpdated');
+    final lastUpdatedString = _sharedPreferences.getString('${cacheKey}LastUpdated');
     if (lastUpdatedString == null) return true;
     final lastUpdated = DateTime.parse(lastUpdatedString);
     return lastUpdated.add(_cacheDuration).isBefore(DateTime.now().toUtc());
@@ -135,11 +123,6 @@ class CacheManager {
   }
 
   void _logError(String name, Object e) {
-    log(
-      '$name error: $e',
-      name: runtimeType.toString(),
-      error: e,
-      stackTrace: StackTrace.current,
-    );
+    log('$name error: $e', name: runtimeType.toString(), error: e, stackTrace: StackTrace.current);
   }
 }

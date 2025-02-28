@@ -18,10 +18,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(tabIndex: tabIndex));
     AnalyticsManager.logEvent(
       name: '[HomePage] Tab selected',
-      properties: {
-        'label': HomePage.views.keys.toList()[tabIndex],
-        'index': tabIndex,
-      },
+      properties: {'label': HomePage.views.keys.toList()[tabIndex], 'index': tabIndex},
     );
   }
 

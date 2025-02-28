@@ -31,21 +31,12 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, top: 32, bottom: 72),
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Colors.white),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            '3초만에 가입 / 로그인',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
+          const Text('3초만에 가입 / 로그인', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900)),
           const SizedBox(height: 12),
           const Text(
             '로그인하면 실감의 더 많은 기능들을 이용할 수 있어요!',
@@ -91,34 +82,33 @@ class _LoginPageState extends State<LoginPage> {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   style: Theme.of(context).primaryTextTheme.bodyLarge?.copyWith(
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w300,
-                        fontSize: 11,
-                      ),
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 11,
+                  ),
                   children: [
                     const TextSpan(text: '로그인하면 '),
                     TextSpan(
                       text: '개인정보처리방침',
                       style: const TextStyle(color: Colors.blueAccent),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launchUrl(
-                            Uri.parse(urlPrivacy),
-                            mode: LaunchMode.externalApplication,
-                          );
-                        },
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(
+                                Uri.parse(urlPrivacy),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            },
                     ),
                     const TextSpan(text: ' 및 '),
                     TextSpan(
                       text: '서비스이용약관',
                       style: const TextStyle(color: Colors.blueAccent),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launchUrl(
-                            Uri.parse(urlTerms),
-                            mode: LaunchMode.externalApplication,
-                          );
-                        },
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(Uri.parse(urlTerms), mode: LaunchMode.externalApplication);
+                            },
                     ),
                     const TextSpan(text: '에 동의하는 것으로 간주됩니다.'),
                   ],
@@ -134,17 +124,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppCubit, AppState>(
-      listenWhen: (previous, current) =>
-          previous.isSignedIn != current.isSignedIn,
+      listenWhen: (previous, current) => previous.isSignedIn != current.isSignedIn,
       listener: (context, appState) {
         if (appState.isSignedIn) {
           Navigator.pop(context);
           EasyLoading.dismiss();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!'),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('${appState.me!.displayName ?? '실감이'}님 반갑습니다!')));
           AnalyticsManager.logEvent(
             name: '[LoginPage] Login',
             properties: {'user_id': appState.me!.id},
@@ -158,8 +145,7 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Theme.of(context).primaryColor,
           textBrightness: Brightness.light,
           child: BlocConsumer<LoginCubit, LoginState>(
-            listenWhen: (previous, current) =>
-                previous.isLoading != current.isLoading,
+            listenWhen: (previous, current) => previous.isLoading != current.isLoading,
             listener: (context, state) {
               if (state.isLoading) {
                 EasyLoading.show();
@@ -170,11 +156,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context, state) {
               return PopScope(
                 canPop: !state.isLoading,
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: _buildLoginLayout(),
-                  ),
-                ),
+                child: Center(child: SingleChildScrollView(child: _buildLoginLayout())),
               );
             },
           ),
@@ -207,10 +189,7 @@ class _LoginButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: borderColor,
-          width: 1,
-        ),
+        border: Border.all(color: borderColor, width: 1),
       ),
       child: Material(
         type: MaterialType.transparency,
@@ -228,12 +207,8 @@ class _LoginButton extends StatelessWidget {
                   child: SvgPicture.asset(
                     assetName,
                     height: 24,
-                    colorFilter: lightText
-                        ? const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          )
-                        : null,
+                    colorFilter:
+                        lightText ? const ColorFilter.mode(Colors.white, BlendMode.srcIn) : null,
                   ),
                 ),
                 Expanded(

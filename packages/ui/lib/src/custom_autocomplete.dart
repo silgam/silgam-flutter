@@ -42,10 +42,7 @@ class CustomAutocomplete<T extends Object> extends StatelessWidget {
                     ),
                   ],
                 ),
-                constraints: BoxConstraints(
-                  maxHeight: 200,
-                  maxWidth: constraints.maxWidth,
-                ),
+                constraints: BoxConstraints(maxHeight: 200, maxWidth: constraints.maxWidth),
                 child: ListView.separated(
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,

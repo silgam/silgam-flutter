@@ -9,9 +9,8 @@ class InitialRouteHandler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final route = _initialRoute.contains('silgam.app')
-        ? _initialRoute.split('silgam.app')[1]
-        : _initialRoute;
+    final route =
+        _initialRoute.contains('silgam.app') ? _initialRoute.split('silgam.app')[1] : _initialRoute;
     Future(() {
       if (!context.mounted) return;
 
@@ -23,10 +22,6 @@ class InitialRouteHandler extends StatelessWidget {
       }
     });
 
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

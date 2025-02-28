@@ -23,50 +23,51 @@ Future<void> configureDependencies() => getIt.init();
 abstract class RegisterModule {
   @singleton
   @preResolve
-  Future<SharedPreferences> get sharedPreferences =>
-      SharedPreferences.getInstance();
+  Future<SharedPreferences> get sharedPreferences => SharedPreferences.getInstance();
 
   @singleton
-  Dio get dio => Dio(BaseOptions(
-        baseUrl: urlSilgamApi,
-        contentType: Headers.jsonContentType,
-        sendTimeout: kIsWeb ? null : const Duration(seconds: 20),
-        receiveTimeout: const Duration(seconds: 20),
-        connectTimeout: const Duration(seconds: 20),
-      ))
+  Dio get dio =>
+      Dio(
+          BaseOptions(
+            baseUrl: urlSilgamApi,
+            contentType: Headers.jsonContentType,
+            sendTimeout: kIsWeb ? null : const Duration(seconds: 20),
+            receiveTimeout: const Duration(seconds: 20),
+            connectTimeout: const Duration(seconds: 20),
+          ),
+        )
         ..interceptors.add(PrettyDioLogger(responseBody: false))
-        ..interceptors.add(InterceptorsWrapper(
-          onResponse: (response, handler) {
-            if (response.statusCode == 200) {
-              getIt.get<AppCubit>().updateIsOffline(false);
-            }
-            handler.next(response);
-          },
-          onError: (e, handler) {
-            log('Dio error: ${e.error}, type: ${e.type}',
-                name: 'DioInterceptor');
+        ..interceptors.add(
+          InterceptorsWrapper(
+            onResponse: (response, handler) {
+              if (response.statusCode == 200) {
+                getIt.get<AppCubit>().updateIsOffline(false);
+              }
+              handler.next(response);
+            },
+            onError: (e, handler) {
+              log('Dio error: ${e.error}, type: ${e.type}', name: 'DioInterceptor');
 
-            final body = e.response?.data;
-            ApiFailure failure;
-            if (e.error is SocketException ||
-                e.type == DioExceptionType.connectionTimeout ||
-                e.type == DioExceptionType.sendTimeout ||
-                e.type == DioExceptionType.receiveTimeout) {
-              failure = ApiFailure.noNetwork();
-              getIt.get<AppCubit>().updateIsOffline(true);
-            } else if (body is Map<String, dynamic>) {
-              final message = body['message'] as String?;
-              failure = ApiFailure(
-                type: ApiFailureType.unknown,
-                message: message ?? ApiFailureType.unknown.message,
-              );
-            } else {
-              failure = ApiFailure.unknown();
-            }
+              final body = e.response?.data;
+              ApiFailure failure;
+              if (e.error is SocketException ||
+                  e.type == DioExceptionType.connectionTimeout ||
+                  e.type == DioExceptionType.sendTimeout ||
+                  e.type == DioExceptionType.receiveTimeout) {
+                failure = ApiFailure.noNetwork();
+                getIt.get<AppCubit>().updateIsOffline(true);
+              } else if (body is Map<String, dynamic>) {
+                final message = body['message'] as String?;
+                failure = ApiFailure(
+                  type: ApiFailureType.unknown,
+                  message: message ?? ApiFailureType.unknown.message,
+                );
+              } else {
+                failure = ApiFailure.unknown();
+              }
 
-            handler.next(e.copyWith(
-              error: failure,
-            ));
-          },
-        ));
+              handler.next(e.copyWith(error: failure));
+            },
+          ),
+        );
 }

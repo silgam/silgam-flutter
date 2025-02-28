@@ -60,20 +60,16 @@ class _AdsCardState extends State<AdsCard> {
                   for (final (index, ads) in state.ads.indexed)
                     VisibilityDetector(
                       key: Key('$index ${ads.imagePath}'),
-                      onVisibilityChanged: (info) =>
-                          _onVisibilityChanged(index, info),
+                      onVisibilityChanged: (info) => _onVisibilityChanged(index, info),
                       child: GestureDetector(
                         onTap: () => _onAdsTap(ads, index),
                         child: CachedNetworkImage(
                           imageUrl: ads.imagePath,
                           fit: BoxFit.cover,
-                          errorWidget: (_, __, ___) => Center(
-                            child: Icon(
-                              Icons.image,
-                              size: 32,
-                              color: Colors.grey.shade300,
-                            ),
-                          ),
+                          errorWidget:
+                              (_, __, ___) => Center(
+                                child: Icon(Icons.image, size: 32, color: Colors.grey.shade300),
+                              ),
                         ),
                       ),
                     ),
@@ -121,25 +117,20 @@ class _AdsCardState extends State<AdsCard> {
     for (final action in ads.actions) {
       switch (action.intent) {
         case AdsIntent.openUrl:
-          launchUrl(Uri.parse(action.data),
-              mode: LaunchMode.externalApplication);
+          launchUrl(Uri.parse(action.data), mode: LaunchMode.externalApplication);
           break;
         case AdsIntent.openAdUrl:
-          launchUrl(Uri.parse(action.data),
-              mode: LaunchMode.externalApplication);
+          launchUrl(Uri.parse(action.data), mode: LaunchMode.externalApplication);
           break;
         case AdsIntent.openPurchasePage:
           final productId = action.data;
-          final product = getIt
-              .get<IapCubit>()
-              .state
-              .products
-              .firstWhereOrNull((p) => p.id == productId);
+          final product = getIt.get<IapCubit>().state.products.firstWhereOrNull(
+            (p) => p.id == productId,
+          );
           if (product != null) {
-            Navigator.of(context).pushNamed(
-              PurchasePage.routeName,
-              arguments: PurchasePageArguments(product: product),
-            );
+            Navigator.of(
+              context,
+            ).pushNamed(PurchasePage.routeName, arguments: PurchasePageArguments(product: product));
           }
           break;
         case AdsIntent.openOfflineGuidePage:

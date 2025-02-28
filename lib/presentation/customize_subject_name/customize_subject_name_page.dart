@@ -18,8 +18,7 @@ class CustomizeSubjectNamePage extends StatefulWidget {
   static const routeName = '/customize_subject_name';
 
   @override
-  State<CustomizeSubjectNamePage> createState() =>
-      _CustomizeSubjectNamePageState();
+  State<CustomizeSubjectNamePage> createState() => _CustomizeSubjectNamePageState();
 }
 
 class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
@@ -43,10 +42,7 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
     if (values == null) return;
 
     final Map<Subject, String> subjectNames = values.map(
-      (subject, subjectName) => MapEntry(
-        Subject.values.byName(subject),
-        subjectName,
-      ),
+      (subject, subjectName) => MapEntry(Subject.values.byName(subject), subjectName),
     );
 
     _cubit.save(subjectNames: subjectNames);
@@ -56,8 +52,7 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(
-        name:
-            '${CustomizeSubjectNamePage.routeName}/custom_subject_name_not_available_dialog',
+        name: '${CustomizeSubjectNamePage.routeName}/custom_subject_name_not_available_dialog',
       ),
       builder: (context) {
         return BlocBuilder<IapCubit, IapState>(
@@ -79,15 +74,12 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
                     text: '실감패스 확인하러 가기',
                     onPressed: () {
                       AnalyticsManager.logEvent(
-                        name:
-                            '[CustomizeSubjectNamePage] Check pass button tapped',
+                        name: '[CustomizeSubjectNamePage] Check pass button tapped',
                       );
                       Navigator.of(context).pop();
                       Navigator.of(context).pushNamed(
                         PurchasePage.routeName,
-                        arguments: PurchasePageArguments(
-                          product: sellingProduct,
-                        ),
+                        arguments: PurchasePageArguments(product: sellingProduct),
                       );
                     },
                   ),
@@ -101,11 +93,7 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
 
   void _onSaved() {
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('과목 이름이 저장되었습니다.'),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('과목 이름이 저장되었습니다.')));
   }
 
   void _onPopInvokedWithResult(bool didPop, _) {
@@ -144,8 +132,7 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
     return FormBuilder(
       key: _formKey,
       enabled: state.status != CustomizeSubjectNameStatus.saving,
-      canPop: !state.isFormChanged &&
-          state.status != CustomizeSubjectNameStatus.saving,
+      canPop: !state.isFormChanged && state.status != CustomizeSubjectNameStatus.saving,
       onPopInvokedWithResult: _onPopInvokedWithResult,
       onChanged: _cubit.onFormChanged,
       child: Column(
@@ -184,12 +171,8 @@ class _CustomizeSubjectNamePageState extends State<CustomizeSubjectNamePage> {
           return PageLayout(
             title: '기본 과목 이름 설정',
             onBackPressed: () => Navigator.of(context).maybePop(),
-            bottomAction: PageLayoutBottomAction(
-              label: '저장',
-              onPressed: _onSavePressed,
-            ),
-            isBottomActionLoading:
-                state.status == CustomizeSubjectNameStatus.saving,
+            bottomAction: PageLayoutBottomAction(label: '저장', onPressed: _onSavePressed),
+            isBottomActionLoading: state.status == CustomizeSubjectNameStatus.saving,
             unfocusOnTapBackground: true,
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),

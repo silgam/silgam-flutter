@@ -5,19 +5,19 @@ import '../../model/exam.dart';
 
 @lazySingleton
 class ExamRepository {
-  final CollectionReference<Exam> _examsCollection =
-      FirebaseFirestore.instance.collection('exams').withConverter(
-            fromFirestore: (snapshot, _) => Exam.fromJson(snapshot.data()!),
-            toFirestore: (exam, _) => exam.toJson(),
-          );
+  final CollectionReference<Exam> _examsCollection = FirebaseFirestore.instance
+      .collection('exams')
+      .withConverter(
+        fromFirestore: (snapshot, _) => Exam.fromJson(snapshot.data()!),
+        toFirestore: (exam, _) => exam.toJson(),
+      );
 
   void addExam(Exam exam) {
     _examsCollection.doc(exam.id).set(exam);
   }
 
   Future<List<Exam>> getMyExams(String userId) async {
-    final exams =
-        await _examsCollection.where('userId', isEqualTo: userId).get();
+    final exams = await _examsCollection.where('userId', isEqualTo: userId).get();
     return exams.docs.map((snapshot) => snapshot.data()).toList();
   }
 

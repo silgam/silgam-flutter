@@ -5,23 +5,14 @@ class TimelineMarker extends StatelessWidget {
   final double height;
   final Color color;
 
-  const TimelineMarker({
-    super.key,
-    this.width = 8,
-    this.height = 12,
-    this.color = Colors.grey,
-  });
+  const TimelineMarker({super.key, this.width = 8, this.height = 12, this.color = Colors.grey});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: ClipPath(
         clipper: TimelineMarkerClipper(),
-        child: Container(
-          width: width,
-          height: height,
-          color: color,
-        ),
+        child: Container(width: width, height: height, color: color),
       ),
     );
   }

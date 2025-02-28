@@ -17,7 +17,5 @@ abstract class OnboardingApi {
   Future<List<JoinPath>> getAllJoinPaths();
 
   @POST('/onboarding/join_paths')
-  Future<void> submitJoinPaths(
-    @Body() SubmitJoinPathsRequestDto request,
-  );
+  Future<void> submitJoinPaths(@Body() SubmitJoinPathsRequestDto request);
 }

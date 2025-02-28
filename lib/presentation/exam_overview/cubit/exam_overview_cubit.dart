@@ -40,9 +40,7 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
 
   void updateLapTimeItemGroups() {
     if (_appCubit.state.productBenefit.isLapTimeAvailable) {
-      _updateLapTimeItemGroups(
-        lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time),
-      );
+      _updateLapTimeItemGroups(lapTimes: _examDetail.lapTimes.sortedBy((lapTime) => lapTime.time));
     } else {
       _updateLapTimeItemGroupsUsingExample();
     }
@@ -59,26 +57,28 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     emit(state.copyWith(isAutoSavingRecords: true));
 
     final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
-    final recordsCountToSave = examRecordLimit == -1
-        ? _examDetail.exams.length
-        : (examRecordLimit - _recordListCubit.state.originalRecords.length)
-            .clamp(0, _examDetail.exams.length);
+    final recordsCountToSave =
+        examRecordLimit == -1
+            ? _examDetail.exams.length
+            : (examRecordLimit - _recordListCubit.state.originalRecords.length).clamp(
+              0,
+              _examDetail.exams.length,
+            );
 
     final List<ExamRecord> savedRecords = [];
     for (final exam in _examDetail.exams.take(recordsCountToSave)) {
       final examStartedTime = _examDetail.examStartedTimes[exam];
       final examFinishedTime = _examDetail.examFinishedTimes[exam];
-      final examDurationMinutes = examStartedTime != null &&
-              examFinishedTime != null
-          ? examFinishedTime.difference(examStartedTime).inMinutesWithCorrection
-          : exam.durationMinutes;
+      final examDurationMinutes =
+          examStartedTime != null && examFinishedTime != null
+              ? examFinishedTime.difference(examStartedTime).inMinutesWithCorrection
+              : exam.durationMinutes;
 
       final record = ExamRecord.create(
         userId: userId,
-        title: ExamRecord.autoSaveTitlePrefix +
-            (_examDetail.exams.length > 1
-                ? '${_examDetail.timetableName} - '
-                : '') +
+        title:
+            ExamRecord.autoSaveTitlePrefix +
+            (_examDetail.exams.length > 1 ? '${_examDetail.timetableName} - ' : '') +
             exam.name,
         exam: exam,
         examStartedTime: examStartedTime ?? DateTime.now(),
@@ -92,20 +92,23 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
 
     _recordListCubit.onRecordsCreated(savedRecords);
 
-    emit(state.copyWith(
-      isAutoSavingRecords: false,
-      examToRecordIds: {
-        ...state.examToRecordIds,
-        for (final record in savedRecords) record.exam: record.id,
-      },
-    ));
+    emit(
+      state.copyWith(
+        isAutoSavingRecords: false,
+        examToRecordIds: {
+          ...state.examToRecordIds,
+          for (final record in savedRecords) record.exam: record.id,
+        },
+      ),
+    );
 
-    final autoSaveFailedExamNames = _examDetail.exams.reversed
-        .take(_examDetail.exams.length - recordsCountToSave)
-        .map((exam) => exam.name)
-        .toList()
-        .reversed
-        .toList();
+    final autoSaveFailedExamNames =
+        _examDetail.exams.reversed
+            .take(_examDetail.exams.length - recordsCountToSave)
+            .map((exam) => exam.name)
+            .toList()
+            .reversed
+            .toList();
 
     if (autoSaveFailedExamNames.isNotEmpty) {
       _sharedPreferences.setBool(PreferenceKey.useAutoSaveRecords, false);
@@ -115,15 +118,11 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
   }
 
   void examRecorded(Exam exam, String recordId) {
-    emit(state.copyWith(
-      examToRecordIds: {...state.examToRecordIds, exam: recordId},
-    ));
+    emit(state.copyWith(examToRecordIds: {...state.examToRecordIds, exam: recordId}));
   }
 
   void examRecordDeleted(Exam exam) {
-    emit(state.copyWith(
-      examToRecordIds: {...state.examToRecordIds}..remove(exam),
-    ));
+    emit(state.copyWith(examToRecordIds: {...state.examToRecordIds}..remove(exam)));
   }
 
   void _updateLapTimeItemGroups({required List<LapTime> lapTimes}) {
@@ -132,8 +131,10 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     for (final lapTime in lapTimes) {
       final exam = lapTime.breakpoint.exam;
 
-      final List<LapTimeItemGroup> lapTimeItemGroups =
-          examToLapTimeItemGroups.putIfAbsent(exam, () => []);
+      final List<LapTimeItemGroup> lapTimeItemGroups = examToLapTimeItemGroups.putIfAbsent(
+        exam,
+        () => [],
+      );
 
       final Announcement? targetAnnouncement;
       if (lapTime.time.isSameOrAfter(exam.endTime)) {
@@ -145,48 +146,49 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
       }
 
       if (targetAnnouncement != null &&
-          lapTimeItemGroups.lastOrNull?.announcementPurpose !=
-              targetAnnouncement.purpose) {
-        lapTimeItemGroups.add(LapTimeItemGroup(
-          title: targetAnnouncement.title,
-          startTime: targetAnnouncement.time.calculateBreakpointTime(
-            exam.startTime,
-            exam.endTime,
+          lapTimeItemGroups.lastOrNull?.announcementPurpose != targetAnnouncement.purpose) {
+        lapTimeItemGroups.add(
+          LapTimeItemGroup(
+            title: targetAnnouncement.title,
+            startTime: targetAnnouncement.time.calculateBreakpointTime(
+              exam.startTime,
+              exam.endTime,
+            ),
+            announcementPurpose: targetAnnouncement.purpose,
+            lapTimeItems: [],
           ),
-          announcementPurpose: targetAnnouncement.purpose,
-          lapTimeItems: [],
-        ));
+        );
       }
 
       final lapTimeItemGroup = lapTimeItemGroups.last;
-      lapTimeItemGroup.lapTimeItems.add(LapTimeItem(
-        time: lapTime.time,
-        timeDifference: lapTime.time.difference(
-          lapTimeItemGroup.lapTimeItems.lastOrNull?.time ??
-              lapTimeItemGroup.startTime,
+      lapTimeItemGroup.lapTimeItems.add(
+        LapTimeItem(
+          time: lapTime.time,
+          timeDifference: lapTime.time.difference(
+            lapTimeItemGroup.lapTimeItems.lastOrNull?.time ?? lapTimeItemGroup.startTime,
+          ),
+          timeElapsed: lapTime.time.difference(lapTimeItemGroup.startTime),
         ),
-        timeElapsed: lapTime.time.difference(lapTimeItemGroup.startTime),
-      ));
+      );
     }
 
-    emit(state.copyWith(
-      examToLapTimeItemGroups: examToLapTimeItemGroups,
-    ));
+    emit(state.copyWith(examToLapTimeItemGroups: examToLapTimeItemGroups));
   }
 
   void _updateLapTimeItemGroupsUsingExample() {
     final firstExam = _examDetail.exams.first;
     final exampleLapTimeItemGroups = getExampleLapTimeGroups(
-      startTime: firstExam.subject.defaultAnnouncements.first.time
-          .calculateBreakpointTime(
+      startTime: firstExam.subject.defaultAnnouncements.first.time.calculateBreakpointTime(
         firstExam.startTime,
         firstExam.endTime,
       ),
     );
 
-    emit(state.copyWith(
-      examToLapTimeItemGroups: {firstExam: exampleLapTimeItemGroups},
-      isUsingExampleLapTimeItemGroups: true,
-    ));
+    emit(
+      state.copyWith(
+        examToLapTimeItemGroups: {firstExam: exampleLapTimeItemGroups},
+        isUsingExampleLapTimeItemGroups: true,
+      ),
+    );
   }
 }

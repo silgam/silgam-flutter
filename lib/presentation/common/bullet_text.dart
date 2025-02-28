@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BulletText extends StatelessWidget {
-  const BulletText({
-    super.key,
-    required this.text,
-    this.style,
-  });
+  const BulletText({super.key, required this.text, this.style});
 
   final String text;
   final TextStyle? style;
@@ -18,10 +14,8 @@ class BulletText extends StatelessWidget {
       children: [
         Text(
           '• ',
-          style: style?.copyWith(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w300,
-              ) ??
+          style:
+              style?.copyWith(fontFamily: 'Roboto', fontWeight: FontWeight.w300) ??
               const TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w300,
@@ -29,13 +23,7 @@ class BulletText extends StatelessWidget {
                 height: 1.2,
               ),
         ),
-        Flexible(
-          child: Text(
-            text,
-            textAlign: TextAlign.start,
-            style: style,
-          ),
-        ),
+        Flexible(child: Text(text, textAlign: TextAlign.start, style: style)),
       ],
     );
   }

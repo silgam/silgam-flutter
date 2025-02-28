@@ -12,10 +12,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../app_env.dart';
 
 class AnalyticsManager {
-  static final FirebaseAnalytics _firebaseAnalytics =
-      FirebaseAnalytics.instance;
-  static final FirebaseCrashlytics _firebaseCrashlytics =
-      FirebaseCrashlytics.instance;
+  static final FirebaseAnalytics _firebaseAnalytics = FirebaseAnalytics.instance;
+  static final FirebaseCrashlytics _firebaseCrashlytics = FirebaseCrashlytics.instance;
   static late final Mixpanel _mixpanel;
 
   static Future<void> init() async {
@@ -41,10 +39,7 @@ class AnalyticsManager {
     FirebaseAuth.instance.authStateChanges().listen((event) {
       registerUserProperties({'Firebase User ID': event?.uid});
       setUserId(userId: event?.uid);
-      setPeopleProperties({
-        '\$name': event?.uid,
-        '\$email': event?.email,
-      });
+      setPeopleProperties({'\$name': event?.uid, '\$email': event?.email});
     });
   }
 
@@ -70,10 +65,7 @@ class AnalyticsManager {
         value is String || value is num ? value : value.toString(),
       ),
     );
-    await _firebaseAnalytics.logEvent(
-      name: firebaseEventName,
-      parameters: firebaseProperties,
-    );
+    await _firebaseAnalytics.logEvent(name: firebaseEventName, parameters: firebaseProperties);
   }
 
   static void eventStartTime({required String name}) {
@@ -84,8 +76,7 @@ class AnalyticsManager {
     _mixpanel.timeEvent(name);
   }
 
-  static Future<void> registerUserProperties(
-      Map<String, dynamic> properties) async {
+  static Future<void> registerUserProperties(Map<String, dynamic> properties) async {
     if (kIsWeb) return;
 
     log('User properties registered: $properties', name: 'AnalyticsManager');
@@ -124,18 +115,12 @@ class AnalyticsRouteObserver extends RouteObserver {
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
-    AnalyticsManager.logEvent(
-      name: 'Page Open',
-      properties: {'Page Name': route.settings.name},
-    );
+    AnalyticsManager.logEvent(name: 'Page Open', properties: {'Page Name': route.settings.name});
   }
 
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
-    AnalyticsManager.logEvent(
-      name: 'Page Close',
-      properties: {'Route': route.settings.name},
-    );
+    AnalyticsManager.logEvent(name: 'Page Close', properties: {'Route': route.settings.name});
   }
 }

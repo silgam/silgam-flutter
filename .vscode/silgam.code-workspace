@@ -10,6 +10,9 @@
     }
   ],
   "settings": {
+    "[dart]": {
+      "editor.rulers": [100]
+    },
     "prettier.singleQuote": true,
     "cSpell.spellCheckOnlyWorkspaceFiles": true,
     "cSpell.words": [

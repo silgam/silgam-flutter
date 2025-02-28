@@ -17,20 +17,9 @@ class Subtitle extends StatelessWidget {
       margin: margin,
       padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 4),
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade300,
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
+      child: Text(text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
     );
   }
 }

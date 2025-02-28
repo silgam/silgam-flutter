@@ -14,7 +14,7 @@ part 'custom_exam_edit_state.dart';
 @injectable
 class CustomExamEditCubit extends Cubit<CustomExamEditState> {
   CustomExamEditCubit(this._examRepository, this._appCubit)
-      : super(const CustomExamEditState.initial());
+    : super(const CustomExamEditState.initial());
 
   final ExamRepository _examRepository;
   final AppCubit _appCubit;

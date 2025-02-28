@@ -12,6 +12,5 @@ class IapState with _$IapState {
     @Default(false) final bool isLoading,
   }) = _IapState;
 
-  Product? get freeProduct =>
-      products.firstWhereOrNull((product) => product.id == ProductId.free);
+  Product? get freeProduct => products.firstWhereOrNull((product) => product.id == ProductId.free);
 }

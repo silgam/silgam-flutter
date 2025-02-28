@@ -19,17 +19,16 @@ class Breakpoint {
     required this.isFirstInExam,
   });
 
-  static List<Breakpoint> createBreakpointsFromTimetable(
-    Timetable timetable,
-  ) {
+  static List<Breakpoint> createBreakpointsFromTimetable(Timetable timetable) {
     final breakpoints = <Breakpoint>[];
 
     timetable.items.forEachIndexed((index, currentItem) {
-      final itemStartTime = index == 0
-          ? timetable.startTime
-          : breakpoints.last.time.add(
-              Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
-            );
+      final itemStartTime =
+          index == 0
+              ? timetable.startTime
+              : breakpoints.last.time.add(
+                Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
+              );
       final examStartTime = itemStartTime.add(
         Duration(minutes: currentItem.exam.subject.minutesBeforeExamStart),
       );
@@ -38,8 +37,7 @@ class Breakpoint {
         currentItem.exam,
         examStartTime,
       );
-      if (breakpoints.lastOrNull?.time ==
-          currentItemBreakpoints.firstOrNull?.time) {
+      if (breakpoints.lastOrNull?.time == currentItemBreakpoints.firstOrNull?.time) {
         breakpoints.removeLast();
       }
       breakpoints.addAll(currentItemBreakpoints);
@@ -48,10 +46,7 @@ class Breakpoint {
     return breakpoints;
   }
 
-  static List<Breakpoint> _createBreakpointsFromExam(
-    Exam exam,
-    DateTime examStartTime,
-  ) {
+  static List<Breakpoint> _createBreakpointsFromExam(Exam exam, DateTime examStartTime) {
     final breakpoints = <Breakpoint>[];
 
     for (final announcement in exam.announcements) {
@@ -60,13 +55,15 @@ class Breakpoint {
         examStartTime.add(Duration(minutes: exam.durationMinutes)),
       );
 
-      breakpoints.add(Breakpoint(
-        title: announcement.title,
-        time: breakpointTime,
-        announcement: announcement,
-        exam: exam,
-        isFirstInExam: breakpoints.isEmpty,
-      ));
+      breakpoints.add(
+        Breakpoint(
+          title: announcement.title,
+          time: breakpointTime,
+          announcement: announcement,
+          exam: exam,
+          isFirstInExam: breakpoints.isEmpty,
+        ),
+      );
     }
 
     return breakpoints;

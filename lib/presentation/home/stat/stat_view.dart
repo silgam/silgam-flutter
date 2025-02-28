@@ -53,10 +53,7 @@ class _StatViewState extends State<StatView> {
       firstDate: _cubit.state.defaultDateRange.start,
       lastDate: _cubit.state.defaultDateRange.end,
       initialDateRange: _cubit.state.dateRange,
-      switchToCalendarEntryModeIcon: const Icon(
-        Icons.date_range,
-        color: Colors.white,
-      ),
+      switchToCalendarEntryModeIcon: const Icon(Icons.date_range, color: Colors.white),
     );
     if (picked != null) {
       _cubit.onDateRangeChanged(picked);
@@ -71,11 +68,9 @@ class _StatViewState extends State<StatView> {
       child: MultiBlocListener(
         listeners: [
           BlocListener<HomeCubit, HomeState>(
-            listenWhen: (previous, current) =>
-                previous.tabIndex != current.tabIndex,
+            listenWhen: (previous, current) => previous.tabIndex != current.tabIndex,
             listener: (context, state) {
-              final statViewTabIndex =
-                  HomePage.views.keys.toList().indexOf(StatView.title);
+              final statViewTabIndex = HomePage.views.keys.toList().indexOf(StatView.title);
               if (state.tabIndex == statViewTabIndex) {
                 _cubit.refresh();
               }
@@ -83,8 +78,7 @@ class _StatViewState extends State<StatView> {
           ),
           BlocListener<RecordListCubit, RecordListState>(
             bloc: getIt.get(),
-            listenWhen: (previous, current) =>
-                previous.originalRecords != current.originalRecords,
+            listenWhen: (previous, current) => previous.originalRecords != current.originalRecords,
             listener: (_, recordListState) => _cubit.onOriginalRecordsUpdated(),
           ),
         ],
@@ -108,23 +102,19 @@ class _StatViewState extends State<StatView> {
                         ),
                         screenWidth > tabletScreenWidth
                             ? _buildTabletLayout(
-                                filteredRecords: state.records,
-                                selectedExamIds: state.selectedExamIds,
-                                selectedExamValueType:
-                                    state.selectedExamValueType,
-                              )
+                              filteredRecords: state.records,
+                              selectedExamIds: state.selectedExamIds,
+                              selectedExamValueType: state.selectedExamValueType,
+                            )
                             : _buildMobileLayout(
-                                filteredRecords: state.records,
-                                selectedExamIds: state.selectedExamIds,
-                                selectedExamValueType:
-                                    state.selectedExamValueType,
-                              ),
+                              filteredRecords: state.records,
+                              selectedExamIds: state.selectedExamIds,
+                              selectedExamValueType: state.selectedExamValueType,
+                            ),
                       ],
                     ),
                     if (!appState.productBenefit.isStatisticAvailable)
-                      const FreeUserBlockOverlay(
-                        text: '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.',
-                      ),
+                      const FreeUserBlockOverlay(text: '예시 데이터입니다.\n통계 기능은 실감패스 사용자만 이용 가능해요.'),
                   ],
                 );
               },
@@ -155,12 +145,8 @@ class _StatViewState extends State<StatView> {
                     examValueType: selectedExamValueType,
                     selectedExamIds: selectedExamIds,
                   ),
-                  _buildTotalExamDurationInfoCard(
-                    filteredRecords: filteredRecords,
-                  ),
-                  _buildTotalExamCountInfoCard(
-                    filteredRecords: filteredRecords,
-                  ),
+                  _buildTotalExamDurationInfoCard(filteredRecords: filteredRecords),
+                  _buildTotalExamCountInfoCard(filteredRecords: filteredRecords),
                 ],
               ),
             ),
@@ -169,10 +155,7 @@ class _StatViewState extends State<StatView> {
               child: Column(
                 children: [
                   _buildPieChartCard(filteredRecords: filteredRecords),
-                  _buildHeatmapChartCard(
-                    filteredRecords: filteredRecords,
-                    expandHeight: false,
-                  )
+                  _buildHeatmapChartCard(filteredRecords: filteredRecords, expandHeight: false),
                 ],
               ),
             ),
@@ -200,16 +183,11 @@ class _StatViewState extends State<StatView> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: _buildPieChartCard(filteredRecords: filteredRecords),
-              ),
+              Expanded(child: _buildPieChartCard(filteredRecords: filteredRecords)),
               const SizedBox(width: _cardBetweenMarginHorizontal),
               Expanded(
-                child: _buildHeatmapChartCard(
-                  filteredRecords: filteredRecords,
-                  expandHeight: true,
-                ),
-              )
+                child: _buildHeatmapChartCard(filteredRecords: filteredRecords, expandHeight: true),
+              ),
             ],
           ),
         ),
@@ -251,11 +229,7 @@ class _StatViewState extends State<StatView> {
                   children: [
                     SizedBox(width: horizontalPadding),
                     FilterActionChip(
-                      label: Icon(
-                        Icons.replay,
-                        size: 16,
-                        color: Colors.grey.shade700,
-                      ),
+                      label: Icon(Icons.replay, size: 16, color: Colors.grey.shade700),
                       onPressed: _cubit.onFilterResetButtonTapped,
                       tooltip: '초기화',
                     ),
@@ -272,8 +246,7 @@ class _StatViewState extends State<StatView> {
                       tooltip: '기간 설정',
                     ),
                     const SizedBox(width: 6),
-                    for (Exam exam
-                        in exams.where((exam) => exam.name.isNotEmpty))
+                    for (Exam exam in exams.where((exam) => exam.name.isNotEmpty))
                       ExamFilterChip(
                         exam: exam,
                         isSelected: selectedExamIds.contains(exam.id),
@@ -295,8 +268,8 @@ class _StatViewState extends State<StatView> {
     required ExamValueType examValueType,
     required List<String> selectedExamIds,
   }) {
-    final isAllPerfectScoresSame = 1 ==
-        filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
+    final isAllPerfectScoresSame =
+        1 == filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
     final average = filteredRecords.values.flattened
         .map((record) => examValueType.getValue(record))
         .nonNulls
@@ -315,45 +288,28 @@ class _StatViewState extends State<StatView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                '과목별',
-                style: _titleTextStyle,
-              ),
+              Text('과목별', style: _titleTextStyle),
               const SizedBox(width: 6),
               _buildExamValueTypeDropdown(examValueType),
               const SizedBox(width: 6),
-              Text(
-                '그래프',
-                style: _titleTextStyle,
-              ),
+              Text('그래프', style: _titleTextStyle),
               examValueType == ExamValueType.scoreRatio
                   ? Padding(
-                      padding: const EdgeInsets.only(left: 6),
-                      child: Tooltip(
-                        message: '''모든 과목의 만점을 100점으로 환산해서 볼 수 있어요.
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Tooltip(
+                      message: '''모든 과목의 만점을 100점으로 환산해서 볼 수 있어요.
 
 예시1: 만점이 50점인 과목의 점수가 40점 -> 보정 점수 80점
 예시2: 만점이 20점인 과목의 점수가 10점 -> 보정 점수 50점
 
 환산식: 보정 점수 = (취득 점수 / 만점) x 100''',
-                        triggerMode: TooltipTriggerMode.tap,
-                        showDuration: const Duration(seconds: 5),
-                        textStyle: const TextStyle(
-                          height: 1.4,
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        child: Icon(
-                          Icons.help_outline,
-                          size: 18,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                    )
+                      triggerMode: TooltipTriggerMode.tap,
+                      showDuration: const Duration(seconds: 5),
+                      textStyle: const TextStyle(height: 1.4, color: Colors.white, fontSize: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Icon(Icons.help_outline, size: 18, color: Colors.grey.shade700),
+                    ),
+                  )
                   : const SizedBox.shrink(),
             ],
           ),
@@ -368,8 +324,7 @@ class _StatViewState extends State<StatView> {
                     (exam, records) => MapEntry(
                       exam,
                       records
-                          .where((record) =>
-                              examValueType.getValue(record) != null)
+                          .where((record) => examValueType.getValue(record) != null)
                           .sortedBy((record) => record.examStartedTime),
                     ),
                   )..removeWhere((subject, records) => records.isEmpty),
@@ -385,10 +340,7 @@ class _StatViewState extends State<StatView> {
               Text(
                 '평균',
                 textAlign: TextAlign.center,
-                style: _titleTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: _titleTextStyle.copyWith(fontSize: 13, fontWeight: FontWeight.w500),
               ),
               const SizedBox(width: 6),
               Text(
@@ -398,19 +350,15 @@ class _StatViewState extends State<StatView> {
                 textAlign: TextAlign.center,
                 style: _titleTextStyle.copyWith(),
               ),
-              if (!isAllPerfectScoresSame || average == null)
-                const SizedBox(width: 6),
+              if (!isAllPerfectScoresSame || average == null) const SizedBox(width: 6),
               if (!isAllPerfectScoresSame || average == null)
                 Tooltip(
-                  message: isAllPerfectScoresSame
-                      ? '1개 이상의 기록이 있을 때에만 평균 계산이 가능해요'
-                      : '평균 계산은 만점이 같은 과목들끼리만 가능해요',
+                  message:
+                      isAllPerfectScoresSame
+                          ? '1개 이상의 기록이 있을 때에만 평균 계산이 가능해요'
+                          : '평균 계산은 만점이 같은 과목들끼리만 가능해요',
                   triggerMode: TooltipTriggerMode.tap,
-                  child: Icon(
-                    Icons.info_outline,
-                    size: 15,
-                    color: Colors.grey.shade700,
-                  ),
+                  child: Icon(Icons.info_outline, size: 15, color: Colors.grey.shade700),
                 ),
             ],
           ),
@@ -445,10 +393,8 @@ class _StatViewState extends State<StatView> {
     });
 
     final values = allRecords.map((record) => examValueType.getValue(record)!);
-    var minValue = (values.minOrNull ?? examValueType.minValue) *
-        examValueType.reverseMultiple;
-    var maxValue = (values.maxOrNull ?? examValueType.maxValue) *
-        examValueType.reverseMultiple;
+    var minValue = (values.minOrNull ?? examValueType.minValue) * examValueType.reverseMultiple;
+    var maxValue = (values.maxOrNull ?? examValueType.maxValue) * examValueType.reverseMultiple;
     if (examValueType.reverse && values.isNotEmpty) {
       final temp = minValue;
       minValue = maxValue;
@@ -457,60 +403,53 @@ class _StatViewState extends State<StatView> {
     final minMaxGap = maxValue - minValue;
     final maxLength = dateToRecordsMap.length;
 
-    final lineBarsData = recordsMap.entries.map((entry) {
-      final exam = entry.key;
-      final color = Color(exam.color);
-      return LineChartBarData(
-        color: color,
-        barWidth: (4 - dateToRecordsMap.keys.length * 0.015).clamp(2, 4),
-        isStrokeCapRound: true,
-        isStrokeJoinRound: true,
-        belowBarData: BarAreaData(
-          show: true,
-          gradient: LinearGradient(
-            colors: [
-              color.withAlpha(77),
-              color.withAlpha(0),
+    final lineBarsData =
+        recordsMap.entries.map((entry) {
+          final exam = entry.key;
+          final color = Color(exam.color);
+          return LineChartBarData(
+            color: color,
+            barWidth: (4 - dateToRecordsMap.keys.length * 0.015).clamp(2, 4),
+            isStrokeCapRound: true,
+            isStrokeJoinRound: true,
+            belowBarData: BarAreaData(
+              show: true,
+              gradient: LinearGradient(
+                colors: [color.withAlpha(77), color.withAlpha(0)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            dotData: FlDotData(
+              getDotPainter: (p0, p1, p2, p3) {
+                return FlDotCirclePainter(
+                  radius: 2,
+                  color: Colors.white,
+                  strokeWidth: (2 - dateToRecordsMap.keys.length * 0.005).clamp(1, 2),
+                  strokeColor: color,
+                );
+              },
+            ),
+            spots: [
+              ...dateToRecordsMap.entries.mapIndexed((index, entry) {
+                final record = entry.value.where((record) => record.exam == exam);
+                return record.isEmpty
+                    ? null
+                    : FlSpot(
+                      index.toDouble(),
+                      examValueType.getValue(record.first)!.toDouble() *
+                          examValueType.reverseMultiple,
+                    );
+              }).nonNulls,
             ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        dotData: FlDotData(
-          getDotPainter: (p0, p1, p2, p3) {
-            return FlDotCirclePainter(
-              radius: 2,
-              color: Colors.white,
-              strokeWidth:
-                  (2 - dateToRecordsMap.keys.length * 0.005).clamp(1, 2),
-              strokeColor: color,
-            );
-          },
-        ),
-        spots: [
-          ...dateToRecordsMap.entries.mapIndexed((index, entry) {
-            final record = entry.value.where((record) => record.exam == exam);
-            return record.isEmpty
-                ? null
-                : FlSpot(
-                    index.toDouble(),
-                    examValueType.getValue(record.first)!.toDouble() *
-                        examValueType.reverseMultiple,
-                  );
-          }).nonNulls,
-        ],
-      );
-    }).toList();
+          );
+        }).toList();
     final lineTouchData = LineTouchData(
       touchSpotThreshold: 10,
       getTouchedSpotIndicator: (barData, spotIndexes) {
         return spotIndexes.map((spotIndex) {
           return TouchedSpotIndicatorData(
-            FlLine(
-              color: barData.color ?? Colors.black,
-              dashArray: [5, 5],
-              strokeWidth: 1,
-            ),
+            FlLine(color: barData.color ?? Colors.black, dashArray: [5, 5], strokeWidth: 1),
             FlDotData(
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
@@ -534,16 +473,12 @@ class _StatViewState extends State<StatView> {
         getTooltipItems: (touchedSpots) {
           return touchedSpots.map((touchedSpot) {
             final exam = recordsMap.keys.toList()[touchedSpot.barIndex];
-            final records =
-                dateToRecordsMap.entries.elementAt(touchedSpot.x.toInt()).value;
+            final records = dateToRecordsMap.entries.elementAt(touchedSpot.x.toInt()).value;
             final record = records.firstWhere((record) => record.exam == exam);
             final value = touchedSpot.y.toInt() * examValueType.reverseMultiple;
             return LineTooltipItem(
               record.title,
-              const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
+              const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               children: [
                 TextSpan(
                   text: ' $value${examValueType.postfix}',
@@ -557,7 +492,7 @@ class _StatViewState extends State<StatView> {
                     fontSize: 12,
                     height: 1,
                   ),
-                )
+                ),
               ],
             );
           }).toList();
@@ -565,12 +500,8 @@ class _StatViewState extends State<StatView> {
       ),
     );
     final titleData = FlTitlesData(
-      topTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-      rightTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       leftTitles: AxisTitles(
         drawBelowEverything: true,
         sideTitles: SideTitles(
@@ -589,10 +520,7 @@ class _StatViewState extends State<StatView> {
               alignment: Alignment.centerRight,
               child: Text(
                 (value * examValueType.reverseMultiple).toStringAsFixed(0),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 10,
-                ),
+                style: const TextStyle(color: Colors.black, fontSize: 10),
               ),
             );
           },
@@ -612,10 +540,8 @@ class _StatViewState extends State<StatView> {
             final index = value.toInt();
             final key = dateToRecordsMap.keys.elementAt(index);
             final keySplits = key.split('.')..removeLast();
-            final isAlreadyShown =
-                dateToRecordsMap.keys.take(index).any((previousKey) {
-              return (previousKey.split('.')..removeLast()).join() ==
-                  keySplits.join();
+            final isAlreadyShown = dateToRecordsMap.keys.take(index).any((previousKey) {
+              return (previousKey.split('.')..removeLast()).join() == keySplits.join();
             });
             if (isAlreadyShown && meta.appliedInterval < 2) {
               return const SizedBox.shrink();
@@ -624,10 +550,7 @@ class _StatViewState extends State<StatView> {
               alignment: Alignment.bottomCenter,
               child: Text(
                 keySplits.getRange(1, 3).map((e) => int.parse(e)).join('/'),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 10,
-                ),
+                style: const TextStyle(color: Colors.black, fontSize: 10),
               ),
             );
           },
@@ -660,121 +583,111 @@ class _StatViewState extends State<StatView> {
     );
   }
 
-  Widget _buildPieChartCard({
-    required final Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildPieChartCard({required final Map<Exam, List<ExamRecord>> filteredRecords}) {
     return CustomCard(
       clipBehavior: Clip.none,
       padding: const EdgeInsets.symmetric(
         horizontal: _cardPaddingHorizontal,
         vertical: _cardPaddingVertical,
       ),
-      margin: _cardMargin.subtract(
-        EdgeInsets.only(right: _cardMargin.right),
-      ),
+      margin: _cardMargin.subtract(EdgeInsets.only(right: _cardMargin.right)),
       child: Column(
         children: [
-          Text(
-            '과목별 푼 모의고사 수',
-            textAlign: TextAlign.center,
-            style: _titleTextStyle,
-          ),
+          Text('과목별 푼 모의고사 수', textAlign: TextAlign.center, style: _titleTextStyle),
           const SizedBox(height: 16),
-          AspectRatio(
-            aspectRatio: 1,
-            child: _buildPieChart(filteredRecords: filteredRecords),
-          ),
+          AspectRatio(aspectRatio: 1, child: _buildPieChart(filteredRecords: filteredRecords)),
         ],
       ),
     );
   }
 
-  Widget _buildPieChart({
-    required final Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildPieChart({required final Map<Exam, List<ExamRecord>> filteredRecords}) {
     final totalValue = filteredRecords.values.flattened.length;
 
     int touchedIndex = -1;
     return MediaQuery(
       data: const MediaQueryData(textScaler: TextScaler.linear(1.0)),
-      child: LayoutBuilder(builder: (context, constraints) {
-        return StatefulBuilder(builder: (context, setState) {
-          return PieChart(
-            swapAnimationCurve: Curves.easeOut,
-            swapAnimationDuration: const Duration(milliseconds: 100),
-            PieChartData(
-              sectionsSpace: 0,
-              centerSpaceRadius: 0,
-              sections: filteredRecords.entries.mapIndexed((index, entry) {
-                final exam = entry.key;
-                final records = entry.value;
-                final value = records.length;
-                final ratio = value / totalValue;
-                final isTouched = touchedIndex == index;
-                return PieChartSectionData(
-                  color: Color(exam.color),
-                  value: value.toDouble() * (isTouched ? 3 : 1),
-                  showTitle: false,
-                  radius: (constraints.maxWidth / 2) * (isTouched ? 1.05 : 1),
-                  badgePositionPercentageOffset: ratio == 1
-                      ? 0
-                      : ratio > 0.3
-                          ? 0.5
-                          : 0.85 - ratio,
-                  badgeWidget: isTouched || touchedIndex == -1
-                      ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (isTouched || ratio >= 0.1)
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: isTouched ? double.infinity : 60,
-                                ),
-                                child: Text(
-                                  exam.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        (_titleTextStyle.fontSize ?? 14) - 2,
-                                  ),
-                                ),
-                              ),
-                            if (isTouched || ratio >= 0.1)
-                              const SizedBox(height: 4),
-                            if (isTouched || ratio >= 0.025)
-                              Text(
-                                '$value개',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize:
-                                      (_titleTextStyle.fontSize ?? 14) - 3,
-                                ),
-                              ),
-                          ],
-                        )
-                      : null,
-                );
-              }).toList(),
-              pieTouchData: PieTouchData(
-                touchCallback: (event, pieTouchResponse) {
-                  setState(() {
-                    if (!event.isInterestedForInteractions ||
-                        pieTouchResponse == null ||
-                        pieTouchResponse.touchedSection == null) {
-                      touchedIndex = -1;
-                      return;
-                    }
-                    touchedIndex =
-                        pieTouchResponse.touchedSection!.touchedSectionIndex;
-                  });
-                },
-              ),
-            ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return PieChart(
+                swapAnimationCurve: Curves.easeOut,
+                swapAnimationDuration: const Duration(milliseconds: 100),
+                PieChartData(
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 0,
+                  sections:
+                      filteredRecords.entries.mapIndexed((index, entry) {
+                        final exam = entry.key;
+                        final records = entry.value;
+                        final value = records.length;
+                        final ratio = value / totalValue;
+                        final isTouched = touchedIndex == index;
+                        return PieChartSectionData(
+                          color: Color(exam.color),
+                          value: value.toDouble() * (isTouched ? 3 : 1),
+                          showTitle: false,
+                          radius: (constraints.maxWidth / 2) * (isTouched ? 1.05 : 1),
+                          badgePositionPercentageOffset:
+                              ratio == 1
+                                  ? 0
+                                  : ratio > 0.3
+                                  ? 0.5
+                                  : 0.85 - ratio,
+                          badgeWidget:
+                              isTouched || touchedIndex == -1
+                                  ? Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (isTouched || ratio >= 0.1)
+                                        ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: isTouched ? double.infinity : 60,
+                                          ),
+                                          child: Text(
+                                            exam.name,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: (_titleTextStyle.fontSize ?? 14) - 2,
+                                            ),
+                                          ),
+                                        ),
+                                      if (isTouched || ratio >= 0.1) const SizedBox(height: 4),
+                                      if (isTouched || ratio >= 0.025)
+                                        Text(
+                                          '$value개',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: (_titleTextStyle.fontSize ?? 14) - 3,
+                                          ),
+                                        ),
+                                    ],
+                                  )
+                                  : null,
+                        );
+                      }).toList(),
+                  pieTouchData: PieTouchData(
+                    touchCallback: (event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      });
+                    },
+                  ),
+                ),
+              );
+            },
           );
-        });
-      }),
+        },
+      ),
     );
   }
 
@@ -788,31 +701,21 @@ class _StatViewState extends State<StatView> {
         left: _cardPaddingHorizontal,
         right: _cardPaddingHorizontal,
       ),
-      margin: _cardMargin.subtract(
-        EdgeInsets.only(left: _cardMargin.left),
-      ),
+      margin: _cardMargin.subtract(EdgeInsets.only(left: _cardMargin.left)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '푼 모의고사 수 히트맵',
-            textAlign: TextAlign.center,
-            style: _titleTextStyle,
-          ),
+          Text('푼 모의고사 수 히트맵', textAlign: TextAlign.center, style: _titleTextStyle),
           if (!expandHeight) const SizedBox(height: 12),
           if (expandHeight) const Spacer(),
-          _buildHeatmapChart(
-            filteredRecords: filteredRecords,
-          ),
+          _buildHeatmapChart(filteredRecords: filteredRecords),
           if (expandHeight) const Spacer(),
         ],
       ),
     );
   }
 
-  Widget _buildHeatmapChart({
-    required Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildHeatmapChart({required Map<Exam, List<ExamRecord>> filteredRecords}) {
     final datasets = filteredRecords.values.flattened
         .groupListsBy((record) => record.examStartedTime.toDate())
         .map((date, records) => MapEntry(date, records.length));
@@ -821,79 +724,67 @@ class _StatViewState extends State<StatView> {
     Timer? dismissTimer;
     return MediaQuery(
       data: const MediaQueryData(textScaler: TextScaler.linear(1.0)),
-      child: StatefulBuilder(builder: (context, setState) {
-        return Column(
-          children: [
-            HeatMapCalendar(
-              showColorTip: false,
-              flexible: true,
-              borderRadius: 2,
-              monthFontSize: 10,
-              weekFontSize: 10,
-              fontSize: 10,
-              defaultColor: Colors.black.withAlpha(10),
-              textColor: Colors.grey,
-              secondaryTextColor: Colors.white,
-              weekTextColor: Colors.grey,
-              monthTextColor: Colors.grey.shade700,
-              initDate: DateTime.now(),
-              datasets: datasets,
-              colorsets: const {
-                0: Color.fromARGB(255, 57, 83, 211),
-              },
-              onClick: (date) {
-                final value = datasets[date] ?? 0;
-                setState(() {
-                  touchedData = MapEntry(date, value);
-                  dismissTimer?.cancel();
-                  dismissTimer = Timer(
-                    const Duration(milliseconds: 2000),
-                    () {
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return Column(
+            children: [
+              HeatMapCalendar(
+                showColorTip: false,
+                flexible: true,
+                borderRadius: 2,
+                monthFontSize: 10,
+                weekFontSize: 10,
+                fontSize: 10,
+                defaultColor: Colors.black.withAlpha(10),
+                textColor: Colors.grey,
+                secondaryTextColor: Colors.white,
+                weekTextColor: Colors.grey,
+                monthTextColor: Colors.grey.shade700,
+                initDate: DateTime.now(),
+                datasets: datasets,
+                colorsets: const {0: Color.fromARGB(255, 57, 83, 211)},
+                onClick: (date) {
+                  final value = datasets[date] ?? 0;
+                  setState(() {
+                    touchedData = MapEntry(date, value);
+                    dismissTimer?.cancel();
+                    dismissTimer = Timer(const Duration(milliseconds: 2000), () {
                       setState(() {
                         touchedData = null;
                       });
-                    },
-                  );
-                });
-              },
-            ),
-            Container(
-              height: _cardPaddingVertical,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left: 4, right: 4, top: 2),
-              child: Text(
-                touchedData != null ? '${touchedData!.value}개' : '',
-                maxLines: 1,
-                style: TextStyle(
-                  height: 1,
-                  fontSize: 10,
-                  color: Colors.grey.shade600,
+                    });
+                  });
+                },
+              ),
+              Container(
+                height: _cardPaddingVertical,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(left: 4, right: 4, top: 2),
+                child: Text(
+                  touchedData != null ? '${touchedData!.value}개' : '',
+                  maxLines: 1,
+                  style: TextStyle(height: 1, fontSize: 10, color: Colors.grey.shade600),
                 ),
               ),
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildTotalExamDurationInfoCard({
-    required Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildTotalExamDurationInfoCard({required Map<Exam, List<ExamRecord>> filteredRecords}) {
     return _buildInfoCard(
       title: '지금까지 모의고사를 푼 시간',
-      text: Duration(
-        minutes: filteredRecords.values.flattened
-            .map((e) => e.examDurationMinutes)
-            .nonNulls
-            .sum,
-      ).toStringFormat(),
+      text:
+          Duration(
+            minutes:
+                filteredRecords.values.flattened.map((e) => e.examDurationMinutes).nonNulls.sum,
+          ).toStringFormat(),
     );
   }
 
-  Widget _buildTotalExamCountInfoCard({
-    required Map<Exam, List<ExamRecord>> filteredRecords,
-  }) {
+  Widget _buildTotalExamCountInfoCard({required Map<Exam, List<ExamRecord>> filteredRecords}) {
     return _buildInfoCard(
       title: '지금까지 푼 모의고사 개수',
       text: '${filteredRecords.values.flattened.length}개',
@@ -910,11 +801,7 @@ class _StatViewState extends State<StatView> {
       isThin: true,
       child: Column(
         children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: _titleTextStyle,
-          ),
+          Text(title, textAlign: TextAlign.center, style: _titleTextStyle),
           const SizedBox(height: 4),
           Text(
             text,
@@ -935,60 +822,29 @@ class _StatViewState extends State<StatView> {
       onChanged: _cubit.onExamValueTypeChanged,
       alignment: Alignment.center,
       isDense: true,
-      items: ExamValueType.values
-          .map((valueType) => DropdownMenuItem(
-                value: valueType,
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: Text(
-                    valueType.name,
-                    style: _titleTextStyle,
+      items:
+          ExamValueType.values
+              .map(
+                (valueType) => DropdownMenuItem(
+                  value: valueType,
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: Text(valueType.name, style: _titleTextStyle),
                   ),
                 ),
-              ))
-          .toList(),
+              )
+              .toList(),
     );
   }
 }
 
 enum ExamValueType {
-  score(
-    name: '점수',
-    postfix: '점',
-    getValue: getScore,
-    minValue: 0,
-    maxValue: 100,
-  ),
-  scoreRatio(
-    name: '보정 점수',
-    postfix: '점',
-    getValue: getScoreRatio,
-    minValue: 0,
-    maxValue: 100,
-  ),
-  grade(
-    name: '등급',
-    postfix: '등급',
-    getValue: getGrade,
-    minValue: 9,
-    maxValue: 1,
-    reverse: true,
-  ),
-  percentile(
-    name: '백분위',
-    postfix: '%',
-    getValue: getPercentile,
-    minValue: 0,
-    maxValue: 100,
-  ),
-  standardScore(
-    name: '표준점수',
-    postfix: '점',
-    getValue: getStandardScore,
-    minValue: 0,
-    maxValue: 150,
-  );
+  score(name: '점수', postfix: '점', getValue: getScore, minValue: 0, maxValue: 100),
+  scoreRatio(name: '보정 점수', postfix: '점', getValue: getScoreRatio, minValue: 0, maxValue: 100),
+  grade(name: '등급', postfix: '등급', getValue: getGrade, minValue: 9, maxValue: 1, reverse: true),
+  percentile(name: '백분위', postfix: '%', getValue: getPercentile, minValue: 0, maxValue: 100),
+  standardScore(name: '표준점수', postfix: '점', getValue: getStandardScore, minValue: 0, maxValue: 150);
 
   const ExamValueType({
     required this.name,

@@ -19,18 +19,13 @@ import '../home/settings/settings_view.dart';
 import 'cubit/purchase_cubit.dart';
 
 class PurchasePageArguments {
-  const PurchasePageArguments({
-    required this.product,
-  });
+  const PurchasePageArguments({required this.product});
 
   final Product product;
 }
 
 class PurchasePage extends StatefulWidget {
-  const PurchasePage({
-    super.key,
-    required this.product,
-  });
+  const PurchasePage({super.key, required this.product});
 
   static const routeName = '/purchase';
 
@@ -45,8 +40,7 @@ class _PurchasePageState extends State<PurchasePage> {
   final IapCubit _iapCubit = getIt.get();
   final PurchaseCubit _cubit = getIt.get();
 
-  late final backgroundColor =
-      Color(int.parse(widget.product.pageBackgroundColor));
+  late final backgroundColor = Color(int.parse(widget.product.pageBackgroundColor));
   final WebViewController _webViewController = WebViewController();
 
   @override
@@ -59,23 +53,15 @@ class _PurchasePageState extends State<PurchasePage> {
     final packageInfo = await PackageInfo.fromPlatform();
     Uri uri = Uri.parse(widget.product.pageUrl);
     uri = uri.replace(
-      queryParameters: {
-        ...uri.queryParameters,
-        'buildNumber': packageInfo.buildNumber,
-      },
+      queryParameters: {...uri.queryParameters, 'buildNumber': packageInfo.buildNumber},
     );
 
     _webViewController
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..enableZoom(false)
       ..setBackgroundColor(backgroundColor)
-      ..setNavigationDelegate(NavigationDelegate(
-        onProgress: _cubit.onWebviewProgressChanged,
-      ))
-      ..addJavaScriptChannel(
-        'FlutterWebView',
-        onMessageReceived: _onWebviewMessageReceived,
-      )
+      ..setNavigationDelegate(NavigationDelegate(onProgress: _cubit.onWebviewProgressChanged))
+      ..addJavaScriptChannel('FlutterWebView', onMessageReceived: _onWebviewMessageReceived)
       ..loadRequest(uri);
   }
 
@@ -92,9 +78,7 @@ class _PurchasePageState extends State<PurchasePage> {
         Navigator.pushNamed(
           context,
           CustomExamGuidePage.routeName,
-          arguments: const CustomExamGuideArguments(
-            isFromPurchasePage: true,
-          ),
+          arguments: const CustomExamGuideArguments(isFromPurchasePage: true),
         );
         break;
 
@@ -127,19 +111,17 @@ class _PurchasePageState extends State<PurchasePage> {
   void _showTrialConfirmDialog() {
     final now = DateFormat.yMd('ko_KR').add_Hm().format(DateTime.now());
     final trialEndTime = DateFormat.yMd('ko_KR').add_Hm().format(
-          DateTime.now()
-              .add(Duration(days: widget.product.trialPeriod))
-              .subtract(const Duration(seconds: 1)),
-        );
+      DateTime.now()
+          .add(Duration(days: widget.product.trialPeriod))
+          .subtract(const Duration(seconds: 1)),
+    );
 
     showDialog(
       context: context,
-      routeSettings:
-          const RouteSettings(name: '/purchase/trial_confirm_dialog'),
+      routeSettings: const RouteSettings(name: '/purchase/trial_confirm_dialog'),
       builder: (context) {
         return CustomAlertDialog.customContent(
-          title:
-              '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
+          title: '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험을 시작할까요?',
           scrollable: true,
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -184,14 +166,11 @@ class _PurchasePageState extends State<PurchasePage> {
     Navigator.of(context).pop();
     getIt.get<HomeCubit>().changeTabByTitle(SettingsView.title);
 
-    final message = me.isProductTrial
-        ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
-        : '${widget.product.name}가 시작되었어요! 열공하세요 🔥';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    final message =
+        me.isProductTrial
+            ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
+            : '${widget.product.name}가 시작되었어요! 열공하세요 🔥';
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _onIapLoadingChanged(bool isLoading) {
@@ -221,15 +200,7 @@ class _PurchasePageState extends State<PurchasePage> {
               height: 1.2,
             ),
           ),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                height: 1.2,
-              ),
-            ),
-          ),
+          Expanded(child: Text(text, style: TextStyle(color: Colors.grey.shade600, height: 1.2))),
         ],
       ),
     );
@@ -238,8 +209,7 @@ class _PurchasePageState extends State<PurchasePage> {
   Widget _buildBody() {
     return BlocBuilder<PurchaseCubit, PurchaseState>(
       builder: (context, state) {
-        final showBottomButton =
-            !state.isWebviewLoading && !state.isPurchaseSectionShown;
+        final showBottomButton = !state.isWebviewLoading && !state.isPurchaseSectionShown;
 
         return Stack(
           fit: StackFit.expand,
@@ -247,9 +217,10 @@ class _PurchasePageState extends State<PurchasePage> {
             Center(
               child: CircularProgressIndicator(
                 strokeWidth: 3,
-                color: widget.product.isPageBackgroundDark
-                    ? Colors.white
-                    : Theme.of(context).primaryColor,
+                color:
+                    widget.product.isPageBackgroundDark
+                        ? Colors.white
+                        : Theme.of(context).primaryColor,
               ),
             ),
             AnimatedOpacity(
@@ -291,10 +262,7 @@ class _PurchasePageState extends State<PurchasePage> {
   @override
   Widget build(BuildContext context) {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 실감패스를 확인할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 실감패스를 확인할 수 없어요.', dismissOnTap: true);
       Navigator.of(context).pop();
     }
 
@@ -306,8 +274,7 @@ class _PurchasePageState extends State<PurchasePage> {
           _onMeChanged(state.me);
         },
         child: BlocConsumer<IapCubit, IapState>(
-          listenWhen: (previous, current) =>
-              previous.isLoading != current.isLoading,
+          listenWhen: (previous, current) => previous.isLoading != current.isLoading,
           listener: (context, state) {
             _onIapLoadingChanged(state.isLoading);
           },
@@ -317,12 +284,10 @@ class _PurchasePageState extends State<PurchasePage> {
               child: AnnotatedRegion(
                 value: defaultSystemUiOverlayStyle.copyWith(
                   statusBarColor: backgroundColor,
-                  statusBarBrightness: widget.product.isPageBackgroundDark
-                      ? Brightness.dark
-                      : Brightness.light,
-                  statusBarIconBrightness: widget.product.isPageBackgroundDark
-                      ? Brightness.light
-                      : Brightness.dark,
+                  statusBarBrightness:
+                      widget.product.isPageBackgroundDark ? Brightness.dark : Brightness.light,
+                  statusBarIconBrightness:
+                      widget.product.isPageBackgroundDark ? Brightness.light : Brightness.dark,
                 ),
                 child: Scaffold(
                   backgroundColor: backgroundColor,
@@ -333,9 +298,10 @@ class _PurchasePageState extends State<PurchasePage> {
                         CustomAppBar(
                           title: widget.product.name,
                           onBackPressed: () => Navigator.pop(context),
-                          textBrightness: widget.product.isPageBackgroundDark
-                              ? Brightness.light
-                              : Brightness.dark,
+                          textBrightness:
+                              widget.product.isPageBackgroundDark
+                                  ? Brightness.light
+                                  : Brightness.dark,
                         ),
                         Expanded(child: _buildBody()),
                       ],

@@ -5,12 +5,9 @@ part 'problem.g.dart';
 
 @freezed
 class WrongProblem with _$WrongProblem {
-  const factory WrongProblem(
-    int problemNumber,
-  ) = _WrongProblem;
+  const factory WrongProblem(int problemNumber) = _WrongProblem;
 
-  factory WrongProblem.fromJson(Map<String, dynamic> json) =>
-      _$WrongProblemFromJson(json);
+  factory WrongProblem.fromJson(Map<String, dynamic> json) => _$WrongProblemFromJson(json);
 
   @override
   String toString() {
@@ -24,14 +21,9 @@ class ReviewProblem {
   final String memo;
   final List<String> imagePaths;
 
-  ReviewProblem({
-    required this.title,
-    this.memo = '',
-    this.imagePaths = const [],
-  });
+  ReviewProblem({required this.title, this.memo = '', this.imagePaths = const []});
 
-  factory ReviewProblem.fromJson(Map<String, dynamic> json) =>
-      _$ReviewProblemFromJson(json);
+  factory ReviewProblem.fromJson(Map<String, dynamic> json) => _$ReviewProblemFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReviewProblemToJson(this);
 

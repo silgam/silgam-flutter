@@ -39,11 +39,8 @@ class StatState with _$StatState {
       return DateTime.now();
     }
 
-    final DateTime lastTime =
-        records.sortedBy((r) => r.examStartedTime).last.examStartedTime;
-    return lastTime.isAfter(DateTime.now())
-        ? lastTime.toDate()
-        : DateTime.now().toDate();
+    final DateTime lastTime = records.sortedBy((r) => r.examStartedTime).last.examStartedTime;
+    return lastTime.isAfter(DateTime.now()) ? lastTime.toDate() : DateTime.now().toDate();
   }
 
   DateTimeRange get defaultDateRange =>
