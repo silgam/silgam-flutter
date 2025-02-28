@@ -35,12 +35,15 @@ class CustomAppBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(
         children: [
-          IconButton(
-            onPressed: ignoreButtonPress ? () {} : onBackPressed,
-            tooltip: '뒤로가기',
-            splashRadius: 20,
-            color: textColor,
-            icon: const Icon(Icons.arrow_back),
+          Material(
+            color: Colors.transparent,
+            child: IconButton(
+              onPressed: ignoreButtonPress ? () {} : onBackPressed,
+              tooltip: '뒤로가기',
+              splashRadius: 20,
+              color: textColor,
+              icon: const Icon(Icons.arrow_back),
+            ),
           ),
           if (title != null)
             Expanded(
@@ -54,13 +57,16 @@ class CustomAppBar extends StatelessWidget {
           else
             const Spacer(),
           for (AppBarAction action in actions)
-            IconButton(
-              key: action.key,
-              onPressed: ignoreButtonPress ? () {} : action.onPressed,
-              tooltip: action.tooltip,
-              splashRadius: 20,
-              color: textColor,
-              icon: Icon(action.iconData),
+            Material(
+              color: Colors.transparent,
+              child: IconButton(
+                key: action.key,
+                onPressed: ignoreButtonPress ? () {} : action.onPressed,
+                tooltip: action.tooltip,
+                splashRadius: 20,
+                color: textColor,
+                icon: Icon(action.iconData),
+              ),
             ),
         ],
       ),
