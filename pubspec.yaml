@@ -6,7 +6,7 @@ version: 1.9.9+126
 
 environment:
   sdk: 3.7.0
-  flutter: 3.29.0
+  flutter: 3.29.1
 
 workspace:
   - packages/ui
