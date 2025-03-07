@@ -16,8 +16,7 @@ part 'record_list_state.dart';
 
 @lazySingleton
 class RecordListCubit extends Cubit<RecordListState> {
-  RecordListCubit(this._examRecordRepository, this._appCubit)
-      : super(RecordListState.initial()) {
+  RecordListCubit(this._examRecordRepository, this._appCubit) : super(RecordListState.initial()) {
     refresh();
   }
 
@@ -33,65 +32,56 @@ class RecordListCubit extends Cubit<RecordListState> {
 
     emit(state.copyWith(isLoading: true));
 
-    final records =
-        await _examRecordRepository.getMyExamRecords(_appCubit.state.me!.id);
-    final filteredRecords =
-        _getFilteredAndSortedRecords(originalRecords: records);
+    final records = await _examRecordRepository.getMyExamRecords(_appCubit.state.me!.id);
+    final filteredRecords = _getFilteredAndSortedRecords(originalRecords: records);
 
-    emit(state.copyWith(
-      isLoading: false,
-      originalRecords: records,
-      records: filteredRecords,
-    ));
+    emit(state.copyWith(isLoading: false, originalRecords: records, records: filteredRecords));
 
-    AnalyticsManager.setPeopleProperty(
-        'Number of Exam Records', records.length);
+    AnalyticsManager.setPeopleProperty('Number of Exam Records', records.length);
   }
 
   Future<void> onRecordCreated(ExamRecord record) async {
     final newOriginalRecords = [record, ...state.originalRecords];
-    emit(state.copyWith(
-      originalRecords: newOriginalRecords,
-      records: _getFilteredAndSortedRecords(
+    emit(
+      state.copyWith(
         originalRecords: newOriginalRecords,
+        records: _getFilteredAndSortedRecords(originalRecords: newOriginalRecords),
       ),
-    ));
+    );
     await refresh();
   }
 
   Future<void> onRecordsCreated(List<ExamRecord> records) async {
     final newOriginalRecords = [...records.reversed, ...state.originalRecords];
-    emit(state.copyWith(
-      originalRecords: newOriginalRecords,
-      records: _getFilteredAndSortedRecords(
+    emit(
+      state.copyWith(
         originalRecords: newOriginalRecords,
+        records: _getFilteredAndSortedRecords(originalRecords: newOriginalRecords),
       ),
-    ));
+    );
     await refresh();
   }
 
   Future<void> onRecordUpdated(ExamRecord record) async {
     final newOriginalRecords = [...state.originalRecords];
-    newOriginalRecords[
-        newOriginalRecords.indexWhere((r) => r.id == record.id)] = record;
-    emit(state.copyWith(
-      originalRecords: newOriginalRecords,
-      records: _getFilteredAndSortedRecords(
+    newOriginalRecords[newOriginalRecords.indexWhere((r) => r.id == record.id)] = record;
+    emit(
+      state.copyWith(
         originalRecords: newOriginalRecords,
+        records: _getFilteredAndSortedRecords(originalRecords: newOriginalRecords),
       ),
-    ));
+    );
     await refresh();
   }
 
   Future<void> onRecordDeleted(ExamRecord record) async {
-    final newOriginalRecords =
-        state.originalRecords.where((r) => r.id != record.id).toList();
-    emit(state.copyWith(
-      originalRecords: newOriginalRecords,
-      records: _getFilteredAndSortedRecords(
+    final newOriginalRecords = state.originalRecords.where((r) => r.id != record.id).toList();
+    emit(
+      state.copyWith(
         originalRecords: newOriginalRecords,
+        records: _getFilteredAndSortedRecords(originalRecords: newOriginalRecords),
       ),
-    ));
+    );
     await refresh();
   }
 
@@ -101,16 +91,14 @@ class RecordListCubit extends Cubit<RecordListState> {
   }
 
   void onSortDateButtonTapped() {
-    RecordSortType sortType = RecordSortType
-        .values[(state.sortType.index + 1) % RecordSortType.values.length];
+    RecordSortType sortType =
+        RecordSortType.values[(state.sortType.index + 1) % RecordSortType.values.length];
     final records = _getFilteredAndSortedRecords(sortType: sortType);
     emit(state.copyWith(sortType: sortType, records: records));
 
     AnalyticsManager.logEvent(
       name: '[HomePage-list] Sort-by-date button tapped',
-      properties: {
-        'sort_newest_first': state.sortType.name,
-      },
+      properties: {'sort_newest_first': state.sortType.name},
     );
   }
 
@@ -121,8 +109,7 @@ class RecordListCubit extends Cubit<RecordListState> {
     } else {
       selectedExamIds.add(exam.id);
     }
-    final records =
-        _getFilteredAndSortedRecords(selectedExamIds: selectedExamIds);
+    final records = _getFilteredAndSortedRecords(selectedExamIds: selectedExamIds);
     emit(state.copyWith(selectedExamIds: selectedExamIds, records: records));
 
     AnalyticsManager.logEvent(
@@ -140,14 +127,9 @@ class RecordListCubit extends Cubit<RecordListState> {
       sortType: RecordSortType.dateDesc,
       selectedExamIds: [],
     );
-    emit(state.copyWith(
-      sortType: RecordSortType.dateDesc,
-      selectedExamIds: [],
-      records: records,
-    ));
+    emit(state.copyWith(sortType: RecordSortType.dateDesc, selectedExamIds: [], records: records));
 
-    AnalyticsManager.logEvent(
-        name: '[HomePage-list] Filter reset button tapped');
+    AnalyticsManager.logEvent(name: '[HomePage-list] Filter reset button tapped');
   }
 
   List<ExamRecord> _getFilteredAndSortedRecords({
@@ -161,16 +143,16 @@ class RecordListCubit extends Cubit<RecordListState> {
     sortType ??= state.sortType;
     selectedExamIds ??= state.selectedExamIds;
 
-    return originalRecords.where(
-      (record) {
-        if (searchQuery!.isEmpty) return true;
-        return record.title.contains(searchQuery) ||
-            record.feedback.contains(searchQuery);
-      },
-    ).where((record) {
-      if (selectedExamIds!.isEmpty) return true;
-      return selectedExamIds.contains(record.exam.id);
-    }).toList()
+    return originalRecords
+        .where((record) {
+          if (searchQuery!.isEmpty) return true;
+          return record.title.contains(searchQuery) || record.feedback.contains(searchQuery);
+        })
+        .where((record) {
+          if (selectedExamIds!.isEmpty) return true;
+          return selectedExamIds.contains(record.exam.id);
+        })
+        .toList()
       ..sort((a, b) {
         switch (sortType!) {
           case RecordSortType.dateDesc:

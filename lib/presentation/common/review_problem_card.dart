@@ -9,11 +9,7 @@ class ReviewProblemCard extends StatelessWidget {
   final ReviewProblem problem;
   final GestureTapCallback? onTap;
 
-  const ReviewProblemCard({
-    super.key,
-    required this.problem,
-    this.onTap,
-  });
+  const ReviewProblemCard({super.key, required this.problem, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +26,7 @@ class ReviewProblemCard extends StatelessWidget {
         margin: const EdgeInsets.all(0),
         elevation: 0,
         clipBehavior: Clip.antiAlias,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(6))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -41,58 +35,55 @@ class ReviewProblemCard extends StatelessWidget {
                 child: SizedBox(
                   width: double.infinity,
                   height: double.infinity,
-                  child: Builder(builder: (context) {
-                    String imagePath = problem.imagePaths.first;
-                    if (imagePath.startsWith('http')) {
-                      return CachedNetworkImage(
-                        imageUrl: imagePath,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                        progressIndicatorBuilder: (_, __, progress) => Center(
-                          child: CircularProgressIndicator(
-                            value: progress.progress,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) {
-                          return Container(
-                            padding: const EdgeInsets.all(20),
-                            alignment: Alignment.center,
-                            child: const Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '사진을 불러올 수 없어요.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
+                  child: Builder(
+                    builder: (context) {
+                      String imagePath = problem.imagePaths.first;
+                      if (imagePath.startsWith('http')) {
+                        return CachedNetworkImage(
+                          imageUrl: imagePath,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                          progressIndicatorBuilder:
+                              (_, __, progress) => Center(
+                                child: CircularProgressIndicator(
+                                  value: progress.progress,
+                                  strokeWidth: 2,
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
+                              ),
+                          errorWidget: (_, __, ___) {
+                            return Container(
+                              padding: const EdgeInsets.all(20),
+                              alignment: Alignment.center,
+                              child: const Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '사진을 불러올 수 없어요.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.grey, fontSize: 12),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      return Image.file(
-                        File(imagePath),
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                      );
-                    }
-                  }),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return Image.file(
+                          File(imagePath),
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
             if (problem.imagePaths.isEmpty)
@@ -106,11 +97,7 @@ class ReviewProblemCard extends StatelessWidget {
                   ),
                 ),
               ),
-            Divider(
-              height: 1,
-              thickness: 1,
-              color: Colors.grey.shade200,
-            ),
+            Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
             const SizedBox(height: 2),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -124,10 +111,7 @@ class ReviewProblemCard extends StatelessWidget {
                       problem.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -135,10 +119,7 @@ class ReviewProblemCard extends StatelessWidget {
                     imageCountText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w300,
-                    ),
+                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w300),
                   ),
                 ],
               ),

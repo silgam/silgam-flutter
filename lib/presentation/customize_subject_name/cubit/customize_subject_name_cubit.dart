@@ -13,10 +13,8 @@ part 'customize_subject_name_state.dart';
 
 @injectable
 class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
-  CustomizeSubjectNameCubit(
-    this._appCubit,
-    this._userRepository,
-  ) : super(const CustomizeSubjectNameState());
+  CustomizeSubjectNameCubit(this._appCubit, this._userRepository)
+    : super(const CustomizeSubjectNameState());
 
   final AppCubit _appCubit;
   final UserRepository _userRepository;
@@ -27,10 +25,7 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
 
   Future<void> save({required Map<Subject, String> subjectNames}) async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 수정할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 수정할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -42,23 +37,15 @@ class CustomizeSubjectNameCubit extends Cubit<CustomizeSubjectNameState> {
 
     emit(state.copyWith(status: CustomizeSubjectNameStatus.saving));
 
-    await _userRepository.updateCustomSubjectNameMap(
-      userId: me.id,
-      subjectNameMap: subjectNames,
-    );
+    await _userRepository.updateCustomSubjectNameMap(userId: me.id, subjectNameMap: subjectNames);
     await _appCubit.onUserChange();
 
     emit(state.copyWith(status: CustomizeSubjectNameStatus.saved));
 
     AnalyticsManager.logEvent(
       name: '[CustomizeSubjectNamePage] Subject Name Saved',
-      properties: {
-        'subjectNameMap': subjectNames.toString(),
-      },
+      properties: {'subjectNameMap': subjectNames.toString()},
     );
-    AnalyticsManager.setPeopleProperty(
-      'Customized Subject Names',
-      subjectNames.toString(),
-    );
+    AnalyticsManager.setPeopleProperty('Customized Subject Names', subjectNames.toString());
   }
 }

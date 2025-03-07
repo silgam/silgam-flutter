@@ -37,8 +37,7 @@ class TimelineTile extends StatelessWidget {
     }
 
     return Transform.translate(
-      offset:
-          Offset(0, smallText != null && direction == Axis.horizontal ? 10 : 0),
+      offset: Offset(0, smallText != null && direction == Axis.horizontal ? 10 : 0),
       child: InkWell(
         onTap: _onTap,
         splashColor: Colors.transparent,
@@ -53,14 +52,8 @@ class TimelineTile extends StatelessWidget {
                 Opacity(
                   opacity: disabled ? 0.5 : 1.0,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
                     child: Text(
                       examName ?? '',
                       style: const TextStyle(
@@ -145,10 +138,7 @@ class TimelineConnector extends StatelessWidget {
     if (direction == Axis.horizontal) {
       double widthScale = (displaySize.width / 120).constraint(3, 10);
       margin = const EdgeInsets.symmetric(horizontal: 1);
-      connectorMargin = const EdgeInsets.symmetric(
-        horizontal: _markerWidth / 2,
-        vertical: 1,
-      );
+      connectorMargin = const EdgeInsets.symmetric(horizontal: _markerWidth / 2, vertical: 1);
       width = duration * widthScale + connectorMargin.horizontal * 2;
       height = (1 + connectorMargin.vertical * 2) + _markerHeight * 2;
       connecterWidth = null;
@@ -158,10 +148,7 @@ class TimelineConnector extends StatelessWidget {
     } else {
       double heightScale = (displaySize.height / 120).constraint(3, 10);
       margin = const EdgeInsets.symmetric(vertical: 1);
-      connectorMargin = const EdgeInsets.symmetric(
-        vertical: _markerWidth / 2,
-        horizontal: 1,
-      );
+      connectorMargin = const EdgeInsets.symmetric(vertical: _markerWidth / 2, horizontal: 1);
       height = duration * heightScale + connectorMargin.vertical * 2;
       width = (1 + connectorMargin.horizontal * 2) + _markerHeight * 2;
       connecterWidth = 1;
@@ -180,34 +167,29 @@ class TimelineConnector extends StatelessWidget {
           Expanded(
             flex: unsetHeight ? 0 : 1,
             child: Stack(
-              children: markerPositions
-                  .map(
-                    (position) => Flex(
-                      direction: direction,
-                      children: [
-                        if (position > 0)
-                          Spacer(
-                            flex: (position * 100000000).toInt(),
-                          ),
-                        RotatedBox(
-                          quarterTurns: direction == Axis.horizontal ? 0 : -1,
-                          child: TimelineMarker(
-                            width: _markerWidth,
-                            height: _markerHeight,
-                            color: _getTimelineColor(
-                              position > progress,
-                              enabledColor: enabledColor,
+              children:
+                  markerPositions
+                      .map(
+                        (position) => Flex(
+                          direction: direction,
+                          children: [
+                            if (position > 0) Spacer(flex: (position * 100000000).toInt()),
+                            RotatedBox(
+                              quarterTurns: direction == Axis.horizontal ? 0 : -1,
+                              child: TimelineMarker(
+                                width: _markerWidth,
+                                height: _markerHeight,
+                                color: _getTimelineColor(
+                                  position > progress,
+                                  enabledColor: enabledColor,
+                                ),
+                              ),
                             ),
-                          ),
+                            if (position < 1) Spacer(flex: ((1 - position) * 100000000).toInt()),
+                          ],
                         ),
-                        if (position < 1)
-                          Spacer(
-                            flex: ((1 - position) * 100000000).toInt(),
-                          ),
-                      ],
-                    ),
-                  )
-                  .toList(),
+                      )
+                      .toList(),
             ),
           ),
           Container(
@@ -219,14 +201,8 @@ class TimelineConnector extends StatelessWidget {
                 begin: begin,
                 end: end,
                 colors: [
-                  _getTimelineColor(
-                    false,
-                    enabledColor: enabledColor,
-                  ),
-                  _getTimelineColor(
-                    true,
-                    enabledColor: enabledColor,
-                  )
+                  _getTimelineColor(false, enabledColor: enabledColor),
+                  _getTimelineColor(true, enabledColor: enabledColor),
                 ],
                 stops: [progress, progress],
               ),
@@ -239,10 +215,7 @@ class TimelineConnector extends StatelessWidget {
   }
 }
 
-Color _getTimelineColor(
-  bool disabled, {
-  Color enabledColor = Colors.white,
-}) {
+Color _getTimelineColor(bool disabled, {Color enabledColor = Colors.white}) {
   if (disabled) return Colors.grey[700]!;
   return enabledColor;
 }

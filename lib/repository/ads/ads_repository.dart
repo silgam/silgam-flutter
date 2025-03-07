@@ -19,16 +19,18 @@ class AdsRepository {
     try {
       final versionNumber = await _getVersionNumber();
       var ads = await _adsApi.getAllAds();
-      ads = ads
-          .where((ad) =>
-              ad.minVersionNumber <= versionNumber &&
-              (ad.maxVersionNumber == null ||
-                  ad.maxVersionNumber! >= versionNumber) &&
-              ad.expiryDate.isAfter(DateTime.now()) &&
-              ad.startDate.isBefore(DateTime.now()))
-          .toList()
-        ..shuffle()
-        ..sort((a, b) => a.priority - b.priority);
+      ads =
+          ads
+              .where(
+                (ad) =>
+                    ad.minVersionNumber <= versionNumber &&
+                    (ad.maxVersionNumber == null || ad.maxVersionNumber! >= versionNumber) &&
+                    ad.expiryDate.isAfter(DateTime.now()) &&
+                    ad.startDate.isBefore(DateTime.now()),
+              )
+              .toList()
+            ..shuffle()
+            ..sort((a, b) => a.priority - b.priority);
       return Result.success(ads);
     } on DioException catch (e) {
       log(e.toString(), name: 'AdsRepository.getAllAds');

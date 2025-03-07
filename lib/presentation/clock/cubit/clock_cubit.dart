@@ -28,11 +28,13 @@ class ClockCubit extends Cubit<ClockState> {
     this._appCubit,
     this._noiseSettingCubit,
     this._announcementPlayer,
-  ) : super(ClockState(
+  ) : super(
+        ClockState(
           currentTime: DateTime.now(),
           pageOpenedTime: DateTime.now(),
           timetableStartedTime: DateTime.now(),
-        )) {
+        ),
+      ) {
     _initialize();
   }
 
@@ -45,22 +47,23 @@ class ClockCubit extends Cubit<ClockState> {
   NoiseGenerator? _noiseGenerator;
 
   get defaultLogProperties => {
-        'timetable_name': _timetable.name,
-        'exam_names': _timetable.toExamNamesString(),
-        'subject_names': _timetable.toSubjectNamesString(),
-        'is_exam_finished': state.isFinished,
-        'exam_ids': _timetable.items.map((item) => item.exam.id).join(', '),
-        'isCustomExams':
-            _timetable.items.map((item) => item.exam.isCustomExam).join(', '),
-      };
+    'timetable_name': _timetable.name,
+    'exam_names': _timetable.toExamNamesString(),
+    'subject_names': _timetable.toSubjectNamesString(),
+    'is_exam_finished': state.isFinished,
+    'exam_ids': _timetable.items.map((item) => item.exam.id).join(', '),
+    'isCustomExams': _timetable.items.map((item) => item.exam.isCustomExam).join(', '),
+  };
 
   void _initialize() {
     final breakpoints = Breakpoint.createBreakpointsFromTimetable(_timetable);
 
-    emit(state.copyWith(
-      breakpoints: Breakpoint.createBreakpointsFromTimetable(_timetable),
-      currentTime: breakpoints.first.time,
-    ));
+    emit(
+      state.copyWith(
+        breakpoints: Breakpoint.createBreakpointsFromTimetable(_timetable),
+        currentTime: breakpoints.first.time,
+      ),
+    );
 
     final noiseSettingState = _noiseSettingCubit.state;
     if (noiseSettingState.selectedNoisePreset != NoisePreset.disabled) {
@@ -80,25 +83,18 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void startExam() {
-    emit(state.copyWith(
-      isStarted: true,
-      timetableStartedTime: DateTime.now(),
-    ));
+    emit(state.copyWith(isStarted: true, timetableStartedTime: DateTime.now()));
     _restartTimer();
     _playAnnouncement();
     _noiseGenerator?.start();
 
     AnalyticsManager.eventStartTime(name: '[ClockPage] Finish exam');
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Start exam',
-      properties: defaultLogProperties,
-    );
+    AnalyticsManager.logEvent(name: '[ClockPage] Start exam', properties: defaultLogProperties);
   }
 
   void subtract30Seconds() {
     final announcementPosition = _announcementPlayer.position.inMilliseconds;
-    final announcementDuration =
-        _announcementPlayer.duration?.inMilliseconds ?? 0;
+    final announcementDuration = _announcementPlayer.duration?.inMilliseconds ?? 0;
     if ((announcementPosition - announcementDuration).abs() > 100) {
       _announcementPlayer.seek(_announcementPlayer.position - 30.seconds);
     }
@@ -138,14 +134,9 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void onLapTimeButtonPressed() {
-    final newLapTime = LapTime(
-      time: state.currentTime,
-      breakpoint: state.currentBreakpoint,
-    );
+    final newLapTime = LapTime(time: state.currentTime, breakpoint: state.currentBreakpoint);
     if (state.lapTimes.lastOrNull?.time != newLapTime.time) {
-      emit(state.copyWith(
-        lapTimes: [...state.lapTimes, newLapTime],
-      ));
+      emit(state.copyWith(lapTimes: [...state.lapTimes, newLapTime]));
     }
 
     AnalyticsManager.logEvent(
@@ -161,8 +152,7 @@ class ClockCubit extends Cubit<ClockState> {
   void _onEverySecond(DateTime newTime) {
     emit(state.copyWith(currentTime: newTime));
     if (!state.isFinished) {
-      final nextBreakpoint =
-          state.breakpoints[state.currentBreakpointIndex + 1];
+      final nextBreakpoint = state.breakpoints[state.currentBreakpointIndex + 1];
       if (newTime.compareTo(nextBreakpoint.time) >= 0) _moveToNextBreakpoint();
     }
   }
@@ -174,16 +164,11 @@ class ClockCubit extends Cubit<ClockState> {
 
   void _moveToPreviousBreakpoint({bool adjustTime = true}) {
     if (state.currentBreakpointIndex <= 0) return;
-    _moveBreakpoint(
-      index: state.currentBreakpointIndex - 1,
-      adjustTime: adjustTime,
-    );
+    _moveBreakpoint(index: state.currentBreakpointIndex - 1, adjustTime: adjustTime);
   }
 
   void _moveBreakpoint({required int index, bool adjustTime = true}) {
-    emit(state.copyWith(
-      currentBreakpointIndex: index,
-    ));
+    emit(state.copyWith(currentBreakpointIndex: index));
     _saveExamStartedTimeIfNeeded();
     _saveExamFinishedTimeIfNeeded();
     _announcementPlayer.pause();
@@ -196,8 +181,7 @@ class ClockCubit extends Cubit<ClockState> {
 
   Future<void> _playAnnouncement() async {
     await _announcementPlayer.pause();
-    final String? currentFileName =
-        state.currentBreakpoint.announcement.fileName;
+    final String? currentFileName = state.currentBreakpoint.announcement.fileName;
     if (currentFileName == null) {
       await _announcementPlayer.seek(_announcementPlayer.duration);
       return;
@@ -210,32 +194,26 @@ class ClockCubit extends Cubit<ClockState> {
   }
 
   void _saveExamStartedTimeIfNeeded() {
-    if (state.currentBreakpoint.announcement.purpose ==
-        AnnouncementPurpose.start) {
-      emit(state.copyWith(
-        examStartedTimes: {
-          ...state.examStartedTimes,
-          state.currentExam: DateTime.now(),
-        },
-      ));
+    if (state.currentBreakpoint.announcement.purpose == AnnouncementPurpose.start) {
+      emit(
+        state.copyWith(
+          examStartedTimes: {...state.examStartedTimes, state.currentExam: DateTime.now()},
+        ),
+      );
     }
   }
 
   void _saveExamFinishedTimeIfNeeded() {
-    if (state.currentBreakpoint.announcement.purpose ==
-        AnnouncementPurpose.finish) {
-      emit(state.copyWith(
-        examFinishedTimes: {
-          ...state.examFinishedTimes,
-          state.currentExam: DateTime.now(),
-        },
-      ));
+    if (state.currentBreakpoint.announcement.purpose == AnnouncementPurpose.finish) {
+      emit(
+        state.copyWith(
+          examFinishedTimes: {...state.examFinishedTimes, state.currentExam: DateTime.now()},
+        ),
+      );
     }
 
     if (state.isFinished) {
-      emit(state.copyWith(
-        timetableFinishedTime: DateTime.now(),
-      ));
+      emit(state.copyWith(timetableFinishedTime: DateTime.now()));
     }
   }
 
@@ -248,8 +226,7 @@ class ClockCubit extends Cubit<ClockState> {
       }
     }
     if (!state.isFinished) {
-      final nextBreakpoint =
-          state.breakpoints[state.currentBreakpointIndex + 1];
+      final nextBreakpoint = state.breakpoints[state.currentBreakpointIndex + 1];
       if (newTime.compareTo(nextBreakpoint.time) >= 0) {
         _moveToNextBreakpoint();
         return;

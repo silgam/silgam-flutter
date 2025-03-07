@@ -33,10 +33,7 @@ class ExamFilterChip extends StatelessWidget {
           ),
           onSelected: (_) => onSelected(),
           selected: false,
-          side: BorderSide(
-            color: _darkColor,
-            width: 0.4,
-          ),
+          side: BorderSide(color: _darkColor, width: 0.4),
           backgroundColor: Color(exam.color).withAlpha(isSelected ? 255 : 10),
           pressElevation: 0,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

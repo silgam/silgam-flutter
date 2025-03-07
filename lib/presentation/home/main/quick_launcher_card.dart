@@ -64,11 +64,7 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                iconData,
-                color: color,
-                size: 24,
-              ),
+              Icon(iconData, color: color, size: 24),
               const SizedBox(height: 4),
               Text(
                 title,
@@ -92,8 +88,7 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
     return CustomCard(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: BlocBuilder<AppCubit, AppState>(
-        buildWhen: (previous, current) =>
-            previous.isSignedIn != current.isSignedIn,
+        buildWhen: (previous, current) => previous.isSignedIn != current.isSignedIn,
         builder: (context, state) {
           return GridView.extent(
             maxCrossAxisExtent: 110,
@@ -117,11 +112,7 @@ class _QuickLauncherCardState extends State<QuickLauncherCard> {
                 iconData: Icons.graphic_eq,
                 title: '시험장 소음\n설정하기',
               ),
-              _buildItem(
-                onTap: _onRecordItemTap,
-                iconData: Icons.edit,
-                title: '모의고사\n기록하기',
-              ),
+              _buildItem(onTap: _onRecordItemTap, iconData: Icons.edit, title: '모의고사\n기록하기'),
               _buildItem(
                 onTap: _onSendFeedbackItemTap,
                 iconData: CupertinoIcons.paperplane_fill,

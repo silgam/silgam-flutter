@@ -6,12 +6,7 @@ class AppBarAction {
   final String tooltip;
   final VoidCallback? onPressed;
 
-  const AppBarAction({
-    this.key,
-    required this.iconData,
-    required this.tooltip,
-    this.onPressed,
-  });
+  const AppBarAction({this.key, required this.iconData, required this.tooltip, this.onPressed});
 }
 
 class CustomAppBar extends StatelessWidget {
@@ -32,8 +27,7 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color textColor =
-        textBrightness == Brightness.dark ? Colors.black : Colors.white;
+    final Color textColor = textBrightness == Brightness.dark ? Colors.black : Colors.white;
 
     final title = this.title;
 
@@ -57,11 +51,7 @@ class CustomAppBar extends StatelessWidget {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(color: textColor, fontSize: 20, fontWeight: FontWeight.w700),
               ),
             )
           else

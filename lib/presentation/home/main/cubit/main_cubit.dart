@@ -18,12 +18,8 @@ part 'main_state.dart';
 
 @lazySingleton
 class MainCubit extends Cubit<MainState> {
-  MainCubit(
-    this._adsRepository,
-    this._dDayRepository,
-    this._cacheManager,
-    this._appCubit,
-  ) : super(const MainState());
+  MainCubit(this._adsRepository, this._dDayRepository, this._cacheManager, this._appCubit)
+    : super(const MainState());
 
   final AdsRepository _adsRepository;
   final DDayRepository _dDayRepository;
@@ -38,44 +34,35 @@ class MainCubit extends Cubit<MainState> {
 
   Future<void> updateAds() async {
     List<Ads>? cachedAds = _cacheManager.getAds();
-    emit(state.copyWith(
-      ads: _getAdsToShow(cachedAds ?? []),
-    ));
+    emit(state.copyWith(ads: _getAdsToShow(cachedAds ?? [])));
 
     final getAdsResult = await _adsRepository.getAllAds();
     if (getAdsResult.isError()) return;
 
     List<Ads>? ads = getAdsResult.tryGetSuccess();
     await _cacheManager.setAds(ads);
-    emit(state.copyWith(
-      ads: _getAdsToShow(ads ?? []),
-      adsShownLoggedMap: {},
-    ));
+    emit(state.copyWith(ads: _getAdsToShow(ads ?? []), adsShownLoggedMap: {}));
   }
 
   Future<void> _updateDDays() async {
     List<DDay>? cachedDDays = _cacheManager.getDDays();
-    emit(state.copyWith(
-      dDayItems: getDDayItemsToShow(cachedDDays ?? []),
-    ));
+    emit(state.copyWith(dDayItems: getDDayItemsToShow(cachedDDays ?? [])));
 
     final getDDaysResult = await _dDayRepository.getAllDDays();
     if (getDDaysResult.isError()) return;
 
     List<DDay>? dDays = getDDaysResult.tryGetSuccess();
     await _cacheManager.setDDays(dDays);
-    emit(state.copyWith(
-      dDayItems: getDDayItemsToShow(dDays ?? []),
-    ));
+    emit(state.copyWith(dDayItems: getDDayItemsToShow(dDays ?? [])));
   }
 
   List<Ads> _getAdsToShow(List<Ads> ads) {
     final isPurchasedUser = _appCubit.state.me?.isPurchasedUser ?? false;
     final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
     return ads
-        .whereNot((ad) =>
-            (isPurchasedUser && ad.isHiddenToPurchasedUser) ||
-            (isAdsRemoved && ad.isAd))
+        .whereNot(
+          (ad) => (isPurchasedUser && ad.isHiddenToPurchasedUser) || (isAdsRemoved && ad.isAd),
+        )
         .toList();
   }
 
@@ -85,9 +72,7 @@ class MainCubit extends Cubit<MainState> {
 
   void onAdsShown(int index) {
     if (state.adsShownLoggedMap[index] == true) return;
-    emit(state.copyWith(
-      adsShownLoggedMap: {...state.adsShownLoggedMap, index: true},
-    ));
+    emit(state.copyWith(adsShownLoggedMap: {...state.adsShownLoggedMap, index: true}));
 
     final Ads ads = state.ads[index];
     AnalyticsManager.logEvent(

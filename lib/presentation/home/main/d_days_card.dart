@@ -21,16 +21,10 @@ class DDaysCard extends StatelessWidget {
               children: [
                 Text(
                   DateFormat.yMEd('ko_KR').format(dDayItem.date),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  dDayItem.title,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
+                Text(dDayItem.title, style: const TextStyle(fontWeight: FontWeight.w700)),
               ],
             ),
             Text(
@@ -50,10 +44,7 @@ class DDaysCard extends StatelessWidget {
           decoration: ShapeDecoration(
             shape: const StadiumBorder(),
             gradient: LinearGradient(
-              colors: [
-                primaryColor,
-                primaryColor.withAlpha(30),
-              ],
+              colors: [primaryColor, primaryColor.withAlpha(30)],
               stops: [dDayItem.progress, dDayItem.progress],
             ),
           ),

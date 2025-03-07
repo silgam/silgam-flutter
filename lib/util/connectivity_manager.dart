@@ -25,8 +25,7 @@ class ConnectivityManger {
     _onConnectivityChanged(connectivityResults);
 
     _connectivityListener?.cancel();
-    _connectivityListener =
-        Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
+    _connectivityListener = Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
   }
 
   void updateRealtimeDatabaseListener({required String? currentUserId}) {
@@ -37,8 +36,7 @@ class ConnectivityManger {
 
     _sessionId = const Uuid().v1();
     final db = FirebaseDatabase.instance;
-    _realtimeDatabaseListener =
-        db.ref('.info/connected').onValue.skip(1).listen((event) {
+    _realtimeDatabaseListener = db.ref('.info/connected').onValue.skip(1).listen((event) {
       // ca0acf561495e6e8647f9b60cc911c3581d6de40 커밋 이후로 iOS에서 결제 시작 직후에
       // event.snapshot.value가 잠깐동안 false에서 true로 바뀌는 현상이 있어 결제 오류가 발생함
       // 따라서 결제 중에는 아래의 코드 무시
@@ -47,10 +45,7 @@ class ConnectivityManger {
       if (isPurchasing) return;
 
       final connected = event.snapshot.value == true;
-      log(
-        'Realtime database connected: $connected',
-        name: runtimeType.toString(),
-      );
+      log('Realtime database connected: $connected', name: runtimeType.toString());
       _appCubit.updateIsOffline(!connected);
 
       if (connected) {

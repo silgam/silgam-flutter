@@ -18,17 +18,17 @@ class Timetable with _$Timetable {
     bool isAllSubjectsTimetable,
   }) = _Timetable;
 
-  factory Timetable.fromJson(Map<String, dynamic> json) =>
-      _$TimetableFromJson(json);
+  factory Timetable.fromJson(Map<String, dynamic> json) => _$TimetableFromJson(json);
 
   List<Exam> get exams => items.map((e) => e.exam).toList();
 
   Duration get duration => items.fold(
-      const Duration(),
-      (previousValue, item) =>
-          previousValue +
-          Duration(minutes: item.exam.timetableDurationMinutes) +
-          Duration(minutes: item.breakMinutesAfter));
+    const Duration(),
+    (previousValue, item) =>
+        previousValue +
+        Duration(minutes: item.exam.timetableDurationMinutes) +
+        Duration(minutes: item.breakMinutesAfter),
+  );
 
   DateTime get endTime => startTime.add(duration);
 
@@ -44,11 +44,9 @@ class Timetable with _$Timetable {
 @freezed
 class TimetableItem with _$TimetableItem {
   const factory TimetableItem({
-    @JsonKey(name: 'examId', toJson: Exam.toId, fromJson: Exam.fromId)
-    required Exam exam,
+    @JsonKey(name: 'examId', toJson: Exam.toId, fromJson: Exam.fromId) required Exam exam,
     @Default(0) int breakMinutesAfter,
   }) = _TimetableItem;
 
-  factory TimetableItem.fromJson(Map<String, dynamic> json) =>
-      _$TimetableItemFromJson(json);
+  factory TimetableItem.fromJson(Map<String, dynamic> json) => _$TimetableItemFromJson(json);
 }

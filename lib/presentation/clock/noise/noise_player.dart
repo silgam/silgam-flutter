@@ -64,8 +64,7 @@ class NoiseAudioPlayer implements NoisePlayer {
     await _whiteNoisePlayer.stop();
     await _whiteNoisePlayer.dispose();
 
-    await Future.wait(
-        [..._undisposedNoisePlayers.keys].map(_disposeNoisePlayer));
+    await Future.wait([..._undisposedNoisePlayers.keys].map(_disposeNoisePlayer));
   }
 
   Future<void> _disposeNoisePlayer(int playerId) async {

@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:gal/gal.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -18,23 +18,17 @@ import '../app/cubit/app_cubit.dart';
 class ReviewProblemDetailPageArguments {
   ReviewProblem problem;
 
-  ReviewProblemDetailPageArguments({
-    required this.problem,
-  });
+  ReviewProblemDetailPageArguments({required this.problem});
 }
 
 class ReviewProblemDetailPage extends StatefulWidget {
   static const routeName = '/review_problem_detail';
   final ReviewProblem reviewProblem;
 
-  const ReviewProblemDetailPage({
-    super.key,
-    required this.reviewProblem,
-  });
+  const ReviewProblemDetailPage({super.key, required this.reviewProblem});
 
   @override
-  State<ReviewProblemDetailPage> createState() =>
-      _ReviewProblemDetailPageState();
+  State<ReviewProblemDetailPage> createState() => _ReviewProblemDetailPageState();
 }
 
 class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
@@ -89,34 +83,30 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
 
   void _onDownloadPressed() async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
       return;
     }
 
     final appDocDir = await getTemporaryDirectory();
-    String savePath = "${appDocDir.path}/temp.jpg";
+    String savePath = "${appDocDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg";
     String imageUrl = widget.reviewProblem.imagePaths[_currentIndex];
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('다운로드하는 중입니다...'),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('다운로드하는 중입니다...')));
     }
+
     await Dio().download(imageUrl, savePath);
-    await ImageGallerySaver.saveFile(savePath, name: DateTime.now().toString());
+    final hasAccess = await Gal.hasAccess(toAlbum: true);
+    if (!hasAccess) {
+      await Gal.requestAccess(toAlbum: true);
+    }
+    await Gal.putImage(savePath, album: '실감');
     await File(savePath).delete();
 
     if (!mounted) return;
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
-      ..showSnackBar(
-        const SnackBar(content: Text('저장되었습니다.')),
-      );
+      ..showSnackBar(const SnackBar(content: Text('저장되었습니다.')));
   }
 
   void _onMemoIconPressed() {
@@ -130,20 +120,13 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
       onPageChanged: _onPhotoChanged,
       itemCount: widget.reviewProblem.imagePaths.length,
       loadingBuilder: (context, event) {
-        return const Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 2,
-          ),
-        );
+        return const Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2));
       },
       builder: (context, index) {
         return PhotoViewGalleryPageOptions(
           onTapUp: (context, details, controllerValue) => _onPhotoViewTapUp(),
           onScaleEnd: _onPhotoViewScaleEnd,
-          imageProvider: CachedNetworkImageProvider(
-            widget.reviewProblem.imagePaths[index],
-          ),
+          imageProvider: CachedNetworkImageProvider(widget.reviewProblem.imagePaths[index]),
           errorBuilder: (context, error, stackTrace) {
             return Container(
               padding: const EdgeInsets.all(20),
@@ -155,16 +138,12 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                   Text(
                     '사진을 불러올 수 없어요.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(color: Colors.grey),
                   ),
                   Text(
                     '오프라인 상태일 때에는 온라인 상태에서 열어본 적이 있는 사진만 볼 수 있어요.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(color: Colors.grey),
                   ),
                 ],
               ),
@@ -182,8 +161,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
     return Container(
       padding: EdgeInsets.only(top: statusBarHeight),
       margin: const EdgeInsets.only(bottom: 40),
-      color:
-          _hideMemo ? Colors.black.withAlpha(102) : Colors.black.withAlpha(179),
+      color: _hideMemo ? Colors.black.withAlpha(102) : Colors.black.withAlpha(179),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,12 +191,7 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
-                  child: Text(
-                    problem.memo,
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: Text(problem.memo, style: const TextStyle(color: Colors.white)),
                 ),
               ),
             ),
@@ -233,15 +206,10 @@ class _ReviewProblemDetailPageState extends State<ReviewProblemDetailPage> {
       padding: const EdgeInsets.all(8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.black38,
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.black38),
         child: Text(
           '${_currentIndex + 1}/${widget.reviewProblem.imagePaths.length}',
-          style: const TextStyle(
-            color: Colors.white,
-          ),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

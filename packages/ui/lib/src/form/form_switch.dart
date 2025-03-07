@@ -22,30 +22,16 @@ class FormSwitch extends StatelessWidget {
     return FormBuilderSwitch(
       name: name,
       initialValue: initialValue,
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                height: 1.4,
-                color: Colors.grey,
-              ),
-            )
-          : null,
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 20,
-      ),
-      decoration: const InputDecoration(
-        border: InputBorder.none,
-        contentPadding: EdgeInsets.zero,
-      ),
+      title: Text(title, style: const TextStyle(fontSize: 14)),
+      subtitle:
+          subtitle != null
+              ? Text(
+                subtitle,
+                style: const TextStyle(fontSize: 12, height: 1.4, color: Colors.grey),
+              )
+              : null,
+      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      decoration: const InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.zero),
     );
   }
 }

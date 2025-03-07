@@ -5,8 +5,8 @@ publish_to: 'none'
 version: 1.9.9+126
 
 environment:
-  sdk: 3.6.1
-  flutter: 3.27.3
+  sdk: 3.7.0
+  flutter: 3.29.1
 
 workspace:
   - packages/ui
@@ -72,10 +72,7 @@ dependencies:
   retrofit: ^4.2.0
 
   # Storage and Data
-  image_gallery_saver:
-    git:
-      url: https://github.com/knottx/image_gallery_saver.git
-      ref: knottx
+  gal: ^2.3.1
   image_picker: ^1.1.2
   path_provider: ^2.1.4
   shared_preferences: ^2.3.1
@@ -95,7 +92,7 @@ dependencies:
   crypto: ^3.0.4
   intl: ^0.19.0
   multiple_result: ^5.1.0
-  mixpanel_flutter: ^2.2.0
+  mixpanel_flutter: ^2.3.4
   package_info_plus: ^8.0.2
   screenshot: ^3.0.0
   share_plus: ^10.0.0

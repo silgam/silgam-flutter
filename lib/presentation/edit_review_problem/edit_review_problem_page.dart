@@ -30,10 +30,7 @@ class EditReviewProblemPageSave extends EditReviewProblemPageResult {
 class EditReviewProblemPageDelete extends EditReviewProblemPageResult {}
 
 class EditReviewProblemPage extends StatefulWidget {
-  const EditReviewProblemPage({
-    super.key,
-    this.reviewProblemToEdit,
-  });
+  const EditReviewProblemPage({super.key, this.reviewProblemToEdit});
 
   final ReviewProblem? reviewProblemToEdit;
 
@@ -53,8 +50,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   late final String? _initialTitle = widget.reviewProblemToEdit?.title;
   late final String? _initialMemo = widget.reviewProblemToEdit?.memo;
-  late final List<String> _initialImagePaths =
-      widget.reviewProblemToEdit?.imagePaths ?? [];
+  late final List<String> _initialImagePaths = widget.reviewProblemToEdit?.imagePaths ?? [];
 
   bool _isChanged = false;
 
@@ -64,10 +60,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   void _onDeleteButtonPressed() {
     if (_appCubit.state.isOffline && _initialImagePaths.isNotEmpty) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사진이 포함된 복습할 문제를 삭제할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -112,10 +105,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
       imagePaths: values?[_imagePathsFieldName],
     );
 
-    Navigator.pop(
-      context,
-      EditReviewProblemPageSave(newReviewProblem: newReviewProblem),
-    );
+    Navigator.pop(context, EditReviewProblemPageSave(newReviewProblem: newReviewProblem));
   }
 
   void _onPopInvokedWithResult(bool didPop, _) {
@@ -152,10 +142,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   void _onImageRemove(String imagePath) {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진을 삭제할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사진을 삭제할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -167,10 +154,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
 
   void _onImageAddButtonTap() async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사진을 추가할 수 없어요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사진을 추가할 수 없어요.', dismissOnTap: true);
       return;
     }
 
@@ -234,10 +218,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
                         },
                       )
                     else
-                      Image.file(
-                        File(imagePath),
-                        fit: BoxFit.cover,
-                      ),
+                      Image.file(File(imagePath), fit: BoxFit.cover),
                     Positioned(
                       top: 8,
                       right: 8,
@@ -249,11 +230,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
                           onTap: () => _onImageRemove(imagePath),
                           child: Padding(
                             padding: const EdgeInsets.all(4),
-                            child: Icon(
-                              Icons.clear,
-                              color: Colors.white,
-                              size: 22,
-                            ),
+                            child: Icon(Icons.clear, color: Colors.white, size: 22),
                           ),
                         ),
                       ),
@@ -271,11 +248,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
               child: InkWell(
                 onTap: _onImageAddButtonTap,
                 splashFactory: NoSplash.splashFactory,
-                child: Icon(
-                  CupertinoIcons.add,
-                  size: 24,
-                  color: Colors.grey.shade600,
-                ),
+                child: Icon(CupertinoIcons.add, size: 24, color: Colors.grey.shade600),
               ),
             ),
           ],
@@ -309,8 +282,7 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
               textInputAction: TextInputAction.next,
               validator: FormBuilderValidators.compose([
                 FormBuilderValidators.required(errorText: '제목을 입력해주세요.'),
-                FormBuilderValidators.maxLength(100,
-                    errorText: '100자 이하로 입력해주세요.'),
+                FormBuilderValidators.maxLength(100, errorText: '100자 이하로 입력해주세요.'),
               ]),
             ),
           ),
@@ -341,21 +313,14 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
       onBackPressed: _onBackPressed,
       appBarActions: [
         if (widget.reviewProblemToEdit != null)
-          AppBarAction(
-            iconData: Icons.delete,
-            tooltip: '삭제',
-            onPressed: _onDeleteButtonPressed,
-          ),
+          AppBarAction(iconData: Icons.delete, tooltip: '삭제', onPressed: _onDeleteButtonPressed),
       ],
       bottomAction: PageLayoutBottomAction(
         label: widget.reviewProblemToEdit == null ? '추가' : '수정',
         onPressed: _onSaveButtonPressed,
       ),
       unfocusOnTapBackground: true,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: _buildForm(),
-      ),
+      child: SingleChildScrollView(padding: const EdgeInsets.all(20), child: _buildForm()),
     );
   }
 }

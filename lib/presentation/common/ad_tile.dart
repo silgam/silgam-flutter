@@ -9,11 +9,7 @@ class AdTile extends StatefulWidget {
   final int width;
   final EdgeInsetsGeometry? margin;
 
-  const AdTile({
-    super.key,
-    required this.width,
-    this.margin,
-  });
+  const AdTile({super.key, required this.width, this.margin});
 
   @override
   State<AdTile> createState() => AdTileState();
@@ -54,9 +50,7 @@ class AdTileState extends State<AdTile> {
           width: adSize.width.toDouble(),
           height: adSize.height.toDouble(),
           margin: widget.margin,
-          child: AdWidget(
-            ad: bannerAd,
-          ),
+          child: AdWidget(ad: bannerAd),
         );
       },
     );

@@ -23,8 +23,7 @@ class Ads with _$Ads {
   bool get isHiddenToPurchasedUser =>
       actions.any((action) => action.intent == AdsIntent.openPurchasePage);
 
-  bool get isAd =>
-      actions.any((action) => action.intent == AdsIntent.openAdUrl);
+  bool get isAd => actions.any((action) => action.intent == AdsIntent.openAdUrl);
 }
 
 @freezed
@@ -34,8 +33,7 @@ class AdsAction with _$AdsAction {
     required String data,
   }) = _AdsAction;
 
-  factory AdsAction.fromJson(Map<String, dynamic> json) =>
-      _$AdsActionFromJson(json);
+  factory AdsAction.fromJson(Map<String, dynamic> json) => _$AdsActionFromJson(json);
 }
 
 enum AdsIntent {
@@ -44,5 +42,5 @@ enum AdsIntent {
   openPurchasePage,
   openOfflineGuidePage,
   openCustomExamGuidePage,
-  unknown
+  unknown,
 }

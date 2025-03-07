@@ -29,10 +29,7 @@ class ScaffoldBody extends StatelessWidget {
     final double horizontalPadding;
     if (screenWidth > tabletScreenWidth) {
       final originalHorizontalPadding = screenWidth > 1000 ? 80.0 : 50.0;
-      horizontalPadding = max(
-        (screenWidth - maxWidthForTablet) / 2,
-        originalHorizontalPadding,
-      );
+      horizontalPadding = max((screenWidth - maxWidthForTablet) / 2, originalHorizontalPadding);
     } else {
       horizontalPadding = max((screenWidth - maxWidth) / 2, 20.0);
     }
@@ -63,35 +60,33 @@ class ScaffoldBody extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: 12, right: horizontalPadding),
                 alignment: Alignment.center,
-                child: Builder(builder: (context) {
-                  if (isRefreshing) {
-                    return const IconButton(
-                      onPressed: null,
-                      icon: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
+                child: Builder(
+                  builder: (context) {
+                    if (isRefreshing) {
+                      return const IconButton(
+                        onPressed: null,
+                        icon: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                         ),
-                      ),
-                    );
-                  } else {
-                    return IconButton(
-                      onPressed: _onRefresh,
-                      icon: const Icon(Icons.refresh),
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                    );
-                  }
-                }),
+                      );
+                    } else {
+                      return IconButton(
+                        onPressed: _onRefresh,
+                        icon: const Icon(Icons.refresh),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                      );
+                    }
+                  },
+                ),
               ),
           ],
           foregroundColor: Colors.black,
           backgroundColor: SilgamApp.backgroundColor,
           // Because of this https://github.com/flutter/flutter/issues/24893
-          systemOverlayStyle:
-              kIsWeb || Platform.isIOS ? null : systemOverlayStyle,
+          systemOverlayStyle: kIsWeb || Platform.isIOS ? null : systemOverlayStyle,
         ),
         ...slivers.map((sliver) {
           if (sliver is NonPaddingChildBuilder) {
@@ -108,20 +103,14 @@ class ScaffoldBody extends StatelessWidget {
 
   void _onRefresh() {
     onRefresh?.call();
-    AnalyticsManager.logEvent(
-      name: '[ScaffoldBody] Refresh',
-      properties: {'page': title},
-    );
+    AnalyticsManager.logEvent(name: '[ScaffoldBody] Refresh', properties: {'page': title});
   }
 }
 
 class NonPaddingChildBuilder extends StatelessWidget {
   final Widget Function(double horizontalPadding) builder;
 
-  const NonPaddingChildBuilder({
-    super.key,
-    required this.builder,
-  });
+  const NonPaddingChildBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {

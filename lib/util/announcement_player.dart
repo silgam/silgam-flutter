@@ -15,18 +15,15 @@ class AnnouncementPlayer extends AudioPlayer {
   final SharedPreferences _sharedPreferences;
 
   late final int _announcementTypeId =
-      _sharedPreferences.getInt(PreferenceKey.announcementTypeId) ??
-          defaultAnnouncementType.id;
+      _sharedPreferences.getInt(PreferenceKey.announcementTypeId) ?? defaultAnnouncementType.id;
 
   AnnouncementPlayer(this._sharedPreferences) {
     if (!kIsWeb && Platform.isAndroid) setVolume(0.4);
   }
 
-  Future<Duration?> setAnnouncement(
-    String fileName, {
-    int? announcementTypeId,
-  }) {
+  Future<Duration?> setAnnouncement(String fileName, {int? announcementTypeId}) {
     return setAsset(
-        '$_announcementsAssetPath/${announcementTypeId ?? _announcementTypeId}_$fileName');
+      '$_announcementsAssetPath/${announcementTypeId ?? _announcementTypeId}_$fileName',
+    );
   }
 }

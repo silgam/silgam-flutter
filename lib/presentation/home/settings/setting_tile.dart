@@ -5,14 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/injection.dart';
 
-const settingTitleTextStyle = TextStyle(
-  fontSize: 14,
-);
-const settingDescriptionTextStyle = TextStyle(
-  fontSize: 12,
-  color: Colors.grey,
-  height: 1.4,
-);
+const settingTitleTextStyle = TextStyle(fontSize: 14);
+const settingDescriptionTextStyle = TextStyle(fontSize: 12, color: Colors.grey, height: 1.4);
 
 class SettingTile extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -53,21 +47,16 @@ class _SettingTileState extends State<SettingTile> {
   Widget build(BuildContext context) {
     final preferenceKey = widget.preferenceKey;
     if (preferenceKey != null) {
-      _isSwitchEnabled =
-          _sharedPreferences.getBool(preferenceKey) ?? widget.defaultValue;
+      _isSwitchEnabled = _sharedPreferences.getBool(preferenceKey) ?? widget.defaultValue;
     }
 
     return InkWell(
-      onTap: widget.preferenceKey == null
-          ? _onTap
-          : () => _onSwitchChanged(!_isSwitchEnabled),
+      onTap: widget.preferenceKey == null ? _onTap : () => _onSwitchChanged(!_isSwitchEnabled),
       splashColor: Colors.transparent,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: widget.paddingHorizontal,
-          vertical: widget.description == null && widget.preferenceKey == null
-              ? 16
-              : 12,
+          vertical: widget.description == null && widget.preferenceKey == null ? 16 : 12,
         ),
         child: Row(
           children: [
@@ -77,21 +66,15 @@ class _SettingTileState extends State<SettingTile> {
                 children: [
                   Text(
                     widget.title,
-                    style: settingTitleTextStyle.copyWith(
-                      color: widget.titleColor,
-                    ),
+                    style: settingTitleTextStyle.copyWith(color: widget.titleColor),
                   ),
                   if (widget.description != null) const SizedBox(height: 4),
                   if (widget.description != null)
-                    Text(
-                      _getDescription(),
-                      style: settingDescriptionTextStyle,
-                    ),
+                    Text(_getDescription(), style: settingDescriptionTextStyle),
                 ],
               ),
             ),
-            if (widget.preferenceKey != null || widget.showArrow)
-              const SizedBox(width: 16),
+            if (widget.preferenceKey != null || widget.showArrow) const SizedBox(width: 16),
             if (widget.preferenceKey != null)
               Switch(
                 value: _isSwitchEnabled,
@@ -99,12 +82,8 @@ class _SettingTileState extends State<SettingTile> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             if (widget.showArrow)
-              const Icon(
-                CupertinoIcons.chevron_right,
-                color: Colors.black26,
-                size: 18,
-              ),
-            if (widget.showArrow) const SizedBox(width: 2)
+              const Icon(CupertinoIcons.chevron_right, color: Colors.black26, size: 18),
+            if (widget.showArrow) const SizedBox(width: 2),
           ],
         ),
       ),
@@ -115,9 +94,7 @@ class _SettingTileState extends State<SettingTile> {
     widget.onTap?.call();
     AnalyticsManager.logEvent(
       name: '[HomePage-settings] Setting tile button tapped',
-      properties: {
-        'title': widget.title,
-      },
+      properties: {'title': widget.title},
     );
   }
 
@@ -144,10 +121,7 @@ class _SettingTileState extends State<SettingTile> {
 
     AnalyticsManager.logEvent(
       name: '[HomePage-settings] Setting tile switch toggled',
-      properties: {
-        'title': widget.title,
-        'is_enabled': isEnabled,
-      },
+      properties: {'title': widget.title, 'is_enabled': isEnabled},
     );
   }
 }

@@ -43,8 +43,7 @@ Future<String?> initializeInitialRoute() async {
       sharedPreferences.getBool(PreferenceKey.isOnboardingFinished) ?? false;
   if (isOnboardingFinished) return null;
 
-  final isOnboardingInitialized =
-      await getIt.get<OnboardingCubit>().initialize();
+  final isOnboardingInitialized = await getIt.get<OnboardingCubit>().initialize();
   if (isOnboardingInitialized) return OnboardingPage.routeName;
   return null;
 }
@@ -69,9 +68,7 @@ Future<void> initializeFirebase() async {
 
   await Future.wait([
     getIt.get<AppCubit>().initialize(),
-    if (!kIsWeb)
-      FirebaseCrashlytics.instance
-          .setCrashlyticsCollectionEnabled(kReleaseMode),
+    if (!kIsWeb) FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode),
   ]);
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
@@ -83,13 +80,15 @@ Future<void> initializeFirebase() async {
 
 Future<void> initializeAudioSession() async {
   final AudioSession audioSession = await AudioSession.instance;
-  await audioSession.configure(const AudioSessionConfiguration(
-    avAudioSessionCategory: AVAudioSessionCategory.playback,
-    avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.mixWithOthers,
-    androidAudioAttributes: AndroidAudioAttributes(
-      contentType: AndroidAudioContentType.music,
-      usage: AndroidAudioUsage.media,
+  await audioSession.configure(
+    const AudioSessionConfiguration(
+      avAudioSessionCategory: AVAudioSessionCategory.playback,
+      avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.mixWithOthers,
+      androidAudioAttributes: AndroidAudioAttributes(
+        contentType: AndroidAudioContentType.music,
+        usage: AndroidAudioUsage.media,
+      ),
+      androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
     ),
-    androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
-  ));
+  );
 }

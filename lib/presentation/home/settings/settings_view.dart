@@ -53,13 +53,7 @@ class _SettingsViewState extends State<SettingsView> {
       builder: (context, state) {
         return ScaffoldBody(
           title: SettingsView.title,
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate(
-                _buildSettingTiles(state),
-              ),
-            ),
-          ],
+          slivers: [SliverList(delegate: SliverChildListDelegate(_buildSettingTiles(state)))],
         );
       },
     );
@@ -68,13 +62,9 @@ class _SettingsViewState extends State<SettingsView> {
   List<Widget> _buildSettingTiles(AppState appState) {
     return [
       const SizedBox(height: 8),
-      appState.isSignedIn
-          ? _buildLoginInfo(appState.me!)
-          : LoginButton(onTap: _onLoginTap),
+      appState.isSignedIn ? _buildLoginInfo(appState.me!) : LoginButton(onTap: _onLoginTap),
       if (appState.me?.isPurchasedUser != true)
-        buildPurchaseButtonOr(
-          margin: const EdgeInsets.symmetric(vertical: 16),
-        ),
+        buildPurchaseButtonOr(margin: const EdgeInsets.symmetric(vertical: 16)),
       if (appState.me?.isPurchasedUser == true) const SizedBox(height: 16),
       if (!isAdmobDisabled && !appState.productBenefit.isAdsRemoved)
         LayoutBuilder(
@@ -91,22 +81,20 @@ class _SettingsViewState extends State<SettingsView> {
         child: BlocBuilder<RecordListCubit, RecordListState>(
           builder: (context, recordListState) {
             final examRecordLimit = appState.productBenefit.examRecordLimit;
-            final isExamRecordLimitReached = examRecordLimit != -1 &&
-                recordListState.originalRecords.length >= examRecordLimit;
+            final isExamRecordLimitReached =
+                examRecordLimit != -1 && recordListState.originalRecords.length >= examRecordLimit;
 
             if (appState.isSignedIn && !isExamRecordLimitReached) {
               return const SettingTile(
                 title: '시험 종료 후 자동 저장',
-                description:
-                    '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+                description: '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
                 preferenceKey: PreferenceKey.useAutoSaveRecords,
               );
             } else {
               return SettingTile(
                 onTap: _onAutoSaveRecordsUnavailableButtonTap,
                 title: '시험 종료 후 자동 저장',
-                description:
-                    '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
+                description: '시험 종료 후 응시 기록과 랩타임 기록이 자동으로 저장돼요. (여러 과목을 응시할 경우 모든 과목이 저장됨)',
                 showArrow: true,
               );
             }
@@ -116,16 +104,16 @@ class _SettingsViewState extends State<SettingsView> {
       const SettingDivider(),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
-              title: '랩타임 기능 사용',
-              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
-              preferenceKey: PreferenceKey.useLapTime,
-            )
+            title: '랩타임 기능 사용',
+            description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
+            preferenceKey: PreferenceKey.useLapTime,
+          )
           : SettingTile(
-              onTap: _onLapTimeSettingButtonTap,
-              title: '랩타임 기능 사용',
-              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
-              showArrow: true,
-            ),
+            onTap: _onLapTimeSettingButtonTap,
+            title: '랩타임 기능 사용',
+            description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
+            showArrow: true,
+          ),
       const SettingDivider(),
       SettingTile(
         onTap: _onCustomizeSubjectNameButtonTap,
@@ -137,8 +125,7 @@ class _SettingsViewState extends State<SettingsView> {
       SettingTile(
         onTap: _onCustomExamButtonTap,
         title: '나만의 과목 만들기',
-        description:
-            '기본 과목의 이름, 응시 시간 등을 바꾼 새로운 과목을 만들 수 있어요. (하프 모의고사, 내신 시험 등 커스텀 가능)',
+        description: '기본 과목의 이름, 응시 시간 등을 바꾼 새로운 과목을 만들 수 있어요. (하프 모의고사, 내신 시험 등 커스텀 가능)',
         showArrow: true,
       ),
       const Subtitle(text: '소리 설정', margin: EdgeInsets.zero),
@@ -162,11 +149,7 @@ class _SettingsViewState extends State<SettingsView> {
         description: '인터넷이 없는 환경에서도 이용할 수 있는 기능들에 대해 알아보세요.',
       ),
       const SettingDivider(),
-      if (appState.isSignedIn)
-        SettingTile(
-          onTap: _onNotificationSettingButtonTap,
-          title: '알림 설정',
-        ),
+      if (appState.isSignedIn) SettingTile(onTap: _onNotificationSettingButtonTap, title: '알림 설정'),
       if (appState.isSignedIn) const SettingDivider(),
       SettingTile(
         onTap: _onWriteReviewButtonTap,
@@ -181,17 +164,12 @@ class _SettingsViewState extends State<SettingsView> {
       ),
       const SettingDivider(),
       SettingTile(
-        onTap: () => launchUrl(Uri.parse(urlSupport),
-            mode: LaunchMode.externalApplication),
+        onTap: () => launchUrl(Uri.parse(urlSupport), mode: LaunchMode.externalApplication),
         title: '카카오톡 채널로 문의하기',
         description: '앱 사용 중 발생하는 오류나 의견 등 실감팀의 답변이 필요한 내용을 문의할 수 있어요.',
       ),
       if (appState.isSignedIn) const SettingDivider(),
-      if (appState.isSignedIn)
-        SettingTile(
-          onTap: _onLogoutTap,
-          title: '로그아웃',
-        ),
+      if (appState.isSignedIn) SettingTile(onTap: _onLogoutTap, title: '로그아웃'),
       if (appState.isSignedIn) const SettingDivider(),
       if (appState.isSignedIn)
         SettingTile(
@@ -209,11 +187,7 @@ class _SettingsViewState extends State<SettingsView> {
             alignment: Alignment.center,
             child: Text(
               '버전 정보 ${snapshot.data?.version}+${snapshot.data?.buildNumber}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-              ),
+              style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
             ),
           );
         },
@@ -221,36 +195,22 @@ class _SettingsViewState extends State<SettingsView> {
       const SizedBox(height: 4),
       GestureDetector(
         onTap: () {
-          launchUrl(
-            Uri.parse(urlPrivacy),
-            mode: LaunchMode.externalApplication,
-          );
+          launchUrl(Uri.parse(urlPrivacy), mode: LaunchMode.externalApplication);
         },
         child: const Text(
           '개인정보처리방침',
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
+          style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
           textAlign: TextAlign.center,
         ),
       ),
       const SizedBox(height: 4),
       GestureDetector(
         onTap: () {
-          launchUrl(
-            Uri.parse(urlTerms),
-            mode: LaunchMode.externalApplication,
-          );
+          launchUrl(Uri.parse(urlTerms), mode: LaunchMode.externalApplication);
         },
         child: const Text(
           '서비스이용약관',
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
+          style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
           textAlign: TextAlign.center,
         ),
       ),
@@ -266,11 +226,7 @@ class _SettingsViewState extends State<SettingsView> {
         },
         child: const Text(
           '오픈소스 라이선스',
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
+          style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w300),
           textAlign: TextAlign.center,
         ),
       ),
@@ -293,9 +249,7 @@ class _SettingsViewState extends State<SettingsView> {
               children: [
                 const SizedBox(width: 10),
                 CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                    user.photoUrl ?? '',
-                  ),
+                  backgroundImage: CachedNetworkImageProvider(user.photoUrl ?? ''),
                   backgroundColor: Colors.grey,
                   radius: 24,
                   onBackgroundImageError: (exception, stackTrace) {},
@@ -313,17 +267,11 @@ class _SettingsViewState extends State<SettingsView> {
                               user.displayName ?? '이름 없음',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          SvgPicture.asset(
-                            providerIconPath,
-                            height: 18,
-                          ),
+                          SvgPicture.asset(providerIconPath, height: 18),
                         ],
                       ),
                       const SizedBox(height: 6),
@@ -331,28 +279,21 @@ class _SettingsViewState extends State<SettingsView> {
                         user.email ?? '이메일 없음',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 12),
-                const VerticalDivider(
-                  indent: 8,
-                  endIndent: 8,
-                  width: 1,
-                ),
+                const VerticalDivider(indent: 8, endIndent: 8, width: 1),
                 const SizedBox(width: 4),
                 CachedNetworkImage(
-                  imageUrl: user.isProductTrial
-                      ? user.activeProduct.trialStampImageUrl
-                      : user.activeProduct.stampImageUrl,
+                  imageUrl:
+                      user.isProductTrial
+                          ? user.activeProduct.trialStampImageUrl
+                          : user.activeProduct.stampImageUrl,
                   height: 74,
-                  errorWidget: (_, __, ___) =>
-                      const AspectRatio(aspectRatio: 1),
+                  errorWidget: (_, __, ___) => const AspectRatio(aspectRatio: 1),
                 ),
               ],
             ),
@@ -372,141 +313,125 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void _onLoginInfoLongPress(User user) {
-    AnalyticsManager.logEvent(
-      name: '[HomePage-settings] Login info long pressed',
-    );
+    AnalyticsManager.logEvent(name: '[HomePage-settings] Login info long pressed');
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
-      builder: (_) => CustomAlertDialog.customContent(
-        content: SelectableText(
-          user.id,
-          onTap: () {
-            AnalyticsManager.logEvent(
-                name: '[HomePage-settings] User ID copied');
-            Clipboard.setData(ClipboardData(text: user.id));
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('복사되었습니다.'),
-              ),
-            );
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      builder:
+          (_) => CustomAlertDialog.customContent(
+            content: SelectableText(
+              user.id,
+              onTap: () {
+                AnalyticsManager.logEvent(name: '[HomePage-settings] User ID copied');
+                Clipboard.setData(ClipboardData(text: user.id));
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('복사되었습니다.')));
+                Navigator.pop(context);
+              },
+            ),
+          ),
     );
   }
 
   void _onLogoutTap() async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
       return;
     }
 
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'logout_confirm_dialog'),
-      builder: (_) => CustomAlertDialog(
-        title: '로그아웃하실 건가요?',
-        actions: [
-          CustomTextButton.secondary(
-            text: '취소',
-            onPressed: () {
-              Navigator.pop(context);
-            },
+      builder:
+          (_) => CustomAlertDialog(
+            title: '로그아웃하실 건가요?',
+            actions: [
+              CustomTextButton.secondary(
+                text: '취소',
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              CustomTextButton.primary(
+                text: '로그아웃',
+                onPressed: () async {
+                  await getIt<AppCubit>().onLogout();
+                  if (mounted) Navigator.pop(context);
+                  await AnalyticsManager.logEvent(name: '[HomePage-settings] Logout');
+                },
+              ),
+            ],
           ),
-          CustomTextButton.primary(
-            text: '로그아웃',
-            onPressed: () async {
-              await getIt<AppCubit>().onLogout();
-              if (mounted) Navigator.pop(context);
-              await AnalyticsManager.logEvent(
-                  name: '[HomePage-settings] Logout');
-            },
-          ),
-        ],
-      ),
     );
   }
 
   void _onDeleteAccountTap() async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
       return;
     }
 
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'account_delete_confirm_dialog'),
-      builder: (_) => CustomAlertDialog(
-        title: '탈퇴하시겠습니까?',
-        content: '탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.',
-        actions: [
-          CustomTextButton.secondary(
-            text: '취소',
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          CustomTextButton.destructive(
-            text: '계정 탈퇴',
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await FirebaseAuth.instance.currentUser?.delete();
-                await _appCubit.onLogout();
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'requires-recent-login') {
-                  await FirebaseAuth.instance.signOut();
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        duration: Duration(seconds: 7),
-                        content: Text(
-                            '로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
-                      ),
-                    );
-                    Navigator.pushNamed(context, LoginPage.routeName);
+      builder:
+          (_) => CustomAlertDialog(
+            title: '탈퇴하시겠습니까?',
+            content: '탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.',
+            actions: [
+              CustomTextButton.secondary(
+                text: '취소',
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              CustomTextButton.destructive(
+                text: '계정 탈퇴',
+                onPressed: () async {
+                  Navigator.pop(context);
+                  try {
+                    await FirebaseAuth.instance.currentUser?.delete();
+                    await _appCubit.onLogout();
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'requires-recent-login') {
+                      await FirebaseAuth.instance.signOut();
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            duration: Duration(seconds: 7),
+                            content: Text('로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
+                          ),
+                        );
+                        Navigator.pushNamed(context, LoginPage.routeName);
+                      }
+                    }
                   }
-                }
-              }
-              await AnalyticsManager.logEvent(
-                  name: '[HomePage-settings] Delete account');
-            },
+                  await AnalyticsManager.logEvent(name: '[HomePage-settings] Delete account');
+                },
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _onAutoSaveRecordsUnavailableButtonTap() {
     if (_appCubit.state.isNotSignedIn) {
       Navigator.pushNamed(context, LoginPage.routeName);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('로그인 후 사용할 수 있는 기능이에요.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('로그인 후 사용할 수 있는 기능이에요.')));
       return;
     } else {
       showDialog(
         context: context,
-        routeSettings: const RouteSettings(
-          name: '/auto_save_records_limit_info_dialog',
-        ),
+        routeSettings: const RouteSettings(name: '/auto_save_records_limit_info_dialog'),
         builder: (context) {
           return BlocBuilder<AppCubit, AppState>(
             builder: (context, appState) {
               return BlocBuilder<IapCubit, IapState>(
                 builder: (context, iapState) {
-                  final examRecordLimit =
-                      appState.freeProductBenefit.examRecordLimit;
+                  final examRecordLimit = appState.freeProductBenefit.examRecordLimit;
                   final sellingProduct = iapState.sellingProduct;
 
                   return CustomAlertDialog(
@@ -530,9 +455,7 @@ class _SettingsViewState extends State<SettingsView> {
                             Navigator.of(context).pop();
                             Navigator.of(context).pushNamed(
                               PurchasePage.routeName,
-                              arguments: PurchasePageArguments(
-                                product: sellingProduct,
-                              ),
+                              arguments: PurchasePageArguments(product: sellingProduct),
                             );
                           },
                         ),
@@ -578,10 +501,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   void _onWriteReviewButtonTap() async {
     if (_appCubit.state.isOffline) {
-      EasyLoading.showToast(
-        '오프라인 상태에서는 사용할 수 없는 기능이에요.',
-        dismissOnTap: true,
-      );
+      EasyLoading.showToast('오프라인 상태에서는 사용할 수 없는 기능이에요.', dismissOnTap: true);
       return;
     }
 
@@ -623,12 +543,6 @@ class SettingDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Divider(
-      color: Colors.grey.shade200,
-      height: 1,
-      thickness: 1,
-      indent: 12,
-      endIndent: 12,
-    );
+    return Divider(color: Colors.grey.shade200, height: 1, thickness: 1, indent: 12, endIndent: 12);
   }
 }

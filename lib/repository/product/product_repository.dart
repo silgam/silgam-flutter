@@ -23,11 +23,13 @@ class ProductRepository {
       final products = await _productApi.getAllProducts();
       final productsLocal = <Product>[];
       for (final product in products) {
-        productsLocal.add(product.copyWith(
-          expiryDate: product.expiryDate.toLocal(),
-          sellingStartDate: product.sellingStartDate.toLocal(),
-          sellingEndDate: product.sellingEndDate.toLocal(),
-        ));
+        productsLocal.add(
+          product.copyWith(
+            expiryDate: product.expiryDate.toLocal(),
+            sellingStartDate: product.sellingStartDate.toLocal(),
+            sellingEndDate: product.sellingEndDate.toLocal(),
+          ),
+        );
       }
       return Result.success(productsLocal);
     } on DioException catch (e) {
@@ -56,13 +58,9 @@ class ProductRepository {
     }
   }
 
-  Future<Result<Unit, ApiFailure>> startTrial({
-    required String productId,
-  }) async {
+  Future<Result<Unit, ApiFailure>> startTrial({required String productId}) async {
     final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-    final request = StartTrialRequestDto(
-      productId: productId,
-    );
+    final request = StartTrialRequestDto(productId: productId);
     try {
       await _productApi.startTrial('Bearer $authToken', request);
       return const Result.success(unit);
@@ -77,10 +75,7 @@ class ProductRepository {
     required String store,
   }) async {
     final authToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-    final request = CanPurchaseRequestDto(
-      productId: productId,
-      store: store,
-    );
+    final request = CanPurchaseRequestDto(productId: productId, store: store);
     try {
       await _productApi.canPurchase('Bearer $authToken', request);
       return const Result.success(unit);
