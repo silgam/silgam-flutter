@@ -67,10 +67,6 @@ class NoiseSettingCubit extends Cubit<NoiseSettingState> {
     );
     _saveAll();
 
-    AnalyticsManager.logEvent(
-      name: '[NoiseSettingPage] Noise level changed',
-      properties: {'noise': noise.name, 'level': value},
-    );
     AnalyticsManager.setPeopleProperty('[Noise] Levels', state.noiseLevels.toString());
   }
 

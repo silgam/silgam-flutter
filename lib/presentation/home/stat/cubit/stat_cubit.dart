@@ -60,8 +60,6 @@ class StatCubit extends Cubit<StatState> {
       return;
     }
 
-    AnalyticsManager.logEvent(name: '[HomePage-stat] Refresh');
-
     emit(state.copyWith(isLoading: true));
     await _recordListCubit.refresh();
     emit(state.copyWith(isLoading: false));

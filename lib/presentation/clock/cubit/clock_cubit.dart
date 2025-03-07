@@ -101,22 +101,12 @@ class ClockCubit extends Cubit<ClockState> {
 
     final newTime = state.currentTime.subtract(30.seconds);
     _onTimeChanged(newTime);
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Subtract 30 seconds',
-      properties: {...defaultLogProperties, 'current_time': state.currentTime.toString()},
-    );
   }
 
   void add30Seconds() {
     final newTime = state.currentTime.add(30.seconds);
     _announcementPlayer.seek(_announcementPlayer.position + 30.seconds);
     _onTimeChanged(newTime);
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Add 30 seconds',
-      properties: {...defaultLogProperties, 'current_time': state.currentTime.toString()},
-    );
   }
 
   void onBreakpointTap(int index) {
