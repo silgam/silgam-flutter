@@ -10,7 +10,6 @@ import '../../model/exam.dart';
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
-import '../../util/analytics_manager.dart';
 import '../../util/duration_extension.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
@@ -116,8 +115,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
   void initState() {
     super.initState();
 
-    AnalyticsManager.eventStartTime(name: '[EditExamRecordPage] Edit finished');
-
     if (_appCubit.state.isNotSignedIn) {
       Navigator.pop(context);
       return;
@@ -130,8 +127,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   @override
   void dispose() {
-    _logEvent('[EditExamRecordPage] Edit finished');
-
     super.dispose();
   }
 
@@ -143,23 +138,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
       Navigator.pop(context);
       showExamRecordLimitInfoDialog(context);
     }
-  }
-
-  void _logEvent(String name) {
-    final Exam? exam = _formKey.currentState?.fields[_examFieldName]?.value;
-
-    AnalyticsManager.logEvent(
-      name: name,
-      properties: {
-        if (exam != null) ...{
-          'exam_name': exam.name,
-          'exam_id': exam.id,
-          'subject': exam.subject.name,
-        },
-        'is_editing_mode': _isEditingMode,
-        'input_exam_existed': widget.inputExam != null,
-      },
-    );
   }
 
   void _onPopInvokedWithResult(bool didPop, _) {
@@ -209,7 +187,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
 
   void _onBackPressed() {
     Navigator.maybePop(context);
-    _logEvent('[EditExamRecordPage] Cancel button tapped');
   }
 
   void _onSavePressed() async {
@@ -293,8 +270,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
         result: record,
       );
     }
-
-    _logEvent('[EditExamRecordPage] Exam record saved');
   }
 
   Widget _buildForm() {

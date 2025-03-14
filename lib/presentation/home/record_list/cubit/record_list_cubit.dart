@@ -111,15 +111,6 @@ class RecordListCubit extends Cubit<RecordListState> {
     }
     final records = _getFilteredAndSortedRecords(selectedExamIds: selectedExamIds);
     emit(state.copyWith(selectedExamIds: selectedExamIds, records: records));
-
-    AnalyticsManager.logEvent(
-      name: '[HomePage-list] Exam filter button tapped',
-      properties: {
-        'subject': exam.subject.name,
-        'examId': exam.id,
-        'selected': state.selectedExamIds.contains(exam.id),
-      },
-    );
   }
 
   void onFilterResetButtonTapped() {

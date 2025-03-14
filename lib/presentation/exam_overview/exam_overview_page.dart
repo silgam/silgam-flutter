@@ -143,11 +143,6 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
-
-                AnalyticsManager.logEvent(
-                  name: '[ExamOverviewPage-CloseDialog] Exit button pressed',
-                  properties: {'exam_detail': widget.examDetail.toString()},
-                );
               },
             ),
           ],

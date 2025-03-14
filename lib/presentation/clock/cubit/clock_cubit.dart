@@ -122,15 +122,6 @@ class ClockCubit extends Cubit<ClockState> {
       _announcementPlayer.pause();
       _noiseGenerator?.pauseWhiteNoise();
     }
-
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Play/Pause Button Pressed',
-      properties: {
-        ...defaultLogProperties,
-        'current_time': state.currentTime.toString(),
-        'running': state.isRunning,
-      },
-    );
   }
 
   void onLapTimeButtonPressed() {

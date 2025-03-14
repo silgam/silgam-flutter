@@ -82,15 +82,6 @@ class StatCubit extends Cubit<StatState> {
         records: _getFilteredRecords(selectedExamIds: selectedExamIds),
       ),
     );
-
-    AnalyticsManager.logEvent(
-      name: '[HomePage-stat] Exam filter button tapped',
-      properties: {
-        'subject': exam.subject.name,
-        'examId': exam.id,
-        'selected': state.selectedExamIds.contains(exam.id),
-      },
-    );
   }
 
   void onFilterResetButtonTapped() {

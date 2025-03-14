@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../util/analytics_manager.dart';
 import '../common/timeline_marker.dart';
 
 class TimelineTile extends StatelessWidget {
@@ -39,7 +38,7 @@ class TimelineTile extends StatelessWidget {
     return Transform.translate(
       offset: Offset(0, smallText != null && direction == Axis.horizontal ? 10 : 0),
       child: InkWell(
-        onTap: _onTap,
+        onTap: onTap,
         splashColor: Colors.transparent,
         highlightColor: Colors.white12,
         borderRadius: BorderRadius.circular(4),
@@ -95,14 +94,6 @@ class TimelineTile extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _onTap() {
-    onTap();
-    AnalyticsManager.logEvent(
-      name: '[ClockPage] Timeline tile tapped',
-      properties: {'title': title},
     );
   }
 }

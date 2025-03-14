@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../util/analytics_manager.dart';
 import '../home_page.dart';
 
 part 'home_cubit.freezed.dart';
@@ -16,10 +15,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   void changeTab(int tabIndex) {
     emit(state.copyWith(tabIndex: tabIndex));
-    AnalyticsManager.logEvent(
-      name: '[HomePage] Tab selected',
-      properties: {'label': HomePage.views.keys.toList()[tabIndex], 'index': tabIndex},
-    );
   }
 
   void changeTabByTitle(String title) {
