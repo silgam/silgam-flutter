@@ -8,21 +8,24 @@ import '../cubit/clock_cubit.dart';
 import 'noise_player.dart';
 
 class NoiseGenerator {
-  static const double _probabilityMultiple = 0.001;
-  final NoiseSettingState noiseSettingState;
-  final NoisePlayer noisePlayer;
-  final ClockCubit clockCubit;
-  final _random = Random();
-  Timer? _timer;
-
   NoiseGenerator({
     required this.noiseSettingState,
     required this.noisePlayer,
     required this.clockCubit,
   });
 
+  final NoiseSettingState noiseSettingState;
+  final NoisePlayer noisePlayer;
+  final ClockCubit clockCubit;
+
+  static const double _probabilityMultiple = 0.001;
+
+  final _random = Random();
+  Timer? _timer;
+
   void start() {
     playWhiteNoiseIfEnabled();
+
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) async {
       ClockState clockState = clockCubit.state;
       if (!clockState.isRunning) return;
