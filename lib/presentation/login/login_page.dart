@@ -78,10 +78,10 @@ class _LoginPageState extends State<LoginPage> {
                   lightText: true,
                 ),
               const SizedBox(height: 16),
-              RichText(
+              Text.rich(
                 textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: Theme.of(context).primaryTextTheme.bodyLarge?.copyWith(
+                TextSpan(
+                  style: TextStyle(
                     color: Colors.grey.shade600,
                     fontWeight: FontWeight.w300,
                     fontSize: 11,

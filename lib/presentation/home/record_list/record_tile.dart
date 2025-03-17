@@ -118,15 +118,10 @@ class RecordTileState extends State<RecordTile> {
       textSpans.add(TextSpan(text: ' 등급', style: smallTextStyle));
     }
 
-    TextStyle? defaultTextStyle = Theme.of(context).primaryTextTheme.bodyLarge;
-    return RichText(
+    return Text.rich(
       textAlign: TextAlign.end,
-      text: TextSpan(
-        style: defaultTextStyle?.copyWith(
-          fontWeight: FontWeight.w300,
-          fontSize: 18,
-          color: Colors.black,
-        ),
+      TextSpan(
+        style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18, color: Colors.black),
         children: textSpans,
       ),
     );

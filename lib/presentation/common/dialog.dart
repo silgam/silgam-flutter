@@ -349,14 +349,10 @@ void showSendFeedbackDialog(BuildContext context) {
                     borderRadius: BorderRadius.circular(3),
                     border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
-                  child: RichText(
+                  child: Text.rich(
                     textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade800,
-                        fontFamily: fontFamily,
-                      ),
+                    TextSpan(
+                      style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
                       children: [
                         const TextSpan(
                           text: '기능상의 오류',
