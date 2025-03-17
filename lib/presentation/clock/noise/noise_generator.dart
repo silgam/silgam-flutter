@@ -20,7 +20,6 @@ class NoiseGenerator {
 
   static const double _probabilityMultiple = 0.001;
 
-  final _random = Random();
   Timer? _timer;
 
   void start() {
@@ -92,6 +91,6 @@ class NoiseGenerator {
   }
 
   bool _calculateProbability(double level) {
-    return level * _probabilityMultiple > _random.nextDouble();
+    return level * _probabilityMultiple > Random().nextDouble();
   }
 }
