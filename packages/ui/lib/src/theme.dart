@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-const String fontFamily = 'NanumSquare';
+const String defaultFontFamily = 'NanumSquare';
 
 final textButtonTheme = TextButtonThemeData(
   style: TextButton.styleFrom(
-    textStyle: const TextStyle(fontFamily: fontFamily, fontWeight: FontWeight.w700),
+    textStyle: const TextStyle(fontFamily: defaultFontFamily, fontWeight: FontWeight.w700),
   ),
 );
 
 final outlinedButtonTheme = OutlinedButtonThemeData(
   style: OutlinedButton.styleFrom(
-    textStyle: const TextStyle(fontFamily: fontFamily, fontWeight: FontWeight.w700),
+    textStyle: const TextStyle(fontFamily: defaultFontFamily, fontWeight: FontWeight.w700),
   ),
 );
 

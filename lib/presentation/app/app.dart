@@ -204,7 +204,7 @@ class SilgamApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: false,
           primarySwatch: indigoSwatch,
-          fontFamily: fontFamily,
+          fontFamily: defaultFontFamily,
           scaffoldBackgroundColor: SilgamApp.backgroundColor,
           textButtonTheme: textButtonTheme,
           outlinedButtonTheme: outlinedButtonTheme,
