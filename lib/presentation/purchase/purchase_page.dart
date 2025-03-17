@@ -193,12 +193,7 @@ class _PurchasePageState extends State<PurchasePage> {
         children: [
           Text(
             '• ',
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w300,
-              color: Colors.grey.shade600,
-              height: 1.2,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w300, color: Colors.grey.shade600, height: 1.2),
           ),
           Expanded(child: Text(text, style: TextStyle(color: Colors.grey.shade600, height: 1.2))),
         ],
