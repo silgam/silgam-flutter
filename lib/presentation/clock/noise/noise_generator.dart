@@ -71,7 +71,7 @@ class NoiseGenerator {
         }
       }
 
-      if (_calculateProbability(level * levelMultiple)) {
+      if (_shouldPlayNoise(level * levelMultiple)) {
         await noisePlayer.playNoise(noiseId: id, delayMillis: delay);
       }
     }
@@ -92,7 +92,7 @@ class NoiseGenerator {
     await noisePlayer.dispose();
   }
 
-  bool _calculateProbability(double level) {
+  bool _shouldPlayNoise(double level) {
     return level * _probabilityMultiple > Random().nextDouble();
   }
 }
