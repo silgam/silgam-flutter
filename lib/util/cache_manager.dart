@@ -14,7 +14,7 @@ import 'const.dart';
 class CacheManager {
   const CacheManager(this._sharedPreferences);
 
-  static const _cacheDuration = Duration(days: 7);
+  static const _cacheDuration = Duration(days: 15);
   final SharedPreferences _sharedPreferences;
 
   User? getMe() {

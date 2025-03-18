@@ -7,6 +7,14 @@
     {
       "path": "../packages/ui",
       "name": "UI"
+    },
+    {
+      "path": "../lib",
+      "name": "Root lib"
+    },
+    {
+      "path": "../packages/ui/lib",
+      "name": "UI lib"
     }
   ],
   "settings": {
