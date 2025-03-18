@@ -75,7 +75,7 @@ class ClockCubit extends Cubit<ClockState> {
 
       _noiseGenerator = NoiseGenerator(
         noisePlayer: NoiseAudioPlayer(),
-        clockCubit: this,
+        getClockState: () => state,
         useWhiteNoise: noiseSettingState.useWhiteNoise,
         noiseLevels: availableNoiseLevels,
       );

@@ -10,13 +10,13 @@ import 'noise_player.dart';
 class NoiseGenerator {
   NoiseGenerator({
     required this.noisePlayer,
-    required this.clockCubit,
+    required this.getClockState,
     required this.useWhiteNoise,
     required this.noiseLevels,
   });
 
   final NoisePlayer noisePlayer;
-  final ClockCubit clockCubit;
+  final ClockState Function() getClockState;
   final bool useWhiteNoise;
   final Map<int, int> noiseLevels;
 
@@ -31,7 +31,7 @@ class NoiseGenerator {
   }
 
   void _onEveryTick(Timer timer) async {
-    ClockState clockState = clockCubit.state;
+    ClockState clockState = getClockState();
     if (!clockState.isRunning) return;
 
     RelativeTimeType currentRelativeTime = clockState.currentBreakpoint.announcement.time.type;
