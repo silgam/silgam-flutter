@@ -4,20 +4,21 @@ import 'dart:math';
 import '../../../model/relative_time.dart';
 import '../../../model/subject.dart';
 import '../../../repository/noise/noise_repository.dart';
-import '../../noise_setting/cubit/noise_setting_cubit.dart';
 import '../cubit/clock_cubit.dart';
 import 'noise_player.dart';
 
 class NoiseGenerator {
   NoiseGenerator({
-    required this.noiseSettingState,
     required this.noisePlayer,
     required this.clockCubit,
+    required this.useWhiteNoise,
+    required this.noiseLevels,
   });
 
-  final NoiseSettingState noiseSettingState;
   final NoisePlayer noisePlayer;
   final ClockCubit clockCubit;
+  final bool useWhiteNoise;
+  final Map<int, int> noiseLevels;
 
   static const double _probabilityMultiple = 0.001;
 
@@ -35,7 +36,7 @@ class NoiseGenerator {
 
     RelativeTimeType currentRelativeTime = clockState.currentBreakpoint.announcement.time.type;
 
-    for (final MapEntry(key: id, value: level) in noiseSettingState.noiseLevels.entries) {
+    for (final MapEntry(key: id, value: level) in noiseLevels.entries) {
       double levelMultiple = 1;
       int delay = 0;
 
@@ -77,7 +78,7 @@ class NoiseGenerator {
   }
 
   void playWhiteNoiseIfEnabled() {
-    if (noiseSettingState.useWhiteNoise) {
+    if (useWhiteNoise) {
       noisePlayer.playWhiteNoise();
     }
   }
