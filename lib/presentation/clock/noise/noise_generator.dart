@@ -34,42 +34,8 @@ class NoiseGenerator {
     ClockState clockState = getClockState();
     if (!clockState.isRunning) return;
 
-    RelativeTimeType currentRelativeTime = clockState.currentBreakpoint.announcement.time.type;
-
     for (final MapEntry(key: id, value: level) in noiseLevels.entries) {
-      double levelMultiple = 1;
-      int delay = 0;
-
-      // 시험지 넘기는 소리 예외 사항
-      if (id == NoiseId.paperFlipping) {
-        if (currentRelativeTime == RelativeTimeType.beforeStart) {
-          levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
-        } else if (currentRelativeTime == RelativeTimeType.afterStart) {
-          int afterStart =
-              clockState.currentTime.difference(clockState.currentBreakpoint.time).inSeconds;
-          if (afterStart <= 2) {
-            delay = 1000;
-            levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
-          } else if (2 < afterStart && afterStart <= 7) {
-            delay = 1000;
-            levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
-          }
-        } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
-          int beforeFinish =
-              clockState.currentTime.difference(clockState.currentBreakpoint.time).inMinutes;
-          if (clockState.currentExam.subject == Subject.investigation ||
-              clockState.currentExam.subject == Subject.investigation2) {
-            beforeFinish = 5 - beforeFinish;
-          } else {
-            beforeFinish = 10 - beforeFinish;
-          }
-          if (beforeFinish <= 2) {
-            levelMultiple = 10; // 시험 종료 직전 시험지 많이 넘김
-          } else if (2 < beforeFinish && beforeFinish <= 10) {
-            levelMultiple = 2; // 시험 종료 전 일정 시간 동안 시험지 조금 넘김
-          }
-        }
-      }
+      final (:levelMultiple, :delay) = _calculateLevelMultipleAndDelay(id, clockState);
 
       if (_shouldPlayNoise(level * levelMultiple)) {
         await noisePlayer.playNoise(noiseId: id, delayMillis: delay);
@@ -90,6 +56,50 @@ class NoiseGenerator {
   Future<void> dispose() async {
     _timer?.cancel();
     await noisePlayer.dispose();
+  }
+
+  ({double levelMultiple, int delay}) _calculateLevelMultipleAndDelay(
+    int noiseId,
+    ClockState clockState,
+  ) {
+    double levelMultiple = 1;
+    int delay = 0;
+
+    final RelativeTimeType currentRelativeTime =
+        clockState.currentBreakpoint.announcement.time.type;
+
+    // 시험지 넘기는 소리 예외 사항
+    if (noiseId == NoiseId.paperFlipping) {
+      if (currentRelativeTime == RelativeTimeType.beforeStart) {
+        levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
+      } else if (currentRelativeTime == RelativeTimeType.afterStart) {
+        int afterStart =
+            clockState.currentTime.difference(clockState.currentBreakpoint.time).inSeconds;
+        if (afterStart <= 2) {
+          delay = 1000;
+          levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
+        } else if (2 < afterStart && afterStart <= 7) {
+          delay = 1000;
+          levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
+        }
+      } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
+        int beforeFinish =
+            clockState.currentTime.difference(clockState.currentBreakpoint.time).inMinutes;
+        if (clockState.currentExam.subject == Subject.investigation ||
+            clockState.currentExam.subject == Subject.investigation2) {
+          beforeFinish = 5 - beforeFinish;
+        } else {
+          beforeFinish = 10 - beforeFinish;
+        }
+        if (beforeFinish <= 2) {
+          levelMultiple = 10; // 시험 종료 직전 시험지 많이 넘김
+        } else if (2 < beforeFinish && beforeFinish <= 10) {
+          levelMultiple = 2; // 시험 종료 전 일정 시간 동안 시험지 조금 넘김
+        }
+      }
+    }
+
+    return (levelMultiple: levelMultiple, delay: delay);
   }
 
   bool _shouldPlayNoise(double level) {
