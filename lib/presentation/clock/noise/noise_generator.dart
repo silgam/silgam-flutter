@@ -3,6 +3,7 @@ import 'dart:math';
 
 import '../../../model/relative_time.dart';
 import '../../../model/subject.dart';
+import '../../../repository/noise/noise_repository.dart';
 import '../../noise_setting/cubit/noise_setting_cubit.dart';
 import '../cubit/clock_cubit.dart';
 import 'noise_player.dart';
@@ -39,7 +40,7 @@ class NoiseGenerator {
       int delay = 0;
 
       // 시험지 넘기는 소리 예외 사항
-      if (id == 0) {
+      if (id == NoiseId.paperFlipping) {
         if (currentRelativeTime == RelativeTimeType.beforeStart) {
           levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
         } else if (currentRelativeTime == RelativeTimeType.afterStart) {
