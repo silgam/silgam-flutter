@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import '../../../model/exam.dart';
 import '../../../model/relative_time.dart';
 import '../../../model/subject.dart';
 import '../../../repository/noise/noise_repository.dart';
@@ -35,7 +36,13 @@ class NoiseGenerator {
     if (!clockState.isRunning) return;
 
     for (final MapEntry(key: id, value: level) in noiseLevels.entries) {
-      final (:levelMultiple, :delay) = _calculateLevelMultipleAndDelay(id, clockState);
+      final (:levelMultiple, :delay) = _calculateLevelMultipleAndDelay(
+        noiseId: id,
+        currentRelativeTime: clockState.currentBreakpoint.announcement.time.type,
+        currentTime: clockState.currentTime,
+        currentBreakpointTime: clockState.currentBreakpoint.time,
+        currentExam: clockState.currentExam,
+      );
 
       if (_shouldPlayNoise(level * levelMultiple)) {
         await noisePlayer.playNoise(noiseId: id, delayMillis: delay);
@@ -58,23 +65,22 @@ class NoiseGenerator {
     await noisePlayer.dispose();
   }
 
-  ({double levelMultiple, int delay}) _calculateLevelMultipleAndDelay(
-    int noiseId,
-    ClockState clockState,
-  ) {
+  ({double levelMultiple, int delay}) _calculateLevelMultipleAndDelay({
+    required int noiseId,
+    required RelativeTimeType currentRelativeTime,
+    required DateTime currentTime,
+    required DateTime currentBreakpointTime,
+    required Exam currentExam,
+  }) {
     double levelMultiple = 1;
     int delay = 0;
-
-    final RelativeTimeType currentRelativeTime =
-        clockState.currentBreakpoint.announcement.time.type;
 
     // 시험지 넘기는 소리 예외 사항
     if (noiseId == NoiseId.paperFlipping) {
       if (currentRelativeTime == RelativeTimeType.beforeStart) {
         levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
       } else if (currentRelativeTime == RelativeTimeType.afterStart) {
-        int afterStart =
-            clockState.currentTime.difference(clockState.currentBreakpoint.time).inSeconds;
+        int afterStart = currentTime.difference(currentBreakpointTime).inSeconds;
         if (afterStart <= 2) {
           delay = 1000;
           levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
@@ -83,10 +89,9 @@ class NoiseGenerator {
           levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
         }
       } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
-        int beforeFinish =
-            clockState.currentTime.difference(clockState.currentBreakpoint.time).inMinutes;
-        if (clockState.currentExam.subject == Subject.investigation ||
-            clockState.currentExam.subject == Subject.investigation2) {
+        int beforeFinish = currentTime.difference(currentBreakpointTime).inMinutes;
+        if (currentExam.subject == Subject.investigation ||
+            currentExam.subject == Subject.investigation2) {
           beforeFinish = 5 - beforeFinish;
         } else {
           beforeFinish = 10 - beforeFinish;
