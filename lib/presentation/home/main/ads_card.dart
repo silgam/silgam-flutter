@@ -26,13 +26,59 @@ class AdsCard extends StatefulWidget {
 }
 
 class _AdsCardState extends State<AdsCard> {
-  int _currentPageIndex = 0;
   final MainCubit _mainCubit = getIt.get();
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _onPageChanged(0, null);
+  }
+
+  void _onVisibilityChanged(int index, VisibilityInfo info, AdsImage? selectedImage) {
+    if (info.visibleFraction > 0.5) {
+      _mainCubit.onAdsShown(index, selectedImage);
+    }
+  }
+
+  void _onAdsTap(Ads ads, int index, AdsImage? selectedImage) {
+    _mainCubit.logAdsTap(ads, index, selectedImage);
+
+    for (final action in ads.actions) {
+      switch (action.intent) {
+        case AdsIntent.openUrl:
+          launchUrl(Uri.parse(action.data), mode: LaunchMode.externalApplication);
+          break;
+        case AdsIntent.openAdUrl:
+          launchUrl(Uri.parse(action.data), mode: LaunchMode.externalApplication);
+          break;
+        case AdsIntent.openPurchasePage:
+          final productId = action.data;
+          final product = getIt.get<IapCubit>().state.products.firstWhereOrNull(
+            (p) => p.id == productId,
+          );
+          if (product != null) {
+            Navigator.of(
+              context,
+            ).pushNamed(PurchasePage.routeName, arguments: PurchasePageArguments(product: product));
+          }
+          break;
+        case AdsIntent.openOfflineGuidePage:
+          Navigator.of(context).pushNamed(OfflineGuidePage.routeName);
+          break;
+        case AdsIntent.openCustomExamGuidePage:
+          Navigator.of(context).pushNamed(CustomExamGuidePage.routeName);
+          break;
+        case AdsIntent.unknown:
+          break;
+      }
+    }
+  }
+
+  void _onPageChanged(int index, _) {
+    VisibilityDetectorController.instance.notifyNow();
+    _currentPageIndex = index;
+    setState(() {});
   }
 
   Widget _buildAds(Ads ads, int index) {
@@ -99,51 +145,5 @@ class _AdsCardState extends State<AdsCard> {
         );
       },
     );
-  }
-
-  void _onPageChanged(int index, _) {
-    VisibilityDetectorController.instance.notifyNow();
-    _currentPageIndex = index;
-    setState(() {});
-  }
-
-  void _onAdsTap(Ads ads, int index, AdsImage? selectedImage) {
-    _mainCubit.logAdsTap(ads, index, selectedImage);
-
-    for (final action in ads.actions) {
-      switch (action.intent) {
-        case AdsIntent.openUrl:
-          launchUrl(Uri.parse(action.data), mode: LaunchMode.externalApplication);
-          break;
-        case AdsIntent.openAdUrl:
-          launchUrl(Uri.parse(action.data), mode: LaunchMode.externalApplication);
-          break;
-        case AdsIntent.openPurchasePage:
-          final productId = action.data;
-          final product = getIt.get<IapCubit>().state.products.firstWhereOrNull(
-            (p) => p.id == productId,
-          );
-          if (product != null) {
-            Navigator.of(
-              context,
-            ).pushNamed(PurchasePage.routeName, arguments: PurchasePageArguments(product: product));
-          }
-          break;
-        case AdsIntent.openOfflineGuidePage:
-          Navigator.of(context).pushNamed(OfflineGuidePage.routeName);
-          break;
-        case AdsIntent.openCustomExamGuidePage:
-          Navigator.of(context).pushNamed(CustomExamGuidePage.routeName);
-          break;
-        case AdsIntent.unknown:
-          break;
-      }
-    }
-  }
-
-  void _onVisibilityChanged(int index, VisibilityInfo info, AdsImage? selectedImage) {
-    if (info.visibleFraction > 0.5) {
-      _mainCubit.onAdsShown(index, selectedImage);
-    }
   }
 }
