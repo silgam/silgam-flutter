@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
@@ -8,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../model/ads.dart';
-import '../../../util/analytics_manager.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/iap_cubit.dart';
 import '../../common/custom_card.dart';
@@ -34,6 +35,27 @@ class _AdsCardState extends State<AdsCard> {
     _onPageChanged(0, null);
   }
 
+  Widget _buildAds(Ads ads, int index) {
+    final AdsImage? selectedImage =
+        ads.images.isNotEmpty ? ads.images[Random().nextInt(ads.images.length)] : null;
+    final String imageUrl = selectedImage?.url ?? ads.imagePath;
+
+    return VisibilityDetector(
+      key: Key('$index $imageUrl'),
+      onVisibilityChanged: (info) => _onVisibilityChanged(index, info, selectedImage),
+      child: GestureDetector(
+        onTap: () => _onAdsTap(ads, index, selectedImage),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          errorWidget:
+              (_, __, ___) =>
+                  Center(child: Icon(Icons.image, size: 32, color: Colors.grey.shade300)),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainCubit, MainState>(
@@ -56,24 +78,7 @@ class _AdsCardState extends State<AdsCard> {
                   enableInfiniteScroll: state.ads.length > 1,
                   onPageChanged: _onPageChanged,
                 ),
-                items: [
-                  for (final (index, ads) in state.ads.indexed)
-                    VisibilityDetector(
-                      key: Key('$index ${ads.imagePath}'),
-                      onVisibilityChanged: (info) => _onVisibilityChanged(index, info),
-                      child: GestureDetector(
-                        onTap: () => _onAdsTap(ads, index),
-                        child: CachedNetworkImage(
-                          imageUrl: ads.imagePath,
-                          fit: BoxFit.cover,
-                          errorWidget:
-                              (_, __, ___) => Center(
-                                child: Icon(Icons.image, size: 32, color: Colors.grey.shade300),
-                              ),
-                        ),
-                      ),
-                    ),
-                ],
+                items: [for (final (index, ads) in state.ads.indexed) _buildAds(ads, index)],
               ),
               if (state.ads.length > 1)
                 Padding(
@@ -102,17 +107,8 @@ class _AdsCardState extends State<AdsCard> {
     setState(() {});
   }
 
-  void _onAdsTap(Ads ads, int index) {
-    AnalyticsManager.logEvent(
-      name: '[HomePage-main] Silgam ads tapped',
-      properties: {
-        'title': ads.title,
-        'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
-        'actionData': ads.actions.map((e) => e.data).join(', '),
-        'priority': ads.priority,
-        'order': index + 1,
-      },
-    );
+  void _onAdsTap(Ads ads, int index, AdsImage? selectedImage) {
+    _mainCubit.logAdsTap(ads, index, selectedImage);
 
     for (final action in ads.actions) {
       switch (action.intent) {
@@ -145,9 +141,9 @@ class _AdsCardState extends State<AdsCard> {
     }
   }
 
-  void _onVisibilityChanged(int index, VisibilityInfo info) {
+  void _onVisibilityChanged(int index, VisibilityInfo info, AdsImage? selectedImage) {
     if (info.visibleFraction > 0.5) {
-      _mainCubit.onAdsShown(index);
+      _mainCubit.onAdsShown(index, selectedImage);
     }
   }
 }

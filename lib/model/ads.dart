@@ -10,6 +10,7 @@ class Ads with _$Ads {
   const factory Ads({
     required String title,
     required String imagePath,
+    @Default([]) List<AdsImage> images,
     required int priority,
     required List<AdsAction> actions,
     required DateTime startDate,
@@ -24,6 +25,13 @@ class Ads with _$Ads {
       actions.any((action) => action.intent == AdsIntent.openPurchasePage);
 
   bool get isAd => actions.any((action) => action.intent == AdsIntent.openAdUrl);
+}
+
+@freezed
+class AdsImage with _$AdsImage {
+  const factory AdsImage({required String id, required String url}) = _AdsImage;
+
+  factory AdsImage.fromJson(Map<String, dynamic> json) => _$AdsImageFromJson(json);
 }
 
 @freezed

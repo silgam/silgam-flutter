@@ -70,19 +70,27 @@ class MainCubit extends Cubit<MainState> {
     return DDayUtil(dDays).getItemsToShow(DateTime.now());
   }
 
-  void onAdsShown(int index) {
+  void onAdsShown(int index, AdsImage? selectedImage) {
     if (state.adsShownLoggedMap[index] == true) return;
     emit(state.copyWith(adsShownLoggedMap: {...state.adsShownLoggedMap, index: true}));
 
-    final Ads ads = state.ads[index];
+    _logAdsEvent('shown', state.ads[index], index, selectedImage);
+  }
+
+  void logAdsTap(Ads ads, int index, AdsImage? selectedImage) {
+    _logAdsEvent('tapped', ads, index, selectedImage);
+  }
+
+  void _logAdsEvent(String eventName, Ads ads, int index, AdsImage? selectedImage) {
     AnalyticsManager.logEvent(
-      name: '[HomePage-main] Silgam ads shown',
+      name: '[HomePage-main] Silgam ads $eventName',
       properties: {
         'title': ads.title,
         'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
         'actionData': ads.actions.map((e) => e.data).join(', '),
         'priority': ads.priority,
         'order': index + 1,
+        'imageId': selectedImage?.id ?? 'none',
       },
     );
   }
