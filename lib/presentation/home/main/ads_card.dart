@@ -69,6 +69,9 @@ class _AdsCardState extends State<AdsCard> {
         case AdsIntent.openCustomExamGuidePage:
           Navigator.of(context).pushNamed(CustomExamGuidePage.routeName);
           break;
+        case AdsIntent.openPage:
+          Navigator.of(context).pushNamed(action.data);
+          break;
         case AdsIntent.unknown:
           break;
       }
