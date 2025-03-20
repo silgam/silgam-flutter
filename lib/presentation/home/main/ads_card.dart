@@ -33,14 +33,14 @@ class _AdsCardState extends State<AdsCard> {
     _onPageChanged(0, null);
   }
 
-  void _onVisibilityChanged(int index, VisibilityInfo info, AdsImage? selectedImage) {
+  void _onVisibilityChanged(int index, VisibilityInfo info, AdsVariant? variant) {
     if (info.visibleFraction > 0.5) {
-      _mainCubit.onAdsShown(index, selectedImage);
+      _mainCubit.onAdsShown(index, variant);
     }
   }
 
-  void _onAdsTap(Ads ads, int index, AdsImage? selectedImage) {
-    _mainCubit.logAdsTap(ads, index, selectedImage);
+  void _onAdsTap(Ads ads, int index, AdsVariant? variant) {
+    _mainCubit.logAdsTap(ads, index, variant);
 
     for (final action in ads.actions) {
       switch (action.intent) {
@@ -83,16 +83,16 @@ class _AdsCardState extends State<AdsCard> {
   }
 
   Widget _buildAds(Ads ads, int index) {
-    final AdsImage? selectedImage = _mainCubit.getSelectedAdsImage(ads);
-    final String imageUrl = selectedImage?.url ?? ads.imagePath;
+    final AdsVariant? variant = _mainCubit.getSelectedAdsVariant(ads);
+    final String imagePath = variant?.imagePath ?? ads.imagePath;
 
     return VisibilityDetector(
-      key: Key('$index $imageUrl'),
-      onVisibilityChanged: (info) => _onVisibilityChanged(index, info, selectedImage),
+      key: Key('$index $imagePath'),
+      onVisibilityChanged: (info) => _onVisibilityChanged(index, info, variant),
       child: GestureDetector(
-        onTap: () => _onAdsTap(ads, index, selectedImage),
+        onTap: () => _onAdsTap(ads, index, variant),
         child: CachedNetworkImage(
-          imageUrl: imageUrl,
+          imageUrl: imagePath,
           fit: BoxFit.cover,
           errorWidget:
               (_, __, ___) =>

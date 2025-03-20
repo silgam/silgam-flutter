@@ -50,7 +50,7 @@ class MainCubit extends Cubit<MainState> {
 
     List<Ads>? ads = getAdsResult.tryGetSuccess();
     await _cacheManager.setAds(ads);
-    await _preselectAdsImages(ads ?? []);
+    await _preselectAdsVariants(ads ?? []);
     emit(state.copyWith(ads: _getAdsToShow(ads ?? []), adsShownLoggedMap: {}));
   }
 
@@ -76,45 +76,50 @@ class MainCubit extends Cubit<MainState> {
         .toList();
   }
 
-  Future<void> _preselectAdsImages(List<Ads> ads) async {
-    final List<String> selectedAdsImageIds =
-        _sharedPreferences.getStringList(PreferenceKey.selectedAdsImageIds) ?? [];
+  Future<void> _preselectAdsVariants(List<Ads> ads) async {
+    final List<String> selectedAdsVariantIds =
+        _sharedPreferences.getStringList(PreferenceKey.selectedAdsVariantIds) ?? [];
 
     for (final ad in ads) {
-      if (ad.images.isEmpty) continue;
+      if (ad.variants.isEmpty) continue;
 
-      final isAlreadySelected = ad.images.any((image) => selectedAdsImageIds.contains(image.id));
+      final isAlreadySelected = ad.variants.any(
+        (variant) => selectedAdsVariantIds.contains(variant.id),
+      );
       if (isAlreadySelected) continue;
 
-      final randomIndex = Random().nextInt(ad.images.length);
-      final selectedAdsImageId = ad.images[randomIndex].id;
-      selectedAdsImageIds.add(selectedAdsImageId);
+      final randomIndex = Random().nextInt(ad.variants.length);
+      final selectedAdsVariantId = ad.variants[randomIndex].id;
+      selectedAdsVariantIds.add(selectedAdsVariantId);
 
       AnalyticsManager.logEvent(
-        name: '[HomePage-main] Silgam ads image selected',
-        properties: {'title': ad.title, 'selectedImageId': selectedAdsImageId},
+        name: '[HomePage-main] Silgam ads variant selected',
+        properties: {'title': ad.title, 'variantId': selectedAdsVariantId},
       );
     }
 
-    await _sharedPreferences.setStringList(PreferenceKey.selectedAdsImageIds, selectedAdsImageIds);
+    await _sharedPreferences.setStringList(
+      PreferenceKey.selectedAdsVariantIds,
+      selectedAdsVariantIds,
+    );
   }
 
   List<DDayItem> getDDayItemsToShow(List<DDay> dDays) {
     return DDayUtil(dDays).getItemsToShow(DateTime.now());
   }
 
-  void onAdsShown(int index, AdsImage? selectedImage) {
+  void onAdsShown(int index, AdsVariant? variant) {
     if (state.adsShownLoggedMap[index] == true) return;
     emit(state.copyWith(adsShownLoggedMap: {...state.adsShownLoggedMap, index: true}));
 
-    _logAdsEvent('shown', state.ads[index], index, selectedImage);
+    _logAdsEvent('shown', state.ads[index], index, variant);
   }
 
-  void logAdsTap(Ads ads, int index, AdsImage? selectedImage) {
-    _logAdsEvent('tapped', ads, index, selectedImage);
+  void logAdsTap(Ads ads, int index, AdsVariant? variant) {
+    _logAdsEvent('tapped', ads, index, variant);
   }
 
-  void _logAdsEvent(String eventName, Ads ads, int index, AdsImage? selectedImage) {
+  void _logAdsEvent(String eventName, Ads ads, int index, AdsVariant? variant) {
     AnalyticsManager.logEvent(
       name: '[HomePage-main] Silgam ads $eventName',
       properties: {
@@ -123,17 +128,17 @@ class MainCubit extends Cubit<MainState> {
         'actionData': ads.actions.map((e) => e.data).join(', '),
         'priority': ads.priority,
         'order': index + 1,
-        'imageId': selectedImage?.id ?? 'none',
+        'variantId': variant?.id ?? 'none',
       },
     );
   }
 
-  AdsImage? getSelectedAdsImage(Ads ads) {
-    if (ads.images.isEmpty) return null;
+  AdsVariant? getSelectedAdsVariant(Ads ads) {
+    if (ads.variants.isEmpty) return null;
 
-    final List<String> selectedAdsImageIds =
-        _sharedPreferences.getStringList(PreferenceKey.selectedAdsImageIds) ?? [];
+    final List<String> selectedAdsVariantIds =
+        _sharedPreferences.getStringList(PreferenceKey.selectedAdsVariantIds) ?? [];
 
-    return ads.images.firstWhereOrNull((image) => selectedAdsImageIds.contains(image.id));
+    return ads.variants.firstWhereOrNull((variant) => selectedAdsVariantIds.contains(variant.id));
   }
 }

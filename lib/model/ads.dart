@@ -10,7 +10,7 @@ class Ads with _$Ads {
   const factory Ads({
     required String title,
     required String imagePath,
-    @Default([]) List<AdsImage> images,
+    @Default([]) List<AdsVariant> variants,
     required int priority,
     required List<AdsAction> actions,
     required DateTime startDate,
@@ -28,10 +28,10 @@ class Ads with _$Ads {
 }
 
 @freezed
-class AdsImage with _$AdsImage {
-  const factory AdsImage({required String id, required String url}) = _AdsImage;
+class AdsVariant with _$AdsVariant {
+  const factory AdsVariant({required String id, required String imagePath}) = _AdsVariant;
 
-  factory AdsImage.fromJson(Map<String, dynamic> json) => _$AdsImageFromJson(json);
+  factory AdsVariant.fromJson(Map<String, dynamic> json) => _$AdsVariantFromJson(json);
 }
 
 @freezed
