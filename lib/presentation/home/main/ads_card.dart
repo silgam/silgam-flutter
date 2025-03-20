@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:collection/collection.dart';
@@ -85,8 +83,7 @@ class _AdsCardState extends State<AdsCard> {
   }
 
   Widget _buildAds(Ads ads, int index) {
-    final AdsImage? selectedImage =
-        ads.images.isNotEmpty ? ads.images[Random().nextInt(ads.images.length)] : null;
+    final AdsImage? selectedImage = _mainCubit.getSelectedAdsImage(ads);
     final String imageUrl = selectedImage?.url ?? ads.imagePath;
 
     return VisibilityDetector(
