@@ -41,8 +41,6 @@ import 'cubit/app_cubit.dart';
 import 'cubit/iap_cubit.dart';
 import 'initial_route_handler.dart';
 
-const double cardCornerRadius = 14;
-
 class SilgamApp extends StatelessWidget {
   const SilgamApp({super.key, required String? initialRoute}) : _initialRoute = initialRoute;
 
