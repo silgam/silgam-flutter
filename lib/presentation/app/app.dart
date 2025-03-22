@@ -44,7 +44,6 @@ import 'initial_route_handler.dart';
 class SilgamApp extends StatelessWidget {
   const SilgamApp({super.key, required String? initialRoute}) : _initialRoute = initialRoute;
 
-  static const backgroundColor = Color.fromARGB(255, 245, 246, 247);
   final String? _initialRoute;
 
   void _initialize() {
@@ -203,7 +202,7 @@ class SilgamApp extends StatelessWidget {
           useMaterial3: false,
           primarySwatch: indigoSwatch,
           fontFamily: defaultFontFamily,
-          scaffoldBackgroundColor: SilgamApp.backgroundColor,
+          scaffoldBackgroundColor: Color.fromARGB(255, 245, 246, 247),
           textButtonTheme: textButtonTheme,
           outlinedButtonTheme: outlinedButtonTheme,
           sliderTheme: getSliderTheme(context),

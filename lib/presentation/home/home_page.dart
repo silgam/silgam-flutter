@@ -94,7 +94,6 @@ class _HomePageState extends State<HomePage> {
                 canPop: state.tabIndex == HomeCubit.defaultTabIndex,
                 onPopInvokedWithResult: _onPopInvokedWithResult,
                 child: Scaffold(
-                  backgroundColor: SilgamApp.backgroundColor,
                   body: SafeArea(
                     child: IndexedStack(
                       alignment: Alignment.center,

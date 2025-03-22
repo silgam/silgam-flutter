@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
-import '../app/app.dart';
 
 class ScaffoldBody extends StatelessWidget {
   final String title;
@@ -84,7 +83,7 @@ class ScaffoldBody extends StatelessWidget {
               ),
           ],
           foregroundColor: Colors.black,
-          backgroundColor: SilgamApp.backgroundColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           // Because of this https://github.com/flutter/flutter/issues/24893
           systemOverlayStyle: kIsWeb || Platform.isIOS ? null : systemOverlayStyle,
         ),
