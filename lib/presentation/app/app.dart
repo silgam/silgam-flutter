@@ -41,12 +41,20 @@ import 'cubit/app_cubit.dart';
 import 'cubit/iap_cubit.dart';
 import 'initial_route_handler.dart';
 
-class SilgamApp extends StatelessWidget {
-  const SilgamApp({super.key, required String? initialRoute}) : _initialRoute = initialRoute;
+class SilgamApp extends StatefulWidget {
+  const SilgamApp({super.key, this.initialRoute});
 
-  final String? _initialRoute;
+  final String? initialRoute;
 
-  void _initialize() {
+  @override
+  State<SilgamApp> createState() => _SilgamAppState();
+}
+
+class _SilgamAppState extends State<SilgamApp> {
+  @override
+  void initState() {
+    super.initState();
+
     FirebaseMessaging.instance.requestPermission();
     initializeDateFormatting('ko_KR');
     _initializeEasyLoading();
@@ -75,8 +83,6 @@ class SilgamApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _initialize();
-
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: getIt.get<AppCubit>()),
@@ -84,7 +90,7 @@ class SilgamApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: '실감',
-        initialRoute: _initialRoute,
+        initialRoute: widget.initialRoute,
 
         // Android에서 App links로 실행될 때 initial route가 http를 포함한 형태로 오는 문제가 있음
         onGenerateInitialRoutes:
