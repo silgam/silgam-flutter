@@ -125,11 +125,6 @@ class _EditRecordPageState extends State<EditRecordPage> {
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   void _checkIfRecordLimitExceeded() {
     final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
     final examRecordCount = _recordListCubit.state.originalRecords.length;
