@@ -73,6 +73,35 @@ class _HomePageState extends State<HomePage> {
     _onMeChanged();
   }
 
+  void _onMeChanged() {
+    final me = context.read<AppCubit>().state.me;
+    if (me == null) return;
+
+    if (me.isMarketingInfoReceivingConsented == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (isMarketingInfoReceivingConsentDialogShowing) return;
+        isMarketingInfoReceivingConsentDialogShowing = true;
+        await Future.delayed(const Duration(seconds: 1));
+        if (!mounted) return;
+        await showMarketingInfoReceivingConsentDialog(context);
+        isMarketingInfoReceivingConsentDialogShowing = false;
+      });
+    }
+  }
+
+  void _onPopInvokedWithResult(bool didPop, _) {
+    if (didPop) return;
+    _cubit.changeTab(HomeCubit.defaultTabIndex);
+  }
+
+  void _onAddExamRecordButtonPressed() async {
+    await Navigator.pushNamed(context, EditRecordPage.routeName);
+  }
+
+  void _onOfflineMessageTap() {
+    Navigator.pushNamed(context, OfflineGuidePage.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -179,34 +208,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void _onMeChanged() {
-    final me = context.read<AppCubit>().state.me;
-    if (me == null) return;
-
-    if (me.isMarketingInfoReceivingConsented == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (isMarketingInfoReceivingConsentDialogShowing) return;
-        isMarketingInfoReceivingConsentDialogShowing = true;
-        await Future.delayed(const Duration(seconds: 1));
-        if (!mounted) return;
-        await showMarketingInfoReceivingConsentDialog(context);
-        isMarketingInfoReceivingConsentDialogShowing = false;
-      });
-    }
-  }
-
-  void _onPopInvokedWithResult(bool didPop, _) {
-    if (didPop) return;
-    _cubit.changeTab(HomeCubit.defaultTabIndex);
-  }
-
-  void _onAddExamRecordButtonPressed() async {
-    await Navigator.pushNamed(context, EditRecordPage.routeName);
-  }
-
-  void _onOfflineMessageTap() {
-    Navigator.pushNamed(context, OfflineGuidePage.routeName);
   }
 }
