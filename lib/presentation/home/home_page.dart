@@ -81,25 +81,96 @@ class _HomePageState extends State<HomePage> {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (isMarketingInfoReceivingConsentDialogShowing) return;
         isMarketingInfoReceivingConsentDialogShowing = true;
+
         await Future.delayed(const Duration(seconds: 1));
-        if (!mounted) return;
-        await showMarketingInfoReceivingConsentDialog(context);
+
+        if (mounted) {
+          await showMarketingInfoReceivingConsentDialog(context);
+        }
+
         isMarketingInfoReceivingConsentDialogShowing = false;
       });
     }
   }
 
-  void _onPopInvokedWithResult(bool didPop, _) {
+  void _onPopInvokedWithResult(bool didPop, Object? result) {
     if (didPop) return;
     _cubit.changeTab(HomeCubit.defaultTabIndex);
   }
 
-  void _onAddExamRecordButtonPressed() async {
-    await Navigator.pushNamed(context, EditRecordPage.routeName);
+  void _onAddExamRecordButtonPressed() {
+    Navigator.pushNamed(context, EditRecordPage.routeName);
   }
 
   void _onOfflineMessageTap() {
     Navigator.pushNamed(context, OfflineGuidePage.routeName);
+  }
+
+  Widget _buildBottomNavigationBar(HomeState state) {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) => previous.isOffline != current.isOffline,
+      builder: (context, appState) {
+        return SafeArea(
+          left: false,
+          right: false,
+          bottom: appState.isOffline,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
+              BottomNavigationBar(
+                elevation: 0,
+                backgroundColor: Colors.white,
+                unselectedItemColor: Colors.grey,
+                showUnselectedLabels: false,
+                showSelectedLabels: false,
+                type: BottomNavigationBarType.fixed,
+                onTap: _cubit.changeTab,
+                currentIndex: state.tabIndex,
+                landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+                items: HomePage.views.values
+                    .map((view) => view.bottomNavigationBarItem)
+                    .toList(growable: false),
+              ),
+              !appState.isOffline
+                  ? const SizedBox.shrink()
+                  : InkWell(
+                    onTap: _onOfflineMessageTap,
+                    splashColor: Colors.transparent,
+                    child: Ink(
+                      color: Theme.of(context).primaryColor,
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: const Text(
+                          '오프라인 상태에선 일부 기능만 사용 가능해요.',
+                          style: TextStyle(fontSize: 12, height: 1.2, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFloatingActionButton(HomeState state) {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) => previous.isSignedIn != current.isSignedIn,
+      builder: (context, appState) {
+        final recordListTabIndex = HomePage.views.keys.toList().indexOf(RecordListView.title);
+
+        return state.tabIndex == recordListTabIndex && appState.isSignedIn
+            ? FloatingActionButton(
+              onPressed: () => _onAddExamRecordButtonPressed(),
+              child: const Icon(Icons.add),
+            )
+            : const SizedBox.shrink();
+      },
+    );
   }
 
   @override
@@ -132,75 +203,8 @@ class _HomePageState extends State<HomePage> {
                           .toList(growable: false),
                     ),
                   ),
-                  bottomNavigationBar: BlocBuilder<AppCubit, AppState>(
-                    buildWhen: (previous, current) => previous.isOffline != current.isOffline,
-                    builder: (context, appState) {
-                      return SafeArea(
-                        left: false,
-                        right: false,
-                        bottom: appState.isOffline,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
-                            BottomNavigationBar(
-                              elevation: 0,
-                              backgroundColor: Colors.white,
-                              unselectedItemColor: Colors.grey,
-                              showUnselectedLabels: false,
-                              showSelectedLabels: false,
-                              type: BottomNavigationBarType.fixed,
-                              onTap: _cubit.changeTab,
-                              currentIndex: state.tabIndex,
-                              landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-                              items: HomePage.views.values
-                                  .map((view) => view.bottomNavigationBarItem)
-                                  .toList(growable: false),
-                            ),
-                            !appState.isOffline
-                                ? const SizedBox.shrink()
-                                : InkWell(
-                                  onTap: _onOfflineMessageTap,
-                                  splashColor: Colors.transparent,
-                                  child: Ink(
-                                    color: Theme.of(context).primaryColor,
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      child: const Text(
-                                        '오프라인 상태에선 일부 기능만 사용 가능해요.',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          height: 1.2,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  floatingActionButton: BlocBuilder<AppCubit, AppState>(
-                    buildWhen: (previous, current) => previous.isSignedIn != current.isSignedIn,
-                    builder: (context, appState) {
-                      final recordListTabIndex = HomePage.views.keys.toList().indexOf(
-                        RecordListView.title,
-                      );
-                      return state.tabIndex == recordListTabIndex && appState.isSignedIn
-                          ? FloatingActionButton(
-                            onPressed: () => _onAddExamRecordButtonPressed(),
-                            child: const Icon(Icons.add),
-                          )
-                          : const SizedBox.shrink();
-                    },
-                  ),
+                  bottomNavigationBar: _buildBottomNavigationBar(state),
+                  floatingActionButton: _buildFloatingActionButton(state),
                 ),
               );
             },
