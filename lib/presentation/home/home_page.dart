@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -65,12 +68,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeCubit _cubit = getIt.get();
+
   bool isMarketingInfoReceivingConsentDialogShowing = false;
+  StreamSubscription? _firebaseMessagingSubscription;
 
   @override
   void initState() {
     super.initState();
+
     _onMeChanged();
+    _initializeNotificationInteractions();
+  }
+
+  @override
+  void dispose() {
+    _firebaseMessagingSubscription?.cancel();
+    super.dispose();
   }
 
   void _onMeChanged() {
@@ -90,6 +103,24 @@ class _HomePageState extends State<HomePage> {
 
         isMarketingInfoReceivingConsentDialogShowing = false;
       });
+    }
+  }
+
+  Future<void> _initializeNotificationInteractions() async {
+    final RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    _firebaseMessagingSubscription = FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    final routeName = message.data['routeName'];
+
+    if (routeName != null) {
+      Navigator.pushNamed(context, routeName);
     }
   }
 
