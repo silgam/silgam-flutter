@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../util/analytics_manager.dart';
 import '../../../util/const.dart';
 import '../../../util/injection.dart';
-import '../../app/app.dart';
 import '../../app/cubit/app_cubit.dart';
 import 'ads_card.dart';
 import 'cubit/main_cubit.dart';
@@ -57,6 +56,8 @@ class _MainViewState extends State<MainView> {
 
   Widget _buildTitle({required double horizontalPadding, bool isTablet = false}) {
     final DateTime today = DateTime.now();
+    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -92,7 +93,7 @@ class _MainViewState extends State<MainView> {
                   width: 10,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [SilgamApp.backgroundColor, SilgamApp.backgroundColor.withAlpha(0)],
+                      colors: [backgroundColor, backgroundColor.withAlpha(0)],
                     ),
                   ),
                 ),

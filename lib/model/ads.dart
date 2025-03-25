@@ -10,6 +10,7 @@ class Ads with _$Ads {
   const factory Ads({
     required String title,
     required String imagePath,
+    @Default([]) List<AdsVariant> variants,
     required int priority,
     required List<AdsAction> actions,
     required DateTime startDate,
@@ -24,6 +25,13 @@ class Ads with _$Ads {
       actions.any((action) => action.intent == AdsIntent.openPurchasePage);
 
   bool get isAd => actions.any((action) => action.intent == AdsIntent.openAdUrl);
+}
+
+@freezed
+class AdsVariant with _$AdsVariant {
+  const factory AdsVariant({required String id, required String imagePath}) = _AdsVariant;
+
+  factory AdsVariant.fromJson(Map<String, dynamic> json) => _$AdsVariantFromJson(json);
 }
 
 @freezed
@@ -42,5 +50,6 @@ enum AdsIntent {
   openPurchasePage,
   openOfflineGuidePage,
   openCustomExamGuidePage,
+  openPage,
   unknown,
 }

@@ -26,6 +26,7 @@ class Exam with _$Exam {
     required int numberOfQuestions,
     required int perfectScore,
     @Default(true) bool isBeforeFinishAnnouncementEnabled,
+    @Default(true) bool isListeningEndAnnouncementEnabled,
     required int color,
     DateTime? createdAt,
   }) = _Exam;
@@ -57,11 +58,21 @@ class Exam with _$Exam {
             (announcement.time.type == RelativeTimeType.afterStart ||
                 announcement.time.type == RelativeTimeType.beforeFinish) &&
             announcement.time.minutes >= durationMinutes;
-        final skipBeforeFinishAnnouncement =
-            !isBeforeFinishAnnouncementEnabled &&
-            announcement.purpose == AnnouncementPurpose.beforeFinish;
+        if (isOverExamDuration) {
+          return false;
+        }
 
-        return !isOverExamDuration && !skipBeforeFinishAnnouncement;
+        if (!isBeforeFinishAnnouncementEnabled &&
+            announcement.purpose == AnnouncementPurpose.beforeFinish) {
+          return false;
+        }
+
+        if (!isListeningEndAnnouncementEnabled &&
+            announcement.purpose == AnnouncementPurpose.listeningEnd) {
+          return false;
+        }
+
+        return true;
       }).toList();
 
   late final Announcement? firstAnnouncement = announcements.firstOrNull;

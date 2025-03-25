@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -35,6 +36,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   static const _numberOfQuestionsFieldName = 'numberOfQuestions';
   static const _perfectScoreFieldName = 'perfectScore';
   static const _isBeforeFinishAnnouncementEnabledFieldName = 'isBeforeFinishAnnouncementEnabled';
+  static const _isListeningEndAnnouncementEnabledFieldName = 'isListeningEndAnnouncementEnabled';
 
   final ExamRepository _examRepository = getIt.get();
   final ExamRecordRepository _examRecordRepository = getIt.get();
@@ -63,6 +65,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       _examToEdit?.perfectScore.toString() ?? _baseExamInitialValue.perfectScore.toString();
   late final _isBeforeFinishAnnouncementEnabledInitialValue =
       _examToEdit?.isBeforeFinishAnnouncementEnabled ?? true;
+  late final _isListeningEndAnnouncementEnabledInitialValue =
+      _examToEdit?.isListeningEndAnnouncementEnabled ?? true;
 
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isChanged = false;
@@ -70,6 +74,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   @override
   void initState() {
     super.initState();
+
+    _customExamEditCubit.onBaseExamChanged(_baseExamInitialValue);
 
     if (!_isEditMode && _appCubit.state.customExams.length == _maxCustomExams) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -119,6 +125,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
       perfectScore: int.parse(values[_perfectScoreFieldName]),
       isBeforeFinishAnnouncementEnabled: values[_isBeforeFinishAnnouncementEnabledFieldName],
+      isListeningEndAnnouncementEnabled: values[_isListeningEndAnnouncementEnabledFieldName],
     );
 
     Navigator.pop(context, true);
@@ -228,8 +235,10 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
     );
   }
 
-  void _onDefaultExamChanged(Exam? exam) {
+  void _onBaseExamChanged(Exam? exam) {
     if (exam == null) return;
+
+    _customExamEditCubit.onBaseExamChanged(exam);
 
     _formKey.currentState?.patchValue({
       _startTimeFieldName: TimeOfDay.fromDateTime(exam.startTime),
@@ -252,7 +261,6 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
         });
       },
       child: Column(
-        spacing: 20,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -280,7 +288,7 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                   child: FormDropdown<Exam>(
                     name: _baseExamFieldName,
                     initialValue: _baseExamInitialValue,
-                    onChanged: _onDefaultExamChanged,
+                    onChanged: _onBaseExamChanged,
                     items:
                         _defaultExams
                             .map((exam) => DropdownMenuItem(value: exam, child: Text(exam.name)))
@@ -370,11 +378,27 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               ],
             ),
           ),
+          const SizedBox(height: 20),
           FormSwitch(
             name: _isBeforeFinishAnnouncementEnabledFieldName,
             initialValue: _isBeforeFinishAnnouncementEnabledInitialValue,
             title: '종료 전 안내방송',
             subtitle: '종료 10분 전 또는 종료 5분 전 안내방송 재생 여부를 선택할 수 있어요.',
+          ),
+          BlocSelector<CustomExamEditCubit, CustomExamEditState, bool>(
+            selector: (state) => state.showListeningEndAnnouncementEnabledField,
+            builder: (context, showListeningEndAnnouncementEnabledField) {
+              if (!showListeningEndAnnouncementEnabledField) {
+                return const SizedBox.shrink();
+              }
+
+              return FormSwitch(
+                name: _isListeningEndAnnouncementEnabledFieldName,
+                initialValue: _isListeningEndAnnouncementEnabledInitialValue,
+                title: '영어 듣기 제거',
+                subtitle: '영어 과목의 타임라인에서 듣기 평가 종료 지점을 제거할 수 있어요.',
+              );
+            },
           ),
         ],
       ),
@@ -383,21 +407,24 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
-      title: _isEditMode ? '과목 수정' : '과목 만들기',
-      onBackPressed: _onBackPressed,
-      appBarActions: [
-        if (_isEditMode)
-          AppBarAction(iconData: Icons.delete, tooltip: '삭제', onPressed: _onDeletePressed),
-      ],
-      bottomAction: PageLayoutBottomAction(
-        label: _isEditMode ? '저장' : '만들기',
-        onPressed: _onSavePressed,
-      ),
-      unfocusOnTapBackground: true,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: _buildForm(),
+    return BlocProvider(
+      create: (context) => _customExamEditCubit,
+      child: PageLayout(
+        title: _isEditMode ? '과목 수정' : '과목 만들기',
+        onBackPressed: _onBackPressed,
+        appBarActions: [
+          if (_isEditMode)
+            AppBarAction(iconData: Icons.delete, tooltip: '삭제', onPressed: _onDeletePressed),
+        ],
+        bottomAction: PageLayoutBottomAction(
+          label: _isEditMode ? '저장' : '만들기',
+          onPressed: _onSavePressed,
+        ),
+        unfocusOnTapBackground: true,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: _buildForm(),
+        ),
       ),
     );
   }

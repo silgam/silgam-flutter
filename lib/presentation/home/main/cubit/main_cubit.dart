@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../model/ads.dart';
 import '../../../../model/dday.dart';
@@ -9,6 +12,7 @@ import '../../../../repository/ads/ads_repository.dart';
 import '../../../../repository/dday/dday_repository.dart';
 import '../../../../util/analytics_manager.dart';
 import '../../../../util/cache_manager.dart';
+import '../../../../util/const.dart';
 import '../../../../util/dday_util.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../d_days_card.dart';
@@ -18,13 +22,18 @@ part 'main_state.dart';
 
 @lazySingleton
 class MainCubit extends Cubit<MainState> {
-  MainCubit(this._adsRepository, this._dDayRepository, this._cacheManager, this._appCubit)
-    : super(const MainState());
+  MainCubit(
+    this._adsRepository,
+    this._dDayRepository,
+    this._cacheManager,
+    this._sharedPreferences,
+    this._appCubit,
+  ) : super(const MainState());
 
   final AdsRepository _adsRepository;
   final DDayRepository _dDayRepository;
   final CacheManager _cacheManager;
-
+  final SharedPreferences _sharedPreferences;
   final AppCubit _appCubit;
 
   void initialize() {
@@ -41,6 +50,7 @@ class MainCubit extends Cubit<MainState> {
 
     List<Ads>? ads = getAdsResult.tryGetSuccess();
     await _cacheManager.setAds(ads);
+    await _preselectAdsVariants(ads ?? []);
     emit(state.copyWith(ads: _getAdsToShow(ads ?? []), adsShownLoggedMap: {}));
   }
 
@@ -66,24 +76,69 @@ class MainCubit extends Cubit<MainState> {
         .toList();
   }
 
+  Future<void> _preselectAdsVariants(List<Ads> ads) async {
+    final List<String> selectedAdsVariantIds =
+        _sharedPreferences.getStringList(PreferenceKey.selectedAdsVariantIds) ?? [];
+
+    for (final ad in ads) {
+      if (ad.variants.isEmpty) continue;
+
+      final isAlreadySelected = ad.variants.any(
+        (variant) => selectedAdsVariantIds.contains(variant.id),
+      );
+      if (isAlreadySelected) continue;
+
+      final randomIndex = Random().nextInt(ad.variants.length);
+      final selectedAdsVariantId = ad.variants[randomIndex].id;
+      selectedAdsVariantIds.add(selectedAdsVariantId);
+
+      AnalyticsManager.logEvent(
+        name: '[HomePage-main] Silgam ads variant selected',
+        properties: {'title': ad.title, 'variantId': selectedAdsVariantId},
+      );
+    }
+
+    await _sharedPreferences.setStringList(
+      PreferenceKey.selectedAdsVariantIds,
+      selectedAdsVariantIds,
+    );
+  }
+
   List<DDayItem> getDDayItemsToShow(List<DDay> dDays) {
     return DDayUtil(dDays).getItemsToShow(DateTime.now());
   }
 
-  void onAdsShown(int index) {
+  void onAdsShown(int index, AdsVariant? variant) {
     if (state.adsShownLoggedMap[index] == true) return;
     emit(state.copyWith(adsShownLoggedMap: {...state.adsShownLoggedMap, index: true}));
 
-    final Ads ads = state.ads[index];
+    _logAdsEvent('shown', state.ads[index], index, variant);
+  }
+
+  void logAdsTap(Ads ads, int index, AdsVariant? variant) {
+    _logAdsEvent('tapped', ads, index, variant);
+  }
+
+  void _logAdsEvent(String eventName, Ads ads, int index, AdsVariant? variant) {
     AnalyticsManager.logEvent(
-      name: '[HomePage-main] Silgam ads shown',
+      name: '[HomePage-main] Silgam ads $eventName',
       properties: {
         'title': ads.title,
         'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
         'actionData': ads.actions.map((e) => e.data).join(', '),
         'priority': ads.priority,
         'order': index + 1,
+        'variantId': variant?.id ?? 'none',
       },
     );
+  }
+
+  AdsVariant? getSelectedAdsVariant(Ads ads) {
+    if (ads.variants.isEmpty) return null;
+
+    final List<String> selectedAdsVariantIds =
+        _sharedPreferences.getStringList(PreferenceKey.selectedAdsVariantIds) ?? [];
+
+    return ads.variants.firstWhereOrNull((variant) => selectedAdsVariantIds.contains(variant.id));
   }
 }

@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../model/ads.dart';
-import '../../../util/analytics_manager.dart';
 import '../../../util/injection.dart';
 import '../../app/cubit/iap_cubit.dart';
 import '../../common/custom_card.dart';
@@ -25,8 +24,8 @@ class AdsCard extends StatefulWidget {
 }
 
 class _AdsCardState extends State<AdsCard> {
-  int _currentPageIndex = 0;
   final MainCubit _mainCubit = getIt.get();
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
@@ -34,85 +33,14 @@ class _AdsCardState extends State<AdsCard> {
     _onPageChanged(0, null);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MainCubit, MainState>(
-      buildWhen: (previous, current) => previous.ads != current.ads,
-      builder: (context, state) {
-        if (state.ads.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        return CustomCard(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              CarouselSlider(
-                options: CarouselOptions(
-                  aspectRatio: 2,
-                  viewportFraction: 1,
-                  autoPlay: state.ads.length > 1,
-                  enableInfiniteScroll: state.ads.length > 1,
-                  onPageChanged: _onPageChanged,
-                ),
-                items: [
-                  for (final (index, ads) in state.ads.indexed)
-                    VisibilityDetector(
-                      key: Key('$index ${ads.imagePath}'),
-                      onVisibilityChanged: (info) => _onVisibilityChanged(index, info),
-                      child: GestureDetector(
-                        onTap: () => _onAdsTap(ads, index),
-                        child: CachedNetworkImage(
-                          imageUrl: ads.imagePath,
-                          fit: BoxFit.cover,
-                          errorWidget:
-                              (_, __, ___) => Center(
-                                child: Icon(Icons.image, size: 32, color: Colors.grey.shade300),
-                              ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              if (state.ads.length > 1)
-                Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: AnimatedSmoothIndicator(
-                    activeIndex: _currentPageIndex,
-                    count: state.ads.length,
-                    effect: WormEffect(
-                      dotWidth: 6,
-                      dotHeight: 6,
-                      dotColor: Colors.white.withAlpha(50),
-                      activeDotColor: Colors.white.withAlpha(150),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
+  void _onVisibilityChanged(int index, VisibilityInfo info, AdsVariant? variant) {
+    if (info.visibleFraction > 0.5) {
+      _mainCubit.onAdsShown(index, variant);
+    }
   }
 
-  void _onPageChanged(int index, _) {
-    VisibilityDetectorController.instance.notifyNow();
-    _currentPageIndex = index;
-    setState(() {});
-  }
-
-  void _onAdsTap(Ads ads, int index) {
-    AnalyticsManager.logEvent(
-      name: '[HomePage-main] Silgam ads tapped',
-      properties: {
-        'title': ads.title,
-        'actionIntents': ads.actions.map((e) => e.intent.toString()).join(', '),
-        'actionData': ads.actions.map((e) => e.data).join(', '),
-        'priority': ads.priority,
-        'order': index + 1,
-      },
-    );
+  void _onAdsTap(Ads ads, int index, AdsVariant? variant) {
+    _mainCubit.logAdsTap(ads, index, variant);
 
     for (final action in ads.actions) {
       switch (action.intent) {
@@ -139,15 +67,83 @@ class _AdsCardState extends State<AdsCard> {
         case AdsIntent.openCustomExamGuidePage:
           Navigator.of(context).pushNamed(CustomExamGuidePage.routeName);
           break;
+        case AdsIntent.openPage:
+          Navigator.of(context).pushNamed(action.data);
+          break;
         case AdsIntent.unknown:
           break;
       }
     }
   }
 
-  void _onVisibilityChanged(int index, VisibilityInfo info) {
-    if (info.visibleFraction > 0.5) {
-      _mainCubit.onAdsShown(index);
-    }
+  void _onPageChanged(int index, _) {
+    VisibilityDetectorController.instance.notifyNow();
+    _currentPageIndex = index;
+    setState(() {});
+  }
+
+  Widget _buildAds(Ads ads, int index) {
+    final AdsVariant? variant = _mainCubit.getSelectedAdsVariant(ads);
+    final String imagePath = variant?.imagePath ?? ads.imagePath;
+
+    return VisibilityDetector(
+      key: Key('$index $imagePath'),
+      onVisibilityChanged: (info) => _onVisibilityChanged(index, info, variant),
+      child: GestureDetector(
+        onTap: () => _onAdsTap(ads, index, variant),
+        child: CachedNetworkImage(
+          imageUrl: imagePath,
+          fit: BoxFit.cover,
+          errorWidget:
+              (_, __, ___) =>
+                  Center(child: Icon(Icons.image, size: 32, color: Colors.grey.shade300)),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MainCubit, MainState>(
+      buildWhen: (previous, current) => previous.ads != current.ads,
+      builder: (context, state) {
+        if (state.ads.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return CustomCard(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              CarouselSlider(
+                options: CarouselOptions(
+                  aspectRatio: 2,
+                  viewportFraction: 1,
+                  autoPlay: state.ads.length > 1,
+                  enableInfiniteScroll: state.ads.length > 1,
+                  onPageChanged: _onPageChanged,
+                ),
+                items: [for (final (index, ads) in state.ads.indexed) _buildAds(ads, index)],
+              ),
+              if (state.ads.length > 1)
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: AnimatedSmoothIndicator(
+                    activeIndex: _currentPageIndex,
+                    count: state.ads.length,
+                    effect: WormEffect(
+                      dotWidth: 6,
+                      dotHeight: 6,
+                      dotColor: Colors.white.withAlpha(50),
+                      activeDotColor: Colors.white.withAlpha(150),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

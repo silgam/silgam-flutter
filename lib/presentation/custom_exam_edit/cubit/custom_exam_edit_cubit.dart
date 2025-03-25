@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../model/exam.dart';
+import '../../../model/subject.dart';
 import '../../../repository/exam/exam_repository.dart';
 import '../../../util/date_time_extension.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -13,11 +14,14 @@ part 'custom_exam_edit_state.dart';
 
 @injectable
 class CustomExamEditCubit extends Cubit<CustomExamEditState> {
-  CustomExamEditCubit(this._examRepository, this._appCubit)
-    : super(const CustomExamEditState.initial());
+  CustomExamEditCubit(this._examRepository, this._appCubit) : super(const CustomExamEditState());
 
   final ExamRepository _examRepository;
   final AppCubit _appCubit;
+
+  void onBaseExamChanged(Exam exam) {
+    emit(state.copyWith(showListeningEndAnnouncementEnabledField: exam.subject == Subject.english));
+  }
 
   void save({
     required Exam? examToEdit,
@@ -28,6 +32,7 @@ class CustomExamEditCubit extends Cubit<CustomExamEditState> {
     required int numberOfQuestions,
     required int perfectScore,
     required bool isBeforeFinishAnnouncementEnabled,
+    required bool isListeningEndAnnouncementEnabled,
   }) {
     final userId = _appCubit.state.me!.id;
     final newExam = Exam(
@@ -41,6 +46,7 @@ class CustomExamEditCubit extends Cubit<CustomExamEditState> {
       numberOfQuestions: numberOfQuestions,
       perfectScore: perfectScore,
       isBeforeFinishAnnouncementEnabled: isBeforeFinishAnnouncementEnabled,
+      isListeningEndAnnouncementEnabled: isListeningEndAnnouncementEnabled,
       color: baseExam.color,
       createdAt: examToEdit?.createdAt ?? DateTime.now(),
     );

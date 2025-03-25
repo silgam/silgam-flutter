@@ -100,7 +100,7 @@ enum Subject {
       Announcement(
         title: '듣기 끝',
         time: RelativeTime.afterStart(minutes: 23),
-        purpose: AnnouncementPurpose.other,
+        purpose: AnnouncementPurpose.listeningEnd,
       ),
       Announcement(
         title: '종료 10분 전',
