@@ -58,16 +58,21 @@ class Exam with _$Exam {
             (announcement.time.type == RelativeTimeType.afterStart ||
                 announcement.time.type == RelativeTimeType.beforeFinish) &&
             announcement.time.minutes >= durationMinutes;
-        final skipBeforeFinishAnnouncement =
-            !isBeforeFinishAnnouncementEnabled &&
-            announcement.purpose == AnnouncementPurpose.beforeFinish;
-        final skipListeningEndAnnouncement =
-            !isListeningEndAnnouncementEnabled &&
-            announcement.purpose == AnnouncementPurpose.listeningEnd;
+        if (isOverExamDuration) {
+          return false;
+        }
 
-        return !isOverExamDuration &&
-            !skipBeforeFinishAnnouncement &&
-            !skipListeningEndAnnouncement;
+        if (!isBeforeFinishAnnouncementEnabled &&
+            announcement.purpose == AnnouncementPurpose.beforeFinish) {
+          return false;
+        }
+
+        if (!isListeningEndAnnouncementEnabled &&
+            announcement.purpose == AnnouncementPurpose.listeningEnd) {
+          return false;
+        }
+
+        return true;
       }).toList();
 
   late final Announcement? firstAnnouncement = announcements.firstOrNull;
