@@ -395,8 +395,8 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
               return FormSwitch(
                 name: _isListeningEndAnnouncementEnabledFieldName,
                 initialValue: _isListeningEndAnnouncementEnabledInitialValue,
-                title: '영어 듣기 제거',
-                subtitle: '영어 과목의 타임라인에서 듣기 평가 종료 지점을 제거할 수 있어요.',
+                title: '영어 듣기 평가 포함하기',
+                subtitle: '타임라인에 듣기 평가 종료 지점이 표시돼요.',
               );
             },
           ),
