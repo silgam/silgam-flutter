@@ -67,13 +67,17 @@ class ClockCubit extends Cubit<ClockState> {
 
     final noiseSettingState = _noiseSettingCubit.state;
     if (noiseSettingState.selectedNoisePreset != NoisePreset.disabled) {
-      final noisePlayer = NoiseAudioPlayer(
-        availableNoiseIds: _appCubit.state.productBenefit.availableNoiseIds,
-      );
+      final availableNoiseIds = _appCubit.state.productBenefit.availableNoiseIds;
+      final Map<int, int> availableNoiseLevels = {
+        for (final MapEntry(key: id, value: level) in noiseSettingState.noiseLevels.entries)
+          if (level > 0 && availableNoiseIds.contains(id)) id: level,
+      };
+
       _noiseGenerator = NoiseGenerator(
-        noiseSettingState: noiseSettingState,
-        noisePlayer: noisePlayer,
-        clockCubit: this,
+        noisePlayer: NoiseAudioPlayer(),
+        getClockState: () => state,
+        useWhiteNoise: noiseSettingState.useWhiteNoise,
+        noiseLevels: availableNoiseLevels,
       );
     }
   }
