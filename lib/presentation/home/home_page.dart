@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/injection.dart';
 import '../app/app.dart';
@@ -118,9 +119,13 @@ class _HomePageState extends State<HomePage> {
 
   void _handleMessage(RemoteMessage message) {
     final routeName = message.data['routeName'];
-
     if (routeName != null) {
       Navigator.pushNamed(context, routeName);
+    }
+
+    final url = message.data['url'];
+    if (url != null) {
+      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
   }
 
