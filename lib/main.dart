@@ -29,16 +29,16 @@ void main() async {
 
   await configureDependencies();
   await Future.wait([
-    initializeFirebase(),
+    _initializeFirebase(),
     if (!kIsWeb && !isAdmobDisabled) MobileAds.instance.initialize(),
-    initializeAudioSession(),
+    _initializeAudioSession(),
   ]);
-  final initialRoute = await initializeInitialRoute();
+  final initialRoute = await _initializeInitialRoute();
 
   runApp(SilgamApp(initialRoute: initialRoute));
 }
 
-Future<String?> initializeInitialRoute() async {
+Future<String?> _initializeInitialRoute() async {
   final SharedPreferences sharedPreferences = getIt.get();
   final isOnboardingFinished =
       sharedPreferences.getBool(PreferenceKey.isOnboardingFinished) ?? false;
@@ -49,7 +49,7 @@ Future<String?> initializeInitialRoute() async {
   return null;
 }
 
-Future<void> initializeFirebase() async {
+Future<void> _initializeFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   if (useFirebaseEmulator) {
@@ -81,7 +81,7 @@ Future<void> initializeFirebase() async {
   NotificationManager.instance.initializeFirebaseMessaging();
 }
 
-Future<void> initializeAudioSession() async {
+Future<void> _initializeAudioSession() async {
   final AudioSession audioSession = await AudioSession.instance;
   await audioSession.configure(
     const AudioSessionConfiguration(
