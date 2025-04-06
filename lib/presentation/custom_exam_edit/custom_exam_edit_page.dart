@@ -125,7 +125,9 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
       numberOfQuestions: int.parse(values[_numberOfQuestionsFieldName]),
       perfectScore: int.parse(values[_perfectScoreFieldName]),
       isBeforeFinishAnnouncementEnabled: values[_isBeforeFinishAnnouncementEnabledFieldName],
-      isListeningEndAnnouncementEnabled: values[_isListeningEndAnnouncementEnabledFieldName],
+      isListeningEndAnnouncementEnabled:
+          values[_isListeningEndAnnouncementEnabledFieldName] ??
+          _isListeningEndAnnouncementEnabledInitialValue,
     );
 
     Navigator.pop(context, true);
