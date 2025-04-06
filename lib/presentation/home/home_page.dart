@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _onMeChanged();
-    NotificationManager.instance.initializeNotificationInteractions(context);
+    NotificationManager.instance.initialize(context);
   }
 
   void _onMeChanged() {

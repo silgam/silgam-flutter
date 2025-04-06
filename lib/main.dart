@@ -21,7 +21,6 @@ import 'presentation/onboarding/onboarding_page.dart';
 import 'util/analytics_manager.dart';
 import 'util/const.dart';
 import 'util/injection.dart';
-import 'util/notification_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,8 +76,6 @@ Future<void> _initializeFirebase() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: false);
     return true;
   };
-
-  NotificationManager.instance.initializeFirebaseMessaging();
 }
 
 Future<void> _initializeAudioSession() async {

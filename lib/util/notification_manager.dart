@@ -1,47 +1,114 @@
-import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NotificationManager {
-  const NotificationManager._();
+  NotificationManager._();
 
   static NotificationManager get instance => _instance;
-  static const NotificationManager _instance = NotificationManager._();
+  static final NotificationManager _instance = NotificationManager._();
 
-  void initializeFirebaseMessaging() {
+  /// 변경하면 AndroidManifest.xml에 정의되어 있는
+  /// com.google.firebase.messaging.default_notification_channel_id 값도 변경되어야 함
+  static const String androidNotificationChannelId = 'default';
+
+  static const String androidNotificationChannelName = '기본';
+
+  final AndroidFlutterLocalNotificationsPlugin _localNotificationsPlugin =
+      AndroidFlutterLocalNotificationsPlugin();
+
+  /// [Navigator] 하위 위젯의 [context]가 필요함.
+  Future<void> initialize(BuildContext context) async {
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      if (context.mounted) {
+        _handleNotificationAction(message.data, context);
+      }
+    });
+
+    await _initializeForegroundNotification(context);
+
+    if (context.mounted) {
+      await _handleInitialNotification(context);
+    }
+  }
+
+  Future<void> _initializeForegroundNotification(BuildContext context) async {
     if (Platform.isIOS) {
-      FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
       );
     }
+
+    if (Platform.isAndroid) {
+      FirebaseMessaging.onMessage.listen(_showLocalNotification);
+
+      await _localNotificationsPlugin.initialize(
+        AndroidInitializationSettings('@mipmap/launcher_icon'),
+        onDidReceiveNotificationResponse: (details) {
+          _onLocalNotificationResponse(details, context);
+        },
+      );
+      await _localNotificationsPlugin.createNotificationChannel(
+        AndroidNotificationChannel(androidNotificationChannelId, androidNotificationChannelName),
+      );
+    }
   }
 
-  Future<void> initializeNotificationInteractions(BuildContext context) async {
-    final RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  void _showLocalNotification(RemoteMessage message) {
+    if (!Platform.isAndroid) return;
 
+    final notification = message.notification;
+    if (notification == null) return;
+
+    _localNotificationsPlugin.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      notificationDetails: AndroidNotificationDetails(
+        androidNotificationChannelId,
+        androidNotificationChannelName,
+      ),
+      payload: jsonEncode(message.data),
+    );
+  }
+
+  void _onLocalNotificationResponse(NotificationResponse response, BuildContext context) {
+    final payload = response.payload;
+    if (payload == null) return;
+
+    final data = jsonDecode(payload);
+    _handleNotificationAction(data, context);
+  }
+
+  Future<void> _handleInitialNotification(BuildContext context) async {
+    final RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null && context.mounted) {
-      _handleMessage(initialMessage, context);
+      _handleNotificationAction(initialMessage.data, context);
     }
 
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      if (context.mounted) {
-        _handleMessage(message, context);
-      }
-    });
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+        await _localNotificationsPlugin.getNotificationAppLaunchDetails();
+    final notificationResponse = notificationAppLaunchDetails?.notificationResponse;
+    if (notificationAppLaunchDetails?.didNotificationLaunchApp == true &&
+        notificationResponse != null &&
+        context.mounted) {
+      _onLocalNotificationResponse(notificationResponse, context);
+    }
   }
 
-  void _handleMessage(RemoteMessage message, BuildContext context) {
-    final routeName = message.data['routeName'];
+  void _handleNotificationAction(Map<String, dynamic> data, BuildContext context) {
+    final routeName = data['routeName'];
     if (routeName != null) {
       Navigator.pushNamed(context, routeName);
     }
 
-    final url = message.data['url'];
+    final url = data['url'];
     if (url != null) {
       launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
