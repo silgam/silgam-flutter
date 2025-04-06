@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,17 +69,25 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void skip() {
     emit(state.copyWith(step: OnboardingStep.finished));
-    _onboardingRepository.submitJoinPaths(isSkipped: true, joinPathIds: [], otherJoinPath: null);
+
+    if (!kDebugMode) {
+      _onboardingRepository.submitJoinPaths(isSkipped: true, joinPathIds: [], otherJoinPath: null);
+    }
+
     AnalyticsManager.logEvent(name: '[Onboarding] Skip join path');
   }
 
   void submitJoinPath({required String otherJoinPath}) {
     emit(state.copyWith(step: OnboardingStep.finished));
-    _onboardingRepository.submitJoinPaths(
-      isSkipped: false,
-      joinPathIds: state.selectedJoinPathIds,
-      otherJoinPath: otherJoinPath,
-    );
+
+    if (!kDebugMode) {
+      _onboardingRepository.submitJoinPaths(
+        isSkipped: false,
+        joinPathIds: state.selectedJoinPathIds,
+        otherJoinPath: otherJoinPath,
+      );
+    }
+
     AnalyticsManager.logEvent(
       name: '[Onboarding] Submit join path',
       properties: {'joinPathIds': state.selectedJoinPathIds, 'otherJoinPath': otherJoinPath},
