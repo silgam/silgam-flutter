@@ -129,6 +129,7 @@ class MainCubit extends Cubit<MainState> {
         'priority': ads.priority,
         'order': index + 1,
         'variantId': variant?.id ?? 'none',
+        'category': ads.category ?? 'none',
       },
     );
   }
