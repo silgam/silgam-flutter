@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -17,25 +18,42 @@ class AdsRepository {
 
   Future<Result<List<Ads>, ApiFailure>> getAllAds() async {
     try {
-      final versionNumber = await _getVersionNumber();
       var ads = await _adsApi.getAllAds();
-      ads =
-          ads
-              .where(
-                (ad) =>
-                    ad.minVersionNumber <= versionNumber &&
-                    (ad.maxVersionNumber == null || ad.maxVersionNumber! >= versionNumber) &&
-                    ad.expiryDate.isAfter(DateTime.now()) &&
-                    ad.startDate.isBefore(DateTime.now()),
-              )
-              .toList()
-            ..shuffle()
-            ..sort((a, b) => a.priority - b.priority);
-      return Result.success(ads);
+      final filteredAds = await _getFilteredAndSortedAds(ads);
+
+      return Result.success(filteredAds);
     } on DioException catch (e) {
       log(e.toString(), name: 'AdsRepository.getAllAds');
       return Result.error(e.error as ApiFailure);
     }
+  }
+
+  Future<List<Ads>> _getFilteredAndSortedAds(List<Ads> ads) async {
+    final versionNumber = await _getVersionNumber();
+
+    return ads
+        .where(
+          (ad) =>
+              ad.minVersionNumber <= versionNumber &&
+              (ad.maxVersionNumber == null || ad.maxVersionNumber! >= versionNumber) &&
+              ad.expiryDate.isAfter(DateTime.now()) &&
+              ad.startDate.isBefore(DateTime.now()),
+        )
+        .groupListsBy((ad) => ad.category)
+        .entries
+        .expand((entry) {
+          final category = entry.key;
+          final categoryAds = entry.value;
+          final showCount = categoryAds.firstOrNull?.showCountInCategory;
+
+          if (category == null || showCount == null) {
+            return categoryAds;
+          }
+
+          return categoryAds.shuffled().take(showCount);
+        })
+        .shuffled()
+        .sorted((a, b) => a.priority - b.priority);
   }
 
   Future<int> _getVersionNumber() async {

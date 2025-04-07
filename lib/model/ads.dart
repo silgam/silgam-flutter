@@ -17,6 +17,8 @@ class Ads with _$Ads {
     required DateTime expiryDate,
     required int minVersionNumber,
     int? maxVersionNumber,
+    String? category,
+    int? showCountInCategory,
   }) = _Ads;
 
   factory Ads.fromJson(Map<String, dynamic> json) => _$AdsFromJson(json);
