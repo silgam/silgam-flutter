@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/injection.dart';
+import '../../util/notification_manager.dart';
 import '../app/app.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
@@ -71,20 +70,13 @@ class _HomePageState extends State<HomePage> {
   final HomeCubit _cubit = getIt.get();
 
   bool isMarketingInfoReceivingConsentDialogShowing = false;
-  StreamSubscription? _firebaseMessagingSubscription;
 
   @override
   void initState() {
     super.initState();
 
     _onMeChanged();
-    _initializeNotificationInteractions();
-  }
-
-  @override
-  void dispose() {
-    _firebaseMessagingSubscription?.cancel();
-    super.dispose();
+    NotificationManager.instance.initialize(context);
   }
 
   void _onMeChanged() {
@@ -104,28 +96,6 @@ class _HomePageState extends State<HomePage> {
 
         isMarketingInfoReceivingConsentDialogShowing = false;
       });
-    }
-  }
-
-  Future<void> _initializeNotificationInteractions() async {
-    final RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-
-    if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
-
-    _firebaseMessagingSubscription = FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-  }
-
-  void _handleMessage(RemoteMessage message) {
-    final routeName = message.data['routeName'];
-    if (routeName != null) {
-      Navigator.pushNamed(context, routeName);
-    }
-
-    final url = message.data['url'];
-    if (url != null) {
-      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
   }
 
