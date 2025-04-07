@@ -92,13 +92,15 @@ class NotificationManager {
       _handleNotificationAction(initialMessage.data, context);
     }
 
-    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-        await _localNotificationsPlugin.getNotificationAppLaunchDetails();
-    final notificationResponse = notificationAppLaunchDetails?.notificationResponse;
-    if (notificationAppLaunchDetails?.didNotificationLaunchApp == true &&
-        notificationResponse != null &&
-        context.mounted) {
-      _onLocalNotificationResponse(notificationResponse, context);
+    if (Platform.isAndroid) {
+      final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+          await _localNotificationsPlugin.getNotificationAppLaunchDetails();
+      final notificationResponse = notificationAppLaunchDetails?.notificationResponse;
+      if (notificationAppLaunchDetails?.didNotificationLaunchApp == true &&
+          notificationResponse != null &&
+          context.mounted) {
+        _onLocalNotificationResponse(notificationResponse, context);
+      }
     }
   }
 
