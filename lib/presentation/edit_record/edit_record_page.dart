@@ -541,6 +541,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           ),
           FormItem(
             label: '복습할 문제',
+            description: '틀린 문제의 사진과 틀린 이유를 상세히 기록할 수 있어요.',
             child: FormReviewProblemsField(
               name: _reviewProblemsFieldName,
               initialValue: _initialReviewProblems,
