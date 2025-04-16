@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../model/ads.dart';
@@ -43,7 +44,7 @@ class MainCubit extends Cubit<MainState> {
 
   Future<void> updateAds() async {
     List<Ads>? cachedAds = _cacheManager.getAds();
-    emit(state.copyWith(ads: _getAdsToShow(cachedAds ?? [])));
+    emit(state.copyWith(ads: await _getAdsToShow(cachedAds ?? [])));
 
     final getAdsResult = await _adsRepository.getAllAds();
     if (getAdsResult.isError()) return;
@@ -51,7 +52,7 @@ class MainCubit extends Cubit<MainState> {
     List<Ads>? ads = getAdsResult.tryGetSuccess();
     await _cacheManager.setAds(ads);
     await _preselectAdsVariants(ads ?? []);
-    emit(state.copyWith(ads: _getAdsToShow(ads ?? []), adsShownLoggedMap: {}));
+    emit(state.copyWith(ads: await _getAdsToShow(ads ?? []), adsShownLoggedMap: {}));
   }
 
   Future<void> _updateDDays() async {
@@ -66,14 +67,36 @@ class MainCubit extends Cubit<MainState> {
     emit(state.copyWith(dDayItems: getDDayItemsToShow(dDays ?? [])));
   }
 
-  List<Ads> _getAdsToShow(List<Ads> ads) {
+  Future<List<Ads>> _getAdsToShow(List<Ads> ads) async {
     final isPurchasedUser = _appCubit.state.me?.isPurchasedUser ?? false;
     final isAdsRemoved = _appCubit.state.productBenefit.isAdsRemoved;
+    final versionNumber = await _getVersionNumber();
+
     return ads
-        .whereNot(
-          (ad) => (isPurchasedUser && ad.isHiddenToPurchasedUser) || (isAdsRemoved && ad.isAd),
+        .where(
+          (ad) =>
+              !(isPurchasedUser && ad.isHiddenToPurchasedUser) &&
+              !(isAdsRemoved && ad.isAd) &&
+              ad.minVersionNumber <= versionNumber &&
+              (ad.maxVersionNumber == null || ad.maxVersionNumber! >= versionNumber) &&
+              ad.expiryDate.isAfter(DateTime.now()) &&
+              ad.startDate.isBefore(DateTime.now()),
         )
-        .toList();
+        .groupListsBy((ad) => ad.category)
+        .entries
+        .expand((entry) {
+          final category = entry.key;
+          final categoryAds = entry.value;
+          final showCount = categoryAds.firstOrNull?.showCountInCategory;
+
+          if (category == null || showCount == null) {
+            return categoryAds;
+          }
+
+          return categoryAds.shuffled().take(showCount);
+        })
+        .shuffled()
+        .sorted((a, b) => a.priority - b.priority);
   }
 
   Future<void> _preselectAdsVariants(List<Ads> ads) async {
@@ -129,6 +152,7 @@ class MainCubit extends Cubit<MainState> {
         'priority': ads.priority,
         'order': index + 1,
         'variantId': variant?.id ?? 'none',
+        'category': ads.category ?? 'none',
       },
     );
   }
@@ -141,4 +165,9 @@ class MainCubit extends Cubit<MainState> {
 
     return ads.variants.firstWhereOrNull((variant) => selectedAdsVariantIds.contains(variant.id));
   }
+}
+
+Future<int> _getVersionNumber() async {
+  final packageInfo = await PackageInfo.fromPlatform();
+  return int.parse(packageInfo.buildNumber);
 }

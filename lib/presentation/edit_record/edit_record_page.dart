@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -109,7 +110,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   bool _isChanged = false;
   bool _isSaving = false;
   late Exam _previousExam = _initialExam;
-  late int _wrongProblemMaxDigits = _initialExam.numberOfQuestions.toString().length;
+  late int _wrongProblemMaxDigits = _initialExam.getWrongProblemMaxDigits();
 
   @override
   void initState() {
@@ -176,7 +177,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
     _previousExam = exam;
 
     setState(() {
-      _wrongProblemMaxDigits = exam.numberOfQuestions.toString().length;
+      _wrongProblemMaxDigits = exam.getWrongProblemMaxDigits();
     });
   }
 
@@ -540,6 +541,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
           ),
           FormItem(
             label: '복습할 문제',
+            description: '틀린 문제의 사진과 틀린 이유를 상세히 기록할 수 있어요.',
             child: FormReviewProblemsField(
               name: _reviewProblemsFieldName,
               initialValue: _initialReviewProblems,
@@ -560,5 +562,11 @@ class _EditRecordPageState extends State<EditRecordPage> {
       unfocusOnTapBackground: true,
       child: SingleChildScrollView(padding: const EdgeInsets.all(20), child: _buildForm()),
     );
+  }
+}
+
+extension on Exam {
+  int getWrongProblemMaxDigits() {
+    return max(2, numberOfQuestions.toString().length);
   }
 }
