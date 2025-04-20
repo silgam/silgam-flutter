@@ -56,7 +56,7 @@ class FormTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         suffixText: suffixText,
-        errorStyle: hideError ? TextStyle(height: 0.001) : null,
+        errorStyle: hideError ? const TextStyle(height: 0.001) : null,
         hintStyle: TextStyle(color: Colors.grey.shade500),
         contentPadding: const EdgeInsets.all(12),
         isCollapsed: true,

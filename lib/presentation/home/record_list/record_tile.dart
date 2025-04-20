@@ -121,7 +121,7 @@ class RecordTileState extends State<RecordTile> {
     return Text.rich(
       textAlign: TextAlign.end,
       TextSpan(
-        style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18, color: Colors.black),
+        style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 18, color: Colors.black),
         children: textSpans,
       ),
     );

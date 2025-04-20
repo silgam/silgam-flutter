@@ -24,7 +24,7 @@ class FormItem extends StatelessWidget {
       children: [
         _FormLabel(label: label, isRequired: isRequired),
         if (description != null)
-          Text(description, style: TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(description, style: const TextStyle(color: Colors.grey, fontSize: 12)),
         child,
       ],
     );

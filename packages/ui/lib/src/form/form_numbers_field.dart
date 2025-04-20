@@ -112,11 +112,11 @@ class _NumberItem extends StatelessWidget {
               borderSide: BorderSide(width: 0.5, color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(100),
             ),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.only(right: 2),
+            suffixIcon: const Padding(
+              padding: EdgeInsets.only(right: 2),
               child: Icon(Icons.cancel, size: 18, color: Colors.white54),
             ),
-            suffixIconConstraints: BoxConstraints(minWidth: 32),
+            suffixIconConstraints: const BoxConstraints(minWidth: 32),
           ),
           child: Text(
             displayStringForNumber(number),
@@ -234,11 +234,11 @@ class _NumberFieldState extends State<_NumberField> {
               borderRadius: BorderRadius.circular(100),
             ),
             errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 0.5, color: Colors.red),
+              borderSide: const BorderSide(width: 0.5, color: Colors.red),
               borderRadius: BorderRadius.circular(100),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 0.5, color: Colors.red),
+              borderSide: const BorderSide(width: 0.5, color: Colors.red),
               borderRadius: BorderRadius.circular(100),
             ),
           ),
