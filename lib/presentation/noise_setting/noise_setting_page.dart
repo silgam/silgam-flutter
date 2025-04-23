@@ -264,6 +264,16 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                           : null,
                 ),
               ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text('가끔', style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+                  const Spacer(),
+                  Text('자주', style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+                  const SizedBox(width: 8),
+                ],
+              ),
             ],
           ),
         ),
