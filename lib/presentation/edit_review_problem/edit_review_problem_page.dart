@@ -228,8 +228,8 @@ class EditReviewProblemPageState extends State<EditReviewProblemPage> {
                         shape: const CircleBorder(),
                         child: InkWell(
                           onTap: () => _onImageRemove(imagePath),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
+                          child: const Padding(
+                            padding: EdgeInsets.all(4),
                             child: Icon(Icons.clear, color: Colors.white, size: 22),
                           ),
                         ),

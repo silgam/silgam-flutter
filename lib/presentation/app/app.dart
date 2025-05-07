@@ -208,7 +208,7 @@ class _SilgamAppState extends State<SilgamApp> {
           useMaterial3: false,
           primarySwatch: indigoSwatch,
           fontFamily: defaultFontFamily,
-          scaffoldBackgroundColor: Color.fromARGB(255, 245, 246, 247),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 245, 246, 247),
           textButtonTheme: textButtonTheme,
           outlinedButtonTheme: outlinedButtonTheme,
           sliderTheme: getSliderTheme(context),

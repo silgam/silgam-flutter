@@ -160,7 +160,7 @@ class _BottomFadeGradient extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              stops: [0, 0.4, 1],
+              stops: const [0, 0.4, 1],
               colors: [
                 backgroundColor.withAlpha(0),
                 backgroundColor.withAlpha(70),

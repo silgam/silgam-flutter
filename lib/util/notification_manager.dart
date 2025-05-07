@@ -49,13 +49,13 @@ class NotificationManager {
       FirebaseMessaging.onMessage.listen(_showLocalNotification);
 
       await _localNotificationsPlugin.initialize(
-        AndroidInitializationSettings('@mipmap/launcher_icon'),
+        const AndroidInitializationSettings('@mipmap/launcher_icon'),
         onDidReceiveNotificationResponse: (details) {
           _onLocalNotificationResponse(details, context);
         },
       );
       await _localNotificationsPlugin.createNotificationChannel(
-        AndroidNotificationChannel(androidNotificationChannelId, androidNotificationChannelName),
+        const AndroidNotificationChannel(androidNotificationChannelId, androidNotificationChannelName),
       );
     }
   }
@@ -70,7 +70,7 @@ class NotificationManager {
       notification.hashCode,
       notification.title,
       notification.body,
-      notificationDetails: AndroidNotificationDetails(
+      notificationDetails: const AndroidNotificationDetails(
         androidNotificationChannelId,
         androidNotificationChannelName,
       ),

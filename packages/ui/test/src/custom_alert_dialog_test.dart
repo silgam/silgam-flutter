@@ -74,7 +74,7 @@ void main() {
 
     testWidgets('renders with custom content widget', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: CustomAlertDialog.customContent(
             title: 'Test Title',
             content: Text(

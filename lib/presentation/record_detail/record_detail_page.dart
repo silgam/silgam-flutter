@@ -331,7 +331,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (record == null) {
       return PageLayout(
         onBackPressed: () => Navigator.of(context).pop(),
-        child: Center(child: CircularProgressIndicator(strokeWidth: 3)),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 3)),
       );
     }
 

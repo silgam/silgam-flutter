@@ -2,11 +2,11 @@ name: silgam
 description: Silgam
 
 publish_to: 'none'
-version: 1.9.12+131
+version: 1.9.13+132
 
 environment:
   sdk: 3.7.2
-  flutter: 3.29.2
+  flutter: 3.29.3
 
 workspace:
   - packages/ui

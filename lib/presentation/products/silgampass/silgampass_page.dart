@@ -36,7 +36,7 @@ class SilgampassPage extends StatelessWidget {
         onBackPressed: () => Navigator.pop(context),
         backgroundColor: Theme.of(context).primaryColor,
         textBrightness: Brightness.light,
-        child: Center(child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white)),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white)),
       ),
     );
   }
