@@ -36,7 +36,7 @@ class NoiseGenerator {
     if (!clockState.isRunning) return;
 
     for (final MapEntry(key: id, value: level) in noiseLevels.entries) {
-      final (:levelMultiple, :delay) = _calculateLevelMultipleAndDelay(
+      final levelMultiple = _calculateLevelMultiple(
         noiseId: id,
         currentRelativeTime: clockState.currentBreakpoint.announcement.time.type,
         currentTime: clockState.currentTime,
@@ -45,7 +45,7 @@ class NoiseGenerator {
       );
 
       if (_shouldPlayNoise(level * levelMultiple)) {
-        await noisePlayer.playNoise(noiseId: id, delayMillis: delay);
+        await noisePlayer.playNoise(id);
       }
     }
   }
@@ -65,7 +65,7 @@ class NoiseGenerator {
     await noisePlayer.dispose();
   }
 
-  ({double levelMultiple, int delay}) _calculateLevelMultipleAndDelay({
+  double _calculateLevelMultiple({
     required int noiseId,
     required RelativeTimeType currentRelativeTime,
     required DateTime currentTime,
@@ -73,7 +73,6 @@ class NoiseGenerator {
     required Exam currentExam,
   }) {
     double levelMultiple = 1;
-    int delay = 0;
 
     // 시험지 넘기는 소리 예외 사항
     if (noiseId == NoiseId.paperFlipping) {
@@ -81,11 +80,9 @@ class NoiseGenerator {
         levelMultiple = 0; // 시험 시작 전엔 시험지 안 넘김
       } else if (currentRelativeTime == RelativeTimeType.afterStart) {
         int afterStart = currentTime.difference(currentBreakpointTime).inSeconds;
-        if (afterStart <= 2) {
-          delay = 1000;
+        if (1 <= afterStart && afterStart <= 3) {
           levelMultiple = 50; // 시험 시작 직후 시험지 많이 넘김
-        } else if (2 < afterStart && afterStart <= 7) {
-          delay = 1000;
+        } else if (3 < afterStart && afterStart <= 8) {
           levelMultiple = 10; // 시험 시작 후 일정 시간 동안 시험지 조금 넘김
         }
       } else if (currentRelativeTime == RelativeTimeType.beforeFinish) {
@@ -104,7 +101,7 @@ class NoiseGenerator {
       }
     }
 
-    return (levelMultiple: levelMultiple, delay: delay);
+    return levelMultiple;
   }
 
   bool _shouldPlayNoise(double level) {
