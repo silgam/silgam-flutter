@@ -14,4 +14,12 @@ class Announcement with _$Announcement {
   }) = _Announcement;
 }
 
-enum AnnouncementPurpose { preliminary, prepare, start, beforeFinish, finish, listeningEnd, other }
+enum AnnouncementPurpose {
+  preliminary,
+  prepare,
+  changePaper,
+  start,
+  listeningEnd,
+  beforeFinish,
+  finish,
+}

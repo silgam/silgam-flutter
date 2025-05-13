@@ -195,7 +195,7 @@ enum Subject {
       Announcement(
         title: '시험지 교체',
         time: RelativeTime.beforeStart(minutes: 2),
-        purpose: AnnouncementPurpose.other,
+        purpose: AnnouncementPurpose.changePaper,
         fileName: '29_4_finish_first.mp3',
       ),
       Announcement(

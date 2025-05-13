@@ -9,23 +9,20 @@ abstract class NoisePlayer {
 
   void pauseWhiteNoise();
 
-  Future<void> playNoise({required int noiseId, int delayMillis = 0});
+  Future<void> playNoise(int noiseId);
 
   Future<void> dispose();
 }
 
 class NoiseAudioPlayer implements NoisePlayer {
-  NoiseAudioPlayer({required this.availableNoiseIds});
-
-  final List<int> availableNoiseIds;
   final AudioPlayer _whiteNoisePlayer = AudioPlayer();
   final Map<int, AudioPlayer> _undisposedNoisePlayers = {};
 
   bool _isDisposed = false;
 
   @override
-  Future<void> playNoise({required int noiseId, int delayMillis = 0}) async {
-    if (!availableNoiseIds.contains(noiseId) || _isDisposed) return;
+  Future<void> playNoise(int noiseId) async {
+    if (_isDisposed) return;
 
     Noise noise = Noise.byId(noiseId);
     String noisePath = noise.getRandomNoisePath();
@@ -37,7 +34,6 @@ class NoiseAudioPlayer implements NoisePlayer {
     await audioPlayer.setAsset(noisePath);
     double volume = (Random().nextDouble() + 2) * 2;
     await audioPlayer.setVolume(volume);
-    await Future.delayed(Duration(milliseconds: delayMillis));
 
     await audioPlayer.play();
 

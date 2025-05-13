@@ -1,5 +1,21 @@
 import 'dart:math';
 
+abstract final class NoiseId {
+  static const int paperFlipping = 0;
+  static const int writing = 1;
+  static const int erasing = 2;
+  static const int sharpClicking = 3;
+  static const int manCough = 4;
+  static const int sniffle = 5;
+  static const int legShaking = 6;
+  static const int clothes = 7;
+  static const int chairMoving = 8;
+  static const int chairCreaking = 9;
+  static const int dropping = 10;
+  static const int womanCough = 11;
+  static const int sigh = 12;
+}
+
 enum NoisePreset {
   disabled(title: '사용 안함', difficulty: 0),
   easy(
@@ -69,91 +85,91 @@ const _noiseAssetPath = 'assets/noises';
 const whiteNoisePath = '$_noiseAssetPath/whiteNoise.mp3';
 const defaultNoises = [
   Noise(
-    id: 0,
+    id: NoiseId.paperFlipping,
     name: '시험지 넘기는 소리',
     preferenceKey: 'paperFlippingNoise',
     presetLevels: {NoisePreset.easy: 8, NoisePreset.normal: 12, NoisePreset.hard: 16},
     existingFiles: 35,
   ),
   Noise(
-    id: 1,
+    id: NoiseId.writing,
     name: '글씨 쓰는 소리',
     preferenceKey: 'writingNoise',
     presetLevels: {NoisePreset.easy: 6, NoisePreset.normal: 8, NoisePreset.hard: 10},
     existingFiles: 15,
   ),
   Noise(
-    id: 2,
+    id: NoiseId.erasing,
     name: '지우개로 지우는 소리',
     preferenceKey: 'erasingNoise',
     presetLevels: {NoisePreset.easy: 2, NoisePreset.normal: 4, NoisePreset.hard: 6},
     existingFiles: 10,
   ),
   Noise(
-    id: 3,
+    id: NoiseId.sharpClicking,
     name: '샤프 딸깍하는 소리',
     preferenceKey: 'sharpClickingNoise',
     presetLevels: {NoisePreset.easy: 2, NoisePreset.normal: 4, NoisePreset.hard: 6},
     existingFiles: 20,
   ),
   Noise(
-    id: 4,
+    id: NoiseId.manCough,
     name: '기침 소리 (남자)',
     preferenceKey: 'manCoughNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 20,
   ),
   Noise(
-    id: 11,
+    id: NoiseId.womanCough,
     name: '기침 소리 (여자)',
     preferenceKey: 'womanCoughNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 30,
   ),
   Noise(
-    id: 12,
+    id: NoiseId.sigh,
     name: '한숨 소리',
     preferenceKey: 'sighNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 25,
   ),
   Noise(
-    id: 5,
+    id: NoiseId.sniffle,
     name: '코 훌쩍이는 소리',
     preferenceKey: 'sniffleNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 25,
   ),
   Noise(
-    id: 6,
+    id: NoiseId.legShaking,
     name: '다리 떠는 소리',
     preferenceKey: 'legShakingNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 20,
   ),
   Noise(
-    id: 7,
+    id: NoiseId.clothes,
     name: '옷 부딪히는 소리',
     preferenceKey: 'clothesNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 20,
   ),
   Noise(
-    id: 8,
+    id: NoiseId.chairMoving,
     name: '의자 움직이는 소리',
     preferenceKey: 'chairMovingNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 25,
   ),
   Noise(
-    id: 9,
+    id: NoiseId.chairCreaking,
     name: '의자 삐걱이는 소리',
     preferenceKey: 'chairCreakingNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 2, NoisePreset.hard: 3},
     existingFiles: 25,
   ),
   Noise(
-    id: 10,
+    id: NoiseId.dropping,
     name: '뭔가 바닥에 떨어지는 소리',
     preferenceKey: 'droppingNoise',
     presetLevels: {NoisePreset.easy: 1, NoisePreset.normal: 1, NoisePreset.hard: 2},
