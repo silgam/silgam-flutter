@@ -52,28 +52,27 @@ class Exam with _$Exam {
 
   bool get isCustomExam => userId != null;
 
-  late final List<Announcement> announcements =
-      subject.defaultAnnouncements.where((announcement) {
-        final isOverExamDuration =
-            (announcement.time.type == RelativeTimeType.afterStart ||
-                announcement.time.type == RelativeTimeType.beforeFinish) &&
-            announcement.time.minutes >= durationMinutes;
-        if (isOverExamDuration) {
-          return false;
-        }
+  late final List<Announcement> announcements = subject.defaultAnnouncements.where((announcement) {
+    final isOverExamDuration =
+        (announcement.time.type == RelativeTimeType.afterStart ||
+            announcement.time.type == RelativeTimeType.beforeFinish) &&
+        announcement.time.minutes >= durationMinutes;
+    if (isOverExamDuration) {
+      return false;
+    }
 
-        if (!isBeforeFinishAnnouncementEnabled &&
-            announcement.purpose == AnnouncementPurpose.beforeFinish) {
-          return false;
-        }
+    if (!isBeforeFinishAnnouncementEnabled &&
+        announcement.purpose == AnnouncementPurpose.beforeFinish) {
+      return false;
+    }
 
-        if (!isListeningEndAnnouncementEnabled &&
-            announcement.purpose == AnnouncementPurpose.listeningEnd) {
-          return false;
-        }
+    if (!isListeningEndAnnouncementEnabled &&
+        announcement.purpose == AnnouncementPurpose.listeningEnd) {
+      return false;
+    }
 
-        return true;
-      }).toList();
+    return true;
+  }).toList();
 
   late final Announcement? firstAnnouncement = announcements.firstOrNull;
 

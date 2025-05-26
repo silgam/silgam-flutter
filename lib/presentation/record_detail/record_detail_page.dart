@@ -205,7 +205,10 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   }
 
   Widget _buildSubTitle(String text) {
-    return Text(text, style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.w300));
+    return Text(
+      text,
+      style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.w300),
+    );
   }
 
   Widget _buildContent(ExamRecord record) {
@@ -303,9 +306,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           ),
         const SizedBox(height: 16),
         BlocBuilder<AppCubit, AppState>(
-          buildWhen:
-              (previous, current) =>
-                  previous.productBenefit.isAdsRemoved != current.productBenefit.isAdsRemoved,
+          buildWhen: (previous, current) =>
+              previous.productBenefit.isAdsRemoved != current.productBenefit.isAdsRemoved,
           builder: (context, appState) {
             if (isAdmobDisabled || appState.productBenefit.isAdsRemoved) {
               return const SizedBox.shrink();

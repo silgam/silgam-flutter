@@ -158,29 +158,28 @@ class TimelineConnector extends StatelessWidget {
           Expanded(
             flex: unsetHeight ? 0 : 1,
             child: Stack(
-              children:
-                  markerPositions
-                      .map(
-                        (position) => Flex(
-                          direction: direction,
-                          children: [
-                            if (position > 0) Spacer(flex: (position * 100000000).toInt()),
-                            RotatedBox(
-                              quarterTurns: direction == Axis.horizontal ? 0 : -1,
-                              child: TimelineMarker(
-                                width: _markerWidth,
-                                height: _markerHeight,
-                                color: _getTimelineColor(
-                                  position > progress,
-                                  enabledColor: enabledColor,
-                                ),
-                              ),
+              children: markerPositions
+                  .map(
+                    (position) => Flex(
+                      direction: direction,
+                      children: [
+                        if (position > 0) Spacer(flex: (position * 100000000).toInt()),
+                        RotatedBox(
+                          quarterTurns: direction == Axis.horizontal ? 0 : -1,
+                          child: TimelineMarker(
+                            width: _markerWidth,
+                            height: _markerHeight,
+                            color: _getTimelineColor(
+                              position > progress,
+                              enabledColor: enabledColor,
                             ),
-                            if (position < 1) Spacer(flex: ((1 - position) * 100000000).toInt()),
-                          ],
+                          ),
                         ),
-                      )
-                      .toList(),
+                        if (position < 1) Spacer(flex: ((1 - position) * 100000000).toInt()),
+                      ],
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           Container(

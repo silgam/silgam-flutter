@@ -18,11 +18,10 @@ class NotificationSettingPage extends StatelessWidget {
       title: '알림 설정',
       onBackPressed: () => Navigator.of(context).pop(),
       child: BlocConsumer<AppCubit, AppState>(
-        listenWhen:
-            (previous, current) =>
-                previous.me?.isMarketingInfoReceivingConsented !=
-                    current.me?.isMarketingInfoReceivingConsented ||
-                previous.isOffline != current.isOffline,
+        listenWhen: (previous, current) =>
+            previous.me?.isMarketingInfoReceivingConsented !=
+                current.me?.isMarketingInfoReceivingConsented ||
+            previous.isOffline != current.isOffline,
         listener: (context, appState) {
           EasyLoading.dismiss();
         },

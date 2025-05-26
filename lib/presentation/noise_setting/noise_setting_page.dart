@@ -108,26 +108,18 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
         margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 4),
         decoration: BoxDecoration(
           color: Colors.grey.shade700,
-          image:
-              preset.backgroundImage != null
-                  ? DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage(preset.backgroundImage ?? ''),
-                  )
-                  : null,
+          image: preset.backgroundImage != null
+              ? DecorationImage(fit: BoxFit.cover, image: AssetImage(preset.backgroundImage ?? ''))
+              : null,
         ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors:
-                  isSelected
-                      ? [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor.withAlpha(0),
-                      ]
-                      : [const Color(0xFF303030), const Color(0xFF303030).withAlpha(0)],
+              colors: isSelected
+                  ? [Theme.of(context).primaryColor, Theme.of(context).primaryColor.withAlpha(0)]
+                  : [const Color(0xFF303030), const Color(0xFF303030).withAlpha(0)],
             ),
           ),
           child: Row(
@@ -258,10 +250,9 @@ class _NoiseSettingPageState extends State<NoiseSettingPage> {
                   activeColor: Theme.of(
                     context,
                   ).primaryColor.withAlpha(noise.existingFiles == 0 ? 80 : 255),
-                  inactiveColor:
-                      noise.existingFiles == 0
-                          ? Theme.of(context).primaryColor.withAlpha(20)
-                          : null,
+                  inactiveColor: noise.existingFiles == 0
+                      ? Theme.of(context).primaryColor.withAlpha(20)
+                      : null,
                 ),
               ),
               const SizedBox(height: 4),

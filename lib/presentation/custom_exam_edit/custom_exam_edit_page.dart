@@ -48,14 +48,12 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
   late final bool _isEditMode = _examToEdit != null;
 
   late final _examNameInitialValue = _examToEdit?.name;
-  late final _baseExamInitialValue =
-      _examToEdit == null
-          ? _defaultExams.first
-          : _defaultExams.firstWhere((exam) => exam.subject == _examToEdit.subject);
-  late final _startTimeInitialValue =
-      _examToEdit == null
-          ? TimeOfDay.fromDateTime(_baseExamInitialValue.startTime)
-          : TimeOfDay.fromDateTime(_examToEdit.startTime);
+  late final _baseExamInitialValue = _examToEdit == null
+      ? _defaultExams.first
+      : _defaultExams.firstWhere((exam) => exam.subject == _examToEdit.subject);
+  late final _startTimeInitialValue = _examToEdit == null
+      ? TimeOfDay.fromDateTime(_baseExamInitialValue.startTime)
+      : TimeOfDay.fromDateTime(_examToEdit.startTime);
   late final _durationInitialValue =
       _examToEdit?.durationMinutes.toString() ?? _baseExamInitialValue.durationMinutes.toString();
   late final _numberOfQuestionsInitialValue =
@@ -183,21 +181,20 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
 
         showDialog(
           context: context,
-          builder:
-              (context) => CustomAlertDialog(
-                title: '과목을 삭제할 수 없어요!',
-                content:
-                    '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
-                actions: [
-                  CustomTextButton.primary(
-                    text: '확인',
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-                scrollable: true,
+          builder: (context) => CustomAlertDialog(
+            title: '과목을 삭제할 수 없어요!',
+            content:
+                '아래의 모의고사 기록들이 이 과목으로 설정되어 있어요. 이 기록들을 삭제하거나 다른 과목으로 바꾸면 이 과목을 삭제할 수 있어요.\n\n$recordNames',
+            actions: [
+              CustomTextButton.primary(
+                text: '확인',
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
+            ],
+            scrollable: true,
+          ),
         );
       }
     }
@@ -291,10 +288,9 @@ class _CustomExamEditPageState extends State<CustomExamEditPage> {
                     name: _baseExamFieldName,
                     initialValue: _baseExamInitialValue,
                     onChanged: _onBaseExamChanged,
-                    items:
-                        _defaultExams
-                            .map((exam) => DropdownMenuItem(value: exam, child: Text(exam.name)))
-                            .toList(),
+                    items: _defaultExams
+                        .map((exam) => DropdownMenuItem(value: exam, child: Text(exam.name)))
+                        .toList(),
                   ),
                 ),
                 Wrap(

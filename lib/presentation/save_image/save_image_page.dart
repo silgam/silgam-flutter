@@ -82,42 +82,37 @@ class _SaveImagePageState extends State<SaveImagePage> {
               _ChoiceChip(
                 label: '점수',
                 selected: showScore,
-                onSelected:
-                    (value) => setState(() {
-                      showScore = value;
-                    }),
+                onSelected: (value) => setState(() {
+                  showScore = value;
+                }),
               ),
               _ChoiceChip(
                 label: '등급',
                 selected: showGrade,
-                onSelected:
-                    (value) => setState(() {
-                      showGrade = value;
-                    }),
+                onSelected: (value) => setState(() {
+                  showGrade = value;
+                }),
               ),
               _ChoiceChip(
                 label: '시간',
                 selected: showDuration,
-                onSelected:
-                    (value) => setState(() {
-                      showDuration = value;
-                    }),
+                onSelected: (value) => setState(() {
+                  showDuration = value;
+                }),
               ),
               _ChoiceChip(
                 label: '틀린 문제',
                 selected: showWrongProblems,
-                onSelected:
-                    (value) => setState(() {
-                      showWrongProblems = value;
-                    }),
+                onSelected: (value) => setState(() {
+                  showWrongProblems = value;
+                }),
               ),
               _ChoiceChip(
                 label: '피드백',
                 selected: showFeedback,
-                onSelected:
-                    (value) => setState(() {
-                      showFeedback = value;
-                    }),
+                onSelected: (value) => setState(() {
+                  showFeedback = value;
+                }),
               ),
               const SizedBox(width: 12),
             ],

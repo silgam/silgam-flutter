@@ -26,17 +26,16 @@ class CustomFilledButton extends StatelessWidget {
         disabledBackgroundColor: isLoading ? Theme.of(context).primaryColor.withAlpha(180) : null,
         disabledForegroundColor: isLoading ? Colors.white : null,
       ),
-      child:
-          isLoading
-              ? const Padding(
-                padding: EdgeInsets.only(right: 4),
-                child: SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                ),
-              )
-              : Text(label),
+      child: isLoading
+          ? const Padding(
+              padding: EdgeInsets.only(right: 4),
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+              ),
+            )
+          : Text(label),
     );
   }
 }

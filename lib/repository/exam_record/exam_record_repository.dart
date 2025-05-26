@@ -24,21 +24,19 @@ class ExamRecordRepository {
   }
 
   Future<List<ExamRecord>> getMyExamRecords(String userId) async {
-    final querySnapshot =
-        await _recordsRef
-            .where('userId', isEqualTo: userId)
-            .orderBy('examStartedTime', descending: true)
-            .get();
+    final querySnapshot = await _recordsRef
+        .where('userId', isEqualTo: userId)
+        .orderBy('examStartedTime', descending: true)
+        .get();
     final examRecords = querySnapshot.docs.map((snapshot) => snapshot.data()).toList();
     return examRecords;
   }
 
   Future<List<ExamRecord>> getMyExamRecordsByExamId(String userId, String examId) async {
-    final querySnapshot =
-        await _recordsRef
-            .where('userId', isEqualTo: userId)
-            .where('subject', isEqualTo: examId)
-            .get();
+    final querySnapshot = await _recordsRef
+        .where('userId', isEqualTo: userId)
+        .where('subject', isEqualTo: examId)
+        .get();
     final examRecords = querySnapshot.docs.map((snapshot) => snapshot.data()).toList();
     return examRecords;
   }

@@ -167,10 +167,9 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
         child: const Icon(Icons.add),
       ),
       child: BlocBuilder<AppCubit, AppState>(
-        buildWhen:
-            (previous, current) =>
-                !listEquals(previous.customExams, current.customExams) ||
-                !listEquals(previous.getDefaultExams(), current.getDefaultExams()),
+        buildWhen: (previous, current) =>
+            !listEquals(previous.customExams, current.customExams) ||
+            !listEquals(previous.getDefaultExams(), current.getDefaultExams()),
         builder: (context, state) {
           return RefreshIndicator(
             onRefresh: _appCubit.updateCustomExams,

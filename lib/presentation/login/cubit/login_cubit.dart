@@ -96,15 +96,14 @@ class LoginCubit extends Cubit<LoginState> {
       return;
     }
 
-    final OAuthCredential facebookAuthCredential =
-        Platform.isIOS
-            ? OAuthCredential(
-              providerId: 'facebook.com',
-              signInMethod: 'oauth',
-              idToken: accessToken.tokenString,
-              rawNonce: rawNonce,
-            )
-            : FacebookAuthProvider.credential(accessToken.tokenString);
+    final OAuthCredential facebookAuthCredential = Platform.isIOS
+        ? OAuthCredential(
+            providerId: 'facebook.com',
+            signInMethod: 'oauth',
+            idToken: accessToken.tokenString,
+            rawNonce: rawNonce,
+          )
+        : FacebookAuthProvider.credential(accessToken.tokenString);
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 

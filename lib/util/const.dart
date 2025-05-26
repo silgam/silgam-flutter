@@ -11,20 +11,17 @@ const String urlSupport = "https://silgam.app/support";
 const String urlOpenchat = "https://silgam.app/openchat";
 const String urlPrivacy = "https://silgam.app/privacy";
 const String urlTerms = "https://silgam.app/terms";
-final String urlSilgamApi =
-    useFirebaseEmulator
-        ? "http://${Platform.isAndroid ? '10.0.2.2' : 'localhost'}:5001/silgam-app/asia-northeast3/api"
-        : "https://api.silgam.app";
+final String urlSilgamApi = useFirebaseEmulator
+    ? "http://${Platform.isAndroid ? '10.0.2.2' : 'localhost'}:5001/silgam-app/asia-northeast3/api"
+    : "https://api.silgam.app";
 
 const isAdmobDisabled = false || kIsWeb;
-final String bannerAdId =
-    Platform.isAndroid
-        ? "ca-app-pub-5293956621132135/7574334463"
-        : "ca-app-pub-5293956621132135/7145274842";
-final String interstitialAdId =
-    Platform.isAndroid
-        ? "ca-app-pub-5293956621132135/1155168299"
-        : "ca-app-pub-5293956621132135/5094413305";
+final String bannerAdId = Platform.isAndroid
+    ? "ca-app-pub-5293956621132135/7574334463"
+    : "ca-app-pub-5293956621132135/7145274842";
+final String interstitialAdId = Platform.isAndroid
+    ? "ca-app-pub-5293956621132135/1155168299"
+    : "ca-app-pub-5293956621132135/5094413305";
 
 abstract class PreferenceKey {
   static const useAutoSaveRecords = 'useAutoSaveRecords';

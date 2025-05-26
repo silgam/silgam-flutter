@@ -104,16 +104,16 @@ class _SettingsViewState extends State<SettingsView> {
       const SettingDivider(),
       appState.productBenefit.isLapTimeAvailable
           ? const SettingTile(
-            title: '랩타임 기능 사용',
-            description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
-            preferenceKey: PreferenceKey.useLapTime,
-          )
+              title: '랩타임 기능 사용',
+              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
+              preferenceKey: PreferenceKey.useLapTime,
+            )
           : SettingTile(
-            onTap: _onLapTimeSettingButtonTap,
-            title: '랩타임 기능 사용',
-            description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
-            showArrow: true,
-          ),
+              onTap: _onLapTimeSettingButtonTap,
+              title: '랩타임 기능 사용',
+              description: '시험 중 랩타임 측정을 통해 시간 분배를 확인하고 모의고사 기록에 추가할 수 있어요.',
+              showArrow: true,
+            ),
       const SettingDivider(),
       SettingTile(
         onTap: _onCustomizeSubjectNameButtonTap,
@@ -288,10 +288,9 @@ class _SettingsViewState extends State<SettingsView> {
                 const VerticalDivider(indent: 8, endIndent: 8, width: 1),
                 const SizedBox(width: 4),
                 CachedNetworkImage(
-                  imageUrl:
-                      user.isProductTrial
-                          ? user.activeProduct.trialStampImageUrl
-                          : user.activeProduct.stampImageUrl,
+                  imageUrl: user.isProductTrial
+                      ? user.activeProduct.trialStampImageUrl
+                      : user.activeProduct.stampImageUrl,
                   height: 74,
                   errorWidget: (_, __, ___) => const AspectRatio(aspectRatio: 1),
                 ),
@@ -317,20 +316,17 @@ class _SettingsViewState extends State<SettingsView> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'view_user_id_dialog'),
-      builder:
-          (_) => CustomAlertDialog.customContent(
-            content: SelectableText(
-              user.id,
-              onTap: () {
-                AnalyticsManager.logEvent(name: '[HomePage-settings] User ID copied');
-                Clipboard.setData(ClipboardData(text: user.id));
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('복사되었습니다.')));
-                Navigator.pop(context);
-              },
-            ),
-          ),
+      builder: (_) => CustomAlertDialog.customContent(
+        content: SelectableText(
+          user.id,
+          onTap: () {
+            AnalyticsManager.logEvent(name: '[HomePage-settings] User ID copied');
+            Clipboard.setData(ClipboardData(text: user.id));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('복사되었습니다.')));
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 
@@ -343,26 +339,25 @@ class _SettingsViewState extends State<SettingsView> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'logout_confirm_dialog'),
-      builder:
-          (_) => CustomAlertDialog(
-            title: '로그아웃하실 건가요?',
-            actions: [
-              CustomTextButton.secondary(
-                text: '취소',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              CustomTextButton.primary(
-                text: '로그아웃',
-                onPressed: () async {
-                  await getIt<AppCubit>().onLogout();
-                  if (mounted) Navigator.pop(context);
-                  await AnalyticsManager.logEvent(name: '[HomePage-settings] Logout');
-                },
-              ),
-            ],
+      builder: (_) => CustomAlertDialog(
+        title: '로그아웃하실 건가요?',
+        actions: [
+          CustomTextButton.secondary(
+            text: '취소',
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
+          CustomTextButton.primary(
+            text: '로그아웃',
+            onPressed: () async {
+              await getIt<AppCubit>().onLogout();
+              if (mounted) Navigator.pop(context);
+              await AnalyticsManager.logEvent(name: '[HomePage-settings] Logout');
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -375,43 +370,42 @@ class _SettingsViewState extends State<SettingsView> {
     showDialog(
       context: context,
       routeSettings: const RouteSettings(name: 'account_delete_confirm_dialog'),
-      builder:
-          (_) => CustomAlertDialog(
-            title: '탈퇴하시겠습니까?',
-            content: '탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.',
-            actions: [
-              CustomTextButton.secondary(
-                text: '취소',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              CustomTextButton.destructive(
-                text: '계정 탈퇴',
-                onPressed: () async {
-                  Navigator.pop(context);
-                  try {
-                    await FirebaseAuth.instance.currentUser?.delete();
-                    await _appCubit.onLogout();
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'requires-recent-login') {
-                      await FirebaseAuth.instance.signOut();
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            duration: Duration(seconds: 7),
-                            content: Text('로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
-                          ),
-                        );
-                        Navigator.pushNamed(context, LoginPage.routeName);
-                      }
-                    }
-                  }
-                  await AnalyticsManager.logEvent(name: '[HomePage-settings] Delete account');
-                },
-              ),
-            ],
+      builder: (_) => CustomAlertDialog(
+        title: '탈퇴하시겠습니까?',
+        content: '탈퇴하면 모든 데이터가 삭제되고 복구할 수 없습니다.',
+        actions: [
+          CustomTextButton.secondary(
+            text: '취소',
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
+          CustomTextButton.destructive(
+            text: '계정 탈퇴',
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                await FirebaseAuth.instance.currentUser?.delete();
+                await _appCubit.onLogout();
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'requires-recent-login') {
+                  await FirebaseAuth.instance.signOut();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        duration: Duration(seconds: 7),
+                        content: Text('로그인한 지 오래되어 탈퇴할 수 없습니다. 탈퇴하려던 계정으로 다시 로그인해주세요.'),
+                      ),
+                    );
+                    Navigator.pushNamed(context, LoginPage.routeName);
+                  }
+                }
+              }
+              await AnalyticsManager.logEvent(name: '[HomePage-settings] Delete account');
+            },
+          ),
+        ],
+      ),
     );
   }
 

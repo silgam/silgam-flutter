@@ -65,11 +65,10 @@ class _EditRecordPageState extends State<EditRecordPage> {
   late final ExamRecord? _recordToEdit = widget.recordToEdit;
   late final bool _isEditingMode = _recordToEdit != null;
   late final List<Exam> _exams = _appCubit.state.getAllExams();
-  late final List<ExamRecord> _titleAutocompleteRecords =
-      (LinkedHashSet<ExamRecord>(
-        equals: (a, b) => a.title == b.title,
-        hashCode: (a) => a.title.hashCode,
-      )..addAll(_recordListCubit.state.originalRecords)).toList();
+  late final List<ExamRecord> _titleAutocompleteRecords = (LinkedHashSet<ExamRecord>(
+    equals: (a, b) => a.title == b.title,
+    hashCode: (a) => a.title.hashCode,
+  )..addAll(_recordListCubit.state.originalRecords)).toList();
 
   final GlobalKey<FormBuilderState> _formKey = GlobalKey();
 
@@ -318,10 +317,9 @@ class _EditRecordPageState extends State<EditRecordPage> {
               name: _examFieldName,
               initialValue: _initialExam,
               onChanged: _onExamChanged,
-              items:
-                  _exams.map((exam) {
-                    return DropdownMenuItem(value: exam, child: Text(exam.name));
-                  }).toList(),
+              items: _exams.map((exam) {
+                return DropdownMenuItem(value: exam, child: Text(exam.name));
+              }).toList(),
             ),
           ),
           Wrap(
