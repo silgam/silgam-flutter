@@ -5,8 +5,8 @@ publish_to: 'none'
 version: 1.9.14+133
 
 environment:
-  sdk: 3.8.0
-  flutter: 3.32.0
+  sdk: 3.8.1
+  flutter: 3.32.1
 
 workspace:
   - packages/ui

@@ -18,7 +18,7 @@
     }
   ],
   "settings": {
-    "dart.flutterSdkPath": "../.fvm/versions/3.32.0",
+    "dart.flutterSdkPath": "../.fvm/versions/3.32.1",
     "[dart]": {
       "editor.rulers": [100]
     },
