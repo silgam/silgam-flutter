@@ -28,20 +28,19 @@ class FormDatePicker extends StatelessWidget {
         final state = field as FormBuilderFieldState<FormBuilderField<DateTime>, DateTime>;
 
         return GestureDetector(
-          onTap:
-              state.enabled
-                  ? () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: value,
-                      firstDate: firstDate,
-                      lastDate: lastDate,
-                    );
-                    if (date == null) return;
+          onTap: state.enabled
+              ? () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: value,
+                    firstDate: firstDate,
+                    lastDate: lastDate,
+                  );
+                  if (date == null) return;
 
-                    field.didChange(date);
-                  }
-                  : null,
+                  field.didChange(date);
+                }
+              : null,
           child: InputDecorator(
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(12),

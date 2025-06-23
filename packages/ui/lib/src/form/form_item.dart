@@ -47,7 +47,10 @@ class _FormLabel extends StatelessWidget {
     if (isRequired) {
       return Row(
         spacing: 2,
-        children: [labelWidget, const Text('*', style: TextStyle(color: Colors.red))],
+        children: [
+          labelWidget,
+          const Text('*', style: TextStyle(color: Colors.red)),
+        ],
       );
     }
 

@@ -46,11 +46,10 @@ class _RecordListViewState extends State<RecordListView> {
             },
           ),
           BlocListener<AppCubit, AppState>(
-            listenWhen:
-                (previous, current) =>
-                    previous.me != current.me ||
-                    previous.productBenefit != current.productBenefit ||
-                    previous.isOffline != current.isOffline,
+            listenWhen: (previous, current) =>
+                previous.me != current.me ||
+                previous.productBenefit != current.productBenefit ||
+                previous.isOffline != current.isOffline,
             listener: (context, state) {
               _cubit.refresh();
             },

@@ -55,7 +55,10 @@ class NotificationManager {
         },
       );
       await _localNotificationsPlugin.createNotificationChannel(
-        const AndroidNotificationChannel(androidNotificationChannelId, androidNotificationChannelName),
+        const AndroidNotificationChannel(
+          androidNotificationChannelId,
+          androidNotificationChannelName,
+        ),
       );
     }
   }

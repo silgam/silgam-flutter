@@ -19,18 +19,17 @@ class FormTimePicker extends StatelessWidget {
         final state = field as FormBuilderFieldState<FormBuilderField<TimeOfDay>, TimeOfDay>;
 
         return GestureDetector(
-          onTap:
-              state.enabled
-                  ? () async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: value ?? TimeOfDay.now(),
-                    );
-                    if (time == null) return;
+          onTap: state.enabled
+              ? () async {
+                  final time = await showTimePicker(
+                    context: context,
+                    initialTime: value ?? TimeOfDay.now(),
+                  );
+                  if (time == null) return;
 
-                    field.didChange(time);
-                  }
-                  : null,
+                  field.didChange(time);
+                }
+              : null,
           child: InputDecorator(
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(12),

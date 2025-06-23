@@ -142,20 +142,20 @@ class _HomePageState extends State<HomePage> {
               !appState.isOffline
                   ? const SizedBox.shrink()
                   : InkWell(
-                    onTap: _onOfflineMessageTap,
-                    splashColor: Colors.transparent,
-                    child: Ink(
-                      color: Theme.of(context).primaryColor,
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: const Text(
-                          '오프라인 상태에선 일부 기능만 사용 가능해요.',
-                          style: TextStyle(fontSize: 12, height: 1.2, color: Colors.white),
+                      onTap: _onOfflineMessageTap,
+                      splashColor: Colors.transparent,
+                      child: Ink(
+                        color: Theme.of(context).primaryColor,
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          child: const Text(
+                            '오프라인 상태에선 일부 기능만 사용 가능해요.',
+                            style: TextStyle(fontSize: 12, height: 1.2, color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
-                  ),
             ],
           ),
         );
@@ -171,9 +171,9 @@ class _HomePageState extends State<HomePage> {
 
         return state.tabIndex == recordListTabIndex && appState.isSignedIn
             ? FloatingActionButton(
-              onPressed: () => _onAddExamRecordButtonPressed(),
-              child: const Icon(Icons.add),
-            )
+                onPressed: () => _onAddExamRecordButtonPressed(),
+                child: const Icon(Icons.add),
+              )
             : const SizedBox.shrink();
       },
     );
@@ -184,11 +184,10 @@ class _HomePageState extends State<HomePage> {
     return BlocProvider.value(
       value: _cubit,
       child: BlocListener<AppCubit, AppState>(
-        listenWhen:
-            (previous, current) =>
-                (previous.me == null && current.me != null) ||
-                previous.me?.isMarketingInfoReceivingConsented !=
-                    current.me?.isMarketingInfoReceivingConsented,
+        listenWhen: (previous, current) =>
+            (previous.me == null && current.me != null) ||
+            previous.me?.isMarketingInfoReceivingConsented !=
+                current.me?.isMarketingInfoReceivingConsented,
         listener: (context, appState) {
           _onMeChanged();
         },

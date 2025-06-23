@@ -91,24 +91,19 @@ class _LoginPageState extends State<LoginPage> {
                     TextSpan(
                       text: '개인정보처리방침',
                       style: const TextStyle(color: Colors.blueAccent),
-                      recognizer:
-                          TapGestureRecognizer()
-                            ..onTap = () {
-                              launchUrl(
-                                Uri.parse(urlPrivacy),
-                                mode: LaunchMode.externalApplication,
-                              );
-                            },
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(urlPrivacy), mode: LaunchMode.externalApplication);
+                        },
                     ),
                     const TextSpan(text: ' 및 '),
                     TextSpan(
                       text: '서비스이용약관',
                       style: const TextStyle(color: Colors.blueAccent),
-                      recognizer:
-                          TapGestureRecognizer()
-                            ..onTap = () {
-                              launchUrl(Uri.parse(urlTerms), mode: LaunchMode.externalApplication);
-                            },
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(urlTerms), mode: LaunchMode.externalApplication);
+                        },
                     ),
                     const TextSpan(text: '에 동의하는 것으로 간주됩니다.'),
                   ],
@@ -207,8 +202,9 @@ class _LoginButton extends StatelessWidget {
                   child: SvgPicture.asset(
                     assetName,
                     height: 24,
-                    colorFilter:
-                        lightText ? const ColorFilter.mode(Colors.white, BlendMode.srcIn) : null,
+                    colorFilter: lightText
+                        ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                        : null,
                   ),
                 ),
                 Expanded(

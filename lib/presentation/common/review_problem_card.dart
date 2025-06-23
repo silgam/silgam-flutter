@@ -44,13 +44,12 @@ class ReviewProblemCard extends StatelessWidget {
                           width: double.infinity,
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
-                          progressIndicatorBuilder:
-                              (_, __, progress) => Center(
-                                child: CircularProgressIndicator(
-                                  value: progress.progress,
-                                  strokeWidth: 2,
-                                ),
-                              ),
+                          progressIndicatorBuilder: (_, __, progress) => Center(
+                            child: CircularProgressIndicator(
+                              value: progress.progress,
+                              strokeWidth: 2,
+                            ),
+                          ),
                           errorWidget: (_, __, ___) {
                             return Container(
                               padding: const EdgeInsets.all(20),

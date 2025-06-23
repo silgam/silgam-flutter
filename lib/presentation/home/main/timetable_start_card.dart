@@ -143,32 +143,32 @@ class _TimetableStartCardState extends State<TimetableStartCard> with TickerProv
               children: [
                 timetable.items.length > 1
                     ? _buildInfo(
-                      iconData: Icons.schedule,
-                      title: '총 시간',
-                      content:
-                          '${DateFormat.Hm().format(timetable.startTime)} ~ ${DateFormat.Hm().format(timetable.endTime)}',
-                      badgeText: timetable.duration.toKoreanString(),
-                    )
+                        iconData: Icons.schedule,
+                        title: '총 시간',
+                        content:
+                            '${DateFormat.Hm().format(timetable.startTime)} ~ ${DateFormat.Hm().format(timetable.endTime)}',
+                        badgeText: timetable.duration.toKoreanString(),
+                      )
                     : _buildInfo(
-                      iconData: Icons.schedule,
-                      title: '시험 시간',
-                      content:
-                          '${DateFormat.Hm().format(timetable.items.first.exam.startTime)} ~ ${DateFormat.Hm().format(timetable.items.first.exam.endTime)}',
-                      badgeText: '${timetable.items.first.exam.durationMinutes}분',
-                    ),
+                        iconData: Icons.schedule,
+                        title: '시험 시간',
+                        content:
+                            '${DateFormat.Hm().format(timetable.items.first.exam.startTime)} ~ ${DateFormat.Hm().format(timetable.items.first.exam.endTime)}',
+                        badgeText: '${timetable.items.first.exam.durationMinutes}분',
+                      ),
                 const SizedBox(height: 16),
                 timetable.items.length > 1
                     ? _buildInfo(
-                      iconData: Icons.style,
-                      title: '과목',
-                      content: timetable.toExamNamesString(),
-                    )
+                        iconData: Icons.style,
+                        title: '과목',
+                        content: timetable.toExamNamesString(),
+                      )
                     : _buildInfo(
-                      iconData: Icons.text_snippet_outlined,
-                      title: '문제 수 / 만점',
-                      content:
-                          '${timetable.items.first.exam.numberOfQuestions}문제 / ${timetable.items.first.exam.perfectScore}점',
-                    ),
+                        iconData: Icons.text_snippet_outlined,
+                        title: '문제 수 / 만점',
+                        content:
+                            '${timetable.items.first.exam.numberOfQuestions}문제 / ${timetable.items.first.exam.perfectScore}점',
+                      ),
               ],
             ),
           ),

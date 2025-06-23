@@ -96,12 +96,9 @@ class _PageLayoutState extends State<PageLayout> {
     final bottomAction = widget.bottomAction;
 
     final resultWidget = AnnotatedRegion(
-      value:
-          widget.textBrightness == Brightness.dark
-              ? _lightSystemUiOverlayStyle
-              : _darkSystemUiOverlayStyle.copyWith(
-                systemNavigationBarColor: widget.backgroundColor,
-              ),
+      value: widget.textBrightness == Brightness.dark
+          ? _lightSystemUiOverlayStyle
+          : _darkSystemUiOverlayStyle.copyWith(systemNavigationBarColor: widget.backgroundColor),
       child: Scaffold(
         backgroundColor: widget.backgroundColor,
         floatingActionButton: widget.floatingActionButton,
@@ -117,10 +114,9 @@ class _PageLayoutState extends State<PageLayout> {
                 textBrightness: widget.textBrightness,
               ),
               Expanded(
-                child:
-                    bottomAction != null
-                        ? Stack(children: [widget.child, _BottomFadeGradient()])
-                        : widget.child,
+                child: bottomAction != null
+                    ? Stack(children: [widget.child, _BottomFadeGradient()])
+                    : widget.child,
               ),
               if (bottomAction != null)
                 _BottomButton(

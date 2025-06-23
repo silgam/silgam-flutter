@@ -94,9 +94,8 @@ class _AdsCardState extends State<AdsCard> {
         child: CachedNetworkImage(
           imageUrl: imagePath,
           fit: BoxFit.cover,
-          errorWidget:
-              (_, __, ___) =>
-                  Center(child: Icon(Icons.image, size: 32, color: Colors.grey.shade300)),
+          errorWidget: (_, __, ___) =>
+              Center(child: Icon(Icons.image, size: 32, color: Colors.grey.shade300)),
         ),
       ),
     );

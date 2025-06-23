@@ -80,9 +80,8 @@ class _ClockPageState extends State<ClockPage> {
     return BlocProvider(
       create: (context) => _cubit,
       child: BlocConsumer<ClockCubit, ClockState>(
-        listenWhen:
-            (previous, current) =>
-                previous.currentBreakpointIndex != current.currentBreakpointIndex,
+        listenWhen: (previous, current) =>
+            previous.currentBreakpointIndex != current.currentBreakpointIndex,
         listener: (context, state) {
           _animateTimeline(state.currentBreakpointIndex);
         },
@@ -123,22 +122,21 @@ class _ClockPageState extends State<ClockPage> {
                             horizontal: state.isFinished ? 20 : 8,
                             vertical: state.isFinished && _isSmallHeightScreen ? 12 : 0,
                           ),
-                          child:
-                              state.isFinished
-                                  ? OutlinedButton(
-                                    onPressed: _onFinishButtonPressed,
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      side: const BorderSide(color: Colors.white, width: 1),
-                                    ),
-                                    child: const Text('시험 종료'),
-                                  )
-                                  : IconButton(
-                                    splashRadius: 20,
-                                    icon: const Icon(Icons.close),
-                                    onPressed: _onFinishButtonPressed,
-                                    color: Colors.white,
+                          child: state.isFinished
+                              ? OutlinedButton(
+                                  onPressed: _onFinishButtonPressed,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    side: const BorderSide(color: Colors.white, width: 1),
                                   ),
+                                  child: const Text('시험 종료'),
+                                )
+                              : IconButton(
+                                  splashRadius: 20,
+                                  icon: const Icon(Icons.close),
+                                  onPressed: _onFinishButtonPressed,
+                                  color: Colors.white,
+                                ),
                         ),
                       ),
                       _buildBackgroundUi(state.isUiVisible),
@@ -263,8 +261,9 @@ class _ClockPageState extends State<ClockPage> {
           physics: const ClampingScrollPhysics(),
           child: Flex(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment:
-                direction == Axis.horizontal ? CrossAxisAlignment.end : CrossAxisAlignment.center,
+            crossAxisAlignment: direction == Axis.horizontal
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.center,
             direction: direction,
             children: _buildTimelineTiles(direction),
           ),
@@ -286,10 +285,9 @@ class _ClockPageState extends State<ClockPage> {
         TimelineTile(
           key: _timelineTileKeys[index],
           onTap: () => _cubit.onBreakpointTap(index),
-          examName:
-              widget.timetable.items.length > 1 && breakpoint.isFirstInExam
-                  ? breakpoint.exam.name
-                  : null,
+          examName: widget.timetable.items.length > 1 && breakpoint.isFirstInExam
+              ? breakpoint.exam.name
+              : null,
           time: time,
           title: breakpoint.title,
           color: Color(breakpoint.exam.color),
@@ -310,20 +308,18 @@ class _ClockPageState extends State<ClockPage> {
         progress = state.currentTime.difference(breakpoint.time).inSeconds / duration.inSeconds;
       }
 
-      final markerPositions =
-          state.lapTimes
-              .where(
-                (lapTime) =>
-                    lapTime.time.isAtSameMomentAs(breakpoint.time) ||
-                    lapTime.time.isAfter(breakpoint.time) &&
-                        lapTime.time.isBefore(nextBreakpoint.time),
-              )
-              .map((lapTime) {
-                final lapTimeProgress =
-                    lapTime.time.difference(breakpoint.time).inSeconds / duration.inSeconds;
-                return lapTimeProgress;
-              })
-              .toList();
+      final markerPositions = state.lapTimes
+          .where(
+            (lapTime) =>
+                lapTime.time.isAtSameMomentAs(breakpoint.time) ||
+                lapTime.time.isAfter(breakpoint.time) && lapTime.time.isBefore(nextBreakpoint.time),
+          )
+          .map((lapTime) {
+            final lapTimeProgress =
+                lapTime.time.difference(breakpoint.time).inSeconds / duration.inSeconds;
+            return lapTimeProgress;
+          })
+          .toList();
 
       tiles.add(
         TimelineConnector(

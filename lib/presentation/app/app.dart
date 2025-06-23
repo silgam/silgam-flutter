@@ -95,14 +95,12 @@ class _SilgamAppState extends State<SilgamApp> {
         // Android에서 App links로 실행될 때 initial route가 http를 포함한 형태로 오는 문제가 있음
         onGenerateInitialRoutes:
             !kIsWeb &&
-                    Platform.isAndroid &&
-                    PlatformDispatcher.instance.defaultRouteName.contains('silgam.app')
-                ? (initialRoute) {
-                  return [
-                    MaterialPageRoute(builder: (context) => InitialRouteHandler(initialRoute)),
-                  ];
-                }
-                : null,
+                Platform.isAndroid &&
+                PlatformDispatcher.instance.defaultRouteName.contains('silgam.app')
+            ? (initialRoute) {
+                return [MaterialPageRoute(builder: (context) => InitialRouteHandler(initialRoute))];
+              }
+            : null,
 
         routes: {
           OnboardingPage.routeName: (_) => OnboardingPage(),
@@ -136,21 +134,20 @@ class _SilgamAppState extends State<SilgamApp> {
             case EditRecordPage.routeName:
               final args = settings.arguments as EditRecordPageArguments?;
               return MaterialPageRoute<ExamRecord>(
-                builder:
-                    (_) => EditRecordPage(
-                      recordToEdit: args?.recordToEdit,
-                      inputExam: args?.inputExam,
-                      prefillFeedback: args?.prefillFeedback,
-                      examStartedTime: args?.examStartedTime,
-                      examFinishedTime: args?.examFinishedTime,
-                    ),
+                builder: (_) => EditRecordPage(
+                  recordToEdit: args?.recordToEdit,
+                  inputExam: args?.inputExam,
+                  prefillFeedback: args?.prefillFeedback,
+                  examStartedTime: args?.examStartedTime,
+                  examFinishedTime: args?.examFinishedTime,
+                ),
                 settings: settings,
               );
             case EditReviewProblemPage.routeName:
               final args = settings.arguments as EditReviewProblemPageArguments?;
               return MaterialPageRoute<EditReviewProblemPageResult>(
-                builder:
-                    (_) => EditReviewProblemPage(reviewProblemToEdit: args?.reviewProblemToEdit),
+                builder: (_) =>
+                    EditReviewProblemPage(reviewProblemToEdit: args?.reviewProblemToEdit),
                 settings: settings,
               );
             case RecordDetailPage.routeName:
@@ -194,11 +191,10 @@ class _SilgamAppState extends State<SilgamApp> {
                   (settings.arguments as CustomExamGuideArguments?) ??
                   const CustomExamGuideArguments();
               return MaterialPageRoute(
-                builder:
-                    (_) => CustomExamGuidePage(
-                      isFromCustomExamListPage: args.isFromCustomExamListPage,
-                      isFromPurchasePage: args.isFromPurchasePage,
-                    ),
+                builder: (_) => CustomExamGuidePage(
+                  isFromCustomExamListPage: args.isFromCustomExamListPage,
+                  isFromPurchasePage: args.isFromPurchasePage,
+                ),
                 settings: settings,
               );
           }

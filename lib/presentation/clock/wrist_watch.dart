@@ -203,12 +203,11 @@ class AnalogClockPainter extends CustomPainter {
 
     // border style
     if (showBorder && borderWidth > 0) {
-      Paint borderPaint =
-          Paint()
-            ..color = borderColor
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = borderWidth
-            ..isAntiAlias = true;
+      Paint borderPaint = Paint()
+        ..color = borderColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = borderWidth
+        ..isAntiAlias = true;
       canvas.drawCircle(const Offset(0, 0), radius - borderWidth / 2, borderPaint);
     }
 
@@ -236,11 +235,10 @@ class AnalogClockPainter extends CustomPainter {
     }
 
     //draw center point
-    Paint centerPointPaint =
-        Paint()
-          ..strokeWidth = ((radius - borderWidth) / 10)
-          ..strokeCap = StrokeCap.round
-          ..color = centerPointColor;
+    Paint centerPointPaint = Paint()
+      ..strokeWidth = ((radius - borderWidth) / 10)
+      ..strokeCap = StrokeCap.round
+      ..color = centerPointColor;
     canvas.drawPoints(PointMode.points, [const Offset(0, 0)], centerPointPaint);
   }
 
@@ -260,18 +258,16 @@ class AnalogClockPainter extends CustomPainter {
         bigTicks.add(Offset(x, y));
       }
     }
-    Paint tickPaint =
-        Paint()
-          ..color = tickColor
-          ..strokeWidth = tickWidth
-          ..strokeCap = StrokeCap.round;
+    Paint tickPaint = Paint()
+      ..color = tickColor
+      ..strokeWidth = tickWidth
+      ..strokeCap = StrokeCap.round;
     canvas.drawPoints(PointMode.points, ticks, tickPaint);
 
-    Paint bigTickPaint =
-        Paint()
-          ..color = tickColor
-          ..strokeWidth = bigTickWidth
-          ..strokeCap = StrokeCap.round;
+    Paint bigTickPaint = Paint()
+      ..color = tickColor
+      ..strokeWidth = bigTickWidth
+      ..strokeCap = StrokeCap.round;
     canvas.drawPoints(PointMode.points, bigTicks, bigTickPaint);
   }
 
@@ -312,10 +308,9 @@ class AnalogClockPainter extends CustomPainter {
       cos(getRadians(angle * 30)) * radius,
       sin(getRadians(angle * 30)) * radius,
     );
-    final hourHandPaint =
-        Paint()
-          ..color = hourHandColor
-          ..strokeWidth = strokeWidth;
+    final hourHandPaint = Paint()
+      ..color = hourHandColor
+      ..strokeWidth = strokeWidth;
     canvas.drawLine(const Offset(0, 0), handOffset, hourHandPaint);
   }
 
@@ -326,10 +321,9 @@ class AnalogClockPainter extends CustomPainter {
       cos(getRadians(angle * 6.0)) * radius,
       sin(getRadians(angle * 6.0)) * radius,
     );
-    final hourHandPaint =
-        Paint()
-          ..color = minuteHandColor
-          ..strokeWidth = strokeWidth;
+    final hourHandPaint = Paint()
+      ..color = minuteHandColor
+      ..strokeWidth = strokeWidth;
     canvas.drawLine(const Offset(0, 0), handOffset, hourHandPaint);
   }
 
@@ -340,10 +334,9 @@ class AnalogClockPainter extends CustomPainter {
       cos(getRadians(angle * 6.0)) * radius,
       sin(getRadians(angle * 6.0)) * radius,
     );
-    final hourHandPaint =
-        Paint()
-          ..color = secondHandColor
-          ..strokeWidth = strokeWidth;
+    final hourHandPaint = Paint()
+      ..color = secondHandColor
+      ..strokeWidth = strokeWidth;
     canvas.drawLine(const Offset(0, 0), handOffset, hourHandPaint);
   }
 

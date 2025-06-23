@@ -86,15 +86,14 @@ class _ExamOverviewPageState extends State<ExamOverviewPage> {
 
         return CustomAlertDialog(
           title: '시험 종료 후 자동 저장 기능 이용 제한 안내',
-          content:
-              examsCount > 1
-                  ? '''
+          content: examsCount > 1
+              ? '''
 실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${widget.examDetail.timetableName}에 포함된 $examsCount개의 과목들 중 다음 과목들은 자동으로 저장되지 않았어요.
 
 ${autoSaveFailedExamNames.join(', ')}
 
 $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢'''
-                  : '''
+              : '''
 실감패스를 이용하기 전까지는 모의고사 기록을 $examRecordLimit개까지만 저장할 수 있어요. 방금 응시하신 ${_exams.first.name} 과목의 기록은 자동으로 저장되지 않았어요.
 
 $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감패스를 이용하기 전까지는 자동 저장 기능이 비활성화될 예정이에요 😢''',
@@ -474,19 +473,18 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
           const SizedBox(height: 12),
           Wrap(
             alignment: WrapAlignment.center,
-            children:
-                _exams
-                    .map(
-                      (exam) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: Text(
-                          exam.name,
-                          textAlign: TextAlign.center,
-                          style: _contentTextStyle.copyWith(color: Color(exam.color)),
-                        ),
-                      ),
-                    )
-                    .toList(),
+            children: _exams
+                .map(
+                  (exam) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(
+                      exam.name,
+                      textAlign: TextAlign.center,
+                      style: _contentTextStyle.copyWith(color: Color(exam.color)),
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
@@ -585,7 +583,10 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
-          Stack(alignment: Alignment.topCenter, children: [Text('랩타임', style: _titleTextStyle)]),
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [Text('랩타임', style: _titleTextStyle)],
+          ),
           const SizedBox(height: 8),
           if (examToLapTimeItemGroups.isEmpty && isLapTimeAvailable)
             Padding(
@@ -623,11 +624,10 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                           Align(
                             alignment: Alignment.centerRight,
                             child: IconButton(
-                              onPressed:
-                                  () => _onCopyLapTimePressed(
-                                    lapTimeItemGroups: lapTimeItemGroups,
-                                    isUsingExample: isUsingExample,
-                                  ),
+                              onPressed: () => _onCopyLapTimePressed(
+                                lapTimeItemGroups: lapTimeItemGroups,
+                                isUsingExample: isUsingExample,
+                              ),
                               padding: const EdgeInsets.all(0),
                               splashRadius: 24,
                               visualDensity: const VisualDensity(
@@ -693,15 +693,12 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
     final endTime = isUsingExample ? _exams.first.endTime : _exams.last.endTime;
     final durationSeconds = endTime.difference(startTime).inSeconds;
 
-    final markerPositions =
-        lapTimeItemGroups
-            .map((group) => group.lapTimeItems)
-            .flattened
-            .map(
-              (lapTimeItem) => lapTimeItem.time.difference(startTime).inSeconds / durationSeconds,
-            )
-            .where((position) => position >= 0 && position <= 1)
-            .toList();
+    final markerPositions = lapTimeItemGroups
+        .map((group) => group.lapTimeItems)
+        .flattened
+        .map((lapTimeItem) => lapTimeItem.time.difference(startTime).inSeconds / durationSeconds)
+        .where((position) => position >= 0 && position <= 1)
+        .toList();
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -787,10 +784,9 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
 
   Widget _buildRecordExamButton(Exam exam) {
     return BlocBuilder<ExamOverviewCubit, ExamOverviewState>(
-      buildWhen:
-          (previous, current) =>
-              previous.isAutoSavingRecords != current.isAutoSavingRecords ||
-              previous.examToRecordIds != current.examToRecordIds,
+      buildWhen: (previous, current) =>
+          previous.isAutoSavingRecords != current.isAutoSavingRecords ||
+          previous.examToRecordIds != current.examToRecordIds,
       builder: (context, state) {
         final isRecorded = state.examToRecordIds.containsKey(exam);
         final isAutoSaving = !isRecorded && state.isAutoSavingRecords;
@@ -834,18 +830,17 @@ $examRecordLimit개 미만까지 모의고사 기록을 삭제하거나 실감�
                   ),
                   Positioned(
                     right: 0,
-                    child:
-                        isAutoSaving
-                            ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                            : Icon(
-                              isRecorded ? Icons.check : Icons.chevron_right,
-                              color: isRecorded ? Color(exam.color) : Colors.white,
-                              size: 24,
-                            ),
+                    child: isAutoSaving
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : Icon(
+                            isRecorded ? Icons.check : Icons.chevron_right,
+                            color: isRecorded ? Color(exam.color) : Colors.white,
+                            size: 24,
+                          ),
                   ),
                 ],
               ),

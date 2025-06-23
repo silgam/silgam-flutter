@@ -166,10 +166,9 @@ class _PurchasePageState extends State<PurchasePage> {
     Navigator.of(context).pop();
     getIt.get<HomeCubit>().changeTabByTitle(SettingsView.title);
 
-    final message =
-        me.isProductTrial
-            ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
-            : '${widget.product.name}가 시작되었어요! 열공하세요 🔥';
+    final message = me.isProductTrial
+        ? '${widget.product.name} ${widget.product.trialPeriod}일 무료 체험 기간이 시작되었어요 🔥'
+        : '${widget.product.name}가 시작되었어요! 열공하세요 🔥';
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
@@ -195,7 +194,9 @@ class _PurchasePageState extends State<PurchasePage> {
             '• ',
             style: TextStyle(fontWeight: FontWeight.w300, color: Colors.grey.shade600, height: 1.2),
           ),
-          Expanded(child: Text(text, style: TextStyle(color: Colors.grey.shade600, height: 1.2))),
+          Expanded(
+            child: Text(text, style: TextStyle(color: Colors.grey.shade600, height: 1.2)),
+          ),
         ],
       ),
     );
@@ -212,10 +213,9 @@ class _PurchasePageState extends State<PurchasePage> {
             Center(
               child: CircularProgressIndicator(
                 strokeWidth: 3,
-                color:
-                    widget.product.isPageBackgroundDark
-                        ? Colors.white
-                        : Theme.of(context).primaryColor,
+                color: widget.product.isPageBackgroundDark
+                    ? Colors.white
+                    : Theme.of(context).primaryColor,
               ),
             ),
             AnimatedOpacity(
@@ -279,10 +279,12 @@ class _PurchasePageState extends State<PurchasePage> {
               child: AnnotatedRegion(
                 value: defaultSystemUiOverlayStyle.copyWith(
                   statusBarColor: backgroundColor,
-                  statusBarBrightness:
-                      widget.product.isPageBackgroundDark ? Brightness.dark : Brightness.light,
-                  statusBarIconBrightness:
-                      widget.product.isPageBackgroundDark ? Brightness.light : Brightness.dark,
+                  statusBarBrightness: widget.product.isPageBackgroundDark
+                      ? Brightness.dark
+                      : Brightness.light,
+                  statusBarIconBrightness: widget.product.isPageBackgroundDark
+                      ? Brightness.light
+                      : Brightness.dark,
                 ),
                 child: Scaffold(
                   backgroundColor: backgroundColor,
@@ -293,10 +295,9 @@ class _PurchasePageState extends State<PurchasePage> {
                         CustomAppBar(
                           title: widget.product.name,
                           onBackPressed: () => Navigator.pop(context),
-                          textBrightness:
-                              widget.product.isPageBackgroundDark
-                                  ? Brightness.light
-                                  : Brightness.dark,
+                          textBrightness: widget.product.isPageBackgroundDark
+                              ? Brightness.light
+                              : Brightness.dark,
                         ),
                         Expanded(child: _buildBody()),
                       ],

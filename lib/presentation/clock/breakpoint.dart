@@ -23,12 +23,11 @@ class Breakpoint {
     final breakpoints = <Breakpoint>[];
 
     timetable.items.forEachIndexed((index, currentItem) {
-      final itemStartTime =
-          index == 0
-              ? timetable.startTime
-              : breakpoints.last.time.add(
-                Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
-              );
+      final itemStartTime = index == 0
+          ? timetable.startTime
+          : breakpoints.last.time.add(
+              Duration(minutes: timetable.items[index - 1].breakMinutesAfter),
+            );
       final examStartTime = itemStartTime.add(
         Duration(minutes: currentItem.exam.subject.minutesBeforeExamStart),
       );

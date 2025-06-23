@@ -29,9 +29,8 @@ class MyPage extends StatelessWidget {
       title: '마이페이지',
       onBackPressed: () => Navigator.of(context).pop(),
       child: BlocBuilder<AppCubit, AppState>(
-        buildWhen:
-            (previous, current) =>
-                previous.me != current.me || previous.productBenefit != current.productBenefit,
+        buildWhen: (previous, current) =>
+            previous.me != current.me || previous.productBenefit != current.productBenefit,
         builder: (context, appState) {
           final me = appState.me;
           if (me == null) {
@@ -141,10 +140,9 @@ class MyPage extends StatelessWidget {
     final purchaseDateString = DateFormat.yMd(
       'ko_KR',
     ).add_Hm().format(user.receipts.last.createdAt);
-    final expiryDate =
-        isTrial
-            ? DateTime.parse(user.receipts.last.token).toLocal()
-            : user.activeProduct.expiryDate;
+    final expiryDate = isTrial
+        ? DateTime.parse(user.receipts.last.token).toLocal()
+        : user.activeProduct.expiryDate;
     final expiryDateString = DateFormat.yMd('ko_KR').add_Hm().format(expiryDate);
 
     final now = DateTime.now();
@@ -162,10 +160,9 @@ class MyPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors:
-                      isTrial
-                          ? [const Color(0xFFEB7F3C), const Color(0xFF3E49F5)]
-                          : [const Color(0xFF75FBDA), const Color(0xFF3E49F5)],
+                  colors: isTrial
+                      ? [const Color(0xFFEB7F3C), const Color(0xFF3E49F5)]
+                      : [const Color(0xFF75FBDA), const Color(0xFF3E49F5)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -330,7 +327,10 @@ class MyPage extends StatelessWidget {
   Widget _buildInfo(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-      child: BulletText(text: text, style: const TextStyle(color: Colors.grey, height: 1.2)),
+      child: BulletText(
+        text: text,
+        style: const TextStyle(color: Colors.grey, height: 1.2),
+      ),
     );
   }
 }

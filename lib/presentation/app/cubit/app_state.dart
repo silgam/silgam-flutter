@@ -111,16 +111,15 @@ class AppState with _$AppState {
   List<Timetable> getAllTimetables() {
     final allExams = getAllExams();
 
-    final timetables =
-        allExams
-            .map(
-              (exam) => Timetable(
-                name: exam.name,
-                startTime: exam.timetableStartTime,
-                items: [TimetableItem(exam: exam)],
-              ),
-            )
-            .toList();
+    final timetables = allExams
+        .map(
+          (exam) => Timetable(
+            name: exam.name,
+            startTime: exam.timetableStartTime,
+            items: [TimetableItem(exam: exam)],
+          ),
+        )
+        .toList();
 
     final defaultInvestigationExam = allExams.firstWhere(
       (exam) => exam.subject == Subject.investigation && !exam.isCustomExam,
@@ -148,13 +147,11 @@ class AppState with _$AppState {
       name: '전과목',
       isAllSubjectsTimetable: true,
       startTime: defaultExams.first.timetableStartTime,
-      items:
-          defaultExams
-              .map(
-                (exam) =>
-                    TimetableItem(exam: exam, breakMinutesAfter: exam.subject.breakMinutesAfter),
-              )
-              .toList(),
+      items: defaultExams
+          .map(
+            (exam) => TimetableItem(exam: exam, breakMinutesAfter: exam.subject.breakMinutesAfter),
+          )
+          .toList(),
     );
 
     timetables.insert(0, allSubjectsTimetable);

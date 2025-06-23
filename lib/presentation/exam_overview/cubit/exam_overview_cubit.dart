@@ -57,22 +57,20 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
     emit(state.copyWith(isAutoSavingRecords: true));
 
     final examRecordLimit = _appCubit.state.productBenefit.examRecordLimit;
-    final recordsCountToSave =
-        examRecordLimit == -1
-            ? _examDetail.exams.length
-            : (examRecordLimit - _recordListCubit.state.originalRecords.length).clamp(
-              0,
-              _examDetail.exams.length,
-            );
+    final recordsCountToSave = examRecordLimit == -1
+        ? _examDetail.exams.length
+        : (examRecordLimit - _recordListCubit.state.originalRecords.length).clamp(
+            0,
+            _examDetail.exams.length,
+          );
 
     final List<ExamRecord> savedRecords = [];
     for (final exam in _examDetail.exams.take(recordsCountToSave)) {
       final examStartedTime = _examDetail.examStartedTimes[exam];
       final examFinishedTime = _examDetail.examFinishedTimes[exam];
-      final examDurationMinutes =
-          examStartedTime != null && examFinishedTime != null
-              ? examFinishedTime.difference(examStartedTime).inMinutesWithCorrection
-              : exam.durationMinutes;
+      final examDurationMinutes = examStartedTime != null && examFinishedTime != null
+          ? examFinishedTime.difference(examStartedTime).inMinutesWithCorrection
+          : exam.durationMinutes;
 
       final record = ExamRecord.create(
         userId: userId,
@@ -102,13 +100,12 @@ class ExamOverviewCubit extends Cubit<ExamOverviewState> {
       ),
     );
 
-    final autoSaveFailedExamNames =
-        _examDetail.exams.reversed
-            .take(_examDetail.exams.length - recordsCountToSave)
-            .map((exam) => exam.name)
-            .toList()
-            .reversed
-            .toList();
+    final autoSaveFailedExamNames = _examDetail.exams.reversed
+        .take(_examDetail.exams.length - recordsCountToSave)
+        .map((exam) => exam.name)
+        .toList()
+        .reversed
+        .toList();
 
     if (autoSaveFailedExamNames.isNotEmpty) {
       _sharedPreferences.setBool(PreferenceKey.useAutoSaveRecords, false);

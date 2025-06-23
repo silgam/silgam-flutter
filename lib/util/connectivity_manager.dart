@@ -50,10 +50,9 @@ class ConnectivityManger {
 
       if (connected) {
         final userId = currentUserId ?? 'anonymous';
-        _connectedAtRef =
-            db.ref('users/$userId/sessions/$_sessionId/connectedAt')
-              ..onDisconnect().remove()
-              ..set(ServerValue.timestamp);
+        _connectedAtRef = db.ref('users/$userId/sessions/$_sessionId/connectedAt')
+          ..onDisconnect().remove()
+          ..set(ServerValue.timestamp);
       } else {
         _sessionId = const Uuid().v1();
       }
