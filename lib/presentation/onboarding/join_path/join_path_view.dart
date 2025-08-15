@@ -89,7 +89,7 @@ class _JoinPathViewState extends State<JoinPathView> {
                 height: 1.3,
               ),
               decoration: InputDecoration(
-                hintText: '기타',
+                hintText: '기타 (실감을 접한 SNS 인플루언서 이름 등)',
                 fillColor: Colors.white,
                 filled: true,
                 isDense: true,
