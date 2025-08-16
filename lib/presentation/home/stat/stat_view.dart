@@ -268,13 +268,32 @@ class _StatViewState extends State<StatView> {
     required ExamValueType examValueType,
     required List<String> selectedExamIds,
   }) {
-    final isAllPerfectScoresSame =
-        1 == filteredRecords.keys.map((exam) => exam.perfectScore).toSet().length;
-    final average = filteredRecords.values.flattened
-        .map((record) => examValueType.getValue(record))
-        .nonNulls
-        .averageOrNull
-        ?.toStringAsFixed(1);
+    final showingRecords = filteredRecords.map(
+      (exam, records) => MapEntry(
+        exam,
+        records
+            .where((record) => examValueType.getValue(record) != null)
+            .sortedBy((record) => record.examStartedTime),
+      ),
+    )..removeWhere((exam, records) => records.isEmpty);
+
+    AverageCalculationError? averageCalculationError;
+    if (showingRecords.isEmpty) {
+      averageCalculationError = AverageCalculationError.noRecords;
+    } else if ((examValueType == ExamValueType.score ||
+            examValueType == ExamValueType.standardScore) &&
+        showingRecords.keys.map((exam) => exam.perfectScore).toSet().length > 1) {
+      averageCalculationError = AverageCalculationError.differentPerfectScores;
+    }
+
+    double? average;
+    if (averageCalculationError == null) {
+      average = showingRecords.values.flattened
+          .map((record) => examValueType.getValue(record))
+          .nonNulls
+          .average;
+    }
+
     return CustomCard(
       margin: _cardMargin,
       padding: const EdgeInsets.symmetric(
@@ -320,14 +339,7 @@ class _StatViewState extends State<StatView> {
               builder: (context, constraints) {
                 return _buildValueGraphs(
                   examValueType: examValueType,
-                  recordsMap: filteredRecords.map(
-                    (exam, records) => MapEntry(
-                      exam,
-                      records
-                          .where((record) => examValueType.getValue(record) != null)
-                          .sortedBy((record) => record.examStartedTime),
-                    ),
-                  )..removeWhere((subject, records) => records.isEmpty),
+                  recordsMap: showingRecords,
                   cardWidth: constraints.maxWidth,
                 );
               },
@@ -344,18 +356,16 @@ class _StatViewState extends State<StatView> {
               ),
               const SizedBox(width: 6),
               Text(
-                !isAllPerfectScoresSame || average == null
-                    ? '-'
-                    : '$average${examValueType.postfix}',
+                averageCalculationError == null
+                    ? '${average?.toStringAsFixed(1)}${examValueType.postfix}'
+                    : '-',
                 textAlign: TextAlign.center,
                 style: _titleTextStyle.copyWith(),
               ),
-              if (!isAllPerfectScoresSame || average == null) const SizedBox(width: 6),
-              if (!isAllPerfectScoresSame || average == null)
+              if (averageCalculationError != null) const SizedBox(width: 6),
+              if (averageCalculationError != null)
                 Tooltip(
-                  message: isAllPerfectScoresSame
-                      ? '1개 이상의 기록이 있을 때에만 평균 계산이 가능해요'
-                      : '평균 계산은 만점이 같은 과목들끼리만 가능해요',
+                  message: averageCalculationError.message,
                   triggerMode: TooltipTriggerMode.tap,
                   child: Icon(Icons.info_outline, size: 15, color: Colors.grey.shade700),
                 ),
@@ -831,6 +841,15 @@ class _StatViewState extends State<StatView> {
   }
 }
 
+enum AverageCalculationError {
+  noRecords(message: '1개 이상의 기록이 있을 때에만 평균 계산이 가능해요'),
+  differentPerfectScores(message: '평균 계산은 만점이 같은 과목들끼리만 가능해요');
+
+  const AverageCalculationError({required this.message});
+
+  final String message;
+}
+
 enum ExamValueType {
   score(name: '점수', postfix: '점', getValue: getScore, minValue: 0, maxValue: 100),
   scoreRatio(name: '보정 점수', postfix: '점', getValue: getScoreRatio, minValue: 0, maxValue: 100),
@@ -876,14 +895,5 @@ extension on Duration {
     final hours = inHours;
     final minutes = inMinutes - hours * 60;
     return '$hours시간 $minutes분';
-  }
-}
-
-extension on Iterable<num> {
-  double? get averageOrNull {
-    if (isEmpty) {
-      return null;
-    }
-    return average;
   }
 }
