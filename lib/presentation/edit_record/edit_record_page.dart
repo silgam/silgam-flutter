@@ -11,8 +11,10 @@ import '../../model/exam.dart';
 import '../../model/exam_record.dart';
 import '../../model/problem.dart';
 import '../../repository/exam_record/exam_record_repository.dart';
+import '../../util/decimal_text_input_formatters.dart';
 import '../../util/duration_extension.dart';
 import '../../util/injection.dart';
+import '../../util/num_extension.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/dialog.dart';
 import '../home/record_list/cubit/record_list_cubit.dart';
@@ -92,7 +94,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
   late final Exam _initialExam = _recordToEdit?.exam ?? widget.inputExam ?? _exams.first;
   late final int? _initialScore = _recordToEdit?.score;
   late final int? _initialGrade = _recordToEdit?.grade;
-  late final int? _initialPercentile = _recordToEdit?.percentile;
+  late final double? _initialPercentile = _recordToEdit?.percentile;
   late final int? _initialStandardScore = _recordToEdit?.standardScore;
   late final DateTime _initialExamStartedDate =
       _recordToEdit?.examStartedTime ?? widget.examStartedTime ?? DateTime.now();
@@ -232,7 +234,7 @@ class _EditRecordPageState extends State<EditRecordPage> {
       examDurationMinutes: int.tryParse(values[_examDurationMinutesFieldName]),
       score: int.tryParse(values[_scoreFieldName]),
       grade: int.tryParse(values[_gradeFieldName]),
-      percentile: int.tryParse(values[_percentileFieldName]),
+      percentile: double.tryParse(values[_percentileFieldName]),
       standardScore: int.tryParse(values[_standardScoreFieldName]),
       wrongProblems: wrongProblemNumbers.map(WrongProblem.new).toList(),
       feedback: values[_feedbackFieldName],
@@ -396,16 +398,16 @@ class _EditRecordPageState extends State<EditRecordPage> {
                 label: '백분위',
                 child: FormTextField(
                   name: _percentileFieldName,
-                  initialValue: _initialPercentile?.toString() ?? '',
+                  initialValue: _initialPercentile?.toCompactString() ?? '',
                   hintText: '      ',
                   suffixText: '%',
                   textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   hideError: true,
                   autoWidth: true,
                   inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(3),
+                    const DecimalTextInputFormatter(decimalRange: 2),
+                    LengthLimitingTextInputFormatter(5),
                   ],
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.numeric(

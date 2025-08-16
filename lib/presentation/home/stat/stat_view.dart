@@ -849,7 +849,7 @@ enum ExamValueType {
 
   final String name;
   final String postfix;
-  final int? Function(ExamRecord record) getValue;
+  final num? Function(ExamRecord record) getValue;
   final int minValue;
   final int maxValue;
   final bool reverse;
@@ -866,7 +866,7 @@ enum ExamValueType {
 
   static int? getGrade(ExamRecord record) => record.grade;
 
-  static int? getPercentile(ExamRecord record) => record.percentile;
+  static double? getPercentile(ExamRecord record) => record.percentile;
 
   static int? getStandardScore(ExamRecord record) => record.standardScore;
 }
@@ -879,7 +879,7 @@ extension on Duration {
   }
 }
 
-extension on Iterable<int> {
+extension on Iterable<num> {
   double? get averageOrNull {
     if (isEmpty) {
       return null;

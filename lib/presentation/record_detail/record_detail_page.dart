@@ -11,6 +11,7 @@ import '../../repository/exam_record/exam_record_repository.dart';
 import '../../util/analytics_manager.dart';
 import '../../util/const.dart';
 import '../../util/injection.dart';
+import '../../util/num_extension.dart';
 import '../app/cubit/app_cubit.dart';
 import '../common/ad_tile.dart';
 import '../common/review_problem_card.dart';
@@ -171,7 +172,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
   Widget _buildScoreBoard(ExamRecord record) {
     int? score = record.score;
     int? grade = record.grade;
-    int? percentile = record.percentile;
+    double? percentile = record.percentile;
     int? standardScore = record.standardScore;
     int? examDurationMinutes = record.examDurationMinutes;
 
@@ -191,14 +192,17 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     return IntrinsicHeight(child: Row(children: scoreItems));
   }
 
-  Widget _buildScoreItem(String title, int value) {
+  Widget _buildScoreItem(String title, num value) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         children: [
           _buildSubTitle(title),
           const SizedBox(height: 4),
-          Text(value.toString(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w300)),
+          Text(
+            value.toCompactString(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
+          ),
         ],
       ),
     );
