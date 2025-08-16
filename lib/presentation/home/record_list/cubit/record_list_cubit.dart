@@ -136,11 +136,17 @@ class RecordListCubit extends Cubit<RecordListState> {
 
     return originalRecords
         .where((record) {
-          if (searchQuery!.isEmpty) return true;
-          return record.title.contains(searchQuery) || record.feedback.contains(searchQuery);
+          if (searchQuery == null || searchQuery.isEmpty) return true;
+          final query = searchQuery;
+
+          return record.title.contains(query) ||
+              record.feedback.contains(query) ||
+              record.reviewProblems.any(
+                (problem) => problem.title.contains(query) || problem.memo.contains(query),
+              );
         })
         .where((record) {
-          if (selectedExamIds!.isEmpty) return true;
+          if (selectedExamIds == null || selectedExamIds.isEmpty) return true;
           return selectedExamIds.contains(record.exam.id);
         })
         .toList()
