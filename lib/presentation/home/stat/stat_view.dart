@@ -357,7 +357,7 @@ class _StatViewState extends State<StatView> {
               const SizedBox(width: 6),
               Text(
                 averageCalculationError == null
-                    ? '${average?.toStringAsFixed(1)}${examValueType.postfix}'
+                    ? '${average?.toStringAsFixed(2)}${examValueType.postfix}'
                     : '-',
                 textAlign: TextAlign.center,
                 style: _titleTextStyle.copyWith(),
