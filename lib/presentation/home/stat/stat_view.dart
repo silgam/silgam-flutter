@@ -13,6 +13,7 @@ import '../../../model/exam_record.dart';
 import '../../../util/const.dart';
 import '../../../util/date_time_extension.dart';
 import '../../../util/injection.dart';
+import '../../../util/num_extension.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../common/custom_card.dart';
 import '../../common/filter_action_chip.dart';
@@ -483,13 +484,13 @@ class _StatViewState extends State<StatView> {
             final exam = recordsMap.keys.toList()[touchedSpot.barIndex];
             final records = dateToRecordsMap.entries.elementAt(touchedSpot.x.toInt()).value;
             final record = records.firstWhere((record) => record.exam == exam);
-            final value = touchedSpot.y.toInt() * examValueType.reverseMultiple;
+            final value = touchedSpot.y * examValueType.reverseMultiple;
             return LineTooltipItem(
               record.title,
               const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               children: [
                 TextSpan(
-                  text: ' $value${examValueType.postfix}',
+                  text: ' ${value.toCompactString()}${examValueType.postfix}',
                   style: const TextStyle(fontWeight: FontWeight.normal),
                 ),
                 TextSpan(
