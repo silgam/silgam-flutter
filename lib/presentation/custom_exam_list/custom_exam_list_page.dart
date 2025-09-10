@@ -8,7 +8,6 @@ import 'package:ui/ui.dart';
 import '../../model/exam.dart';
 import '../../util/injection.dart';
 import '../app/cubit/app_cubit.dart';
-import '../common/dialog.dart';
 import '../custom_exam_edit/custom_exam_edit_page.dart';
 import '../custom_exam_guide/custom_exam_guide_page.dart';
 
@@ -43,15 +42,11 @@ class _CustomExamListPageState extends State<CustomExamListPage> {
   }
 
   void _onHelpButtonPressed() {
-    if (_appCubit.state.productBenefit.isCustomExamAvailable) {
-      Navigator.pushNamed(
-        context,
-        CustomExamGuidePage.routeName,
-        arguments: const CustomExamGuideArguments(isFromCustomExamListPage: true),
-      );
-    } else {
-      showCustomExamNotAvailableDialog(context, isFromCustomExamListPage: true);
-    }
+    Navigator.pushNamed(
+      context,
+      CustomExamGuidePage.routeName,
+      arguments: const CustomExamGuideArguments(isFromCustomExamListPage: true),
+    );
   }
 
   Widget _buildExamInfoWidget(IconData iconData, String text) {
