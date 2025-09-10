@@ -10,11 +10,13 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:injectable/injectable.dart';
+import 'package:multiple_result/multiple_result.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../model/product.dart';
 import '../../../repository/product/product_repository.dart';
 import '../../../util/analytics_manager.dart';
+import '../../../util/api_failure.dart';
 import '../../../util/cache_manager.dart';
 import '../../../util/const.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -287,16 +289,40 @@ class IapCubit extends Cubit<IapState> {
       return;
     }
 
-    final onPurchaseResult = await _productRepository.onPurchase(
-      productId: purchaseDetails.productID,
-      store: purchaseDetails.verificationData.source,
-      verificationToken: purchaseDetails.verificationData.serverVerificationData,
-    );
+    late Result<Unit, ApiFailure> onPurchaseResult;
+    for (int attempt = 1; attempt <= 3; attempt++) {
+      if (attempt > 1) {
+        AnalyticsManager.logEvent(
+          name: '[PurchasePage] onPurchase retry',
+          properties: {'attempt': attempt},
+        );
+        await Future.delayed(const Duration(seconds: 1));
+      }
+
+      log('[PurchaseCubit] onPurchase attempt $attempt');
+
+      onPurchaseResult = await _productRepository.onPurchase(
+        productId: purchaseDetails.productID,
+        store: purchaseDetails.verificationData.source,
+        verificationToken: purchaseDetails.verificationData.serverVerificationData,
+      );
+
+      if (onPurchaseResult.isSuccess()) {
+        log('[PurchaseCubit] onPurchase attempt $attempt success');
+        break;
+      }
+
+      log('[PurchaseCubit] onPurchase attempt $attempt failed');
+    }
 
     if (onPurchaseResult.isError()) {
       emit(state.copyWith(isLoading: false));
       final message = onPurchaseResult.tryGetError()!.message;
-      EasyLoading.showError(message, dismissOnTap: true);
+      EasyLoading.showError(
+        '구매에 실패했습니다. 문제가 지속되면 실감 카카오톡 채널로 문의해주세요.',
+        dismissOnTap: true,
+        duration: const Duration(seconds: 5),
+      );
       AnalyticsManager.logEvent(
         name: '[PurchasePage] onPurchase failed',
         properties: {
