@@ -276,7 +276,6 @@ PODS:
     - Flutter
   - just_audio (0.0.1):
     - Flutter
-    - FlutterMacOS
   - kakao_flutter_sdk_common (1.9.6):
     - Flutter
   - leveldb-library (1.22.6)
@@ -340,7 +339,7 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - in_app_purchase_storekit (from `.symlinks/plugins/in_app_purchase_storekit/darwin`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
-  - just_audio (from `.symlinks/plugins/just_audio/darwin`)
+  - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - kakao_flutter_sdk_common (from `.symlinks/plugins/kakao_flutter_sdk_common/ios`)
   - mixpanel_flutter (from `.symlinks/plugins/mixpanel_flutter/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -444,7 +443,7 @@ EXTERNAL SOURCES:
   in_app_review:
     :path: ".symlinks/plugins/in_app_review/ios"
   just_audio:
-    :path: ".symlinks/plugins/just_audio/darwin"
+    :path: ".symlinks/plugins/just_audio/ios"
   kakao_flutter_sdk_common:
     :path: ".symlinks/plugins/kakao_flutter_sdk_common/ios"
   mixpanel_flutter:
@@ -475,7 +474,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
-  audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
+  audio_session: f08db0697111ac84ba46191b55488c0563bb29c6
   cloud_firestore: 6b4b5ca28a1f929b0c253ed55de76976310709a7
   connectivity_plus: 3f6c9057f4cd64198dc826edfb0542892f825343
   FBAEMKit: 9900b2edd99a2d21629a6277e6166f14c6215799
@@ -531,7 +530,7 @@ SPEC CHECKSUMS:
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
   in_app_purchase_storekit: e126ef1b89e4a9fdf07e28f005f82632b4609437
   in_app_review: 8efcf4a4d3ba72d5d776d29e5a268f1abf64d184
-  just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
+  just_audio: 6c031bb61297cf218b4462be616638e81c058e97
   kakao_flutter_sdk_common: 7747df5fa2bf4cfcdc7aaa9ec260eb5e89e05f75
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   Mixpanel-swift: 2192b9a24cf41b870749e4e0e10fbc9822bb2b4a
