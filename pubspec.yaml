@@ -80,6 +80,7 @@ dependencies:
   # Audio and Media
   audio_session: ^0.1.21
   just_audio: 0.9.46
+  audio_waveforms: ^1.3.0
 
   # In-App Purchase and Ads
   google_mobile_ads: ^5.1.0
