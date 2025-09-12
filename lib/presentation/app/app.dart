@@ -24,6 +24,7 @@ import '../custom_exam_list/custom_exam_list_page.dart';
 import '../customize_subject_name/customize_subject_name_page.dart';
 import '../edit_record/edit_record_page.dart';
 import '../edit_review_problem/edit_review_problem_page.dart';
+import '../english_listening_file_upload/english_listening_file_upload_page.dart';
 import '../exam_overview/exam_overview_page.dart';
 import '../home/home_page.dart';
 import '../login/login_page.dart';
@@ -113,6 +114,7 @@ class _SilgamAppState extends State<SilgamApp> {
           SilgampassPage.routeName: (_) => const SilgampassPage(),
           CustomExamListPage.routeName: (_) => const CustomExamListPage(),
           AnnouncementSettingPage.routeName: (_) => const AnnouncementSettingPage(),
+          EnglishListeningFileUploadPage.routeName: (_) => const EnglishListeningFileUploadPage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
