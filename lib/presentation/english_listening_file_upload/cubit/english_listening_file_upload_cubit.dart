@@ -12,4 +12,8 @@ class EnglishListeningFileUploadCubit extends Cubit<EnglishListeningFileUploadSt
   void updateWaveformData(List<double> waveformData) {
     emit(state.copyWith(waveformData: waveformData));
   }
+
+  void togglePlayPause() {
+    emit(state.copyWith(isPlaying: !state.isPlaying));
+  }
 }

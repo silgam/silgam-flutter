@@ -114,7 +114,7 @@ class _SilgamAppState extends State<SilgamApp> {
           SilgampassPage.routeName: (_) => const SilgampassPage(),
           CustomExamListPage.routeName: (_) => const CustomExamListPage(),
           AnnouncementSettingPage.routeName: (_) => const AnnouncementSettingPage(),
-          EnglishListeningFileUploadPage.routeName: (_) => EnglishListeningFileUploadPage(),
+          EnglishListeningFileUploadPage.routeName: (_) => const EnglishListeningFileUploadPage(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
