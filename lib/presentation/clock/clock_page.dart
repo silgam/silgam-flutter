@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +121,7 @@ class _ClockPageState extends State<ClockPage> {
                           width: state.isFinished && !_isSmallHeightScreen ? double.infinity : null,
                           margin: EdgeInsets.symmetric(
                             horizontal: state.isFinished ? 20 : 8,
-                            vertical: state.isFinished && _isSmallHeightScreen ? 12 : 0,
+                            vertical: max(0, 24 - MediaQuery.of(context).padding.top),
                           ),
                           child: state.isFinished
                               ? OutlinedButton(
