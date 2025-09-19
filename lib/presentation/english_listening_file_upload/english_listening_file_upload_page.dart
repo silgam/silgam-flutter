@@ -33,7 +33,7 @@ class _EnglishListeningFileUploadPageState extends State<EnglishListeningFileUpl
     super.dispose();
   }
 
-  void _onIsPlayingChanged(bool isPlaying) {
+  void _handleIsPlayingChanged(bool isPlaying) {
     final audioDuration = _audioDuration;
     if (audioDuration == null) return;
 
@@ -52,7 +52,7 @@ class _EnglishListeningFileUploadPageState extends State<EnglishListeningFileUpl
     }
   }
 
-  Future<void> _onPickFileButtonPressed() async {
+  Future<void> _handlePickFile() async {
     // TODO: pickFiles() options
     final files = await FilePicker.platform.pickFiles();
     final path = files?.files.first.path;
@@ -70,10 +70,6 @@ class _EnglishListeningFileUploadPageState extends State<EnglishListeningFileUpl
     _cubit.updateWaveformData(waveformData);
   }
 
-  void _onPlayButtonPressed() {
-    _cubit.togglePlayPause();
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -81,7 +77,7 @@ class _EnglishListeningFileUploadPageState extends State<EnglishListeningFileUpl
       child: BlocListener<EnglishListeningFileUploadCubit, EnglishListeningFileUploadState>(
         listenWhen: (previous, current) => previous.isPlaying != current.isPlaying,
         listener: (context, state) {
-          _onIsPlayingChanged(state.isPlaying);
+          _handleIsPlayingChanged(state.isPlaying);
         },
         child: PageLayout(
           title: '영어 듣기 음원 설정',
@@ -105,12 +101,12 @@ class _EnglishListeningFileUploadPageState extends State<EnglishListeningFileUpl
                   );
                 },
               ),
-              OutlinedButton(onPressed: _onPickFileButtonPressed, child: const Text('Upload File')),
+              OutlinedButton(onPressed: _handlePickFile, child: const Text('Upload File')),
               BlocSelector<EnglishListeningFileUploadCubit, EnglishListeningFileUploadState, bool>(
                 selector: (state) => state.isPlaying,
                 builder: (context, isPlaying) {
                   return IconButton(
-                    onPressed: _onPlayButtonPressed,
+                    onPressed: _cubit.togglePlayPause,
                     icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
                   );
                 },
