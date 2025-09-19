@@ -29,6 +29,7 @@ class _EnglishListeningFileUploadPageState extends State<EnglishListeningFileUpl
   @override
   void dispose() {
     _audioPlayer.dispose();
+    _waveformScrollController.dispose();
     super.dispose();
   }
 
